@@ -1,105 +1,132 @@
 require 'rubygems'
 require 'erb'
 require 'maruku'
+require 'pp'
 
-def generate_page(page_data)
-  page = page_data['page']
-  puts "generating #{page}"
-  
-  @title = page_data['name']
-  @desc = page_data['desc']
-  @pcontent = '<div class="span-21">'
-  
-  if s = page_data['size']
-    w, h = s.split('x')
-  else
-    w = '640'
-    h = '360'
-  end
-  
-  # add video if present
-  if code = page_data['cast']
-    @pcontent += '<center><embed src="http://blip.tv/play/' + code  
-    @pcontent += '" type="application/x-shockwave-flash" width="' + w + '" height="' + h + '" '
-    @pcontent += 'allowscriptaccess="always" allowfullscreen="true"></embed></center>'
-  end
-  
-  @pcontent += '<hr/>'
+def update_toc(toc)
+  # update all the [[nav-prev]], [[nav-next]] links
+  # write a table of contents
 
-  # render markdown from page, if present
-  mpage = "pages/#{page}.markdown"
-  if File.exists?(mpage)
-    content = File.read(mpage)
-    doc = Maruku.new(content)
-    @pcontent += doc.to_html
-    @pcontent += '<br/><br/><hr/>'
+  pages = ['index.html']
+  index = "<ul id=\"toc\">\n"
+  toc.each do |chapter|
+    (ch, data) = chapter
+    next if data[:title].size == 0
+    index += "<li><h1>#{ch}. <a href=\"ch#{ch}-0.html\">#{data[:title]}</a></h1></li>\n"
+    index += "<ul>"
+    pages << "ch#{ch}-0.html"
+    data[:sections].each do |section|
+      next if section[0] == 0
+      index += "<li>#{ch}.#{section[0]} - <a href=\"ch#{ch}-#{section[0]}.html\">#{section[1]}</a></li>"
+      pages << "ch#{ch}-#{section[0]}.html"
+    end
+    index += "</ul>"
   end
+  index += "</ul>"
+  pages << "index.html"
 
-  @pcontent += '</div>'
+  html = "---
+layout: master
+title: Table of Contents
+---
+"
+  html += index
+
+  File.open('book/index.html', 'w+') { |f| f.write(html) }
   
-  @pcontent += "<div class=\"span-10\">"
-  if n = @nextlast[:last][page]
-    @pcontent += "<a href=\"#{n}.html\">&laquo; previous</a>"
-  else
-    @pcontent += "&nbsp;"
-  end
-  @pcontent += "</div>"
-
-  if n = @nextlast[:next][page]
-    @pcontent += "<div style=\"text-align:right\" class=\"span-11 last\"><a href=\"#{n}.html\">next &raquo;</a></div>"
+  i = 1
+  while i < (pages.size - 1)
+    filter = pages[i]
+    prevp = pages[i - 1]
+    nextp = pages[i + 1]
+    content = File.read("book/#{filter}")
+    content.gsub!('[[nav-prev]]', prevp)
+    content.gsub!('[[nav-next]]', nextp)
+    File.open("book/#{filter}", 'w+') { |f| f.write(content) }
+    i += 1
   end
 
-  @pcontent += '<div class="span-21 last">&nbsp;</div><hr/>'
+end
+
+def generate_pages(chapter, content)
+  #pname = "p/#{page}.html"
+  #out = ERB.new(File.read('template/page.erb.html')).result
+
+  toc = {:title => '', :sections => []}
+
+  doc = Maruku.new(content)
+
+  raw = doc.to_html
+  if m = raw.match(/<h1(.*?)>(.*?)<\/h1>/)
+    chapter_title = m[2]
+    toc[:title] = chapter_title
+  end
+
+  sections = raw.split('<h2')
+  section = 0
+  sections.each do |sec|
     
-  pname = "p/#{page}.html"
-  out = ERB.new(File.read('template/page.erb.html')).result
-  File.open(pname, 'w') { |f| f.write(out) }
+    section_title = ''
+    if section_match = sec.match(/>(.*?)<\/h2>/)
+      section_title = section_match[1]
+      toc[:sections] << [section, section_title]
+    else
+      toc[:sections] << [section, nil]
+    end
+    
+    
+    pname = "../../book/ch#{chapter}-#{section}.html"
+    full_title = section_match ? "#{chapter_title} #{section_title}" : chapter_title
+    html = "---
+layout: master
+title: Pro Git #{chapter}.#{section} #{full_title}
+---
+"
+    if section_match
+      sec = '<h2' + sec
+    else
+      html += "<h1>Chapter #{chapter}</h1>"
+    end
+    
+    html += sec
+    
+    nav = "<div id='nav'>
+<a href='[[nav-prev]]'>prev</a> | <a href='[[nav-next]]'>next</a>
+</div>"
+    html += nav
+
+    File.open(pname, 'w+') { |f| f.write(html) }
+    section += 1
+  end
+  toc
 end
 
 # generate the site
-desc "Generate the html files for the site"
-task :gensite do
-  ep = YAML::load( File.open('episodes.yaml') )
+desc "Generate the book html for the site"
+task :genbook do
+  
+  # git read-tree --prefix=book-content/ -u gitbook/master
+  # git rm -rf book-content/
 
-  counter = 0
-  @content = ''
-
-  # finding the next and last pages
-  last = nil
-  @nextlast = {:last => {}, :next => {}}
-  ep['episodes'].each do |section|
-    section['values'].each do |episode|
-      if p = episode['page']
-        @nextlast[:last][p] = last
-        @nextlast[:next][last] = p
-        last = p
+  toc = []
+  
+  chapter_number = 0
+  Dir.chdir('book-content') do
+    Dir.glob("*").each do |chapter|
+      puts 'generating : ' + chapter
+      content = ''
+      Dir.chdir(chapter) do
+        Dir.glob('*').each do |section|
+          content += File.read(section)
+        end
+        chapter_number += 1
+        toc << [chapter_number, generate_pages(chapter_number, content)]
       end
     end
   end
   
-  ep['episodes'].each do |section|
-    if(counter += 1) == 4
-      @content += '<div class="span-6 last">'
-    else
-      @content += '<div class="span-5">'
-    end
-    @content += "<h2>" +  section['section'] + "</h2>"
-    section['values'].each do |episode|
-      @content += "<div class='episode'>"
-      if episode['page'] 
-        @content += "<b><a href=\"p/" + episode['page'] + ".html\">" + episode['name'] + "</a></b>"
-        generate_page(episode)
-      else
-        @content += '<b>' + episode['name'] + '</b>'
-      end
-      @content += '<p>' + episode['desc'] + '</p>'
-      @content += "</div>"
-    end
-    @content += "</div>"
-  end
+  update_toc(toc)
   
-  out = ERB.new(File.read('template/index.erb.html')).result
-  File.open('index.html', 'w') { |f| f.write(out) }
 end
 
-task :default => [:gensite]
+task :default => [:genbook]

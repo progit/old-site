@@ -1,7 +1,7 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
   background: #dda;
-  color: #6C6E58;
+  color: #222;
 }
 
 .more { font-size: 0.7em;}
@@ -13,12 +13,10 @@ img.right {
 
 a {
   color: #3E423A;
-  font-weight: bold;
 }
 
 a:visited {
   color: #6C6E58;
-  font-weight: normal;
 }
 
 #wrapper {
@@ -251,3 +249,12 @@ div.related {
 .float-right { float: right; }
 
 a img { border: 0; }
+
+ul#toc  {
+  list-style: none;
+  margin: 0;
+}
+
+ul#toc ul  {
+  list-style: none;
+}
