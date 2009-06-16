@@ -1,0 +1,17 @@
+---
+layout: master
+title: Pro Git 4.0 Git on the Server
+---
+<h1>Chapter 4</h1><h1 id='git_on_the_server'>Git on the Server</h1>
+
+<p>At this point you should be able to do most of the day to day tasks you will be using Git for. However, in order to do any collaboration in Git, you&#8217;ll need to have a remote Git repository. Though you technically <em>can</em> push and pull changes to and from individuals repostitories, it is discouraged because you can fairly easily mess up what they are working on if you&#8217;re not careful. Furthermore, you want your collaborators to be able to access the repository even if your computer is offline - having a more reliable common repository is often useful. Therefore, the preferred method for collaborating with someone is to setup an intermediate repository that you both have access to and push and pull to and from that. We&#8217;ll refer to this repository as a &#8216;Git server&#8217;, but you&#8217;ll notice that it generally takes a pretty tiny amount of resources to host a Git repo, so it&#8217;s rare you&#8217;ll need to use an entire server for it.</p>
+
+<p>Running a git server is pretty simple. First you&#8217;ll have to choose which protocols you want your server to communicate with. The first section of this chapter will cover which protocols are available and what the pros and cons of each are. The next sections will explain some typical setups using those protocols and how to get your server running with them. Last, we&#8217;ll go over a few hosted options, if you don&#8217;t mind hosting your code on someone elses server and don&#8217;t want to go through the hassle of setting up and maintaining your own.</p>
+
+<p>If you have no real interest in running your own server, you can skip to the last section to see some options for setting up a hosted account and then move on to the next chapter, where we discuss the various ins and outs of working in a distributed source control environment.</p>
+
+<p>A remote repository is generally going to be what is called a &#8216;bare&#8217; repository - this is a Git repository that has no working directory. Since the repository is only used as a collaboration point - there is no reason to have any snapshot checked out on disk, so it is just the Git data. In simplest terms, a &#8216;bare&#8217; repository is just the contents of the &#8216;.git&#8217; directory of your project, with nothing else.</p>
+
+<div id='nav'>
+<a href='ch3-7.html'>prev</a> | <a href='ch4-1.html'>next</a>
+</div>

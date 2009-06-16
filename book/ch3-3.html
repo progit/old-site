@@ -1,0 +1,153 @@
+---
+layout: master
+title: Pro Git 3.3 Git Branching Basic Branching and Merging
+---
+<h2 id='basic_branching_and_merging'>Basic Branching and Merging</h2>
+
+<p>So, let&#8217;s go through a pretty simple example of branching and merging with a workflow that we might use in the real world. We&#8217;ll go through the following steps.</p>
+
+<ul>
+<li>Do work on a website</li>
+
+<li>Create a branch for a new story we&#8217;re working on</li>
+
+<li>Do some work in that branch</li>
+
+<li>A call comes in that another issue is critical and we need a hotfix</li>
+
+<li>We revert back to our production branch</li>
+
+<li>We create a branch to add the hotfix</li>
+
+<li>Once it is tested, we merge the hotfix branch and push to production</li>
+
+<li>We switch back to our original story and continue working</li>
+</ul>
+
+<h3 id='basic_branching'>Basic Branching</h3>
+
+<p>So first, let&#8217;s say we&#8217;re working on our project and have a couple of commits already.</p>
+
+<p><img src='/images/branch-ex1.png' alt='Figure 3.10' /></p>
+
+<p>We have decided we&#8217;re going to work on issue #53 in whatever issue tracking system our company uses. To be clear, Git isn&#8217;t tied into any particular issue tracking system, but since that is a focused topic we want to work on, we&#8217;ll create a new branch to do our work in. To create a branch and switch to it at the same time, we can run the &#8216;git checkout&#8217; command with the &#8216;-b&#8217; switch.</p>
+
+<pre><code>$ git checkout -b iss53
+Switched to a new branch &quot;iss53&quot;</code></pre>
+
+<p>which is equivalent to</p>
+
+<pre><code>$ git branch iss53
+$ git checkout iss53</code></pre>
+
+<p><img src='/images/branch-ex1a.png' alt='Figure 3.10a' /></p>
+
+<p>Then we can work on our website and do some commits, which will move the &#8216;iss53&#8217; branch forward, since we&#8217;re on it.</p>
+
+<pre><code>$ vim index.html
+$ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
+
+<p><img src='/images/branch-ex2.png' alt='Figure 3.11' /></p>
+
+<p>Now we get the call that there is an issue with the website and we need to fix it right now. Luckily we don&#8217;t have to deploy our fix along with the &#8216;iss53&#8217; changes that we&#8217;ve made and we don&#8217;t have to put a lot of effort into reverting those changes before we can work on applying our fix to what is in production. All we have to do is switch back to our &#8216;master&#8217; branch.</p>
+
+<p>sop: I strongly suggest checking that the directory is clean with <code>git status</code> or something. Users are going to think that dirty changes stay with the old branch, and will run into problems when they haven&#8217;t finished committing to the current iss53 branch. git stash or commit then later reset &#8211;soft HEAD^ are two different solutions, and probably too complex for this stage. so maybe just say something about making sure your directory is clean with <code>git status</code> and if not commit everything for safekeeping is a good idea at this stage of the book.</p>
+
+<pre><code>$ git checkout master
+Switched to branch &quot;master&quot;</code></pre>
+
+<p>Now our project working directory is exactly the way it was before we started working on issue 53 and we can concentrate on our hotfix. This is an important point to remember - Git resets your working directory to look like the snapshot of the commit the branch you check out points to. It will add, remove and modify files automatically to make sure your working copy is what the branch looked like on your last commit to it.</p>
+
+<p>You should also note that if your working directory or staging area have uncommited changes that conflict with the branch you&#8217;re checking out, Git will not let you switch branches. It&#8217;s best to have a clean working state when you switch branches.</p>
+
+<p>sop: Oh, I see, you put the dirty state comment after the checkout, not before. I&#8217;d move it before.</p>
+
+<p>Now, we have a hotfix to make. Let&#8217;s create a &#8216;hotfix&#8217; branch to do that work on until it&#8217;s completed.</p>
+
+<pre><code>$ git checkout -b &#39;hotfix&#39;
+Switched to a new branch &quot;hotfix&quot;
+$ vim index.html
+$ git commit -a -m &#39;fixed the broken email address&#39;
+[hotfix]: created 3a0874c: &quot;fixed the broken email address&quot;
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p><img src='/images/branch-ex3.png' alt='Figure 3.12' /></p>
+
+<p>Now we can run our tests and make sure that it&#8217;s what we want and go ahead and merge it back into our &#8216;master&#8217; branch to deploy to production. We do this with the &#8216;git merge&#8217; command.</p>
+
+<pre><code>$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast forward
+ README |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p>You&#8217;ll notice the phrase &#8216;Fast forward&#8217; in that merge. Since the commit pointed to by the branch we merged in was a direct ancestor of the commit we are on, it simply moves the pointer forward.</p>
+
+<p>sop: nope, language is wrong. the commit we are merging is a strict superset of the branch we are on. if superset is too technical, try the commit we are merging already contains the commit we have checked out.</p>
+
+<p><img src='/images/branch-ex4.png' alt='Figure 3.13' /></p>
+
+<p>sop: wtf is this red coloring? it doesn&#8217;t make sense to me, even with the context of the text you have</p>
+
+<p>So, now our change is in the snapshot of the commit pointed to by the &#8216;master&#8217; branch and we can deploy our change.</p>
+
+<p><img src='/images/branch-ex5.png' alt='Figure 3.14' /></p>
+
+<p>Now that our super important fix is deployed, we can switch back to the work we were doing before we were interuppted and continue it. However, first we will delete the &#8216;hotfix&#8217; branch since we no longer need it anymore. We can do that with the &#8216;-d&#8217; option to &#8216;git branch&#8217;.</p>
+
+<pre><code>$ git branch -d hotfix
+Deleted branch hotfix (3a0874c).</code></pre>
+
+<p>Now we can switch back to our work in progress branch on issue 53 and continue working on it.</p>
+
+<pre><code>$ git checkout iss53
+Switched to branch &quot;iss53&quot;
+$ vim index.html
+$ git commit -a -m &#39;finished the new footer [issue 53]&#39;
+[iss53]: created ad82d7a: &quot;finished the new footer [issue 53]&quot;
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p><img src='/images/branch-ex6.png' alt='Figure 3.15' /></p>
+
+<p>sop: I think its worth pointing out at this point that our hotfix isn&#8217;t in iss53. If we need it, we would want to <code>git merge master</code> after the checkout in order to bring our iss53 branch up-to-date with the production code. But if its not critical for iss53, we may want to defer doing the merge, to save a little typing, and to make the history graphs a little less verbose.</p>
+
+<h3 id='basic_merging'>Basic Merging</h3>
+
+<p>OK, now we&#8217;ve decided that our issue 53 work is complete and ready to be merged into our &#8216;master&#8217; branch. Merging in Git is just about as easy as branching and is also done entirely locally. All we have to do is checkout the branch we wish to merge into and then run the &#8216;git merge&#8217; command.</p>
+
+<p>sop: You seem to forget you did a merge earlier for the hotfix branch? Yes, yes, its a fast-forward vs. a recursive merge, but the reader doesn&#8217;t quite realize that distinction yet so he&#8217;s wondering why merging was already done and now we&#8217;re talking about merging and what did he miss?</p>
+
+<p>DWP: Agreed. I think you could beef up the explanation earlier that that merge was an easy one, and then reiterate here why this one is harder.</p>
+
+<pre><code>$ git checkout master
+$ git merge iss53
+Merge made by recursive.
+ README |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Now instead of &#8216;fast forward&#8217;, since the commit on the branch we&#8217;re on is not a direct ancestor of the branch we&#8217;re merging in, Git actually has to do some work. What Git will do in this case is a simple 3 way merge of the two snapshots pointed to by the branch tips and the common ancestor of the two.</p>
+
+<p>sop: This is really awkward to read. But at least correct.</p>
+
+<p>sop: It may be worth pointing out that unlike other VCS tools such as CVS or SVN prior to version 1.5 that you do not need to remember the merge base yourself; git figures it out automatically during each merge, producing the correct result each time.</p>
+
+<p><img src='/images/branch-ex7.png' alt='Figure 3.16' /></p>
+
+<p>sop: Huh. What about marking the C2 common ancestor differently then the C4/C5 tips?</p>
+
+<p>So instead of just moving the branch pointer forward, Git actually creates a new snapshot that resulted from the 3 way merge and automatically creates a new commit that points to it. This is referred to as a &#8216;merge commit&#8217; and is a special type of commit in that it has two parents and introduces no new work.</p>
+
+<p>sop: I&#8217;d scratch the &#8220;introduces no new work&#8221; part. Its only special because nparents &gt; 1.</p>
+
+<p>DWP: I wasn&#8217;t sure what &#8220;introduces no new work&#8221; meant either.</p>
+
+<p><img src='/images/branch-ex8.png' alt='Figure 3.17' /></p>
+
+<p>Now that our work is merged in, we have no need for the issue 53 branch and can now delete it and close the ticket in our ticket tracking system.</p>
+
+<pre><code>$ git branch -d iss53</code></pre>
+
+<div id='nav'>
+<a href='ch3-2.html'>prev</a> | <a href='ch3-4.html'>next</a>
+</div>

@@ -1,0 +1,15 @@
+---
+layout: master
+title: Pro Git 3.2 Git Branching Why Git Branching is Different
+---
+<h2 id='why_git_branching_is_different'>Why Git Branching is Different</h2>
+
+<p>Since the branches in Git are in actuality simple files that contain the 40 character SHA-1 checksum of the commit it points to, they are very cheap to create and destroy. It is as quick and simple to create a new branch as writing 41 bytes to a file (40 characters and a newline).</p>
+
+<p>This is in sharp contrast to how most SCM systems branch, which involves copying all the files of the project into a second directory. This can take several seconds or even minutes, depending on the size of the project, whereas in Git it is always instantaneous. This speed helps encourage developers to create and use branches often.</p>
+
+<p>So, let&#8217;s see why we should.</p>
+
+<div id='nav'>
+<a href='ch3-1.html'>prev</a> | <a href='ch3-3.html'>next</a>
+</div>

@@ -1,0 +1,53 @@
+---
+layout: master
+title: Pro Git 9.6 Git Internals Object Storage
+---
+<h2 id='object_storage'>Object Storage</h2>
+
+<p>I mentioned earlier that a header is stored with the content - let&#8217;s take a minute to look at how exactly Git stores its objects. Let&#8217;s go through how to store an actual blob object, let&#8217;s say the string &#8220;what is up, doc?&#8221; - we&#8217;ll do it interactively in the Ruby scripting language.</p>
+
+<pre><code>$ irb
+&gt;&gt; content = &quot;what is up, doc?&quot;
+=&gt; &quot;what is up, doc?&quot;</code></pre>
+
+<p>Git constructs a header that starts with the type of the object, in this case a &#8216;blob&#8217;. Then it adds a space followed by the size of the content and finally a null byte.</p>
+
+<pre><code>&gt;&gt; header = &quot;blob #{content.length}\0&quot;
+=&gt; &quot;blob 16\000&quot;</code></pre>
+
+<p>Then it concatenates the header and the original content and then it calculates the SHA-1 checksum of that new content.</p>
+
+<pre><code>&gt;&gt; store = header + content
+=&gt; &quot;blob 16\000what is up, doc?&quot;
+&gt;&gt; require &#39;digest/sha1&#39;
+=&gt; true
+&gt;&gt; sha1 = Digest::SHA1.hexdigest(store)
+=&gt; &quot;bd9dbf5aae1a3862dd1526723246b20206e5fc37&quot;</code></pre>
+
+<p>DWP: What does &#8216;require&#8217; do? Is that how things are imported in Ruby? Please don&#8217;t assume anyone knows Ruby.</p>
+
+<p>Git will then compress the new content with Zlib.</p>
+
+<pre><code>&gt;&gt; require &#39;zlib&#39;
+=&gt; true
+&gt;&gt; zlib_content = Zlib::Deflate.deflate(store)
+=&gt; &quot;x\234K\312\311OR04c(\317H,Q\310,V(-\320QH\311O\266\a\000_\034\a\235&quot;</code></pre>
+
+<p>Finally, we&#8217;re going to write our Zlib deflated content to an object on disk.</p>
+
+<pre><code>&gt;&gt; path = &#39;.git/objects/&#39; + sha1[0,2] + &#39;/&#39; + sha1[2,38]
+=&gt; &quot;.git/objects/bd/9dbf5aae1a3862dd1526723246b20206e5fc37&quot;
+&gt;&gt; require &#39;fileutils&#39;
+=&gt; true
+&gt;&gt; FileUtils.mkdir_p(File.dirname(path))
+=&gt; &quot;.git/objects/bd&quot;
+&gt;&gt; File.open(path, &#39;w&#39;) { |f| f.write zlib_content }
+=&gt; 32</code></pre>
+
+<p>DWP: Please be careful to explain thoroughly anything written in Ruby. I assume |f| just gets you a local identifier for the file&#8230;</p>
+
+<p>That&#8217;s it - we&#8217;ve now created a valid Git blob object. All Git objects are stored the same way, just with different types - instead of the string &#8216;blob&#8217; at the beginning of the header, it will be &#8216;commit&#8217; or &#8216;tree&#8217;. Also, while the blob content can be nearly anything, the commit and tree content are very specifically formatted.</p>
+
+<div id='nav'>
+<a href='ch9-5.html'>prev</a> | <a href='ch9-7.html'>next</a>
+</div>

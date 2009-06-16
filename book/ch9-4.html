@@ -1,0 +1,83 @@
+---
+layout: master
+title: Pro Git 9.4 Git Internals Tree Objects
+---
+<h2 id='tree_objects'>Tree Objects</h2>
+
+<p>The next type we&#8217;re going to look at is the &#8216;tree&#8217; object, which solves our next problem of storing the name of the file and also allows us to store a group of files together. Git actually stores its content in a similar manner to a UNIX filesystem, though a bit simplified. All of the content is stored as &#8216;tree&#8217; and &#8216;blob&#8217; objects, with &#8216;trees&#8217; corresponding to UNIX directory entries and &#8216;blobs&#8217; corresponding more or less to inodes or file contents. A single tree object will contain one or more tree entries, each of which containing a SHA-1 pointer to a blob or subtree with its associated mode, type and filename. For example, the most recent tree in our <code>simplegit</code> project may look something like this:</p>
+
+<pre><code>$ git cat-file -p master^{tree}
+100644 blob a906cb2a4a904a152e80877d4088654daad0c859	README
+100644 blob 8f94139338f9404f26296befa88755fc2598c289	Rakefile
+040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0	lib</code></pre>
+
+<p>DWP: Will the reader know what master^{tree} means by now?</p>
+
+<p>Notice that the &#8216;lib&#8217; subdirectory is not a blob but a pointer to another tree.</p>
+
+<pre><code>$ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
+100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b	simplegit.rb</code></pre>
+
+<p>So conceptually, the data that Git is storing is something like this:</p>
+
+<p>Fig1</p>
+
+<p>DWP: I assume there should be an actual link to a file here for Fig1.</p>
+
+<p>So, let&#8217;s create our own trees. To create a tree from the first verison of the file, we can use a plumbing command called &#8216;update-index&#8217; to artificially add our earlier version of the test.txt file to our staging area. We&#8217;ll have to pass it <code>--add</code> since the file doesn&#8217;t exist in our staging area yet (in fact, we don&#8217;t have a staging area setup yet) and <code>--cacheinfo</code> since the file we&#8217;re adding isn&#8217;t in our directory right now but it is in our database. Then we specify the mode, SHA-1 and file name.</p>
+
+<pre><code>$ git update-index --add --cacheinfo 100644 83baae61804e65cc73a7201a7252750c76066a30 test.txt</code></pre>
+
+<p>DWP: Where does the 100644 come from? Is that permissions?</p>
+
+<p>Now we can use a command called <code>write-tree</code> to write the staging area out to a tree object.</p>
+
+<p>DWP: So unlike hash-object above, write-tree automatically adds this to the database.</p>
+
+<pre><code>$ git write-tree
+d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+$ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+100644 blob 83baae61804e65cc73a7201a7252750c76066a30	test.txt</code></pre>
+
+<p>We can also verify that this is a tree object:</p>
+
+<pre><code>$ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+tree</code></pre>
+
+<p>Now let&#8217;s create a new tree with the second version of test.txt and a new file as well.</p>
+
+<pre><code>$ echo &#39;new file&#39; &gt; new.txt
+$ git update-index test.txt 
+$ git update-index --add new.txt </code></pre>
+
+<p>Our staging area now has the new version of test.txt as well as a new file <code>new.txt</code>. Let&#8217;s write that tree out and see what it looks like.</p>
+
+<p>DWP: So &#8216;write that tree out&#8217; is shifting it from the staging area to objects?</p>
+
+<pre><code>$ git write-tree
+0155eb4229851634a0f03eb265b69f5a2d56f341
+$ git cat-file -p 0155eb4229851634a0f03eb265b69f5a2d56f341
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92	new.txt
+100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a	test.txt</code></pre>
+
+<p>Notice that this tree has both file entries and also that the &#8216;test.txt&#8217; SHA is the &#8216;version 2&#8217; SHA from earlier (<code>1f7a7a</code>). Just for fun, let&#8217;s add the first tree as a subdirectory into this one. We can read trees into our staging area by calling <code>read-tree</code>.</p>
+
+<p>DWP: So &#8211;prefix=bak gives a name in the staging area for the directory that you&#8217;re making out of the tree which you&#8217;ve just fetched from objects?</p>
+
+<pre><code>$ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+$ git write-tree
+3c4e9cd789d88d8d89c1073707c3585e41b0e614
+$ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
+040000 tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579	bak
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92	new.txt
+100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a	test.txt</code></pre>
+
+<p>If we created a working directory from this new tree we just wrote, we would get the two files and a subdirectory named &#8216;bak&#8217; that contained the first version of the &#8216;test.txt&#8217; file. The data that Git contains for these structures can be thought of like Figure 2.</p>
+
+<p>Fig2</p>
+
+<p>DWP: As obove, should there be a link here?</p>
+
+<div id='nav'>
+<a href='ch9-3.html'>prev</a> | <a href='ch9-5.html'>next</a>
+</div>

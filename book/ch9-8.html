@@ -1,0 +1,117 @@
+---
+layout: master
+title: Pro Git 9.8 Git Internals Packfiles
+---
+<h2 id='packfiles'>Packfiles</h2>
+
+<p>Let&#8217;s go back to our objects database for our little test Git repository. At this point we have 11 objects - 4 blobs, 3 trees, 3 commits and 1 tag.</p>
+
+<pre><code>$ find .git/objects -type f
+.git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
+.git/objects/1a/410efbd13591db07496601ebc7a059dd55cfe9 # commit 3
+.git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a # test.txt v2
+.git/objects/3c/4e9cd789d88d8d89c1073707c3585e41b0e614 # tree 3
+.git/objects/83/baae61804e65cc73a7201a7252750c76066a30 # test.txt v1
+.git/objects/95/85191f37f7b0fb9444f35a9bf50de191beadc2 # tag
+.git/objects/ca/c0cab538b970a37ea1e769cbbde608743bc96d # commit 2
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4 # &#39;test content&#39;
+.git/objects/d8/329fc1cc938780ffdd9f94e0d364e0ea74f579 # tree 1
+.git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
+.git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1</code></pre>
+
+<p>Git compresses the contents of these files with Zlib and we&#8217;re not storing much, so all of these files collectively take up only 925 bytes. So, let&#8217;s add some larger content to our repository to demonstrate an interesting feature of Git. We&#8217;ll add the repo.rb file from the Grit library we worked with earlier - this is about a 12k source code file.</p>
+
+<pre><code>$ curl http://github.com/mojombo/grit/raw/master/lib/grit/repo.rb &gt; repo.rb
+$ git add repo.rb 
+$ git commit -m &#39;added repo.rb&#39;
+[master 484a592] added repo.rb
+ 3 files changed, 459 insertions(+), 2 deletions(-)
+ delete mode 100644 bak/test.txt
+ create mode 100644 repo.rb
+ rewrite test.txt (100%)</code></pre>
+
+<p>If we look at the tree that created, we can see the SHA-1 value for the blob object that our repo.rb file got.</p>
+
+<pre><code>$ git cat-file -p master^{tree}
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92	new.txt
+100644 blob 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e	repo.rb
+100644 blob e3f094f522629ae358806b17daf78246c27c007b	test.txt</code></pre>
+
+<p>We can then use <code>git cat-file</code> to see how big that object is:</p>
+
+<pre><code>$ git cat-file -s 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e
+12898</code></pre>
+
+<p>Now we&#8217;re going to modify that file a little and see what happens.</p>
+
+<pre><code>$ echo &#39;# testing&#39; &gt;&gt; repo.rb 
+$ git commit -am &#39;modified repo a bit&#39;
+[master ab1afef] modified repo a bit
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Now if we check the tree created by that commit, we&#8217;ll see something interesting.</p>
+
+<pre><code>$ git cat-file -p master^{tree}
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92	new.txt
+100644 blob 05408d195263d853f09dca71d55116663690c27c	repo.rb
+100644 blob e3f094f522629ae358806b17daf78246c27c007b	test.txt</code></pre>
+
+<p>The blob is now a different blob, which means that although we only added a single simple line to the end of a 400 line file, Git stores that new content as a completely new object.</p>
+
+<pre><code>$ git cat-file -s 05408d195263d853f09dca71d55116663690c27c
+12908</code></pre>
+
+<p>We now have two nearly identical 12k objects on our disk. Wouldn&#8217;t it be nice if Git could store those as a single version and then just the difference from the first version to the second?</p>
+
+<p>It turns out that it does. The initial format that Git will save objects in on disk is called a &#8216;loose&#8217; object format. However, occasionally Git will pack up several of these objects into a single binary file called a &#8216;packfile&#8217; in order to save space and be more efficient. Git will do this if you have too many loose objects around, if you run the <code>git gc</code> command manually, or if you push to a remote server. To see what happens, we can manually ask Git to pack up the objects by calling the <code>git gc</code> command.</p>
+
+<pre><code>$ git gc
+Counting objects: 17, done.
+Delta compression using 2 threads.
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (17/17), done.
+Total 17 (delta 1), reused 10 (delta 0)</code></pre>
+
+<p>Now if we look in our objects directory, we will find most of our objects gone and a new pair of files appear.</p>
+
+<pre><code>$ find .git/objects -type f
+.git/objects/71/08f7ecb345ee9d0084193f147cdad4d2998293
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4
+.git/objects/info/packs
+.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
+.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack</code></pre>
+
+<p>The objects that remain are the blobs that are not pointed to by any commit - in this case the &#8216;what is up, doc?&#8217; example and the &#8216;test content&#8217; example blobs we created earlier. Since we never added them to any commits, they are considered &#8216;dangling&#8217; and are not packed up in our new packfile.</p>
+
+<p>The other files are our new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from our filesystem. The index is a file that contains offsets into that packfile so we can quickly seek to a specific object. What is cool is that although the objects on disk before running the <code>gc</code> were collectively about 12k in size, the new packfile is only 6k. We halved our disk usage by packing our objects.</p>
+
+<p>So, how did Git do this? When Git packs its objects, it looks for files that are named and sized similarly and will store just the deltas from one version of the file to the next. We can actually look into the packfile and see what it did to save space. The <code>git verify-pack</code> plumbing command allows us to see what was packed up.</p>
+
+<pre><code>$ git verify-pack -v pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
+0155eb4229851634a0f03eb265b69f5a2d56f341 tree   71 76 5400
+05408d195263d853f09dca71d55116663690c27c blob   12908 3478 874
+09f01cea547666f58d6a8d809583841a7c6f0130 tree   106 107 5086
+1a410efbd13591db07496601ebc7a059dd55cfe9 commit 225 151 322
+1f7a7a472abf3dd9643fd615f6da379c4acb3e3a blob   10 19 5381
+3c4e9cd789d88d8d89c1073707c3585e41b0e614 tree   101 105 5211
+484a59275031909e19aadb7c92262719cfcdf19a commit 226 153 169
+83baae61804e65cc73a7201a7252750c76066a30 blob   10 19 5362
+9585191f37f7b0fb9444f35a9bf50de191beadc2 tag    136 127 5476
+9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e blob   7 18 5193 1 05408d195263d853f09dca71d55116663690c27c
+ab1afef80fac8e34258ff41fc1b867c702daa24b commit 232 157 12
+cac0cab538b970a37ea1e769cbbde608743bc96d commit 226 154 473
+d8329fc1cc938780ffdd9f94e0d364e0ea74f579 tree   36 46 5316
+e3f094f522629ae358806b17daf78246c27c007b blob   1486 734 4352
+f8f51d7d8a1760462eca26eebafde32087499533 tree   106 107 749
+fa49b077972391ad58037050f2a75f74e3671e92 blob   9 18 856
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d commit 177 122 627
+chain length = 1: 1 object
+pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack: ok</code></pre>
+
+<p>We can see that the <code>9bc1d</code> blob, which if you remember back was the first version of our repo.rb file, is referencing the <code>05408</code> blob, which was the second version of the file. The third column in that output is the size of the object in the pack, so we can see that <code>05408</code> takes up 12k of the file but that <code>9bc1d</code> only takes up 7 bytes. What is also interesting about this is that the second version of the file is the one that is stored intact while the original version is the one stored as a delta - this is because the most recent version of the file is the one you&#8217;re most likely to need faster access to.</p>
+
+<p>The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database, always trying to save more space. You can also manually repack at any time by running <code>git gc</code> by hand.</p>
+
+<div id='nav'>
+<a href='ch9-7.html'>prev</a> | <a href='ch9-9.html'>next</a>
+</div>

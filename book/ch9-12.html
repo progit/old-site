@@ -1,0 +1,44 @@
+---
+layout: master
+title: Pro Git 9.12 Git Internals Maintenance
+---
+<h2 id='maintenance'>Maintenance</h2>
+
+<p>DWP: Is this the right header level? I was expecting ###.</p>
+
+<p>Git will automatically run a command called &#8216;auto gc&#8217; occasionally. Most of the time, this command will do nothing. However, if there are too many loose objects (objects not in a packfile) or there are too many packfiles, then Git will launch a full fledged <code>git gc</code> command. The &#8216;gc&#8217; stands for &#8216;garbage collect&#8217; and it does a number of things - it will gather up all the loose objects and place them in packfiles, it will consolidate packfiles into one big packfile and it will remove objects that are not reachable from any commit and are a few months old.</p>
+
+<p>You can run the &#8216;auto gc&#8217; manually by running</p>
+
+<pre><code>$ git gc --auto</code></pre>
+
+<p>which again will generally do nothing. There have to be around 7000 loose objects or over 50 packfiles for it to fire up a <code>gc</code> command. You can modify these limits with the <code>gc.auto</code> and <code>gc.autopacklimit</code> config settings respectively.</p>
+
+<p>The other thing that <code>gc</code> will do is pack up your references into a single file. Let&#8217;s say we have the following branches and tags in our repository:</p>
+
+<pre><code>$ find .git/refs -type f
+.git/refs/heads/experiment
+.git/refs/heads/master
+.git/refs/tags/v1.0
+.git/refs/tags/v1.1</code></pre>
+
+<p>If we run <code>git gc</code>, we will no longer have these files in the &#8216;refs&#8217; directory, Git will move them for sake of efficiency into a file named <code>.git/packed-refs</code> that looks like this:</p>
+
+<pre><code>$ find .git/refs -type f
+$ cat .git/packed-refs 
+# pack-refs with: peeled 
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/heads/experiment
+ab1afef80fac8e34258ff41fc1b867c702daa24b refs/heads/master
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
+9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
+^1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
+
+<p>DWP: Do you really need the find line there?</p>
+
+<p>If you update a reference, it will not edit this file, but instead write a new file to &#8216;refs/heads&#8217;, so to get the appropriate SHA for a given reference, Git checks for that reference in the &#8216;refs&#8217; directory, then will check the &#8216;packed-refs&#8217; file as a fallback. However, if you cannot find a reference in the &#8216;refs&#8217; directory, it is probably in your &#8216;packed-refs&#8217; file.</p>
+
+<p>Notice the last line of the file, which begins with a &#8217;^&#8217;. This means that the tag directly above it is an annotated tag and that line is the commit that the annotated tag points to.</p>
+
+<div id='nav'>
+<a href='ch9-11.html'>prev</a> | <a href='ch9-13.html'>next</a>
+</div>

@@ -1,0 +1,98 @@
+---
+layout: master
+title: Pro Git 10.0 
+---
+<h1>Chapter 10</h1><pre><code>#! /usr/bin/env ruby
+require &#39;digest/sha1&#39;
+
+$author = &#39;Scott Chacon &lt;schacon@geemail.com&gt;&#39;
+$marks = []
+
+def convert_mark_to_date(mark)
+  if mark == &#39;current&#39;
+    return Time.now().to_i
+  else
+    mark = mark.gsub(&#39;back_&#39;, &#39;&#39;)
+    (year, month, day) = mark.split(&#39;_&#39;)
+    return Time.local(year, month, day).to_i
+  end
+end
+
+def export_data(string)
+  puts &quot;data &lt;&lt;EOF&quot;
+  puts string
+  puts &#39;EOF&#39;
+end
+
+def inline_data(file, code = &#39;M&#39;, mode = &#39;644&#39;)
+  content = File.read(file)
+  puts &quot;#{code} #{mode} inline #{file}&quot;
+  export_data(content)
+end
+
+def convert_dir_to_mark(dir)
+  if !$marks.include?(dir)
+    $marks &lt;&lt; dir
+  end
+  ($marks.index(dir) + 1).to_s
+end
+
+def print_export(dir, last_mark, last_manifest)
+
+  mark = convert_dir_to_mark(dir)
+  date = convert_mark_to_date(dir)
+
+  # print the import information
+  puts &#39;commit refs/heads/master&#39;
+  puts &#39;mark :&#39; + mark
+  puts &quot;committer #{$author} #{date} -0700&quot;
+  export_data(&#39;imported from &#39; + dir)
+  puts &#39;from :&#39; + last_mark if last_mark
+
+  current_manifest = {}
+  Dir.glob(&quot;**/*&quot;).each do |dir|
+    next if !File.file?(dir)
+    sha = Digest::SHA1.file(dir).hexdigest
+    current_manifest[dir] = sha
+  end
+
+  # add new files
+  new_files = current_manifest.keys - last_manifest.keys
+  new_files.each do |newf|
+    inline_data(newf)
+  end
+
+  # remove deleted files
+  removed_files = last_manifest.keys - current_manifest.keys
+  removed_files.each do |del|
+    puts &quot;D #{del}&quot;
+  end
+
+  # modify changed files
+  current_manifest.each do |filenm, sha| 
+    next if !last_manifest.has_key?(filenm)
+    if last_manifest[filenm] != sha
+      inline_data(filenm)
+    end
+  end
+
+  return [mark, current_manifest]
+end
+
+
+last_manifest = {}
+last_mark = nil
+
+# loop through the directories
+Dir.chdir(ARGV[0]) do
+  Dir.glob(&quot;*&quot;).each do |dir|
+    next if File.file?(dir)
+
+    # move into the target directory
+    Dir.chdir(dir) do 
+      (last_mark, last_manifest) = print_export(dir, last_mark, last_manifest)
+    end
+  end
+end</code></pre><div id='nav'>
+<a href='[[nav-prev]]'>prev</a> | <a href='[[nav-next]]'>next</a>
+</div>

@@ -1,0 +1,89 @@
+---
+layout: master
+title: Pro Git 3.6 Git Branching Remote Branches
+---
+<h2 id='remote_branches'>Remote Branches</h2>
+
+<p>Remote branches are references to the state of branches on your remote repositories. They are really just local branches that you can&#8217;t move. They are moved automatically whenever you do any network communication. Remote branches are bookmarks to remind you where the branches of your remotes were the last time you connected to them.</p>
+
+<p>DWP: What are remotes? I worry that you jump into this with slightly too little background for the reader.</p>
+
+<p>They take the form of &#8216;(remote)/(branch)&#8217; so for instance if you wanted to see what the &#8216;master&#8217; branch on your &#8216;origin&#8217; remote looked like as of the last time you communicated with it, you would check the &#8216;origin/master&#8217; branch. If you were working on an issue with a partner and they pushed up a &#8216;iss53&#8217; branch, you may have your own local &#8216;iss53&#8217; branch, but the commit that the branch on the server points to is at &#8216;origin/iss53&#8217;.</p>
+
+<p>DWP: I don&#8217;t quite understand this last paragraph.</p>
+
+<p>sop: Maybe take another paragraph to better define what a remote is, and how they are named by shorthand?</p>
+
+<p>DWP: I agree. But is there going to be something on remotes in chapter 2 now? I don&#8217;t currently understand how you access branches on a remote repository.</p>
+
+<h3 id='pushing'>Pushing</h3>
+
+<p>When you want to share a branch with the world, you&#8217;ll need to push it up to a remote you have write access to. Your local branches are not automatically syncronized to the remotes you write to. You have to explicitly push the branches you want to share. That way you can do work that you don&#8217;t want to share in private branches and push up only the topic branches you want to collaborate on.</p>
+
+<p>If we have a branch named &#8216;serverfix&#8217; that we want to work on with others, we can push it up the same way we pushed our first branch. You can simply run &#8216;git push (remote) (branch)&#8217;.</p>
+
+<pre><code>$ git push origin serverfix
+Counting objects: 20, done.
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (15/15), 1.74 KiB, done.
+Total 15 (delta 5), reused 0 (delta 0)
+To git@github.com:schacon/simplegit.git
+ * [new branch]      serverfix -&gt; serverfix</code></pre>
+
+<p>sop: I wonder if we should explain that serverfix is just short for refs/heads/serverfix:refs/heads/serverfix, which means take this local branch named serverfix and update the remote branch named serverfix. it helps with weirder cases like when your local name doesn&#8217;t match the remote name (you mention it later) or to understand delete (see my note below).</p>
+
+<p>Now the next time one of your collaborators fetches from the server, they will get a reference to where the server&#8217;s version of &#8216;serverfix&#8217; is under the remote branch &#8216;origin/serverfix&#8217;.</p>
+
+<pre><code>$ git fetch
+remote: Counting objects: 20, done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 15 (delta 5), reused 0 (delta 0)
+Unpacking objects: 100% (15/15), done.
+From git@github.com:schacon/simplegit
+ * [new branch]      serverfix    -&gt; origin/serverfix</code></pre>
+
+<p>It&#8217;s important to note that when you do a fetch that brings down new remote branches, you do not automatically have local, editable copies of them. In other words, in this case you do not have a new &#8216;serverfix&#8217; branch, you only have a &#8216;origin/serverfix&#8217; pointer that you cannot modify.</p>
+
+<p>If you want to merge this work into your current working branch, you can just run &#8216;git merge origin/serverfix&#8217;. If you want your own &#8216;serverfix&#8217; branch that you can work on, you can base it off your remote branch.</p>
+
+<pre><code>$ git checkout -b serverfix origin/serverfix
+Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;serverfix&quot;</code></pre>
+
+<p>This will give you a local branch that you can work on that starts where &#8216;origin/serverfix&#8217; is at.</p>
+
+<h3 id='tracking_branches'>Tracking Branches</h3>
+
+<p>The other thing about checking out a local branch from a remote branch is that it will automatically create what is called a &#8216;tracking branch&#8217;. Tracking branches are local branches that have a direct relationship to a remote branch, so that if you are on it and type &#8216;git push&#8217;, Git will automatically know which server and branch to push to. Also, &#8216;git pull&#8217; will fetch all the remote references and then automatically merge in the tracked remote branch.</p>
+
+<p>When you clone a repository, it will generally automatically create a &#8216;master&#8217; branch that tracks &#8216;origin/master&#8217;. That&#8217;s why &#8216;git push&#8217; and &#8216;git pull&#8217; work out of the box with no other arguments. However, you can setup other tracking branches, ones that don&#8217;t track branches on &#8216;origin&#8217; and don&#8217;t track the &#8216;master&#8217; branch if you want. The simple case is the example that we just saw, the other way of accomplishing the same thing is to use the &#8217;&#8211;track&#8217; option.</p>
+
+<pre><code>$ git checkout --track origin/serverfix
+Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;serverfix&quot;</code></pre>
+
+<p>sop: this shorthand first appeared in 1.6.1-rc1. can we assume the reader has that?</p>
+
+<p>If you want to setup a local branch with a different name than the name of the remote branch, you can easily use the first version with a different local branch name.</p>
+
+<pre><code>$ git checkout -b sf origin/serverfix
+Branch sf set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;sf&quot;</code></pre>
+
+<p>Now your local branch &#8216;sf&#8217; will automatically push to &#8216;origin/serverfix&#8217; and pull from it.</p>
+
+<h3 id='deleting_remote_branches'>Deleting Remote Branches</h3>
+
+<p>If you are done with a remote branch - say you and your collaborators are complete with a feature and have merged it into your remotes &#8216;master&#8217; branch (or whatever branch your stable codeline is in). You can delete a remote branch with the rather obtuse syntax of &#8216;git push remote :branch&#8217;. So if we wanted to delete our &#8216;serverfix&#8217; branch from the server, we would run the following:</p>
+
+<pre><code>$ git push origin :serverfix
+To git@github.com:schacon/simplegit.git
+ - [deleted]         serverfix</code></pre>
+
+<p>Boom. No more branch on our server. You may want to dogear this page, because you <em>will</em> need that command and you <em>will</em> forget the syntax.</p>
+
+<p>sop: the way i remember it is, i&#8217;m pushing nothing to the branch, and since the branch has nothing to store in it, it goes away. but you didn&#8217;t explain the refspec syntax of src:dst so that may not help the reader.</p>
+
+<div id='nav'>
+<a href='ch3-5.html'>prev</a> | <a href='ch3-7.html'>next</a>
+</div>

@@ -1,0 +1,75 @@
+---
+layout: master
+title: Pro Git 2.7 Git Basics Tips and Tricks
+---
+<h2 id='tips_and_tricks'>Tips and Tricks</h2>
+
+<p>Before we finish up this chapter on Basic Git, there are a few little tips and tricks that might make your Git experience a bit simpler, easier or more familiar. Many people use Git without using any of these and I won’t refer to them or assume you have them done later in the book, but you should probably know how to do them.</p>
+
+<h3 id='autocompletion'>Auto-completion</h3>
+
+<p>If you use the Bash shell, Git comes with a nice auto-completion script you can enable. If you download the Git source code, look into the “contrib/completion” directory and there should be a file called “git-completion.bash”. You can copy this to your home directory and add this to your .bashrc file:</p>
+
+<pre><code>source ~/.git-completion.bash</code></pre>
+
+<p>If you want to setup Git to automatically have Bash shell completion for all users, you can copy this script to the <code>/opt/local/etc/bash\_completion.d</code> directory on Mac systems or to the <code>/etc/bash\_completion.d/</code> directory on Linux systems. This is a directory of scripts that Bash will automatically load to provide shell completions.</p>
+
+<p>If you’re using windows with Git Bash, which is the default when installing Git on Windows with MSysGit, auto-completion should be pre-configured.</p>
+
+<p>Now just type the tab key when writing a Git command and it should return a set of suggestions for you to pick from:</p>
+
+<pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
+commit config</code></pre>
+
+<p>In this case typing “git co” and then hitting the tab key twice will suggest “commit” and “config”. Adding “m<pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'>HTML parse error: 
+&lt;tab&gt;” will complete “git commit” automatically.</pre></p>
+
+<p>This also works with options, which is probably more useful. For instance, if you are running a ‘git log’ command and can’t remember one of the options, you can start typing it and hit ‘tab’ to see what matches.</p>
+
+<pre><code>$ git log –s&lt;tab&gt;
+--shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
+
+<p>That’s a pretty nice trick and may save you some time and documentation reading.</p>
+
+<h3 id='git_aliases'>Git Aliases</h3>
+
+<p>Git does not infer your command if you type it in partially. If you don’t want to type out the entire text of each of the Git commands, you can easily setup an alias for each command using ‘git config’. Here are a couple of examples that you might want to setup.</p>
+
+<pre><code>$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status</code></pre>
+
+<p>What this means is that, for example, instead of typing “git commit”, you will just need to type “git ci”. As you go on using git, you will probably use other commands very frequently as well; in this case, don’t hesitate to create a new alias.</p>
+
+<p>This can also be very useful in creating commands that you think should be there. For example, to correct the usability problem we encountered with unstaging a file, we can simply add our own ‘unstage’ alias to git:</p>
+
+<pre><code>$ git config --global alias.unstage ‘reset HEAD’</code></pre>
+
+<p>This makes the following two commands equivalent:</p>
+
+<pre><code>$ git unstage fileA
+$ git reset HEAD fileA</code></pre>
+
+<p>Which seems a bit clearer. Another common one is to add a ‘last’ command like this:</p>
+
+<pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
+
+<p>This way you can see the last commit easily:</p>
+
+<pre><code>$ git last
+commit 66938dae3329c7aebe598c2246a8e6af90d04646
+Author: Josh Goebel &lt;dreamer3@gmail.com&gt;
+Date:   Tue Aug 26 19:48:51 2008 +0800
+
+    test for current head
+
+    Signed-off-by: Scott Chacon &lt;schacon@gmail.com&gt;</code></pre>
+
+<p>As you can tell, Git will simply replace the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you simply start the command with a ‘!’ character. This is very useful if you write your own tools that work with a git repository, but we can demonstrate it with something like aliasing ‘git visual’ to run gitk.</p>
+
+<pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
+
+<div id='nav'>
+<a href='ch2-6.html'>prev</a> | <a href='ch2-8.html'>next</a>
+</div>

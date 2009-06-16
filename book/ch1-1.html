@@ -1,0 +1,39 @@
+---
+layout: master
+title: Pro Git 1.1 Introduction About Version Control
+---
+<h2 id='about_version_control'>About Version Control</h2>
+
+<p>So, what is “Version Control” and why do you care? Version Control is simply a system that records changes to a file or set of files over time so that you can recall specific versions later. Although in the context of this book we will often be using software source code as the files being version controlled, in reality we can do this with nearly any files on a computer.</p>
+
+<p>If you are a graphic or web designer and want to keep every version of an image or layout (which you most certainly would want to), a VCS is a very wise thing to use. It allows you to revert files back to a previous state, revert the entire project back to a previous state, compare changes over time, see who last modified something that might be causing a problem, or who introduced an issue and when, and more. It also generally means that you can screw things up or lose files and be able to easily recover them. In addition, you get all of this for very little functional overhead.</p>
+
+<h3 id='local_version_control_systems'>Local Version Control Systems</h3>
+
+<p>For many, the version control method of choice is simply to copy the files into another directory, maybe a time stamped one if you&#8217;re clever. This is very common, because it is so simple, but it is also incredibly error prone. It is easy to forget which directory you&#8217;re in and accidentally write to the wrong file or to copy over files you didn&#8217;t mean to.</p>
+
+<p>To deal with this issue, programmers long ago developed local version control systems, which had a simple database that kept all the changes to files under revision control.</p>
+
+<p><img src='/figures/ch1/18333fig0101.png' alt='Figure 1.1' /> <em>Figure 1.1 - local version control</em></p>
+
+<p>One of the more popular was a system called &#8216;rcs&#8217;, which is still distributed with many computers today. In fact, even the popular Mac OS X operating system will have &#8216;rcs&#8217; on it if you install the Developer Tools. This tool basically works by keeping patch sets (that is, the differences between files) from one change to another in a special format on disk, so it can recreate what any of the files looked like any point in time by adding up all the patches.</p>
+
+<h3 id='centralized_version_control_systems'>Centralized Version Control Systems</h3>
+
+<p>The next major issue that people run into is that they need to collaborate with others, sometimes people that are very far away. To deal with this problem, Centralized Version Control Systems (CVCS) were developed. These systems, such as CVS, Subversion or Perforce, have a single server that contains all the versioned files and a number of clients that check files out from that central place. For many years, this has been the standard for version control.</p>
+
+<p><img src='/images/fig12.png' alt='Figure 1.2' /> <em>Figure 1.2 - centralized verison control</em></p>
+
+<p>There are many advantages to this setup, especially over local VCSs. For one, everyone knows to a certain degree what everyone else on the project is doing. Administrators have pretty fine grained control over who can do what and it&#8217;s far easier to administer than dealing with local databases on every client.<br />However, there are some serious downsides to this setup as well. The most obvious is the single point of failure that the centralized server represents. If that server goes down for an hour, that is an hour that nobody can collaborate at all, or save versioned changes to anything they&#8217;re working on. If the hard disk that the central database was on corrupts and proper backups are not kept, you lose absolutely everything – the entire history of the project except whatever single snapshots people happen to have on their local machines. Local VCS systems suffer from this same problem – whenever you have the entire history of the project in a single place, you are at risk of losing everything.</p>
+
+<h3 id='distributed_version_control_systems'>Distributed Version Control Systems</h3>
+
+<p>This is where Distributed Version Control Systems (DVCS) step in. In a distributed VCS (such as Git, Mercurial, Bazaar or Darcs), clients do not just check out the latest snapshot of the files, they fully mirror the repository. That means that if any server dies where these systems were collaborating from, any of the clients repositories can be copied back up to the server to restore it. Every &#8216;checkout&#8217; is really a full backup of all of the data.</p>
+
+<p><img src='/images/fig13.png' alt='Figure 1.3' /> <em>Figure 1.3 - distributed version control</em></p>
+
+<p>Furthermore, many of these systems deal pretty well with having several remote repositories that they can work with, so you can collaborate with different groups of people in different ways within the same project simultaneously. This allows you to setup several types of workflows that are simply not possible in centralized systems, such as hierarchical models. Git falls into this category of VCS.</p>
+
+<div id='nav'>
+<a href='ch1-0.html'>prev</a> | <a href='ch1-2.html'>next</a>
+</div>

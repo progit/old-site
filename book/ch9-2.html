@@ -1,0 +1,30 @@
+---
+layout: master
+title: Pro Git 9.2 Git Internals The Git Directory
+---
+<h2 id='the_git_directory'>The Git Directory</h2>
+
+<p>First of all, when we run <code>git init</code> in a new or existing directory, Git will create the <code>.git</code> directory, which is where almost everything that Git stores and manipulates is located. Simply copying this single directory elsewhere will give you nearly everything you need. So, this whole chapter will basically be dealing with the stuff in this directory. Let&#8217;s take a quick look at it.</p>
+
+<p>DWP: Copying the directory elsewhere will give you everything you need for what?</p>
+
+<pre><code>$ ls 
+HEAD
+branches/
+config
+description
+hooks/
+index
+info/
+objects/
+refs/</code></pre>
+
+<p>You may see some other files in there, but this is a fresh <code>git init</code>ed repository - it is what you will see by default. First of all, the &#8216;branches&#8217; directory is not used by newer Git versions and the &#8216;description&#8217; file is only used by the GitWeb program, so don&#8217;t worry about those. The &#8216;config&#8217; file is where our project specific configuration options are and the &#8216;info&#8217; directory keeps a global &#8216;exclude&#8217; file for ignored patterns that you don&#8217;t want to track in a <code>.gitignore</code> file. The &#8216;hooks&#8217; directory contains your client or server side hook scripts.</p>
+
+<p>DWP: Perhaps point to the place where you discuss hooks.</p>
+
+<p>This leaves 4 important entries - the &#8216;HEAD&#8217; and &#8216;index&#8217; files and the &#8216;objects&#8217; and &#8216;refs&#8217; directories. These four things are the core parts of Git. The &#8216;objects&#8217; directory stores all the content for your database, the &#8216;refs&#8217; directory stores pointers into commit objects in that data (&#8216;branches&#8217;), the HEAD file points to the branch that you currently have checked out and finally the &#8216;index&#8217; file is where Git stores your staging area information. We&#8217;re now going to look at each of these sections in detail to see how Git actually operates.</p>
+
+<div id='nav'>
+<a href='ch9-1.html'>prev</a> | <a href='ch9-3.html'>next</a>
+</div>

@@ -1,0 +1,103 @@
+---
+layout: master
+title: Pro Git 3.4 Git Branching Basic Merge Conflicts
+---
+<h2 id='basic_merge_conflicts'>Basic Merge Conflicts</h2>
+
+<p>Occasionally, this process will not go so smoothly. If you changed the same part of the same file differently in the two branches you are merging together, Git will not be able to merge them cleanly. If our issue 53 fix modified the same part of a file as the hotfix, we&#8217;ll get a merge conflict that will look something like this:</p>
+
+<pre><code>$ git merge iss53
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+
+<p>Now Git has <em>not</em> automatically created a new merge commit. It has paused the process while you resolve the conflict. If you want to see which files are unmerged at any point, you can run &#8216;git status&#8217;.</p>
+
+<pre><code>[master*]$ git status
+index.html: needs merge
+# On branch master
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	unmerged:   index.html
+#</code></pre>
+
+<p>Anything that had merge conflicts and has not been resolved yet will be listed as &#8216;unmerged&#8217;. So, now we have to resolve the conflicts. Git will add standard conflict resolution markers to the files that had conflicts in them, so you can just open them manually and resolve the conflicts. Our file will have a section in it that looks something like this.</p>
+
+<p>DWP: It may sound obvious, but I think you should say what you mean by manually resolve the conflicts - i.e. usually, choose the version that you want, or occasionally merge the two together.</p>
+
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html
+&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+=======
+&lt;div id=&quot;footer&quot;&gt;
+  please contact us at support@github.com
+&lt;/div&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
+
+<p>When you resolve it, just run &#8216;git add&#8217; on the file to mark it as resolved. Staging the file is what resolves it.</p>
+
+<p>The other way you can see what has conflicted is to run &#8216;git diff &#8211;merge&#8217; at this point. That will show you a nice overview of what is being merged from each point of the 3 way merge. That is, for each conflicted file what came from the branch you&#8217;re on, the branch you&#8217;re merging in and the common ancestor.</p>
+
+<pre><code>$ git diff --merge
+diff --cc index.html
+index 25d648a,4d07108..4335f49
+--- a/index.html
++++ b/index.html
+@@@ -16,9 -16,7 +16,7 @@@ Date Finde
+
+  &lt;p id=&quot;out&quot;&gt;...&lt;/p&gt;
+
+- &lt;div id=&quot;footer&quot;&gt;
+-   please contact us at support@github.com
+- &lt;/div&gt;
+ -&lt;div id=&quot;footer&quot;&gt;contact : support@github.com&lt;/div&gt;
+++&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+
+  &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
+
+<p>sop: I wonder if git diff &#8211;merge is too technical here, and shouldn&#8217;t just be deferred until a later time.</p>
+
+<p>DWP: If you keep this here I think you should describe the output a bit.</p>
+
+<p>If you want to use a graphical tool to resolve this, you can run &#8216;git mergetool&#8217; which will fire up an appropriate visual merge tool for you and walk you through the conflicts.</p>
+
+<pre><code>$ git mergetool
+merge tool candidates: kdiff3 tkdiff xxdiff meld gvimdiff opendiff emerge vimdiff
+Merging the files: index.html
+
+Normal merge conflict for &#39;index.html&#39;:
+  {local}: modified
+  {remote}: modified
+Hit return to start merge resolution tool (opendiff):</code></pre>
+
+<p>If you want to use a different merge tool, you can see all the supported ones listed at the top after &#8216;merge tool candidates&#8217;. After each file it will ask you if the merge was successful. If you tell the script that it was, it will stage the file to mark it as resolved for you.</p>
+
+<p>Now you can run &#8216;git status&#8217; again to verify that all your conflicts have been resolved.</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	modified:   index.html
+#</code></pre>
+
+<p>Now you just type &#8216;git commit&#8217; to finalize the merge commit. The commit message will by default look something like this:</p>
+
+<pre><code>Merge branch &#39;iss53&#39;
+
+Conflicts:
+  index.html
+#
+# It looks like you may be committing a MERGE.
+# If this is not correct, please remove the file
+# .git/MERGE_HEAD
+# and try again.
+#</code></pre>
+
+<p>You can modify that message with details on how you resolved the merge if you think it would be helpful to others looking at this merge in the future - why you did what you did, if it&#8217;s not obvious.</p>
+
+<div id='nav'>
+<a href='ch3-3.html'>prev</a> | <a href='ch3-5.html'>next</a>
+</div>

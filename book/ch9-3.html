@@ -1,0 +1,77 @@
+---
+layout: master
+title: Pro Git 9.3 Git Internals Git Objects
+---
+<h2 id='git_objects'>Git Objects</h2>
+
+<p>So, Git is a content addressable filesystem. Great. So what does that even mean?</p>
+
+<p>It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it and it will give you a key back that you can use to retrieve that content again at any time. To demonstrate this, we can use the plumbing command &#8216;hash-object&#8217; which will take some data, store it in our .git directory and give us back the key it stored it as. First of all, let&#8217;s initialize a new Git repository and verify that there is nothing in the &#8216;objects&#8217; directory&#8217;.</p>
+
+<pre><code>$ mkdir test
+$ cd test
+$ git init
+Initialized empty Git repository in /tmp/test/.git/	
+$ find .git/objects
+.git/objects
+.git/objects/info
+.git/objects/pack
+$ find .git/objects -type f
+$</code></pre>
+
+<p>So, Git has initialized the &#8216;objects&#8217; directory and created &#8216;pack&#8217; and &#8216;info&#8217; subdirectories in it, but there are no regular files there. Now let&#8217;s store some text in our Git database.</p>
+
+<pre><code>$ echo &#39;test content&#39; | git hash-object -w --stdin
+d670460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+
+<p>The <code>-w</code> tells <code>hash-object</code> to store the object, otherwise it will simply tell you what the key <em>would</em> be and <code>--stdin</code> obviously tells it to read the content from stdin, otherwise it expects the path to a file. Notice that the output from the command is a 40 character checksum hash. This is the SHA-1 checksum of the content you&#8217;re storing plus a simple header, which we&#8217;ll cover in a bit. However, now we can see how Git has stored our data:</p>
+
+<pre><code>$ find .git/objects -type f 
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+
+<p>Now we can see a file in the &#8216;objects&#8217; directory. This is how Git actually stores the content initially - as a single file per piece of content, named by the SHA-1 checksum of the content and its header, in a subdirectory of the the first two characters of the SHA, with the actual filename being the remaining 38 characters.</p>
+
+<p>We can now pull that content back out of Git with a command called &#8216;cat-file&#8217;. We&#8217;re going to pass a <code>-p</code> to it which instructs the <code>cat-file</code> command to figure out what type of content it is and display it nicely for us.</p>
+
+<pre><code>$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+test content</code></pre>
+
+<p>Now we can add content to Git and pull it back out again. We can also do this with content in files. Let&#8217;s so do some simple version control on a file. First we&#8217;ll create a new file and save its contents in our database.</p>
+
+<pre><code>$ echo &#39;version 1&#39; &gt; test.txt
+$ git hash-object -w test.txt 
+83baae61804e65cc73a7201a7252750c76066a30</code></pre>
+
+<p>Then we&#8217;ll write some new content to the file and save it again.</p>
+
+<pre><code>$ echo &#39;version 2&#39; &gt; test.txt
+$ git hash-object -w test.txt 
+1f7a7a472abf3dd9643fd615f6da379c4acb3e3a</code></pre>
+
+<p>Now we can see that our database has the two new versions of the file saved in it as well as the first content we stored there.</p>
+
+<pre><code>$ find .git/objects -type f 
+.git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a
+.git/objects/83/baae61804e65cc73a7201a7252750c76066a30
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+
+<p>Now I can revert my file back to the first version:</p>
+
+<pre><code>$ git cat-file -p 83baae61804e65cc73a7201a7252750c76066a30 &gt; test.txt 
+$ cat test.txt 
+version 1</code></pre>
+
+<p>Or the second version:</p>
+
+<pre><code>$ git cat-file -p 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a &gt; test.txt 
+$ cat test.txt 
+version 2</code></pre>
+
+<p>However, remembering the SHA-1 key for each version of our file is not practical, plus we aren&#8217;t storing the actual filename in our system anywhere, just the content. This object type is called a &#8216;blob&#8217;. In fact, we can have Git tell us what the content type for any SHA-1 is with <code>cat-file -t</code>.</p>
+
+<pre><code>$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
+blob</code></pre>
+
+<div id='nav'>
+<a href='ch9-2.html'>prev</a> | <a href='ch9-4.html'>next</a>
+</div>

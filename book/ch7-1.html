@@ -1,0 +1,280 @@
+---
+layout: master
+title: Pro Git 7.1 Customizing Git Git Configuration
+---
+<h2 id='git_configuration'>Git Configuration</h2>
+
+<p>As we breifly covered in the very first chapter, you can set Git configuration settings with the <code>git config</code> command. One of the first things we did was setup your name and email address with:</p>
+
+<pre><code>$ git config --global user.name &quot;John Doe&quot;
+$ git config --global user.email johndoe@example.com</code></pre>
+
+<p>Now we&#8217;ll go over a few of the more interesting options that you can set with Git in this manner to customize your Git usage.</p>
+
+<p>We covered some simple Git configuration details in the first chapter, but I&#8217;ll go over them again quickly here. Git uses a series of configuration files to determine non-default behaviour that you might want. The first place Git will look for these values is in an &#8216;/etc/gitconfig&#8217; file, which contains values for every user on the system and all of their repositories. If you pass the option &#8217;&#8211;system&#8217; to git-config, it will read and write from this file specifically. The next place it will look is in the &#8216;~/.gitconfig&#8217; file, which is specific to your user. You can make Git read and write to this file specifically by passing the &#8217;&#8211;global&#8217; option. Finally, Git will look for configuration values in the &#8216;config&#8217; file in the Git Directory (ie: &#8216;.git/config&#8217;) of whatever repository you are currently using. These values are specific to that single repository. Each level will overwrite values in the previous level, so values in <code>.git/config</code> will trump those in <code>/etc/sysconfig</code> for instance. You can also set them by manually editing the file and inserting the correct syntax, but it&#8217;s generally easier to run the <code>git config</code> command.</p>
+
+<h3 id='basic_client_configuration'>Basic Client Configuration</h3>
+
+<p>The configuration options recognized by Git fall into two categories - client side and server side. The majority of the options are client side - configuring up your personal working preferences. Though there are tons of options, we&#8217;re only going to cover the few that are either commonly used or can significantly affect your workflow somehow. There are a lot of options that are really only useful in edge cases that we won&#8217;t go over here. If you want to see a list of all the options that your version of Git will recognize, you can run:</p>
+
+<pre><code>$ git config --help</code></pre>
+
+<p>The manual page for <code>git config</code> lists out all the available options in quite a bit of detail.</p>
+
+<h4 id='coreeditor'>core.editor</h4>
+
+<p>By default, Git will use whatever you have set as your default text editor or else fall back to the Vi editor to create and edit your commit and tag messages. If you want to change that default to something else you can set the <code>core.editor</code> setting.</p>
+
+<pre><code>$ git config --global core.editor emacs</code></pre>
+
+<p>Now no matter what is set as your default shell editor variable, Git will fire up Emacs for editing messages once that is run.</p>
+
+<h4 id='committemplate'>commit.template</h4>
+
+<p>If you set this to the path of a file on your system, it will use this file as the default message when you commit. For instance, if you create a template file at <code>$HOME/.gitmessage.txt</code> that looks like this:</p>
+
+<pre><code>subject line
+
+what happened
+
+[ticket: X]</code></pre>
+
+<p>Then you can tell Git to use it as the default message filled in your editor when you run <code>git commit</code> by setting the <code>commit.template</code> configuration value.</p>
+
+<pre><code>$ git config --global commit.template $HOME/.gitmessage.txt
+$ git commit</code></pre>
+
+<p>Then your editor will open to something like this for your placeholder commit message when you commit:</p>
+
+<pre><code>subject line
+
+what happened
+
+[ticket: X]
+
+# Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+# modified:   lib/test.rb
+#
+~                                                            
+~                                 
+&quot;.git/COMMIT_EDITMSG&quot; 14L, 297C</code></pre>
+
+<p>If you have some sort of commit message policy in place, then putting a template for that policy on your system and configuring Git to use it by default can help increase the chance of that policy being followed regularly.</p>
+
+<h4 id='corepager'>core.pager</h4>
+
+<p>The <code>core.pager</code> setting determines what pager to use when paging long Git output such as <code>log</code> and <code>diff</code>. You can either set it to <code>more</code> or whatever your favorite pager is (by default it is <code>less</code>), or you can turn it off completely by setting it to a blank string.</p>
+
+<pre><code>$ git config --global core.pager &#39;&#39;</code></pre>
+
+<p>If you run that, then Git will simply output the entire output of all commands, no matter how long they are.</p>
+
+<h4 id='usersigningkey'>user.signingkey</h4>
+
+<p>If you are making signed annotated tags (as we covered in Chapter 2), setting your GPG signing key as a configuration setting will make things a bit easier. If you set your key ID like so:</p>
+
+<pre><code>$ git config --global user.signingkey &lt;gpg-key-id&gt;</code></pre>
+
+<p>Then you can simply sign tags without having to specify it every time with the <code>git tag</code> command.</p>
+
+<pre><code>$ git tag -s &lt;tag-name&gt;</code></pre>
+
+<h4 id='coreexcludesfile'>core.excludesfile</h4>
+
+<p>You can put patterns into the .gitignore file in your project to have Git not see them as untracked files or try to stage them when you run <code>git add</code> on them, as we discussed in Chapter 2. However, if you want another file outside of your project to hold those values, or the have more values, you can tell Git where that file is with the <code>core.excludesfile</code> setting. Simply set it to the path of a file that has content similar to what a <code>.gitignore</code> file would have.</p>
+
+<h4 id='helpautocorrect'>help.autocorrect</h4>
+
+<p>This option is only available in Git 1.6.1 and later. If you mistyped a command in Git 1.6, it will show you something like this:</p>
+
+<pre><code>$ git com
+git: &#39;com&#39; is not a git-command. See &#39;git --help&#39;.
+
+Did you mean this?
+	commit</code></pre>
+
+<p>If you set <code>help.autocorrect</code> to &#8216;1&#8217;, Git will automatically run the command if it only has one match under this scenario.</p>
+
+<h3 id='colors_in_git'>Colors in Git</h3>
+
+<p>Git can color it&#8217;s output to your terminal, which can help you visually parse the output quickly and easily. There are a number of options that help you set the coloring to your preference.</p>
+
+<h4 id='colorui'>color.ui</h4>
+
+<p>Git will automatically color most of it&#8217;s output if you ask it to. You can get very specific in what you want colored and how, but to simply turn on all of the default terminal coloring, you can just set the <code>color.ui</code> setting to &#8216;true&#8217;.</p>
+
+<pre><code>$ git config --global color.ui true</code></pre>
+
+<p>When that is set, Git will color it&#8217;s output if the output is to a terminal. Other possible settings are &#8216;false&#8217; which will never color the output, and &#8216;always&#8217; which will set colors all the time, even if you&#8217;re redirecting Git commands to a file or piping them to another command. This setting was added in version 1.5.5, so if you have an older version, you&#8217;ll have to set all the color settings individually.</p>
+
+<p>It is likely pretty rare to actually want <code>color.ui = always</code>. In most scenarios, if you really do want color codes in your redirected output you can instead often pass a <code>--color</code> flag to the Git command to force it to use color codes. The <code>color.ui = true</code> setting is almost always what you&#8217;re going to want to use.</p>
+
+<h4 id='color'>color.*</h4>
+
+<p>If you want to be more specific about which commands are colored and how, or have an older version, Git provides verb-specific coloring settings. Each of these can be set to &#8216;true&#8217;, &#8216;false&#8217; or &#8216;always&#8217;.</p>
+
+<pre><code>color.branch
+color.diff
+color.interactive
+color.status</code></pre>
+
+<p>In addition, each of these has subsettings where you can set specific colors for parts of the output if you want to override them. For example, to set the meta information in your diff output to blue foreground, black background and bold, you can run:</p>
+
+<pre><code>$ git config --global color.diff.meta blue black bold</code></pre>
+
+<p>You can set the color to any of &#8216;normal&#8217;, &#8216;black&#8217;, &#8216;red&#8217;, &#8216;green&#8217;, &#8216;yellow&#8217;, &#8216;blue&#8217;, &#8216;magenta&#8217;, &#8216;cyan&#8217; or &#8216;white&#8217;. If you want an attribute like &#8216;bold&#8217; in the previous example, you can choose from &#8216;bold&#8217;, &#8216;dim&#8217;, &#8216;ul&#8217;, &#8216;blink&#8217; and &#8216;reverse&#8217;.</p>
+
+<p>See the <code>git-config</code> manpage for all the subsettings that you can configure, if you really want to do that.</p>
+
+<h3 id='external_merge_and_diff_tools'>External Merge and Diff Tools</h3>
+
+<p>Though Git has an internal implementation of diff, which is what we&#8217;ve been using, you can also setup an external tool to do it instead. You can also setup a graphical merge conflict resolution tool instead of having to do it manually. Here we&#8217;ll demonstrate setting up Perforce visual merge tool to do our diffs and merge resolutions, since it&#8217;s a pretty nice graphical tool for this and it is free.</p>
+
+<p>If you want to try this out, Perforce visual merge tool works on all major platforms, so you should be able to do so. I&#8217;ll use pathnames in the examples that work on Mac and Linux systems, for Windows you&#8217;ll have to change <code>/usr/local/bin</code> to some executable path in your environment.</p>
+
+<p>You can download Perforce visual merge tool here:</p>
+
+<pre><code>http://www.perforce.com/perforce/downloads/component.html</code></pre>
+
+<p>Now, to begin, we&#8217;ll setup external wrapper scripts to run our commands. I&#8217;ll use the Mac path for the executable, but in other systems it will simply be where your p4merge binary is installed instead. We will setup a merge wrapper script named &#8216;extMerge&#8217; and will simply call our binary with all the arguments provided.</p>
+
+<pre><code>$ cat /usr/local/bin/extMerge
+#!/bin/sh
+/Applications/p4merge.app/Contents/MacOS/p4merge $*</code></pre>
+
+<p>The diff wrapper will check to make sure that there are seven arguments provided and will just pass two of them to our merge script. By default, Git will pass the following arguments to the diff program:</p>
+
+<pre><code>path old-file old-hex old-mode new-file new-hex new-mode</code></pre>
+
+<p>Since we only want the old-file and new-file arguments, we&#8217;ll use the wrapper script to only pass the ones we need.</p>
+
+<pre><code>$ cat /usr/local/bin/extDiff 
+#!/bin/sh
+[ $# -eq 7 ] &amp;&amp; /usr/local/bin/extMerge &quot;$2&quot; &quot;$5&quot;</code></pre>
+
+<p>You&#8217;ll also want to make sure these tools are executable:</p>
+
+<pre><code>$ sudo chmod +x /usr/local/bin/extMerge 
+$ sudo chmod +x /usr/local/bin/extDiff</code></pre>
+
+<p>Now we can setup our config file to use our custom merge resolution and diff tools. This will take a number of custom settings, <code>merge.tool</code> to tell Git what strategy to use, <code>mergetool.*.cmd</code> to specify how to run it, <code>mergetool.trustExitCode</code> to tell it if the exit code of that program is indicative of a successful merge resolution or not and <code>diff.external</code> to tell it what command to run for diffs. So, you can either run four config commands:</p>
+
+<pre><code>$ git config --global merge.tool extMerge
+$ git config --global mergetool.extMerge.cmd &#39;extMerge &quot;$BASE&quot; &quot;$LOCAL&quot; &quot;$REMOTE&quot; &quot;$MERGED&quot;&#39;
+$ git config --global mergetool.trustExitCode = false
+$ git config --global diff.external extDiff</code></pre>
+
+<p>or you can just edit your <code>~/.gitconfig</code> file to add these lines:</p>
+
+<pre><code>[merge]
+  tool = extMerge
+[mergetool &quot;extMerge&quot;]
+  cmd = extMerge &quot;$BASE&quot; &quot;$LOCAL&quot; &quot;$REMOTE&quot; &quot;$MERGED&quot;
+  trustExitCode = false
+[diff]
+  external = extDiff</code></pre>
+
+<p>After this is all set, if you run diff commands such as:</p>
+
+<pre><code>$ git diff 32d1776b1^ 32d1776b1</code></pre>
+
+<p>Instead of getting the diff output on the command line, Git will fire up Perforce with the diff, which will look something like Figure 7.1</p>
+
+<p><img src='/images/fig0701.png' alt='Figure 7.1' /></p>
+
+<p>Also, if you try to merge two branches and subsequently have merge conflicts, you can run the command <code>git mergetool</code> and it will start your Perforce visual tool to let you resolve the conflicts through that GUI tool.</p>
+
+<p>The nice thing about this wrapper setup is that we can change our diff and merge tools pretty easily. For example, if we want to change our <code>extDiff</code> and <code>extMerge</code> tools to run the KDiff3 tool instead, all we have to do is edit our <code>extMerge</code> file.</p>
+
+<pre><code>$ cat /usr/local/bin/extMerge
+#!/bin/sh	
+/Applications/kdiff3.app/Contents/MacOS/kdiff3 $*</code></pre>
+
+<p>Now Git will use the KDiff3 tool for diff viewing and merge conflict resolution instead.</p>
+
+<p>Git also comes preset to use a number of other merge resolution tools without having to setup the &#8216;cmd&#8217; configuration setting for it. You can set it to &#8220;kdiff3&#8221;, &#8220;opendiff&#8221;, &#8220;tkdiff&#8221;, &#8220;meld&#8221;, &#8220;xxdiff&#8221;, &#8220;emerge&#8221;, &#8220;vimdiff&#8221; or &#8220;gvimdiff&#8221;. If you&#8217;re not interested in using KDiff3 for diff, just for merge resolution, and the command is in your path then you can just run:</p>
+
+<pre><code>$ git config --global merge.tool kdiff3</code></pre>
+
+<p>If you just run this instead of setting up the <code>extMerge</code> and <code>extDiff</code> files, then Git will use kdiff3 for merge resolution and the normal Git diff tool for diffs.</p>
+
+<h3 id='formatting_and_whitespace'>Formatting and Whitespace</h3>
+
+<p>Formatting and whitespace issues are some of the more frustrating and subtle issues that many developers encounter when collaborating, especially cross-platform. It is very easy for patches or other collaborated work to introduce subtle whitespace changes because of editors that silently introduce it, or Windows programmers to introduce carriage returns at the end of lines they touch in cross-platform projects. Git has a few configuration options to help with these issues.</p>
+
+<h4 id='coreautocrlf'>core.autocrlf</h4>
+
+<p>If you&#8217;re programming on Windows, or using another system but working with people that are programming on Windows, you will probably run into line ending issues at some point. Git can handle this by auto-converting CRLF line endings into LF when you commit, and vice-versa when it checks code out onto your filesystem. You can turn on this functionality with the <code>core.autocrlf</code> setting. If you are on a Windows machine, set it to &#8216;true&#8217; - this will convert LF endings into CRLF when you checkout code.</p>
+
+<pre><code>$ git config --global core.autocrlf true</code></pre>
+
+<p>If you are on a Linux or Mac system that uses LF line endings then you don&#8217;t want it to convert when you check files out, however if something accidentally gets introduced then you may want Git to fix it. You can tell Git to convert CRLF to LF on commit but not the other way around by setting <code>core.autocrlf</code> to &#8216;input&#8217;.</p>
+
+<pre><code>$ git config --global core.autocrlf input</code></pre>
+
+<p>This setup should leave you with CRLF endings in the Windows checkouts but LF endings on Mac and Linux systems and in the repository itself.</p>
+
+<p>If you are a Windows programmer doing a Windows only project, then you can turn this functionality off altogether, recording the carriage returns in the repository itself by simply setting the config value to &#8216;false&#8217;.</p>
+
+<pre><code>$ git config --global core.autocrlf false</code></pre>
+
+<h4 id='corewhitespace'>core.whitespace</h4>
+
+<p>Git comes preset to detect and can even fix some whitespace issues. There are four main whitespace issues that Git can look for, two are enabled by default and can be turned off while two are not enabled by default but can be activated.</p>
+
+<p>The two that are turned on by default are <code>trailing-space</code> which looks for spaces at the end of lines, and <code>space-before-tab</code> which looks for spaces before tabs at the beginning of a line.</p>
+
+<p>The two that are disabled by default but can be turned on are <code>indent-with-non-tab</code>, which looks for lines that begin with 8 or more spaces instead of tabs, and <code>cr-at-eol</code> which tells Git that carriage returns at the end of lines are OK.</p>
+
+<p>You can tell Git which of these you want enabled by setting the <code>core.whitespace</code> setting to the values you want on or off, seperated by commas. You can disable settings by either leaving them out of the setting string or by prepending a <code>-</code> in front of the value. For example, if you wanted all but cr-at-eol to be set, you could do this:</p>
+
+<pre><code>$ git config --global core.whitespace trailing-space,space-before-tab,indent-with-non-tab</code></pre>
+
+<p>Now Git will detect these issues when you run a <code>git diff</code> command and try to color them for you to see so you can possibly fix them before you commit. It will also use these values to help you when you apply patches with <code>git apply</code>. When applying patches, you can ask it to warn you if it&#8217;s applying patches with the specified whitespace issues:</p>
+
+<pre><code>$ git apply --whitespace=warn &lt;patch&gt;</code></pre>
+
+<p>Or you can have Git try to automatically fix the issue before applying the patch:</p>
+
+<pre><code>$ git apply --whitespace=fix &lt;patch&gt;</code></pre>
+
+<p>These options apply to the <code>git rebase</code> option as well. If you&#8217;ve committed whitespace issues but have not pushed upstream yet, you can run a rebase with the <code>--whitespace=fix</code> option to have it automatically fix whitespace issues as it&#8217;s rewriting the patches.</p>
+
+<h3 id='server_configuration'>Server Configuration</h3>
+
+<p>There are not nearly as many configuration options for the server side of Git stuff, but there are a few interesting ones you may want to take note of.</p>
+
+<h4 id='receivefsckobjects'>receive.fsckObjects</h4>
+
+<p>By default, Git will not check all the objects it receives during a push for consistency. Though Git can check to make sure that each object it has matches it&#8217;s SHA-1 checksum still and points to valid objects and everything, it does not do that by default on every push. This is a relatively expensive operation and may add a good amount of time to each push, depending on the size of the repo or the push. If you want Git to check object consistency on every push, you can force Git to do that by setting the <code>receive.fsckObjects</code> setting to &#8216;true&#8217;</p>
+
+<pre><code>$ git config --system receive.fsckObjects true</code></pre>
+
+<p>Now Git will check the integrity of your repository before each push is accepted to make sure faulty clients are not introducing corrupt data.</p>
+
+<h4 id='receivedenynonfastforwards'>receive.denyNonFastForwards</h4>
+
+<p>If you rebase commits that you have already pushed and then try to push again, or otherwise try to push a commit to a remote branch that does not contain the commit that the remote branch currently points to, you will be denied. This is generally good policy, but in the case of the rebase you may determine that you know what you&#8217;re doing and can &#8216;force update&#8217; the remote branch with a <code>-f</code> flag to your push command.</p>
+
+<p>If you want to disable the ability to force update remote branches to non fast-forward references, you can set the <code>receive.denyNonFastForward</code> setting.</p>
+
+<pre><code>$ git config --system receive.denyNonFastForwards true</code></pre>
+
+<p>The other way you can do this is via server side receive hooks, which we&#8217;ll cover in a bit. There you can do more complex things like deny non fast-forwards to only a certain subset of users.</p>
+
+<h4 id='receivedenydeletes'>receive.denyDeletes</h4>
+
+<p>One of the workarounds to the <code>denyNonFastForward</code> policy is for the user to simply delete the branch and then push it back up with the new reference. In newer versions of Git (it was introduced in 1.6.1), you can set the <code>receive.denyDeletes</code> setting to &#8216;true&#8217;.</p>
+
+<pre><code>$ git config --system receive.denyDeletes true</code></pre>
+
+<p>This will deny branch and tag deletion over a push across the board - no user will be able to do it. To remove remote branches, you&#8217;ll have to remove the ref files from the server manually. There are also more interesting ways to do this on a per-user basis via ACLs that we&#8217;ll cover at the end of this chapter.</p>
+
+<div id='nav'>
+<a href='ch7-0.html'>prev</a> | <a href='ch7-2.html'>next</a>
+</div>

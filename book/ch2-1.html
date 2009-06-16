@@ -1,0 +1,43 @@
+---
+layout: master
+title: Pro Git 2.1 Git Basics Getting a Git Repository
+---
+<h2 id='getting_a_git_repository'>Getting a Git Repository</h2>
+
+<p>There are two main cases where you would get a Git project. The first way would be taking an existing project or directory and importing it into Git. The second is to clone an an existing repository.</p>
+
+<h3 id='initializing_a_repository_in_an_existing_directory'>Initializing a repository in an existing directory</h3>
+
+<p>If you are starting to track an existing project in Git, you simply need to go to the projects directory and type:</p>
+
+<pre><code>$ git init</code></pre>
+
+<p>This will create a new subdirectory there named ‘.git’ that will contain all of your necessary repository files - a Git repository skeleton. At this point nothing in your project is tracked yet. See Chapter 9 for more information on exactly what files are contained in the Git directory that was just created.</p>
+
+<p>If there are existing files that you want to start version controlling (as opposed to an empty directory), you will probably want to start tracking those files and do an initial commit. You can accomplish that with a few <code>git add</code> commands specifing the files you want to track, followed by a commit.</p>
+
+<pre><code>$ git add *.c
+$ git add README
+$ git commit –m ‘initial project version’</code></pre>
+
+<p>We will go over what these commands actually do in just a minute, but at this point you have a Git repository with tracked files and an initial commit.</p>
+
+<h3 id='cloning_an_existing_repository'>Cloning an existing repository</h3>
+
+<p>If you want to get a copy of an existing Git repository, say a project you would like to contribute to, the command you will need is ‘git clone’. For those of you familiar with other VCS systems such as Subversion, you will notice that the command is ‘clone’ and not ‘checkout’. This is an important distinction – Git receieves a copy of nearly every object that the server has. Every version of every file for the history of the project is pulled down when you run ‘git clone’. In fact, if your server disk gets corrupted, you can actually use any of the clones on any client to set the server back up to the state it was in when cloned (you might lose some server-side hooks and such, but all the versioned data would be there – see Chapter 4 for more details.)</p>
+
+<p>So, the way you clone a repository is with ‘git clone <span>url</span>’. For example, if we wanted to clone my Ruby Git library called Grit, you could do so like this:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
+
+<p>That will create a directory named ‘grit’, initialize a ‘.git’ directory inside of that, pull down all the data for that repository and checkout a working copy of the latest version. So, if you go into the new ‘grit’ directory, you will see the project files in there, ready to be worked on or used. If you wanted to clone it into a directory named something other than ‘grit’, you can specify that as the next command line option:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
+
+<p>That will do the same thing, but the target directory will be called ‘mygrit’ instead.</p>
+
+<p>Git has a number of different transfer protocols you can use. In the above example we used the ‘git://’ protocol, but you may also see ‘http(s)://’, or ‘user@server:/path.git’ which will use the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can setup to access your Git repository over and the pros and cons of each.</p>
+
+<div id='nav'>
+<a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>
+</div>
