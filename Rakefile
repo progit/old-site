@@ -62,6 +62,14 @@ def generate_pages(chapter, content)
     toc[:title] = chapter_title
   end
 
+  # replace images
+  if images = raw.scan(/Insert (.*?).png/)
+    images.each do |img|
+      real = "<center><img src=\"/figures/ch#{chapter}/#{img}-tn.png\"></center><br/>"
+      raw.gsub!("Insert #{img}.png", real)
+    end
+  end
+  
   sections = raw.split('<h2')
   section = 0
   sections.each do |sec|
@@ -125,8 +133,34 @@ task :genbook do
     end
   end
   
-  update_toc(toc)
-  
+  update_toc(toc)  
+end
+
+# generate the site
+desc "Convert images"
+task :convert_images do
+  Dir.chdir('figures') do
+    Dir.glob("*").each do |chapter|
+      Dir.chdir(chapter) do
+        Dir.glob("*").each do |image|
+          puts image
+          (im, ending) = image.split('.')
+          if ending == 'png' and im[-3, 3] != '-tn'
+            convert_image = "#{im}-tn.png"
+            if !File.exists?(convert_image)
+              width_out = `exiftool #{image} | grep 'Image Width'`
+              width = width_out.scan(/: (\d+)/).first.first.to_i
+              if width > 500
+                `convert -thumbnail 500x #{image} #{convert_image}`
+              else
+                `cp #{image} #{convert_image}`
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 task :default => [:genbook]

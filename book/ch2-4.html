@@ -1,32 +1,32 @@
 ---
 layout: master
-title: Pro Git 2.4 Git Basics Undoing things
+title: Pro Git 2.4 Git Basics Undoing Things
 ---
-<h2 id='undoing_things'>Undoing things</h2>
+<h2 id='undoing_things'>Undoing Things</h2>
 
-<p>At any stage here we may want to undo something that we did. Here we will review a few basic tools for undoing changes that we made. Be careful here, undoing some of these undos is not always possible. This is one of the few areas in Git where you may lose some work if you do it wrong.</p>
+<p>At any stage, you may want to undo something. Here, we’ll review a few basic tools for undoing changes that you’ve made. Be careful, because you can’t always undo some of these undos. This is one of the few areas in Git where you may lose some work if you do it wrong.</p>
 
-<h3 id='changing_your_last_commit'>Changing your last commit</h3>
+<h3 id='changing_your_last_commit'>Changing Your Last Commit</h3>
 
-<p>One of the more common ‘undo’s is when you commit too early, possibly forgetting to add some files, or you mess up your commit message. If you want to try that commit again, you can simply run commit with the <code>--amend</code> option.</p>
+<p>One of the common undos takes place when you commit too early and possibly forget to add some files, or you mess up your commit message. If you want to try that commit again, you can run commit with the &#8211;amend option:</p>
 
 <pre><code>$ git commit --amend</code></pre>
 
-<p>This is going to take your staging area and use it for the commit. If you have made no changes since your last commit (for instance, you run it immediately after your previous commit) then your snapshot will look exactly the same and all you’re changing is your commit message.</p>
+<p>This command takes your staging area and uses it for the commit. If you’ve have made no changes since your last commit (for instance, you run this command it immediately after your previous commit), then your snapshot will look exactly the same and all you’ll change is your commit message.</p>
 
-<p>The same commit message editor will fire up, but it will already contain the message of your previous commit. So you can edit it the same as normal, but it will overwrite the last commit you did.</p>
+<p>The same commit-message editor fires up, but it already contains the message of your previous commit. You can edit the message the same as always, but it overwrites your previous commit.</p>
 
-<p>As an example, if you committed, then realized you forgot to stage the changes in a file you wanted to add to this commit, you can do something like this:</p>
+<p>As an example, if you commit and then realize you forgot to stage the changes in a file you wanted to add to this commit, you can do something like this:</p>
 
-<pre><code>$ git commit -m ‘initial commit’
+<pre><code>$ git commit -m &#39;initial commit&#39;
 $ git add forgotten_file
 $ git commit --amend </code></pre>
 
-<p>All three of those commands will only end up with a single commit – the second command replaces the results of the first.</p>
+<p>All three of these commands end up with a single commit—the second command replaces the results of the first.</p>
 
-<h3 id='unstaging_a_staged_file'>Unstaging a staged file</h3>
+<h3 id='unstaging_a_staged_file'>Unstaging a Staged File</h3>
 
-<p>The next two sections are demonstrating how to wrangle your staging area and working directory changes. The nice part is that the command that you use to tell you what state those two areas are in will also remind you how to undo changes to them. For example, let’s say that we’ve changed two files and want to commit them as two separate changes, but we accidentally typed <code>git add .</code> and staged them both. How can we unstage one of the two? The <code>git status</code> command will remind us.</p>
+<p>The next two sections demonstrate how to wrangle your staging area and working directory changes. The nice part is that the command you use to determine the state of those two areas also reminds you how to undo changes to them. For example, let’s say you’ve changed two files and want to commit them as two separate changes, but you accidentally type git add * and stage them both. How can you unstage one of the two? The git status command reminds you:</p>
 
 <pre><code>$ git add .
 $ git status
@@ -38,8 +38,7 @@ $ git status
 #       modified:   benchmarks.rb
 #</code></pre>
 
-<p>You can see that right below the ‘Changes to be committed’ text it says ‘use &#8220;git reset HEAD <pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'>HTML parse error: 
-&lt;file&gt;...&quot; to unstage’.  So, let’s use that advice to unstage the benchmarks.rb file.</pre></p>
+<p>Right below the “Changes to be committed” text, it says use <code>git reset HEAD &lt;file&gt;...</code> to unstage. So, let’s use that advice to unstage the benchmarks.rb file:</p>
 
 <pre><code>$ git reset HEAD benchmarks.rb 
 benchmarks.rb: locally modified
@@ -57,11 +56,11 @@ $ git status
 #       modified:   benchmarks.rb
 #</code></pre>
 
-<p>The command is a bit strange, but we can see that it worked. The benchmarks.rb file is modified but once again unstaged.</p>
+<p>The command is a bit strange, but it works. The benchmarks.rb file is modified but once again unstaged.</p>
 
-<h3 id='unmodifiying_a_modified_file'>Unmodifiying a modified file</h3>
+<h3 id='unmodifying_a_modified_file'>Unmodifying a Modified File</h3>
 
-<p>What if we realize that we actually don’t want the changes to the benchmarks.rb file at all. How can we easily unmodify it – revert it back to what it looked like when we last committed (or initially cloned – however we got it into our working directory)? Luckily, ‘git status’ tells us how to do that, too. Looking at the last example output, we can see the ‘unstaged’ area looks like this:</p>
+<p>What if you realize that you don’t want to keep your changes to the benchmarks.rb file? How can you easily unmodify it—revert it back to what it looked like when you last committed (or initially cloned, or however you got it into your working directory)? Luckily, git status tells you how to do that, too. In the last example output, the unstaged area looks like this:</p>
 
 <pre><code># Changed but not updated:
 #   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
@@ -70,7 +69,7 @@ $ git status
 #       modified:   benchmarks.rb
 #</code></pre>
 
-<p>So it tells us pretty explicitly how to discard the changes we’ve made (at least, the newer versions of Git, 1.6.1 and later, will do this – if you have an older version, I highly recommend upgrading it to get some of these nicer usability features). So, lets do what it tells us.</p>
+<p>It tells you pretty explicitly how to discard the changes you’ve made (at least, the newer versions of Git, 1.6.1 and later, do this—if you have an older version, we highly recommend upgrading it to get some of these nicer usability features). Let’s do what it says:</p>
 
 <pre><code>$ git checkout -- benchmarks.rb
 $ git status
@@ -81,7 +80,9 @@ $ git status
 #       modified:   README.txt
 #</code></pre>
 
-<p>Now we can see that the changes have been reverted. You should also realize that this is a pretty dangerous command. Any changes you made to that file are completely gone – you just copied another file over it. Don’t ever use this unless you absolutely know that you don’t want this file. If you need to get it out of the way, we will go over stashing and branching in the next chapter which are generally better ways to go. Remember – anything that is committed in Git you can almost always recover. Even commits that were only on branches that were deleted or commits that were overwritten with an <code>--amend</code> commit can be recovered (see Chapter 9 for data recovery). However, anything that you lose that was <em>never</em> committed is likely never to be seen again.</p>
+<p>You can see that the changes have been reverted. You should also realize that this is a dangerous command: any changes you made to that file are gone—you just copied another file over it. Don’t ever use this command unless you absolutely know that you don’t want the file. If you just need to get it out of the way, we’ll go over stashing and branching in the next chapter; these are generally better ways to go.</p>
+
+<p>Remember, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an &#8211;amend commit can be recovered (see Chapter 9 for data recovery). However, anything you lose that was never committed is likely never to be seen again.</p>
 
 <div id='nav'>
 <a href='ch2-3.html'>prev</a> | <a href='ch2-5.html'>next</a>
