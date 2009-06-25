@@ -1,6 +1,6 @@
 ---
 layout: master
-title: Pro Git 1.5 Getting Started First-Time Git Setup
+title: Pro Git 1.8 Getting Started First-Time Git Setup
 ---
 <h2 id='firsttime_git_setup'>First-Time Git Setup</h2>
 
@@ -8,13 +8,9 @@ title: Pro Git 1.5 Getting Started First-Time Git Setup
 
 <p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
 
-<ul>
-<li>/etc/gitconfig file: Contains values for every user on the system and all their repositories. If you pass the option &#8211;system to git config, it reads and writes from this file specifically.</li>
-
-<li>~/.gitconfig file: Specific to your user. You can make Git read and write to this file specifically by passing the &#8211;global option.</li>
-
-<li>config file in the git directory (that is, .git/config) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in .git/config trump those in /etc/sysconfig.</li>
-</ul>
+<pre><code>*	/etc/gitconfig file: Contains values for every user on the system and all their repositories. If you pass the option --system to git config, it reads and writes from this file specifically. 
+*	~/.gitconfig file: Specific to your user. You can make Git read and write to this file specifically by passing the --global option. 
+*	config file in the git directory (that is, .git/config) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in .git/config trump those in /etc/sysconfig.</code></pre>
 
 <p>On Windows systems, Git looks for the .gitconfig file in the $HOME directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
 
@@ -62,5 +58,5 @@ color.diff=auto
 Scott Chacon</code></pre>
 
 <div id='nav'>
-<a href='ch1-4.html'>prev</a> | <a href='ch1-6.html'>next</a>
+<a href='ch1-7.html'>prev</a> | <a href='ch1-9.html'>next</a>
 </div>
