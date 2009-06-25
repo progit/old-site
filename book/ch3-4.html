@@ -1,102 +1,42 @@
 ---
 layout: master
-title: Pro Git 3.4 Git Branching Basic Merge Conflicts
+title: Pro Git 3.4 Git Branching Branching Workflows
 ---
-<h2 id='basic_merge_conflicts'>Basic Merge Conflicts</h2>
+<h2 id='branching_workflows'>Branching Workflows</h2>
 
-<p>Occasionally, this process will not go so smoothly. If you changed the same part of the same file differently in the two branches you are merging together, Git will not be able to merge them cleanly. If our issue 53 fix modified the same part of a file as the hotfix, we&#8217;ll get a merge conflict that will look something like this:</p>
+<p>Now that you have the basics of branching and merging down, what can or should you do with them? In this section, we’ll cover some common workflows that this lightweight branching makes possible, so you can decide if you would like to incorporate it into your own development cycle.</p>
 
-<pre><code>$ git merge iss53
-Auto-merging index.html
-CONFLICT (content): Merge conflict in index.html
-Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+<h3 id='longrunning_branches'>Long-Running Branches</h3>
 
-<p>Now Git has <em>not</em> automatically created a new merge commit. It has paused the process while you resolve the conflict. If you want to see which files are unmerged at any point, you can run &#8216;git status&#8217;.</p>
+<p>Because Git uses a simple three-way merge, merging from one branch into another multiple times over a long period is generally easy to do. This means you can have several branches that are always open and that you use for different stages of your development cycle; you can merge regularly from some of them into others.</p>
 
-<pre><code>[master*]$ git status
-index.html: needs merge
-# On branch master
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
-#
-#	unmerged:   index.html
-#</code></pre>
+<p>Many Git developers have a workflow that embraces this approach, such as having only code that is entirely stable in their master branch—possibly only code that has been or will be released. They have another parallel branch named develop or next that they work from or use to test stability—it isn’t necessarily always stable, but whenever it gets to a stable state, it can be merged into master. It’s used to pull in topic branches (short-lived branches, like your earlier iss53 branch) when they’re ready, to make sure they pass all the tests and don’t introduce bugs.</p>
 
-<p>Anything that had merge conflicts and has not been resolved yet will be listed as &#8216;unmerged&#8217;. So, now we have to resolve the conflicts. Git will add standard conflict resolution markers to the files that had conflicts in them, so you can just open them manually and resolve the conflicts. Our file will have a section in it that looks something like this.</p>
+<p>In reality, we’re talking about pointers moving up the line of commits you’re making. The stable branches are farther down the line in your commit history, and the bleeding-edge branches are farther up the history (see Figure 3-18).</p>
 
-<p>DWP: It may sound obvious, but I think you should say what you mean by manually resolve the conflicts - i.e. usually, choose the version that you want, or occasionally merge the two together.</p>
+<p><center><img src="/figures/ch3/18333fig0318-tn.png"></center><br/> Figure 3-18. More stable branches are generally farther down the commit history.</p>
 
-<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html
-&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
-=======
-&lt;div id=&quot;footer&quot;&gt;
-  please contact us at support@github.com
-&lt;/div&gt;
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
+<p>It’s generally easier to think about them as work silos, where sets of commits graduate to a more stable silo when they’re fully tested (see Figure 3-19).</p>
 
-<p>When you resolve it, just run &#8216;git add&#8217; on the file to mark it as resolved. Staging the file is what resolves it.</p>
+<p><center><img src="/figures/ch3/18333fig0319-tn.png"></center><br/> Figure 3-19. It may be helpful to think of your branches as silos.</p>
 
-<p>The other way you can see what has conflicted is to run &#8216;git diff &#8211;merge&#8217; at this point. That will show you a nice overview of what is being merged from each point of the 3 way merge. That is, for each conflicted file what came from the branch you&#8217;re on, the branch you&#8217;re merging in and the common ancestor.</p>
+<p>You can keep doing this for several levels of stability. Some larger projects also have a proposed or pu (proposed updates) branch that has integrated branches that may not be ready to go into the next or master branch. The idea is that your branches are at various levels of stability; when they reach a more stable level, they’re merged into the branch above them. Again, having multiple long-running branches isn’t necessary, but it’s often helpful, especially when you’re dealing with very large or complex projects.</p>
 
-<pre><code>$ git diff --merge
-diff --cc index.html
-index 25d648a,4d07108..4335f49
---- a/index.html
-+++ b/index.html
-@@@ -16,9 -16,7 +16,7 @@@ Date Finde
+<h3 id='topic_branches'>Topic Branches</h3>
 
-  &lt;p id=&quot;out&quot;&gt;...&lt;/p&gt;
+<p>Topic branches, however, are useful in projects of any size. A topic branch is a short-lived branch that you create and use for a single particular feature or related work. This is something you’ve likely never done with a VCS before because it’s generally too expensive to create and merge branches. But in Git it’s common to create, work on, merge, and delete branches several times a day.</p>
 
-- &lt;div id=&quot;footer&quot;&gt;
--   please contact us at support@github.com
-- &lt;/div&gt;
- -&lt;div id=&quot;footer&quot;&gt;contact : support@github.com&lt;/div&gt;
-++&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+<p>You saw this in the last section with the iss53 and hotfix branches you created. You did a few commits on them and deleted them directly after merging them into your main branch. This technique allows you to context-switch quickly and completely—because your work is separated into silos where all the changes in that branch have to do with that topic, it’s easier to see what has happened during code review and such. You can keep the changes there for minutes, days, or months, and merge them in when they’re ready, regardless of the order in which they were created or worked on.</p>
 
-  &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
+<p>Consider an example of doing some work (on master), branching off for an issue (iss91), working on it for a bit, branching off the second branch to try another way of handling the same thing (iss91v2), going back to your master branch and working there for a while, and then branching off there to do some work that you’re not sure is a good idea (dumbidea branch). Your commit history will look something like Figure 3-20.</p>
 
-<p>sop: I wonder if git diff &#8211;merge is too technical here, and shouldn&#8217;t just be deferred until a later time.</p>
+<p><center><img src="/figures/ch3/18333fig0320-tn.png"></center><br/> Figure 3-20. Your commit history with multiple topic branches</p>
 
-<p>DWP: If you keep this here I think you should describe the output a bit.</p>
+<p>Now, let’s say you decide you like the second solution to your issue best (iss91v2); and you showed the dumbidea branch to your coworkers, and it turns out to be genius. You can throw away the original iss91 branch (losing commits C5 and C6) and merge in the other two. Your history then looks like Figure 3-21.</p>
 
-<p>If you want to use a graphical tool to resolve this, you can run &#8216;git mergetool&#8217; which will fire up an appropriate visual merge tool for you and walk you through the conflicts.</p>
+<p><center><img src="/figures/ch3/18333fig0321-tn.png"></center><br/> Figure 3-21. Your history after merging in dumbidea and iss91v2</p>
 
-<pre><code>$ git mergetool
-merge tool candidates: kdiff3 tkdiff xxdiff meld gvimdiff opendiff emerge vimdiff
-Merging the files: index.html
-
-Normal merge conflict for &#39;index.html&#39;:
-  {local}: modified
-  {remote}: modified
-Hit return to start merge resolution tool (opendiff):</code></pre>
-
-<p>If you want to use a different merge tool, you can see all the supported ones listed at the top after &#8216;merge tool candidates&#8217;. After each file it will ask you if the merge was successful. If you tell the script that it was, it will stage the file to mark it as resolved for you.</p>
-
-<p>Now you can run &#8216;git status&#8217; again to verify that all your conflicts have been resolved.</p>
-
-<pre><code>$ git status
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#	modified:   index.html
-#</code></pre>
-
-<p>Now you just type &#8216;git commit&#8217; to finalize the merge commit. The commit message will by default look something like this:</p>
-
-<pre><code>Merge branch &#39;iss53&#39;
-
-Conflicts:
-  index.html
-#
-# It looks like you may be committing a MERGE.
-# If this is not correct, please remove the file
-# .git/MERGE_HEAD
-# and try again.
-#</code></pre>
-
-<p>You can modify that message with details on how you resolved the merge if you think it would be helpful to others looking at this merge in the future - why you did what you did, if it&#8217;s not obvious.</p>
+<p>It’s important to remember when you’re doing all this that these branches are completely local. When you’re branching and merging, everything is being done only in your Git repository—no server communication is happening.</p>
 
 <div id='nav'>
 <a href='ch3-3.html'>prev</a> | <a href='ch3-5.html'>next</a>
