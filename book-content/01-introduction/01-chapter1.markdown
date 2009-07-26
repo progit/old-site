@@ -188,11 +188,11 @@ Now that you have Git on your system, you’ll want to do a few things to custom
 
 Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:
 
-*	/etc/gitconfig file: Contains values for every user on the system and all their repositories. If you pass the option --system to git config, it reads and writes from this file specifically. 
-*	~/.gitconfig file: Specific to your user. You can make Git read and write to this file specifically by passing the --global option. 
-*	config file in the git directory (that is, .git/config) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in .git/config trump those in /etc/sysconfig.
+*	`/etc/gitconfig` file: Contains values for every user on the system and all their repositories. If you pass the option` --system` to `git config`, it reads and writes from this file specifically. 
+*	`~/.gitconfig` file: Specific to your user. You can make Git read and write to this file specifically by passing the `--global` option. 
+*	config file in the git directory (that is, `.git/config`) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in `.git/config` trump those in `/etc/sysconfig`.
 
-On Windows systems, Git looks for the .gitconfig file in the $HOME directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.
+On Windows systems, Git looks for the `.gitconfig` file in the `$HOME` directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.
 
 ### Your Identity ###
 
@@ -201,7 +201,7 @@ The first thing you should do when you install Git is to set your user name and 
 	$ git config --global user.name "John Doe"
 	$ git config --global user.email johndoe@example.com
 
-Again, you need to do this only once if you pass the --global option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the --global option when you’re in that project.
+Again, you need to do this only once if you pass the `--global` option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the `--global` option when you’re in that project.
 
 ### Your Editor ###
 
@@ -219,7 +219,7 @@ Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, an
 
 ### Checking Your Settings ###
 
-If you want to check your settings, you can use the git config --list command to list all the settings Git can find at that point:
+If you want to check your settings, you can use the `git config --list` command to list all the settings Git can find at that point:
 
 	$ git config --list
 	user.name=Scott Chacon
@@ -230,9 +230,9 @@ If you want to check your settings, you can use the git config --list command to
 	color.diff=auto
 	...
 
-You may see keys more than once, because Git reads the same key from different files (/etc/gitconfig and ~/.gitconfig, for example). In this case, Git uses the last value for each unique key it sees.
+You may see keys more than once, because Git reads the same key from different files (`/etc/gitconfig` and `~/.gitconfig`, for example). In this case, Git uses the last value for each unique key it sees.
 
-You can also check what Git thinks a specific key’s value is by typing git config {key}:
+You can also check what Git thinks a specific key’s value is by typing `git config {key}`:
 
 	$ git config user.name
 	Scott Chacon
@@ -250,7 +250,7 @@ For example, you can get the manpage help for the config command by running
 	$ git help config
 
 These commands are nice because you can access them anywhere, even offline.
-If the manpages and this book aren’t enough and you need in-person help, you can try the #git or #github channel on the Freenode IRC server (irc.freenode.net). These channels are regularly filled with hundreds of people who are all very knowledgeable about Git and are often willing to help.
+If the manpages and this book aren’t enough and you need in-person help, you can try the `#git` or `#github` channel on the Freenode IRC server (irc.freenode.net). These channels are regularly filled with hundreds of people who are all very knowledgeable about Git and are often willing to help.
 
 ## Summary ##
 
