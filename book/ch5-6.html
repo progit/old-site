@@ -1,0 +1,19 @@
+---
+layout: master
+title: Pro Git 5.6 Distributed Git Working in Topic Branches
+---
+<h2 id='working_in_topic_branches'>Working in Topic Branches</h2>
+
+<p>When you’re thinking of integrating new work, it’s generally a good idea to try it out in a topic branch—a temporary branch specifically made to try out that new work. This way, it’s easy to tweak a patch individually and leave it if it’s not working until you have time to come back to it. If you create a simple branch name based on the theme of the work you’re going to try, such as <code>ruby_client</code> or something similarly descriptive, you can easily remember it if you have to abandon it for a while and come back later. The maintainer of the Git project tends to namespace these branches as well—such as <code>sc/ruby_client</code>, where sc is short for the person who contributed the work. As you’ll remember, you can create the branch based off your master branch like this:</p>
+
+<pre><code>$ git branch sc/ruby_client master</code></pre>
+
+<p>Or, if you want to also switch to it immediately, you can use the checkout -b option:</p>
+
+<pre><code>$ git checkout -b sc/ruby_client master</code></pre>
+
+<p>Now you’re ready to add your contributed work into this topic branch and determine if you want to merge it into your longer-term branches.</p>
+
+<div id='nav'>
+<a href='ch5-5.html'>prev</a> | <a href='ch5-7.html'>next</a>
+</div>

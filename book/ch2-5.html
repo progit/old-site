@@ -40,7 +40,7 @@ origin    git@github.com:mojombo/grit.git</code></pre>
 
 <h3 id='adding_remote_repositories'>Adding Remote Repositories</h3>
 
-<p>We’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run git remote add <span>shortname</span>:</p>
+<p>We’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run <code>git remote add [shortname] [url]</code>:</p>
 
 <pre><code>$ git remote
 origin
@@ -76,7 +76,7 @@ From git://github.com/paulboone/ticgit
 
 <h3 id='pushing_to_your_remotes'>Pushing to Your Remotes</h3>
 
-<p>When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: git push <span>remote-name</span>. If you want to push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:</p>
+<p>When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: <code>git push [remote-name] [branch-name]</code>. If you want to push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:</p>
 
 <pre><code>$ git push origin master</code></pre>
 
@@ -84,7 +84,7 @@ From git://github.com/paulboone/ticgit
 
 <h3 id='inspecting_a_remote'>Inspecting a Remote</h3>
 
-<p>If you want to see more information about a particular remote, you can use the git remote show <span>remote-name</span> command. If you run this command with a particular shortname, such as origin, you get something like this:</p>
+<p>If you want to see more information about a particular remote, you can use the <code>git remote show [remote-name]</code> command. If you run this command with a particular shortname, such as origin, you get something like this:</p>
 
 <pre><code>$ git remote show origin
 * remote origin

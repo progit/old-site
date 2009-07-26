@@ -1,218 +1,49 @@
 ---
 layout: master
-title: Pro Git 4.5 Git on the Server Git Server on EC2
+title: Pro Git 4.5 Git on the Server Public Access
 ---
-<h2 id='git_server_on_ec2'>Git Server on EC2</h2>
+<h2 id='public_access'>Public Access</h2>
 
-<p>sop: Do we need to go into detail about using AWS EC2?</p>
+<p>What if you want anonymous read access to your project? Perhaps instead of hosting an internal private project, you want to host an open source project. Or maybe you have a bunch of automated build servers or continuous integration servers that change a lot, and you don’t want to have to generate SSH keys all the time—you just want to add simple anonymous read access.</p>
 
-<p>dwp: I wonder if this is a candidate for an appendix. It&#8217;s not really describing git specifically, but it could come in handy for the reader. What do you think?</p>
+<p>Probably the simplest way for smaller setups is to run a static web server with its document root where your Git repositories are, and then enable that post-update hook we mentioned in the first section of this chapter. Let’s work from the previous example. Say you have your repositories in the /opt/git directory, and an Apache server is running on your machine. Again, you can use any web server for this; but as an example, we’ll demonstrate some basic Apache configurations that should give you an idea of what you might need.</p>
 
-<p>If you want to test this setup out quickly instead of spending a few hours getting everything setup step by step following the instructions in the previous section, I&#8217;ve setup an Amazon EC2 image for your convenience. If you&#8217;re unfamiliar with Amazon&#8217;s EC2 service, it&#8217;s a web service that lets you provision a custom server on demand and pay for it by the hour, starting at $0.10 per hour.</p>
+<p>First you need to enable the hook:</p>
 
-<p>dwp: Pricing correct at time of press, of course&#8230;</p>
+<pre><code>$ cd project.git
+$ mv hooks/post-update.sample hooks/post-update
+$ chmod a+x hooks/post-update</code></pre>
 
-<p>If you are interested in getting a server with Gitosis, GitWeb and a Git daemon up and running quickly to evaluate, this section will quickly describe how to do so. You&#8217;ll need an Amazon AWS account and the EC2 tools installed. Since getting EC2 itself setup is not the simplest process and this isn&#8217;t really the right place to go over it in detail, if you don&#8217;t have an EC2 account yet you can find out all about the service at Amazon&#8217;s official website here:</p>
+<p>If you’re using a version of Git earlier than 1.6, the mv command isn’t necessary—Got started naming the hooks examples with the .sample postfix only recently.</p>
 
-<pre><code>http://aws.amazon.com/ec2/</code></pre>
+<p>What does this post-update hook do? It looks basically like this:</p>
 
-<p>To setup local tools for an Ubuntu machine, a nice quick start guide is at</p>
+<pre><code>$ cat .git/hooks/post-update 
+#!/bin/sh
+exec git-update-server-info</code></pre>
 
-<pre><code>http://tinyurl.com/ec2ubuntu</code></pre>
+<p>This means that when you push to the server via SSH, Git will run this command to update the files needed for HTTP fetching.</p>
 
-<p>If you use a Mac, the instructions are pretty similar, but there is a Mac specific guide here:</p>
+<p>Next, you need to add a VirtualHost entry to your Apache configuration with the document root as the root directory of your Git projects. Here, we’re assuming that you have wildcard DNS set up to send <code>*.gitserver</code> to whatever box you’re using to run all this:</p>
 
-<pre><code>http://tinyurl.com/ec2mac</code></pre>
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerName git.gitserver
+    DocumentRoot /opt/git
+    &lt;Directory /opt/git/&gt;
+        Order allow, deny
+        allow from all
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre>
 
-<h3 id='running_a_git_server_instance'>Running a Git Server Instance</h3>
+<p>You’ll also need to set the Unix user group of the /opt/git directories to www-data so your web server can read-access the repositories, because the Apache instance running the CGI script will (by default) be running as that user:</p>
 
-<p>dwp: What is AMI?</p>
+<pre><code>$ chgrp -R www-data /opt/git</code></pre>
 
-<p>The AMI for the Git server image I built is <code>ami-eec22587</code>. Assuming you have the EC2 tools installed properly, all you need to do to spin up your new Git server is to run <code>ec2-run-instances</code> with that AMI (I&#8217;ve moved the output fields to new lines to be easier to read).</p>
+<p>When you restart Apache, you should be able to clone your repositories under that directory by specifying the URL for your project:</p>
 
-<pre><code>$ ec2-run-instances ami-eec22587
-RESERVATION	r-98229cf1	502376316513	default
-INSTANCE	i-41c05628	
-		ami-eec22587
-		
-					
-		pending		
-		m1.small
-		2009-02-23T00:52:14+0000	
-		us-east-1a	
-		aki-a71cf9ce	
-		ari-a51cf9cc</code></pre>
+<pre><code>$ git clone http://git.gitserver/project.git</code></pre>
 
-<p>Then you&#8217;ll want to authorize the SSH and GIT ports:</p>
-
-<pre><code>$ ec2-authorize default -p 22
-$ ec2-authorize default -p 9418</code></pre>
-
-<p>After a couple of seconds, your new server will be running.</p>
-
-<pre><code>$ ec2-describe-instances 
-RESERVATION	r-c4239dad	502376316513	default
-INSTANCE	i-95c056fc	
-		ami-eec22587	
-		ec2-75-101-209-100.compute-1.amazonaws.com	
-		domU-12-31-39-00-AA-41.compute-1.internal	
-		running
-		m1.small	
-		2009-02-23T01:06:27+0000	
-		us-east-1c	
-		aki-a71cf9ce	
-		ari-a51cf9cc	</code></pre>
-
-<p>You should be able to SSH into your new server now.</p>
-
-<pre><code>$ ssh -i &lt;your.pem&gt; root@ec2-75-101-209-100.compute-1.amazonaws.com</code></pre>
-
-<h3 id='configuring_your_new_server'>Configuring your new Server</h3>
-
-<p>Now all you have to do is initialize Gitosis with your personal SSH public key and you&#8217;re ready to go. First, get your public key on the server.</p>
-
-<pre><code># locally
-$ scp ~/.ssh/id_rsa.pub root@ec2-75-101-209-100.compute-1.amazonaws.com:/tmp</code></pre>
-
-<p>dwp: Do you need a root password? Or will the reader have that somehow?</p>
-
-<p>Then you can initialize Gitosis.</p>
-
-<pre><code># on the server
-$ sudo -H -u git gitosis-init &lt; /tmp/id_rsa.pub
-$ chmod a+x /opt/git/gitosis-admin.git/hooks/post-update</code></pre>
-
-<p>Now you can clone the new gitosis-admin repository locally and start your configuring.</p>
-
-<pre><code># locally
-$ git clone git@ec2-75-101-209-100.compute-1.amazonaws.com:gitosis-admin.git </code></pre>
-
-<p>There is also some help in the README file that should be in the home directory of the root user when you log in. You should now have a server running GitWeb and a Git daemon, administered via Gitosis.</p>
-
-<h3 id='persistant_data'>Persistant Data</h3>
-
-<p>When a server on EC2 goes down for any reason, you lose any data that was added to that disk since it was instantiated. This means that if you set all this up, any reboot or AWS power loss will lose everything you&#8217;ve done. This image is meant to be used as a learning tool, not a permanent server. If you really want to keep permanent data on EC2, you&#8217;ll have to setup an Amazon elastic block storage device, link it to your instance and set it up so you can reboot the server appropriately. You can read about EBS at <code>http://aws.amazon.com/ebs/</code>.</p>
-
-<p>dwp: It seems a strange idea to pay AWS 10cents an hour to host a server for a bit of a play, don&#8217;t you think? ## Hosted Git ##</p>
-
-<p>Finally, if you don&#8217;t want to go through all of that, there are several options for hosting your Git projects on an external dedicated hosting site. There are a number of advantages to this - it is generally very quick to setup, easy to start projects on and there is no server maintainance or monitoring involved. Even if you do setup and run your own server internally, you may still want to use a public hosting site for your open source code - it&#8217;s generally easier for the open source community to find and help you with.</p>
-
-<p>These days you actually have a huge number of options for hosting to choose from, each with different advantages and disadvantages. To see an up to date list of them, check out the GitHosting page on the main Git wiki.</p>
-
-<pre><code>http://git.or.cz/gitwiki/GitHosting</code></pre>
-
-<p>As I can&#8217;t cover all of them and since I happen to work at one of them, I will use this section to walk through setting up an account and creating a new project at GitHub, so you get an idea of what is involved. I will show some basic GitHub usage both because I work there and so am most familiar with it, and because it is by far the largest open source Git hosting site. It is also one of the very few that offers both public and private hosting options so you can keep your open source and private commercial code in the same place. In fact, we used GitHub to privately collaborate on this very book.</p>
-
-<h3 id='github'>GitHub</h3>
-
-<p>GitHub is slightly different than most code hosting sites in the way that it namespaces projects. Instead of being primarily based on the project, GitHub is user centric. That means when I host my &#8216;grit&#8217; project on GitHub, you will not find it at &#8216;github.com/grit&#8217;, but instead at &#8216;github.com/schacon/grit&#8217;. There is no canonical version of any project, which allows for a project to move from one user to another seamlessly if the first author abandons their project.</p>
-
-<p>GitHub is also a commercial company that charges for accounts that maintain private repositories, but anyone can quickly get a free account to host as many open source projects as you want. We&#8217;ll quickly go over how that is done.</p>
-
-<h4 id='setting_up_a_user_account'>Setting up a user Account</h4>
-
-<p>The first thing you&#8217;ll need to do is setup a free user account. If you visit the &#8220;Pricing and Signup&#8221; page at <code>http://github.com/plans</code> and click on the &#8220;Sign Up&#8221; button on the Free account, you&#8217;ll be taken to the signup page (<code>https://github.com/signup/free</code>).</p>
-
-<p><img src='/images/github/4.1.plans.sm.png' alt='Plans Page' /></p>
-
-<p>Here we will have to choose a username that is not taken in the system yet, an email address that will be associated with the account and a password.</p>
-
-<p><img src='/images/github/4.2.signupform.sm.png' alt='Signup Form' /></p>
-
-<p>If you have it available, this is a good time to add your public SSH key as well. We covered how to generate a new key in the &#8216;Small Setups&#8217; section earlier. Simply take the contents of the public key of that pair and paste it into the textbox here. Clicking on the &#8216;explain ssh keys&#8217; link there will take you to detailed instructions on how to do so on all major operating systems.</p>
-
-<p>Once you hit the &#8216;signup&#8217; button, you&#8217;ll be taken to your new user dashboard.</p>
-
-<p><img src='/images/github/4.3.newuser.sm.png' alt='New User' /></p>
-
-<p>Now we have our user all setup and can create a new repository. We&#8217;ll start by clicking the &#8216;create a new one&#8217; link next to &#8216;Your Repositories&#8217;.</p>
-
-<h4 id='creating_a_new_project'>Creating a new Project</h4>
-
-<p>Once you&#8217;ve hit that link, you&#8217;ll be taken to the &#8216;New Repository&#8217; form.</p>
-
-<p><img src='/images/github/4.4.newrepo.sm.png' alt='New Repository' /></p>
-
-<p>All we really have to do is provide a project name, but we can also add a description. When that is done, we can hit the &#8216;Create Repository&#8217; button. Now we have a new repository on GitHub.</p>
-
-<p><img src='/images/github/4.5.header.sm.png' alt='New Repo Header' /></p>
-
-<p>Before we push new content up, GitHub will simply show us instructions for how to get a repository there. There are instructions specific to a brand new project, pushing an existing Git project, or importing from Subversion.</p>
-
-<p><img src='/images/github/4.6.instructions.sm.png' alt='New Repo Instructions' /></p>
-
-<p>These instructions are similar to what we&#8217;ve already gone over, basically to initialize a project if it is not already a Git project with:</p>
-
-<pre><code>$ git init
-$ git add .
-$ git commit -m &#39;initial commit&#39;</code></pre>
-
-<p>Then once you have a Git repository locally, add GitHub as a remote and push your master branch up.</p>
-
-<pre><code>$ git remote add origin git@github.com:testinguser/iphone_project.git
-$ git push origin master</code></pre>
-
-<p>Now your project is hosted on GitHub and you can give the URL to anyone you want to share your project with, in this case <code>http://github.com/testinguser/iphone_project</code>. We can also see from the header on each of our projects pages that we have two Git URLs.</p>
-
-<p><img src='/images/github/4.7.headershort.sm.png' alt='Project Header' /></p>
-
-<p>The &#8216;Public Clone URL&#8217; is a public, read only Git URL that anyone can clone the project over. Feel free to give that out and post it on your website or what have you.</p>
-
-<p>The &#8216;Your Clone URL&#8217; is a read/write SSH based URL that you can only read or write over if you connect with the SSH private key that is associated with the public key that you uploaded for your user. When other users visit this project page, they will not see that URL, only the public one.</p>
-
-<h4 id='importing_from_subversion'>Importing from Subversion</h4>
-
-<p>If you have an existing public Subversion project that you want to import into Git, GitHub can often do that for you. At the bottom of the instructions page there is a link to a Subversion import. If you click on that, you&#8217;ll see a form with some information on the import process and a textbox where you can paste in the URL of your public Subversion project.</p>
-
-<p><img src='/images/github/4.8.svnimport.sm.png' alt='SVN Import' /></p>
-
-<p>If your project is very large, nonstandard or private, this process will likely not work for you. In Chapter 7 of this book, we&#8217;ll learn how to do more complicated manual project imports.</p>
-
-<h4 id='adding_collaborators'>Adding Collaborators</h4>
-
-<p>Now let&#8217;s add the rest of the team. If John, Josie and Jessica all sign up for accounts on GitHub and we want to give them all push access to our repository, we can add them to our project as &#8216;Collaborators&#8217;. This will allow pushes from their public keys to work as well.</p>
-
-<p>If you click on the &#8216;edit&#8217; button in the project header, or the &#8216;Admin&#8217; tab at the top of the project, you&#8217;ll get to the &#8216;Admin&#8217; page of your GitHub project which looks something like this:</p>
-
-<p><img src='/images/github/4.9.collab.sm.png' alt='Admin Page' /></p>
-
-<p>To give another user write access to your project, click the &#8216;Add another collaborator&#8217; link. You will get a new textbox that you can type a username into. As you type, a helper will pop up showing you possible username matches. When you find the correct user, click the &#8216;Add&#8217; button to add that user as a collaborator on your project.</p>
-
-<p><img src='/images/github/4.10.collabadd.png' alt='Collaborator Add' /></p>
-
-<p>When you are finished adding collaborators, you should be able to see a list of them in the &#8216;Repository Collaborators&#8217; box.</p>
-
-<p><img src='/images/github/4.11.collabs.png' alt='Collaborators' /></p>
-
-<p>dwp: Would that image look a bit better with more than one?</p>
-
-<p>If you need to revoke access to individuals, you can simply click the &#8216;revoke&#8217; link and their push access will be removed. For future projects, you can also copy collaborator groups by copying the permissions of an existing project.</p>
-
-<h4 id='your_project'>Your Project</h4>
-
-<p>Once you push your project up, or have it imported from Subversion, then you will have a main project page that looks something like this:</p>
-
-<p><img src='/images/github/4.12.main.sm.png' alt='Main Page' /></p>
-
-<p>When people visit your project, they will see this page. It contains tabs to different aspects of your projects. The &#8216;Commits&#8217; tab will show you a list of commits in reverse chronological order similar to the output of the <code>git log</code> command. The &#8216;Network&#8217; tab will show all the people that have forked your project and contributed back. The &#8216;Downloads&#8217; tab will allow you to upload binaries of your project and have links to tarballs and zipped versions of any of your tagged points in your project. The &#8216;Wiki&#8217; tab provides your project with a wiki for you to write documentation or other information about your project on. The &#8216;Graphs&#8217; tab has some contribution visualizations and statistics about your project. The main &#8216;Source&#8217; tab that you land on will show your projects main directory listing and will automatically render the README file below it if you have one. It will also show a box above that with the latest commit information.</p>
-
-<h4 id='forking_projects'>Forking Projects</h4>
-
-<p>If you want to contribute to an existing project that you do not have push access to, GitHub encourages &#8216;forking&#8217; the project. If you land on someone&#8217;s project page that looks interesting and you feel that you want to hack on it a bit, you can click the &#8216;fork&#8217; button in the project header to have GitHub copy that project to your user so you can push to it.</p>
-
-<p>This way projects don&#8217;t have to worry about adding users as collaborators to give them push access. People can fork a project, push to it and the main project maintainer can pull those changes in by adding them as a remote and merging their work in.</p>
-
-<p>To fork a project, simply visit the project page (in this case, &#8216;mojombo/chronic&#8217;) and click the &#8216;fork&#8217; button in the header.</p>
-
-<p><img src='/images/github/4.13.fork.sm.png' alt='Forking a Project' /></p>
-
-<p>After a few seconds, you will be taken to your new project page, which will display that this project is a fork of another one.</p>
-
-<p><img src='/images/github/4.14.myfork.png' alt='My Fork' /></p>
-
-<h4 id='github_summary'>GitHub Summary</h4>
-
-<p>So that&#8217;s all we&#8217;ll cover about GitHub, but it&#8217;s important to note how quickly this all can get done. You can create an account, add a new project and push to it in a matter of minutes. If your project is open source, you will also get a huge community of developers that now have visibility into your project and may well fork it and help contribute to it. At the very least, it may be a way to get up and running and trying out Git quickly.</p>
+<p>This way, you can set up HTTP-based read access to any of your projects for a fair number of users in a few minutes. Another simple option for public unauthenticated access is to start a Git daemon, although that requires you to daemonize the process - we’ll cover this option in the next section, if you prefer that route.</p>
 
 <div id='nav'>
 <a href='ch4-4.html'>prev</a> | <a href='ch4-6.html'>next</a>

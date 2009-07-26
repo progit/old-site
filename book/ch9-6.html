@@ -1,52 +1,152 @@
 ---
 layout: master
-title: Pro Git 9.6 Git Internals Object Storage
+title: Pro Git 9.6 Git Internals Transfer Protocols
 ---
-<h2 id='object_storage'>Object Storage</h2>
+<h2 id='transfer_protocols'>Transfer Protocols</h2>
 
-<p>I mentioned earlier that a header is stored with the content - let&#8217;s take a minute to look at how exactly Git stores its objects. Let&#8217;s go through how to store an actual blob object, let&#8217;s say the string &#8220;what is up, doc?&#8221; - we&#8217;ll do it interactively in the Ruby scripting language.</p>
+<p>Git can transfer data between two repositories in two major ways: over HTTP and via the so-called smart protocols used in the file://, ssh://, and git:// transports. This section will quickly cover how these two main protocols operate.</p>
 
-<pre><code>$ irb
-&gt;&gt; content = &quot;what is up, doc?&quot;
-=&gt; &quot;what is up, doc?&quot;</code></pre>
+<h3 id='the_dumb_protocol'>The Dumb Protocol</h3>
 
-<p>Git constructs a header that starts with the type of the object, in this case a &#8216;blob&#8217;. Then it adds a space followed by the size of the content and finally a null byte.</p>
+<p>Git transport over HTTP is often referred to as the dumb protocol because it requires no Git-specific code on the server side during the transport process. The fetch process is a series of GET requests, where the client can assume the layout of the Git repository on the server. Let’s follow the http-fetch process for the simplegit library:</p>
 
-<pre><code>&gt;&gt; header = &quot;blob #{content.length}\0&quot;
-=&gt; &quot;blob 16\000&quot;</code></pre>
+<pre><code>$ git clone http://github.com/schacon/simplegit-progit.git</code></pre>
 
-<p>Then it concatenates the header and the original content and then it calculates the SHA-1 checksum of that new content.</p>
+<p>The first thing this command does is pull down the info/refs file. This file is written by the update-server-info command, which is why you need to enable that as a post-receive hook in order for the HTTP transport to work properly:</p>
 
-<pre><code>&gt;&gt; store = header + content
-=&gt; &quot;blob 16\000what is up, doc?&quot;
-&gt;&gt; require &#39;digest/sha1&#39;
-=&gt; true
-&gt;&gt; sha1 = Digest::SHA1.hexdigest(store)
-=&gt; &quot;bd9dbf5aae1a3862dd1526723246b20206e5fc37&quot;</code></pre>
+<pre><code>=&gt; GET info/refs
+ca82a6dff817ec66f44342007202690a93763949     refs/heads/master</code></pre>
 
-<p>DWP: What does &#8216;require&#8217; do? Is that how things are imported in Ruby? Please don&#8217;t assume anyone knows Ruby.</p>
+<p>Now you have a list of the remote references and SHAs. Next, you look for what the HEAD reference is so you know what to check out when you’re finished:</p>
 
-<p>Git will then compress the new content with Zlib.</p>
+<pre><code>=&gt; GET HEAD
+ref: refs/heads/master</code></pre>
 
-<pre><code>&gt;&gt; require &#39;zlib&#39;
-=&gt; true
-&gt;&gt; zlib_content = Zlib::Deflate.deflate(store)
-=&gt; &quot;x\234K\312\311OR04c(\317H,Q\310,V(-\320QH\311O\266\a\000_\034\a\235&quot;</code></pre>
+<p>You need to check out the master branch when you’ve completed the process. At this point, you’re ready to start the walking process. Because your starting point is the ca82a6 commit object you saw in the info/refs file, you start by fetching that:</p>
 
-<p>Finally, we&#8217;re going to write our Zlib deflated content to an object on disk.</p>
+<pre><code>=&gt; GET objects/ca/82a6dff817ec66f44342007202690a93763949
+(179 bytes of binary data)</code></pre>
 
-<pre><code>&gt;&gt; path = &#39;.git/objects/&#39; + sha1[0,2] + &#39;/&#39; + sha1[2,38]
-=&gt; &quot;.git/objects/bd/9dbf5aae1a3862dd1526723246b20206e5fc37&quot;
-&gt;&gt; require &#39;fileutils&#39;
-=&gt; true
-&gt;&gt; FileUtils.mkdir_p(File.dirname(path))
-=&gt; &quot;.git/objects/bd&quot;
-&gt;&gt; File.open(path, &#39;w&#39;) { |f| f.write zlib_content }
-=&gt; 32</code></pre>
+<p>You get an object back—that object is in loose format on the server, and you fetched it over a static HTTP GET request. You can zlib-uncompress it, strip off the header, and look at the commit content:</p>
 
-<p>DWP: Please be careful to explain thoroughly anything written in Ruby. I assume |f| just gets you a local identifier for the file&#8230;</p>
+<pre><code>$ git cat-file -p ca82a6dff817ec66f44342007202690a93763949
+tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+parent 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+author Scott Chacon &lt;schacon@gmail.com&gt; 1205815931 -0700
+committer Scott Chacon &lt;schacon@gmail.com&gt; 1240030591 -0700
 
-<p>That&#8217;s it - we&#8217;ve now created a valid Git blob object. All Git objects are stored the same way, just with different types - instead of the string &#8216;blob&#8217; at the beginning of the header, it will be &#8216;commit&#8217; or &#8216;tree&#8217;. Also, while the blob content can be nearly anything, the commit and tree content are very specifically formatted.</p>
+changed the verison number</code></pre>
+
+<p>Next, you have two more objects to retrieve — cfda3b, which is the tree of content that the commit we just retrieved points to; and 085bb3, which is the parent commit:</p>
+
+<pre><code>=&gt; GET objects/08/5bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+(179 bytes of data)</code></pre>
+
+<p>That gives you your next commit object. Grab the tree object:</p>
+
+<pre><code>=&gt; GET objects/cf/da3bf379e4f8dba8717dee55aab78aef7f4daf
+(404 - Not Found)</code></pre>
+
+<p>Oops — it looks like that tree object isn’t in loose format on the server, so you get a 404 response back. There are a couple of reasons for this—the object could be in an alternate repository, or it could be in a packfile in this repository. Git checks for any listed alternates first:</p>
+
+<pre><code>=&gt; GET objects/info/http-alternates
+(empty file)</code></pre>
+
+<p>If this comes back with a list of alternate URLs, Git checks for loose files and packfiles there—this is a nice mechanism for projects that are forks of one another to share objects on disk. However, because no alternates are listed in this case, your object must be in a packfile. To see what packfiles are available on this server, you need to get the <code>objects/info/packs</code> file, which contains a listing of them (also generated by <code>update-server-info</code>):</p>
+
+<pre><code>=&gt; GET objects/info/packs
+P pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack</code></pre>
+
+<p>There is only one packfile on the server, so your object is obviously in there, but you’ll check the index file to make sure. This is also useful if you have multiple packfiles on the server, so you can see which packfile contains the object you need:</p>
+
+<pre><code>=&gt; GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.idx
+(4k of binary data)</code></pre>
+
+<p>Now that you have the packfile index, you can see if your object is in it—because the index lists the SHAs of the objects contained in the packfile and the offsets to those objects. Your object is there, so go ahead and get the whole packfile:</p>
+
+<pre><code>=&gt; GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack
+(13k of binary data)</code></pre>
+
+<p>You have your tree object, so you continue walking your commits. They’re all also within the packfile you just downloaded, so you don’t have to do any more requests to your server. Git checks out a working copy of the master branch that was pointed to by the HEAD reference you downloaded at the beginning.</p>
+
+<p>The entire output of this process looks like this:</p>
+
+<pre><code>$ git clone http://github.com/schacon/simplegit-progit.git
+Initialized empty Git repository in /private/tmp/simplegit-progit/.git/
+got ca82a6dff817ec66f44342007202690a93763949
+walk ca82a6dff817ec66f44342007202690a93763949
+got 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Getting alternates list for http://github.com/schacon/simplegit-progit.git
+Getting pack list for http://github.com/schacon/simplegit-progit.git
+Getting index for pack 816a9b2334da9953e530f27bcac22082a9f5b835
+Getting pack 816a9b2334da9953e530f27bcac22082a9f5b835
+ which contains cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+walk 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+walk a11bef06a3f659402fe7563abf99ad00de2209e6</code></pre>
+
+<h3 id='the_smart_protocol'>The Smart Protocol</h3>
+
+<p>The HTTP method is simple but a bit inefficient. Using smart protocols is a more common method of transferring data. These protocols have a process on the remote end that is intelligent about Git—it can read local data and figure out what the client has or needs and generate custom data for it. There are two sets of processes for transferring data: a pair for uploading data and a pair for downloading data.</p>
+
+<h4 id='uploading_data'>Uploading Data</h4>
+
+<p>To upload data to a remote process, Git uses the send-pack and receive-pack processes. The send-pack process runs on the client and connects to a receive-pack process on the remote side.</p>
+
+<p>For example, say you run git push origin master in your project, and origin is defined as a URL that uses the SSH protocol. Git fires up the send-pack process, which initiates a connection over SSH to your server. It tries to run a command on the remote server via an SSH call that looks something like this:</p>
+
+<pre><code>$ ssh -x git@github.com &quot;git-receive-pack &#39;schacon/simplegit-progit.git&#39;&quot;
+005bca82a6dff817ec66f4437202690a93763949 refs/heads/master report-status delete-refs
+003e085bb3bcb608e1e84b2432f8ecbe6306e7e7 refs/heads/topic
+0000</code></pre>
+
+<p>The <code>git-receive-pack</code> command immediately responds with one line for each reference it currently has—in this case, just the master branch and its SHA. The first line also has a list of the server’s capabilities (here, report-status and delete-refs).</p>
+
+<p>Each line starts with a 4-byte hex value specifying how long the rest of the line is. Your first line starts with 005b, which is 91 in hex, meaning that 91 bytes remain on that line. The next line starts with 003e, which is 62, so you read the remaining 62 bytes. The next line is 0000, meaning the server is done with its references listing.</p>
+
+<p>Now that it knows the server’s state, your send-pack process determines what commits it has that the server doesn’t. For each reference that this push will update, the send-pack process tells the receive-pack process that information. For instance, if you’re updating the master branch and adding an experiment branch, the send-pack response may look something like this:</p>
+
+<pre><code>0085ca82a6dff817ec66f44342007202690a93763949  15027957951b64cf874c3557a0f3547bd83b3ff6 refs/heads/master report-status
+00670000000000000000000000000000000000000000 cdfdb42577e2506715f8cfeacdbabc092bf63e8d refs/heads/experiment
+0000</code></pre>
+
+<p>The SHA-1 value of all 0s means that nothing was there before—because you’re adding the experiment reference. If you were deleting a reference, you would see the opposite: all 0s on the right side.</p>
+
+<p>Git sends a line for each reference you’re updating with the old SHA, the new SHA, and the reference that is being updated. The first line also has the client’s capabilities. Next, the client uploads a packfile of all the objects the server doesn’t have yet. Finally, the server responds with a success (or failure) indication:</p>
+
+<pre><code>000Aunpack ok</code></pre>
+
+<h4 id='downloading_data'>Downloading Data</h4>
+
+<p>When you download data, the fetch-pack and upload-pack processes are involved. The client initiates a fetch-pack process that connects to an upload-pack process on the remote side to negotiate what data will be transferred down.</p>
+
+<p>There are different ways to initiate the upload-pack process on the remote repository. You can run via SSH in the same manner as the receive-pack process. You can also initiate the process via the Git daemon, which listens on a server on port 9418 by default. The fetch-pack process sends data that looks like this to the daemon after connecting:</p>
+
+<pre><code>003fgit-upload-pack schacon/simplegit-progit.git\0host=myserver.com\0</code></pre>
+
+<p>It starts with the 4 bytes specifying how much data is following, then the command to run followed by a null byte, and then the server’s hostname followed by a final null byte. The Git daemon checks that the command can be run and that the repository exists and has public permissions. If everything is cool, it fires up the upload-pack process and hands off the request to it.</p>
+
+<p>If you’re doing the fetch over SSH, fetch-pack instead runs something like this:</p>
+
+<pre><code>$ ssh -x git@github.com &quot;git-upload-pack &#39;schacon/simplegit-progit.git&#39;&quot;</code></pre>
+
+<p>In either case, after fetch-pack connects, upload-pack sends back something like this:</p>
+
+<pre><code>0088ca82a6dff817ec66f44342007202690a93763949 HEAD\0multi_ack thin-pack \
+  side-band side-band-64k ofs-delta shallow no-progress include-tag
+003fca82a6dff817ec66f44342007202690a93763949 refs/heads/master
+003e085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 refs/heads/topic
+0000</code></pre>
+
+<p>This is very similar to what receive-pack responds with, but the capabilities are different. In addition, it sends back the HEAD reference so the client knows what to check out if this is a clone.</p>
+
+<p>At this point, the fetch-pack process looks at what objects it has and responds with the objects that it needs by sending “want” and then the SHA it wants. It sends all the objects it already has with “have” and then the SHA. At the end of this list, it writes “done” to initiate the upload-pack process to begin sending the packfile of the data it needs:</p>
+
+<pre><code>0054want ca82a6dff817ec66f44342007202690a93763949 ofs-delta
+0032have 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+0000
+0009done</code></pre>
+
+<p>That is a very basic case of the transfer protocols. In more complex cases, the client supports <code>multi_ack</code> or side-band capabilities; but this example shows you the basic back and forth used by the smart protocol processes.</p>
 
 <div id='nav'>
 <a href='ch9-5.html'>prev</a> | <a href='ch9-7.html'>next</a>

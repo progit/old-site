@@ -1,0 +1,21 @@
+---
+layout: master
+title: Pro Git 5.17 Distributed Git Preparing a Release
+---
+<h2 id='preparing_a_release'>Preparing a Release</h2>
+
+<p>Now you want to release a build. One of the things you’ll want to do is create an archive of the latest snapshot of your code for those poor souls who don’t use Git. The command to do this is git archive:</p>
+
+<pre><code>$ git archive master --prefix=&#39;project/&#39; | gzip &gt; `git describe master`.tar.gz
+$ ls *.tar.gz
+v1.6.2-rc1-20-g8c5b85c.tar.gz</code></pre>
+
+<p>If someone opens that tarball, they get the latest snapshot of your project under a project directory. You can also create a zip archive in much the same way, but by passing the &#8211;format=zip option to git archive:</p>
+
+<pre><code>$ git archive master --prefix=&#39;project/&#39; --format=zip &gt; `git describe master`.zip</code></pre>
+
+<p>You now have a nice tarball and a zip archive of your project release that you can upload to your website or e-mail to people.</p>
+
+<div id='nav'>
+<a href='ch5-16.html'>prev</a> | <a href='ch5-18.html'>next</a>
+</div>

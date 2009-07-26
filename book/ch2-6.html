@@ -114,7 +114,7 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
 <h3 id='verifying_tags'>Verifying Tags</h3>
 
-<p>To verify a signed tag, you use git tag -v <span>tag-name</span>. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:</p>
+<p>To verify a signed tag, you use <code>git tag -v [tag-name]</code>. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:</p>
 
 <pre><code>$ git tag -v v1.4.2.1
 object 883653babd8ee7ea23e6a5c392bb739348b1eb61
@@ -181,7 +181,7 @@ Date:   Sun Apr 27 20:43:35 2008 -0700
 
 <h3 id='sharing_tags'>Sharing Tags</h3>
 
-<p>By default, the git push command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them. This process is just like sharing remote branches – you can run git push origin <span>tagname</span>.</p>
+<p>By default, the git push command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them. This process is just like sharing remote branches – you can run <code>git push origin [tagname]</code>.</p>
 
 <pre><code>$ git push origin v1.5
 Counting objects: 50, done.

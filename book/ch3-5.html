@@ -68,7 +68,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <p>Checking out a local branch from a remote branch automatically creates what is called a tracking branch. Tracking branches are local branches that have a direct relationship to a remote branch. If you’re on a tracking branch and type git push, Git automatically knows which server and branch to push to. Also, running git pull while on one of these branches fetches all the remote references and then automatically merges in the corresponding remote branch.</p>
 
-<p>When you clone a repository, it generally automatically creates a master branch that tracks origin/master. That’s why git push and git pull work out of the box with no other arguments. However, you can set up other tracking branches if you wish—ones that don’t track branches on origin and don’t track the master branch. The simple case is the example you just saw, running git checkout -b <span>branch</span>/<span>branch</span>. If you have Git version 1.6.2 or later, you can also use the &#8211;track shorthand:</p>
+<p>When you clone a repository, it generally automatically creates a master branch that tracks origin/master. That’s why git push and git pull work out of the box with no other arguments. However, you can set up other tracking branches if you wish—ones that don’t track branches on origin and don’t track the master branch. The simple case is the example you just saw, running <code>git checkout -b [branch] [remotename]/[branch]</code>. If you have Git version 1.6.2 or later, you can also use the &#8211;track shorthand:</p>
 
 <pre><code>$ git checkout --track origin/serverfix
 Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
@@ -84,13 +84,13 @@ Switched to a new branch &quot;sf&quot;</code></pre>
 
 <h3 id='deleting_remote_branches'>Deleting Remote Branches</h3>
 
-<p>Suppose you’re done with a remote branch—say, you and your collaborators are finished with a feature and have merged it into your remote’s master branch (or whatever branch your stable codeline is in). You can delete a remote branch using the rather obtuse syntax git push <span>remotename</span> :<span>branch</span>. If you want to delete your serverfix branch from the server, you run the following:</p>
+<p>Suppose you’re done with a remote branch—say, you and your collaborators are finished with a feature and have merged it into your remote’s master branch (or whatever branch your stable codeline is in). You can delete a remote branch using the rather obtuse syntax <code>git push [remotename] :[branch]</code>. If you want to delete your serverfix branch from the server, you run the following:</p>
 
 <pre><code>$ git push origin :serverfix
 To git@github.com:schacon/simplegit.git
  - [deleted]         serverfix</code></pre>
 
-<p>Boom. No more branch on your server. You may want to dog-ear this page, because you’ll need that command, and you’ll likely forget the syntax. A way to remember this command is by recalling the git push <span>remotename</span>:<span>remotebranch</span> syntax that we went over a bit earlier. If you leave off the <span>localbranch</span> portion, then you’re basically saying, “Take nothing on my side and make it be <span>remotebranch</span>.”</p>
+<p>Boom. No more branch on your server. You may want to dog-ear this page, because you’ll need that command, and you’ll likely forget the syntax. A way to remember this command is by recalling the <code>git push [remotename] [localbranch]:[remotebranch]</code> syntax that we went over a bit earlier. If you leave off the <code>[localbranch]</code> portion, then you’re basically saying, “Take nothing on my side and make it be <code>[remotebranch]</code>.”</p>
 
 <div id='nav'>
 <a href='ch3-4.html'>prev</a> | <a href='ch3-6.html'>next</a>

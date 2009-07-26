@@ -1,0 +1,41 @@
+---
+layout: master
+title: Pro Git 5.15 Distributed Git Tagging Your Releases
+---
+<h2 id='tagging_your_releases'>Tagging Your Releases</h2>
+
+<p>When you’ve decided to cut a release, you’ll probably want to drop a tag so you can re-create that release at any point going forward. You can create a new tag as I discussed in Chapter 2. If you decide to sign the tag as the maintainer, the tagging may look something like this:</p>
+
+<pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
+You need a passphrase to unlock the secret key for
+user: &quot;Scott Chacon &lt;schacon@gmail.com&gt;&quot;
+1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
+
+<p>If you do sign your tags, you may have the problem of distributing the public PGP key used to sign your tags. The maintainer of the Git project has solved this issue by including their public key as a blob in the repository and then adding a tag that points directly to that content. To do this, you can figure out which key you want by running gpg &#8211;list-keys:</p>
+
+<pre><code>$ gpg --list-keys
+/Users/schacon/.gnupg/pubring.gpg
+---------------------------------
+pub   1024D/F721C45A 2009-02-09 [expires: 2010-02-09]
+uid                  Scott Chacon &lt;schacon@gmail.com&gt;
+sub   2048g/45D02282 2009-02-09 [expires: 2010-02-09]</code></pre>
+
+<p>Then, you can directly import the key into the Git database by exporting it and piping that through git hash-object, which writes a new blob with those contents into Git and gives you back the SHA-1 of the blob:</p>
+
+<pre><code>$ gpg -a --export F721C45A | git hash-object -w --stdin
+659ef797d181633c87ec71ac3f9ba29fe5775b92</code></pre>
+
+<p>Now that you have the contents of your key in Git, you can create a tag that points directly to it by specifying the new SHA-1 value that the hash-object command gave you:</p>
+
+<pre><code>$ git tag -a maintainer-pgp-pub 659ef797d181633c87ec71ac3f9ba29fe5775b92</code></pre>
+
+<p>If you run git push &#8211;tags, the maintainer-pgp-pub tag will be shared with everyone. If anyone wants to verify a tag, they can directly import your PGP key by pulling the blob directly out of the database and importing it into GPG:</p>
+
+<pre><code>$ git show maintainer-pgp-pub | gpg --import</code></pre>
+
+<p>They can use that key to verify all your signed tags. Also, if you include instructions in the tag message, running git show <pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'>HTML parse error: 
+&lt;tag&gt; will let you give the end user more specific instructions about tag verification.</pre></p>
+
+<div id='nav'>
+<a href='ch5-14.html'>prev</a> | <a href='ch5-16.html'>next</a>
+</div>

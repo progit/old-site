@@ -1,207 +1,75 @@
 ---
 layout: master
-title: Pro Git 4.4 Git on the Server Gitosis
+title: Pro Git 4.4 Git on the Server Setting Up the Server
 ---
-<h2 id='gitosis'>Gitosis</h2>
+<h2 id='setting_up_the_server'>Setting Up the Server</h2>
 
-<p>Keeping all the users public keys in the <code>authorized_keys</code> file for access will only work well for a while. Once you have hundreds of users, it&#8217;s going to be much more of a pain to manage that process. You have to shell onto the server each time and there is no access control at all - everyone in that file will have read and write access to every project.</p>
+<p>Let’s walk through setting up SSH access on the server side. In this example, you’ll use the <code>authorized_keys</code> method for authenticating your users. We also assume you’re running a standard Linux distribution like Ubuntu. First, you create a “git” user and a .ssh directory for that user.</p>
 
-<h3 id='gitosis'>Gitosis</h3>
+<pre><code>$ sudo adduser git
+$ su git
+$ cd
+$ mkdir .ssh</code></pre>
 
-<p>At this point, you may want to turn to a widely used software project called &#8216;Gitosis&#8217;. Gitosis is basically just a set of scripts that help you manage that <code>authorized_keys</code> file as well as implement some simple access controls. The really interesting part is that the UI for this tool for adding people and determining access is not a web interface but a special Git repository. You setup the information in that project and when you push it, Gitosis reconfigures the server based on that, which is pretty cool.</p>
+<p>Next, you need to add some developer SSH public keys to the <code>authorized_keys</code> file for that user. Let’s assume you’ve received a few keys by e-mail and saved them to temporary files. Again, the public keys look something like this:</p>
 
-<p>Now, installing Gitosis is not the simplest task ever, but it&#8217;s not too difficult. It&#8217;s probably easiest to use a Linux server for it - for these examples I&#8217;ll be using a stock Ubuntu 8.10 server.</p>
+<pre><code>$ cat /tmp/id_rsa.john.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
+ojG6rs6hPB09j9R/T17/x4lhJA0F3FR1rP6kYBRsWj2aThGw6HXLm9/5zytK6Ztg3RPKK+4k
+Yjh6541NYsnEAZuXz0jTTyAUfrtU3Z5E003C4oxOj6H0rfIF1kKI9MAQLMdpGW1GYEIgS9Ez
+Sdfd8AcCIicTDWbqLAcU4UpkaX8KyGlLwsNuuGztobF8m72ALC/nLF6JLtPofwFBlgc+myiv
+O7TCUSBdLQlgMVOFq1I2uPWQOkOWQAHukEOmfjy2jctxSDBQ220ymjaNsHT4kgtZg2AYYgPq
+dAv8JggJICUvax2T9va5 gsg-keypair</code></pre>
 
-<p>Gitosis requires some Python tools, so first we have to install the Python &#8216;setuptools&#8217; package, which Ubuntu provides as &#8216;python-setuptools&#8217;.</p>
+<p>You just append them to your <code>authorized_keys</code> file:</p>
 
-<pre><code>$ apt-get install python-setuptools</code></pre>
+<pre><code>$ cat /tmp/id_rsa.john.pub &gt;&gt; ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.josie.pub &gt;&gt; ~/.ssh/authorized_keys
+$ cat /tmp/id_rsa.jessica.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
 
-<p>Next we clone and install Gitosis from the &#8216;eagain.net&#8217; server.</p>
+<p>Now, you can set up an empty repository for them by running <code>git init</code> with the <code>--bare</code> option, which initializes the repository without a working directory:</p>
 
-<pre><code>$ git clone git://eagain.net/gitosis.git
-$ cd gitosis
-$ sudo python setup.py install</code></pre>
+<pre><code>$ cd /opt/git
+$ mkdir project.git
+$ cd project.git
+$ git --bare init</code></pre>
 
-<p>That will install a couple of executables that will be used by Gitosis. Next, Gitosis wants to put it&#8217;s repositories under &#8216;/home/git&#8217;, which is fine but we have already setup our repositories in &#8216;/opt/git&#8217;, so instead of reconfiguring everything, we&#8217;ll just create a symlink.</p>
+<p>Then, John, Josie, or Jessica can push the first version of their project into that repository by adding it as a remote and pushing up a branch. Note that someone must shell onto the machine and create a bare repository every time you want to add a project. Let’s use gitserver as the hostname of the server on which you’ve set up your “git” user and repository. If you’re running it internally, and you set up DNS for gitserver to point to that server, then you can use the commands pretty much as is:</p>
 
-<pre><code>$ ln -s /opt/git /home/git/repositories</code></pre>
+<pre><code># on Johns computer
+$ cd myproject
+$ git init
+$ git add .
+$ git commit -m &#39;initial commit&#39;
+$ git remote add origin git@gitserver:/opt/git/project.git
+$ git push origin master</code></pre>
 
-<p>Now, Gitosis is going to manage our keys for us, so we&#8217;ll need to remove the current file, re-add the keys later and let Gitosis control the <code>authorized_keys</code> file automatically. For now, we&#8217;ll move the <code>authorized_keys</code> file out of the way.</p>
+<p>At this point, the others can clone it down and push changes back up just as easily:</p>
 
-<pre><code>$ mv /home/git/.ssh/authorized_keys /home/git/.ssh/ak.bak</code></pre>
+<pre><code>$ git clone git@gitserver:/opt/git/project.git
+$ vim README
+$ git commit -am &#39;fix for the README file&#39;
+$ git push origin master</code></pre>
 
-<p>Next we need to turn our shell back on for the &#8216;git&#8217; user, if we changed it to the &#8216;git-shell&#8217; command. People still won&#8217;t be able to login, but Gitosis will control that for us. So, let&#8217;s change this line in our <code>/etc/passwd</code> file:</p>
+<p>With this method, you can quickly get a read/write Git server up and running for a handful of developers.</p>
 
-<pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
+<p>As an extra precaution, you can easily restrict the “git” user to only doing Git activities with a limited shell tool called git-shell that comes with Git. If you set this as your “git” user’s login shell, then the “git” user can’t have normal shell access to your server. To use this, specify git-shell instead of bash or csh for your user’s login shell. To do so, you’ll likely have to edit your /etc/passwd file:</p>
 
-<p>back to this:</p>
+<pre><code>$ sudo vim /etc/passwd</code></pre>
+
+<p>At the bottom, you should find a line that looks something like this:</p>
 
 <pre><code>git:x:1000:1000::/home/git:/bin/sh</code></pre>
 
-<p>Now it&#8217;s time to actually initialize Gitosis. We do this by running the <code>gitosis-init</code> command with our personal public key. If your public key is not on the server, you&#8217;ll have to copy it up there.</p>
+<p>Change /bin/sh to /usr/bin/git-shell (or run which git-shell to see where it’s installed). The line should look something like this:</p>
 
-<pre><code>$ sudo -H -u git gitosis-init &lt; /tmp/id_dsa.pub
-Initialized empty Git repository in /opt/git/gitosis-admin.git/
-Reinitialized existing Git repository in /opt/git/gitosis-admin.git/</code></pre>
+<pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
-<p>This is going to let the user with that key modify the main Git repository that controls the Gitosis setup. Next we have to manually set the execute bit on the <code>post-update</code> script for our new control repository.</p>
-
-<pre><code>$ sudo chmod 755 /opt/git/gitosis-admin.git/hooks/post-update</code></pre>
-
-<p>Now we&#8217;re ready to roll. If you&#8217;re setup correctly, you can try to SSH into your server as the user you added the public key for to initialize Gitosis. You should see something like this:</p>
+<p>Now, the “git” user can only use the SSH connection to push and pull Git repositories and can’t shell onto the machine. If you try, you’ll see a login rejection like this:</p>
 
 <pre><code>$ ssh git@gitserver
-PTY allocation request failed on channel 0
-fatal: unrecognized command &#39;gitosis-serve schacon@quaternion&#39;
-  Connection to gitserver closed.</code></pre>
-
-<p>That means that Gitosis recognized you, but shut you out, since you&#8217;re not trying to do any Git commands. So, let&#8217;s do an actual Git command - we&#8217;ll clone the Gitosis control repository.</p>
-
-<pre><code># on your local computer
-$ git clone git@gitserver:gitosis-admin.git</code></pre>
-
-<p>Now we have a directory named &#8216;gitosis-admin&#8217; that has two major parts to it.</p>
-
-<pre><code>$ cd gitosis-admin
-$ find .
-./gitosis.conf
-./keydir
-./keydir/scott.pub</code></pre>
-
-<p>The <code>gitosis.conf</code> file is the control file that we will use to specify users, repositories and permissions. The &#8216;keydir&#8217; directory will be where we store the public keys of all the users who have any sort of access to our repositories - one file per user. The name of the file in &#8216;keydir&#8217; (scott.pub) there will be different for you - Gitosis takes that name from the description at the end of the public key that was imported with the <code>gitosis-init</code> script.</p>
-
-<p>If we look at the <code>gitosis.conf</code> file, it should only be specifying information about the &#8216;gitosis-admin&#8217; project that you just cloned.</p>
-
-<pre><code>$ cat gitosis.conf 
-[gitosis]
-
-[group gitosis-admin]
-writable = gitosis-admin
-members = scott</code></pre>
-
-<p>It shows you that the &#8216;scott&#8217; user - the user whose public key you initialized Gitosis with - is the only one that has access to the &#8216;gitosis-admin&#8217; project.</p>
-
-<p>Now let&#8217;s add a new project for us. We&#8217;ll add a new section called &#8216;mobile&#8217; where we&#8217;ll list the developers on our &#8216;mobile&#8217; team and projects that those developers need access to. Since &#8216;scott&#8217; is the only user in the system right now, we&#8217;ll add him as the only &#8216;member&#8217; and we&#8217;ll create a new project called &#8216;iphone_project&#8217; for us to start on.</p>
-
-<pre><code>[group mobile]
-writable = iphone_project
-members = scott</code></pre>
-
-<p>Whenever we make changes to the &#8216;gitosis-admin&#8217; project, we have to commit the changes and push them back up to the server in order for them to take effect.</p>
-
-<pre><code>$ git commit -am &#39;add iphone_project and mobile group&#39;
-[master]: created 8962da8: &quot;changed name&quot;
- 1 files changed, 4 insertions(+), 0 deletions(-)
-$ git push
-Counting objects: 5, done.
-Compressing objects: 100% (2/2), done.
-Writing objects: 100% (3/3), 272 bytes, done.
-Total 3 (delta 1), reused 0 (delta 0)
-To git@gitserver:/opt/git/gitosis-admin.git
-   fb27aec..8962da8  master -&gt; master</code></pre>
-
-<p>Now we can make our first push to the new &#8216;iphone_project&#8217; project simply by adding our server as a remote to our local version of the project and pushing. You no longer have to manually create a bare repository for new projects on the server - Gitosis will create them automatically when it sees the first push.</p>
-
-<pre><code>$ git remote add origin git@gitserver:iphone_project.git
-$ git push origin master
-Initialized empty Git repository in /opt/git/iphone_project.git/
-Counting objects: 3, done.
-Writing objects: 100% (3/3), 230 bytes, done.
-Total 3 (delta 0), reused 0 (delta 0)
-To git@gitserver:iphone_project.git
- * [new branch]      master -&gt; master</code></pre>
-
-<p>Notice that we don&#8217;t need to specify the path anymore (in fact, it won&#8217;t work), just a colon and then the name of the project - Gitosis will find it for us.</p>
-
-<p>Now we want to work on this with our friends, so we&#8217;ll have to re-add their public keys, but instead of appending them manually to the <code>~/.ssh/authorized_keys</code> file on our server, we&#8217;ll just add them, one key per file, into the <code>keydir</code> directory. How you name the keys will determine how you refer to the users in the &#8216;gitosis.conf&#8217; file. So, let&#8217;s re-add the public keys for John, Josie and Jessica.</p>
-
-<pre><code>$ cp /tmp/id_rsa.john.pub keydir/john.pub
-$ cp /tmp/id_rsa.josie.pub keydir/josie.pub
-$ cp /tmp/id_rsa.jessica.pub keydir/jessica.pub</code></pre>
-
-<p>Now we can add them all to our &#8216;mobile&#8217; team so they will have read and write access to our iphone project.</p>
-
-<pre><code>[group mobile]
-writable = iphone_project
-members = scott john josie jessica</code></pre>
-
-<p>Now once we commit and push that change, all four of those users will be able to read and write to that project.</p>
-
-<p>Gitosis has simple access controls as well. If we wanted John to have only read access to this project, we can do this instead:</p>
-
-<pre><code>[group mobile]
-writable = iphone_project
-members = scott josie jessica
-
-[group mobile_ro]
-readable = iphone_project
-members = john</code></pre>
-
-<p>Now John can clone the project and get updates, but Gitosis will not allow him to push back up to the project. You can create as many of these groups as you want, each with different users and projects in them. You can also specify another group as one of the &#8216;members&#8217;, to inherit all of it&#8217;s members automatically.</p>
-
-<p>If you have any issues, it may be useful to add <code>loglevel=DEBUG</code> under the <code>[gitosis]</code> section. If you&#8217;ve messed up and have lost push access by pushing a messed up configuration, you can manually fix the file on the server under <code>/home/git/.gitosis.conf</code> - that&#8217;s the file Gitosis actually reads it&#8217;s info from, a push to the project simply takes the <code>gitosis.conf</code> file you just pushed up and sticks it there. If you edit it manually that file manually it will remain like that until the next successful push to the &#8216;gitosis-admin&#8217; project.</p>
-
-<h3 id='git_daemon'>Git Daemon</h3>
-
-<p>Now for public, unauthenticated read access to our projects, we&#8217;ll want to move past the HTTP protocol and start using the GIT protocol. The main reason for this is speed. The Git protocol is far more efficient and thus faster than the HTTP protocol, so using it will save your users time.</p>
-
-<p>Again, this is for unauthenticated read-only access, so if you are running this on a server outside your firewall, it would only be used on projects that are publicly visible to the world. If the server you are running it on is inside your firewall, you might use it for projects that you want a large number of people or computers (continuous integration or build servers) to have read-only access to where you don&#8217;t want to have to add an SSH key for each.</p>
-
-<p>In any case, it&#8217;s relatively easy to setup. Basically, we simply need to run this command in a daemonized manner:</p>
-
-<pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
-
-<p>The <code>--reuseaddr</code> allows the server to restart without waiting for old connections to time out, the <code>--base-path</code> option allows people to clone projects without specifying the entire path and the path at the end tells <code>git daemon</code> where to look for repositories to export. You&#8217;ll also need to punch a hole in the firewall on the box you&#8217;re setting this up on at port 9418 if you&#8217;re running one.</p>
-
-<p>So, there are a number of ways you can daemonize this process, depending on the operating system you&#8217;re running. The way you&#8217;ll do this on an Ubuntu machine is to use an Upstart script. So, in the following file:</p>
-
-<pre><code>/etc/event.d/local-git-daemon</code></pre>
-
-<p>We&#8217;ll put this script:</p>
-
-<pre><code>start on startup
-stop on shutdown
-exec /usr/bin/git daemon \
-	--user=git --group=git \
-	--reuseaddr \
-	--base-path=/opt/git/ \
-	/opt/git/
-respawn</code></pre>
-
-<p>Now when we restart our machine, our Git daemon will start automatically and respawn if it goes down. To get it running without having to reboot, you can just run this:</p>
-
-<pre><code>initctl start local-git-daemon</code></pre>
-
-<p>On other systems, you may instead want to use xinetd or a script in your sysvinit system or something else. Just so long as you get that command daemonized and watched somehow.</p>
-
-<p>Next we&#8217;ll have to tell our Gitosis server which repositories to allow unauthenticated Git server based access to. If we add a section for each repository, we can specify which we want our Git daemon to allow reading from. If we wanted to allow Git protocol access for our iphone project, we would add this to the end of the <code>gitosis.conf</code> file:</p>
-
-<pre><code>[repo iphone_project]
-daemon = yes</code></pre>
-
-<p>When that is committed and pushed up, then your running daemon should start serving requests for that project to anyone that has access to port 9418 on your server.</p>
-
-<p>If you decide not to use Gitosis, but want to setup a Git daemon, you&#8217;ll have to run this on each project you want the Git daemon to serve:</p>
-
-<pre><code>$ cd /path/to/project.git
-$ touch git-daemon-export-ok</code></pre>
-
-<p>The presence of that file tells Git that it&#8217;s OK to serve this project without authentication.</p>
-
-<p>Gitosis can also control which projects GitWeb will show. First of all, you need to add something like the following to the <code>/etc/gitweb.conf</code> file.</p>
-
-<pre><code>$projects_list = &quot;/home/git/gitosis/projects.list&quot;;
-$projectroot = &quot;/home/git/repositories&quot;;
-$export_ok = &quot;git-daemon-export-ok&quot;;
-@git_base_url_list = (&#39;git://gitserver&#39;);</code></pre>
-
-<p>Then you can control which projects GitWeb will let users browse by adding or removing a &#8216;gitweb&#8217; setting in the Gitosis configuration file. For instance, if we want the iphone project to show up on GitWeb, we make the repo setting look like this:</p>
-
-<pre><code>[repo iphone_project]
-daemon = yes
-gitweb = yes</code></pre>
-
-<p>Now if we commit and push the project, GitWeb will automatically start showing our iphone project.</p>
+fatal: What do you think I am? A shell?
+Connection to gitserver closed.</code></pre>
 
 <div id='nav'>
 <a href='ch4-3.html'>prev</a> | <a href='ch4-5.html'>next</a>

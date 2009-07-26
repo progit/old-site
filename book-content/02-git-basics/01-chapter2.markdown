@@ -26,7 +26,7 @@ We’ll go over what these commands do in just a minute. At this point, you have
 
 If you want to get a copy of an existing Git repository—for example, a project you’d like to contribute to—the command you need is git clone. If you’re familiar with other VCS systems such as Subversion, you’ll notice that the command is clone and not checkout. This is an important distinction—Git receives a copy of nearly all data that the server has. Every version of every file for the history of the project is pulled down when you run git clone. In fact, if your server disk gets corrupted, you can use any of the clones on any client to set the server back to the state it was in when it was cloned (you may lose some server-side hooks and such, but all the versioned data would be there—see Chapter 4 for more details).
 
-You clone a repository with git clone [url]. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:
+You clone a repository with `git clone [url]`. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:
 
 	$ git clone git://github.com/schacon/grit.git
 
@@ -165,7 +165,7 @@ The rules for the patterns you can put in the .gitignore file are as follows:
 *	You can end patterns with a forward slash (/) to specify a directory.
 *	You can negate a pattern by starting it with an exclamation point (!).
 
-Glob patterns are like simplified regular expressions that shells use. An asterisk (*) matches zero or more characters; [abc] matches any character inside the brackets (in this case a, b, or c); a question mark (?) matches a single character; and brackets enclosing characters seperated by a hyphen([0-9]) matches any character between them (in this case 0 through 9) . 
+Glob patterns are like simplified regular expressions that shells use. An asterisk (`*`) matches zero or more characters; `[abc]` matches any character inside the brackets (in this case a, b, or c); a question mark (`?`) matches a single character; and brackets enclosing characters seperated by a hyphen(`[0-9]`) matches any character between them (in this case 0 through 9) . 
 
 Here is another example .gitignore file:
 
@@ -372,11 +372,11 @@ You can pass files, directories, and file-glob patterns to the git rm command. T
 
 	$ git rm log/\*.log
 
-Note the backslash (\) in front of the *. This is necessary because Git does its own filename expansion in addition to your shell’s filename expansion. This command removes all files that have the .log extension in the log/ directory. Or, you can do something like this:
+Note the backslash (`\`) in front of the `*`. This is necessary because Git does its own filename expansion in addition to your shell’s filename expansion. This command removes all files that have the `.log` extension in the `log/` directory. Or, you can do something like this:
 
 	$ git rm \*~
 
-This command removes all files that end with ~.
+This command removes all files that end with `~`.
 
 ### Moving Files ###
 
@@ -742,7 +742,7 @@ This means we can pull contributions from any of these users pretty easily. But 
 
 ### Adding Remote Repositories ###
 
-We’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run git remote add [shortname] [url]:
+We’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run `git remote add [shortname] [url]`:
 
 	$ git remote
 	origin
@@ -778,7 +778,7 @@ If you have a branch set up to track a remote branch (see the next section and C
 
 ### Pushing to Your Remotes ###
 
-When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: git push [remote-name] [branch-name]. If you want to push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:
+When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: `git push [remote-name] [branch-name]`. If you want to push your master branch to your origin server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:
 
 	$ git push origin master
 
@@ -786,7 +786,7 @@ This command works only if you cloned from a server to which you have write acce
 
 ### Inspecting a Remote ###
 
-If you want to see more information about a particular remote, you can use the git remote show [remote-name] command. If you run this command with a particular shortname, such as origin, you get something like this:
+If you want to see more information about a particular remote, you can use the `git remote show [remote-name]` command. If you run this command with a particular shortname, such as origin, you get something like this:
 
 	$ git remote show origin
 	* remote origin
@@ -954,7 +954,7 @@ This time, if you run git show on the tag, you don’t see the extra tag informa
 
 ### Verifying Tags ###
 
-To verify a signed tag, you use git tag -v [tag-name]. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:
+To verify a signed tag, you use `git tag -v [tag-name]`. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:
 
 	$ git tag -v v1.4.2.1
 	object 883653babd8ee7ea23e6a5c392bb739348b1eb61
@@ -1021,7 +1021,7 @@ You can see that you’ve tagged the commit:
 
 ### Sharing Tags ###
 
-By default, the git push command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them.  This process is just like sharing remote branches – you can run git push origin [tagname].
+By default, the git push command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them.  This process is just like sharing remote branches – you can run `git push origin [tagname]`.
 
 	$ git push origin v1.5
 	Counting objects: 50, done.

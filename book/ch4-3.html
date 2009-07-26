@@ -1,35 +1,17 @@
 ---
 layout: master
-title: Pro Git 4.3 Git on the Server Small Setups
+title: Pro Git 4.3 Git on the Server Generating Your SSH Public Key
 ---
-<h2 id='small_setups'>Small Setups</h2>
+<h2 id='generating_your_ssh_public_key'>Generating Your SSH Public Key</h2>
 
-<p>If you are a small outfit or are just trying out Git in your organization and only have a few developers, things can be pretty simple for you. One of the most complicated aspects to setting up a Git server is user management. If you want some repostiories to be read only to certain users and read/write to others, access and permissions can be a bit difficult to setup.</p>
-
-<h3 id='ssh_access'>SSH Access</h3>
-
-<p>If you already have a server that all of your developers have SSH access to, it&#8217;s generally easiest to setup your first repository there, since there is almost no work to do (as we covered in the last section). If you want more complex ACL type permissions controls on your repositories, you can simply handle it with the normal filesystem permissions of the operating system your server runs.</p>
-
-<p>If you want to setup your repositories on a server that does not have accounts for everyone on your team you want to have write access, then you&#8217;ll have to setup SSH access. I assume that if you have a server to do this with that you already have an SSH server installed and that&#8217;s how at least <em>you</em> are accessing it.</p>
-
-<p>There are a few ways you can give access to everyone on your team. The first is to setup accounts for everybody, which is pretty straightforward but possibly a bit cumbersome. You may not want to run <code>adduser</code> and set temporary passwords for every user.</p>
-
-<p>A second method is to create a single &#8216;git&#8217; user on the machine, ask every user that is to have write access to send you an SSH public key and to add that key to the <code>~/.ssh/authorized_keys</code> file of your new &#8216;git&#8217; user. At that point, everyone will be able access that machine via the &#8216;git&#8217; user. This does not effect the commit data in any way - the SSH user you connect as does not effect the commits you&#8217;ve recorded at all.</p>
-
-<p>Another way to do it is to have your SSH server authenticate off an LDAP server or some other centralized authentication source that you may already have setup. As long as each user can get shell access on the machine, any SSH authentication mechanism that you can think of should work.</p>
-
-<h4 id='generating_your_ssh_public_key'>Generating your SSH Public Key</h4>
-
-<p>That being said, many Git servers authenticate using SSH public keys. In order to provide a public key, each user in your system will have to generate one if they don&#8217;t already have them. This process is pretty similar across all operating systems.</p>
-
-<p>First you should check to make sure you don&#8217;t already have a key. By default, a user&#8217;s SSH keys are stored in that user&#8217;s <code>~/.ssh</code> directory. You can easily check to see if you have a key already by going to that directory and listing the contents.</p>
+<p>That being said, many Git servers authenticate using SSH public keys. In order to provide a public key, each user in your system must generate one if they don’t already have one. This process is similar across all operating systems. First, you should check to make sure you don’t already have a key. By default, a user’s SSH keys are stored in that user’s ~/.ssh directory. You can easily check to see if you have a key already by going to that directory and listing the contents:</p>
 
 <pre><code>$ cd ~/.ssh
 $ ls
-authorized_keys2	id_dsa		known_hosts
-config		id_dsa.pub</code></pre>
+authorized_keys2  id_dsa       known_hosts
+config            id_dsa.pub</code></pre>
 
-<p>You&#8217;re looking for a pair of files named <code>something</code> and <code>something.pub</code>, where the &#8216;something&#8217; is usually one of &#8216;id_dsa&#8217; or &#8216;id_rsa&#8217;. The &#8216;.pub&#8217; file is your public key and the other is your private key. If you don&#8217;t have these files (or you don&#8217;t even have a &#8216;.ssh&#8217; directory) you can create them by running a program called <code>ssh-keygen</code>, which is provided with the SSH package on Linux/Mac systems and comes with the MSysGit package on Windows.</p>
+<p>You’re looking for a pair of files named something and something.pub, where the something is usually <code>id_dsa</code> or <code>id_rsa</code>. The .pub file is your public key, and the other file is your private key. If you don’t have these files (or you don’t even have a .ssh directory), you can create them by running a program called ssh-keygen, which is provided with the SSH package on Linux/Mac systems and comes with the MSysGit package on Windows:</p>
 
 <pre><code>$ ssh-keygen 
 Generating public/private rsa key pair.
@@ -41,9 +23,9 @@ Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
 The key fingerprint is:
 43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a schacon@agadorlaptop.local</code></pre>
 
-<p>First it will confirm where you want to save the key to (.ssh/id_rsa), then it will ask you for a passphrase twice, which you can leave empty if you don&#8217;t want to type a password when you use the key.</p>
+<p>First it confirms where you want to save the key <code>(.ssh/id_rsa)</code>, and then it asks twice for a passphrase, which you can leave empty if you don’t want to type a password when you use the key.</p>
 
-<p>Now each user that did this will have to send their public key to you, or whomever is administrating the Git server (assuming you&#8217;re using an SSH server setup that requires public keys). All they have to do is copy the contents of the &#8216;.pub&#8217; file and email it. The public keys will look something like this:</p>
+<p>Now, each user that does this has to send their public key to you or whoever is administrating the Git server (assuming you’re using an SSH server setup that requires public keys). All they have to do is copy the contents of the .pub file and e-mail it. The public keys look something like this:</p>
 
 <pre><code>$ cat ~/.ssh/id_rsa.pub 
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
@@ -53,171 +35,7 @@ t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
 mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
 NrRFi9wrf+M7Q== schacon@agadorlaptop.local</code></pre>
 
-<p>For a more in depth tutorial on creating an SSH key on multiple operating systems, see the GitHub Guide on SSH keys at <code>http://github.com/guides/providing-your-ssh-key</code>.</p>
-
-<h4 id='setting_up_the_server'>Setting Up the Server</h4>
-
-<p>So, let&#8217;s walk through setting this up on the server side. In this example we&#8217;ll use the &#8216;authorized_hosts&#8217; method for authenticating our users. I&#8217;ll also assume you are running a standard Linux machine like Ubuntu. First you&#8217;ll want to create a &#8216;git&#8217; user and create a &#8216;.ssh&#8217; directory for that user.</p>
-
-<pre><code>$ sudo adduser git
-$ su git
-$ cd
-$ mkdir .ssh</code></pre>
-
-<p>Next we need to add some developer ssh public keys to the <code>authorized_keys</code> file for that user. Let&#8217;s assume we&#8217;ve saved a few keys from emails sent to us to temporary files. Again, the public keys will look something like this:</p>
-
-<pre><code>$ cat /tmp/id_rsa.john.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
-ojG6rs6hPB09j9R/T17/x4lhJA0F3FR1rP6kYBRsWj2aThGw6HXLm9/5zytK6Ztg3RPKK+4k
-Yjh6541NYsnEAZuXz0jTTyAUfrtU3Z5E003C4oxOj6H0rfIF1kKI9MAQLMdpGW1GYEIgS9Ez
-Sdfd8AcCIicTDWbqLAcU4UpkaX8KyGlLwsNuuGztobF8m72ALC/nLF6JLtPofwFBlgc+myiv
-O7TCUSBdLQlgMVOFq1I2uPWQOkOWQAHukEOmfjy2jctxSDBQ220ymjaNsHT4kgtZg2AYYgPq
-dAv8JggJICUvax2T9va5 gsg-keypair</code></pre>
-
-<p>So we just append them to our <code>authorized_keys</code> file.</p>
-
-<pre><code>$ cat /tmp/id_rsa.john.pub &gt;&gt; ~/.ssh/authorized_keys
-$ cat /tmp/id_rsa.josie.pub &gt;&gt; ~/.ssh/authorized_keys
-$ cat /tmp/id_rsa.jessica.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
-
-<p>Now we can setup an empty repository for them by running <code>git init</code> with the <code>--bare</code> option, which will initialize the repository without a working directory.</p>
-
-<pre><code>$ cd /opt/git
-$ mkdir project.git
-$ cd project.git
-$ git --bare init                   </code></pre>
-
-<p>Then John, Josie or Jessica can push the first version of their project into that repository by adding it as a remote and pushing a branch up. Note that someone will have to shell onto the machine and create a bare repository every time you want to add a project. I&#8217;ll use &#8216;gitserver&#8217; as the hostname of the server you&#8217;ve setup your &#8216;git&#8217; user and repository on. If you&#8217;re running it internally and setup DNS for &#8216;gitserver&#8217; to point to that server, then you can use the commands pretty much as-is.</p>
-
-<pre><code># on Johns computer
-$ cd myproject
-$ git init
-$ git add .
-$ git commit -m &#39;initial commit&#39;
-$ git remote add origin git@gitserver:/opt/git/project.git
-$ git push origin master</code></pre>
-
-<p>At that point, the others could clone it down and push changes back up just as easily.</p>
-
-<pre><code>$ git clone git@gitserver:/opt/git/project.git
-$ vim README
-$ git commit -am &#39;fix for the README file&#39;
-$ git push origin master</code></pre>
-
-<p>With this method, you can get a read/write Git server up and running for a handful of developers pretty quickly.</p>
-
-<p>As an extra precaution, you can easily restrict the &#8216;git&#8217; user to only doing Git activities with a limited shell tool that comes with git called <code>git-shell</code>. If you set this as your &#8216;git&#8217; user&#8217;s login shell, then the &#8216;git&#8217; user will not be able to have normal shell access to your server. To use this, simply specify <code>git-shell</code> instead of <code>bash</code> or <code>csh</code> for your user&#8217;s login shell. To do this, you&#8217;ll likely just have to edit your &#8216;/etc/passwd&#8217; file.</p>
-
-<pre><code>$ sudo vim /etc/passwd</code></pre>
-
-<p>At the bottom, you should find a line that looks something like this:</p>
-
-<pre><code>git:x:1000:1000::/home/git:/bin/sh</code></pre>
-
-<p>Then just change the &#8216;/bin/sh&#8217; to &#8216;/usr/bin/git-shell&#8217; (or run <code>which git-shell</code> to see where it is installed). The line should now look something like this instead:</p>
-
-<pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
-
-<p>Now the &#8216;git&#8217; user can only use the SSH connection to push and pull git repos, and cannot actually shell onto the machine. If you try, you&#8217;ll see a login rejection like this:</p>
-
-<pre><code>$ ssh git@gitserver
-fatal: What do you think I am? A shell?
-Connection to gitserver closed.</code></pre>
-
-<h3 id='public_access'>Public Access</h3>
-
-<p>What if you want anonymous read access to your project? Perhaps instead of hosting an internal private project you want to host an open source one. Or maybe you have a bunch of automated build or continuous integration servers that change a lot and you don&#8217;t want to have to generate SSH keys all the time, you just want to add simple anonymous read access.</p>
-
-<p>Probably the simplest way for smaller setups is to just run a static web server with it&#8217;s document root where your Git repositories are, then enable that post-update hook we mentioned in the first section of this chapter. Let&#8217;s work from the previous example. Say we have our repositories in the <code>/opt/git</code> directory and there is an Apache server running on our machine. Again, you can use any web server for this, but just to show an example I&#8217;ll demonstrate some basic Apache configurations that should give you an idea of what you might need.</p>
-
-<p>First off we&#8217;ll need to enable the hook:</p>
-
-<pre><code>$ cd project.git
-$ mv hooks/post-update.sample hooks/post-update
-$ chmod a+x hooks/post-update</code></pre>
-
-<p>If you&#8217;re using a version of Git earlier than 1.6, the &#8216;mv&#8217; command there will not be necessary - they only started naming the hooks examples with the &#8216;.sample&#8217; postfix recently. So what does this <code>post-update</code> hook do anyhow? It looks basically like this:</p>
-
-<pre><code>$ cat .git/hooks/post-update.sample 
-#!/bin/sh
-exec git-update-server-info</code></pre>
-
-<p>Which means that when you push to the server via SSH, Git will run this command to update the files needed for HTTP fetching.</p>
-
-<p>Next we need to add a VirtualHost entry to our Apache configuration with the document root as the root directory of our Git projects. Here I&#8217;m assuming that you have wildcard DNS setup to send <em>.gitserver to whatever box you&#8217;re using to run all of this.</em></p>
-
-<pre><code>&lt;VirtualHost *:80&gt;
-    ServerName git.gitserver
-    DocumentRoot /opt/git
-	&lt;Directory /opt/git/&gt;
-		Order allow, deny
-		allow from all
-	&lt;/Directory&gt;
-&lt;/VirtualHost&gt;</code></pre>
-
-<p>Then once we restart Apache, we should be able to clone our repostiories under that directory by just specifying the URL for our project.</p>
-
-<pre><code>$ git clone http://git.gitserver/project.git</code></pre>
-
-<p>This way, we can setup HTTP based read access to any of our projects for a fair number of users in a few minutes. Another simple option for public unauthenticated access is to start a Git daemon, though that requires us to daemonize it - we&#8217;ll cover this option in the next section if you prefer that route.</p>
-
-<h3 id='gitweb'>GitWeb</h3>
-
-<p>Now that we have basic read-write and read-only access to our project, you may want to setup a simple web-based visualizer for your projects. Git comes with a CGI script called GitWeb that is commonly used for this. You can see GitWeb in use at sites like <code>git.kernel.org</code>.</p>
-
-<p><img src='/images/gitweb.sm.png' alt='Figure 4.1 - GitWeb' /></p>
-
-<p>If you want to checkout what it would look like for your project, Git comes with a command to fire up a temporary GitWeb instance if you have a lightweight server on your system like <code>lighttpd</code> or <code>webrick</code>. On Linux machines <code>lighttpd</code> is often installed, so you may be able to get it to run by just typing <code>git instaweb</code> in your project directory. If you&#8217;re running a Mac, Leopard comes pre-installed with Ruby so <code>webrick</code> might be your best bet. To start <code>instaweb</code> with a non-lighttpd handler, you can run it with the <code>--httpd</code> option.</p>
-
-<pre><code>$ git instaweb --httpd=webrick
-[2009-02-21 10:02:21] INFO  WEBrick 1.3.1
-[2009-02-21 10:02:21] INFO  ruby 1.8.6 (2008-03-03) [universal-darwin9.0]</code></pre>
-
-<p>dwp: I agree. We shouldn&#8217;t assume ruby will be installed. I don&#8217;t have ruby either, so that&#8217;s not a great sample of current readers! Given you&#8217;ve already used apache, why not use it again?</p>
-
-<p>sc: Sorry guys, I want to show this because people often want to see a web ui for thier Git install and I can&#8217;t get the apache2 handler to work on my mac and Leopard comes with Ruby and is Ruby is otherwise pretty easy to install on nearly any system. It&#8217;s the only handler I think I&#8217;ve ever gotten to work with instaweb.</p>
-
-<p>That will startup an httpd server on port <code>1234</code> and then automatically open a web browser that opens on that page. Pretty easy on your part. When you are done and want to shut down the server, you can run the same command with a <code>--stop</code> option.</p>
-
-<pre><code>$ git instaweb --httpd=webrick --stop</code></pre>
-
-<p>If you want to run this on a web server all the time for your team or for an open source project you&#8217;re hosting, you&#8217;ll need to setup the CGI script to be served by your normal webserver. Some Linux distributions have a &#8216;gitweb&#8217; package that you might be able to install via <code>apt</code> or <code>yum</code> - so you may want to try that first. We&#8217;ll walk though installing it manually very quickly. First you&#8217;ll need to get the Git source code, which GitWeb comes with, and generate the custom CGI script:</p>
-
-<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
-$ cd git/
-$ make GITWEB_PROJECTROOT=&quot;/opt/git&quot; \
-		prefix=/usr gitweb/gitweb.cgi	
-$ sudo cp -Rf gitweb /var/www/  </code></pre>
-
-<p>Notice that we had to tell it where to find our Git repositories with the <code>GITWEB_PROJECTROOT</code> variable. Now we need to make Apache use CGI for that script, which we can add a VirtualHost for.</p>
-
-<pre><code>&lt;VirtualHost *:80&gt;
-    ServerName gitserver
-    DocumentRoot /var/www/gitweb
-    &lt;Directory /var/www/gitweb&gt;
-        Options ExecCGI +FollowSymLinks +SymLinksIfOwnerMatch
-        AllowOverride All
-        order allow,deny
-        Allow from all
-
-        AddHandler cgi-script cgi
-
-        DirectoryIndex gitweb.cgi
-
-        RewriteEngine On
-        RewriteCond %{REQUEST_FILENAME} !-f
-        RewriteCond %{REQUEST_FILENAME} !-d
-        RewriteRule ^.* /gitweb.cgi/$0 [L,PT]
-    &lt;/Directory&gt;
-&lt;/VirtualHost&gt;</code></pre>
-
-<p>Again, this can be served with any CGI capable webserver, so if you prefer using something else it should not be difficult to setup. The rewrite stuff is also not really neccesary, it just makes the URL look a bit prettier - feel free to remove it if you don&#8217;t have mod_rewrite on your server.</p>
-
-<p>At this point, we should be able to visit <code>http://gitserver/</code> to view our repositories online, and we can use <code>git.gitserver</code> to clone and fetch our repositories over HTTP as well.</p>
-
-<p>We&#8217;ll probably also want to set the &#8216;group&#8217; of the <code>/opt/git</code> directories to &#8216;www-data&#8217; so our GitWeb script can read access the repositories, since the Apache instance running the CGI script will (by default) be running as that user.</p>
-
-<pre><code>$ chgrp -R www-data /opt/git</code></pre>
+<p>For a more in-depth tutorial on creating an SSH key on multiple operating systems, see the GitHub guide on SSH keys at <code>http://github.com/guides/providing-your-ssh-key</code>.</p>
 
 <div id='nav'>
 <a href='ch4-2.html'>prev</a> | <a href='ch4-4.html'>next</a>

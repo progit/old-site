@@ -4,17 +4,17 @@ title: Pro Git 6.1 Git Tools Revision Selection
 ---
 <h2 id='revision_selection'>Revision Selection</h2>
 
-<p>Git allows you to specify specific commits or a range of commits in several different ways, which are not neccesarily obvious but are very helpful to know.</p>
+<p>Git allows you to specify specific commits or a range of commits in several ways. They aren’t necessarily obvious but are helpful to know.</p>
 
 <h3 id='single_revisions'>Single Revisions</h3>
 
-<p>You can obviously refer to a commit by the SHA-1 hash that it is given, but there are more human friendly ways to refer to commits as well. The following section will outline the various ways that you can refer to a single commit.</p>
+<p>You can obviously refer to a commit by the SHA-1 hash that it’s given, but there are more human-friendly ways to refer to commits as well. This section outlines the various ways you can refer to a single commit.</p>
 
-<h4 id='short_sha'>Short SHA</h4>
+<h3 id='short_sha'>Short SHA</h3>
 
-<p>Git is smart enough to figure out what commit you meant to type if you just provide the first few characters, so long as the partial SHA-1 you provided is at least 4 characters long and unambiguous - that is, there is only one object in the current repository that begins with the partial SHA-1 provided.</p>
+<p>Git is smart enough to figure out what commit you meant to type if you provide the first few characters, as long as your partial SHA-1 is at least four characters long and unambiguous—that is, only one object in the current repository begins with that partial SHA-1.</p>
 
-<p>For example, if you want to see a specific commit, let&#8217;s say we run a <code>git log</code> command and identify the commit where we added certain functionality.</p>
+<p>For example, to see a specific commit, suppose you run a git log command and identify the commit where you added certain functionality:</p>
 
 <pre><code>$ git log
 commit 734713bc047d87bf7eac9674765ae793478c50d3
@@ -36,50 +36,48 @@ Date:   Thu Dec 11 14:58:32 2008 -0800
 
     added some blame and merge stuff</code></pre>
 
-<p>In this case, let&#8217;s choose <code>1c002dd...</code>. If we wanted to <code>git show</code> that commit, the following commands are equivalent (assuming the shorter versions are actually unambiguous):</p>
+<p>In this case, choose 1c002dd&#8230;. If you git show that commit, the following commands are equivalent (assuming the shorter versions are unambiguous):</p>
 
 <pre><code>$ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
 $ git show 1c002dd4b536e7479f
 $ git show 1c002d</code></pre>
 
-<p>Git can actually figure out a short unique abbreviation for your SHA-1 values. If you pass <code>--abbrev-commit</code> to the <code>git log</code> command, it will use shorter values, though still keeping them unique - it defaults to using 7 characters, but will make them longer if it needs to in order to keep it unambiguous.</p>
+<p>Git can figure out a short, unique abbreviation for your SHA-1 values. If you pass &#8211;abbrev-commit to the git log command, the output will use shorter values but keep them unique; it defaults to using seven characters but makes them longer if necessary to keep the SHA-1 unambiguous:</p>
 
 <pre><code>$ git log --abbrev-commit --pretty=oneline
 ca82a6d changed the verison number
 085bb3b removed unnecessary test code
 a11bef0 first commit</code></pre>
 
-<p>In most projects, 8 to 10 characters are more than enough to be unique within the project. One of the largest Git projects, the Linux kernel, is beginning to need 12 characters out of the possible 40 to stay unique.</p>
+<p>Generally, eight to ten characters are more than enough to be unique within a project. One of the largest Git projects, the Linux kernel, is beginning to need 12 characters out of the possible 40 to stay unique.</p>
 
-<p>SIDEBAR: a short note about SHA-1</p>
+<h3 id='a_short_note_about_sha1'>A SHORT NOTE ABOUT SHA-1</h3>
 
-<p>A lot of people become concerned at some point that they will, by random happenstance, have two objects in their repository that by coincidence hash to the same SHA-1 value. What then?</p>
+<p>A lot of people become concerned at some point that they will, by random happenstance, have two objects in their repository that hash to the same SHA-1 value. What then?</p>
 
-<p>First of all, I&#8217;m not entirely positive what Git will do when you try to commit a blob that happens to collide. It will likely see an object already in your Git database and will assume it was already written. If you tried to check that out again at some point you would probably get the wrong data. It is pretty difficult to test this - even getting these values artificially is time and resource intensive.</p>
+<p>If you do happen to commit an object that hashes to the same SHA-1 value as a previous object in your repository, GIt will see the previous object already in your Git database and assume it was already written. If you try to check out that object again at some point, you’ll always get the data of the first object.</p>
 
-<p>However, you should be aware of how ridiculously unlikely this scenario is. The SHA-1 digest is 20 bytes or 160 bits. The number of randomly hashed objects needed to ensure a 50% probability of a single collision is about 2^80 ( the formula for determining collision probability is p = (n(n-1)/2) * (1/2^160) ). 2^80 is 1.2 x 10^24 or 1 million billion billion. It is 1,200 times the number of grains of sand on the earth.</p>
+<p>However, you should be aware of how ridiculously unlikely this scenario is. The SHA-1 digest is 20 bytes or 160 bits. The number of randomly hashed objects needed to ensure a 50% probability of a single collision is about 2^80 (the formula for determining collision probability is p = (n(n-1)/2) * (1/2^160)). 2^80 is 1.2 x 10^24 or 1 million billion billion. That’s 1,200 times the number of grains of sand on the earth.</p>
 
-<p>To give you an idea of what it would actually take to get a SHA-1 collsion, if all 6.5 billion humans on earth were programming and every one of them was producing code the equivalent of the entire linux kernel history (1 million Git objects) per <em>second</em> and pushing all of that into one enormous Git repository, it would take 5 years until that repository had enough objects in it to have a 50% probability of a single SHA-1 object collision. There is a much higher probability that every member of your programming team will be attacked and killed by wolves in unrelated incidents on the same night.</p>
+<p>Here’s an example to give you an idea of what it would take to get a SHA-1 collision. If all 6.5 billion humans on Earth were programming, and every second, each one was producing code that was the equivalent of the entire Linux kernel history (1 million Git objects) and pushing it into one enormous Git repository, it would take 5 years until that repository contained enough objects to have a 50% probability of a single SHA-1 object collision. A higher probability exists that every member of your programming team will be attacked and killed by wolves in unrelated incidents on the same night.</p>
 
-<p>ENDSIDEBAR</p>
+<h3 id='branch_references'>Branch References</h3>
 
-<h4 id='branch_references'>Branch References</h4>
-
-<p>The most straightforward way to specify a commit is if it has a branch reference pointed at it. Then you can then use a branch name in any Git command that expects a commit object or SHA-1 value. For instance, if you wanted to show the last commit object on a branch, the following commands would be equivalent, assuming that the &#8216;topic1&#8217; branch pointed to <code>ca82a6d</code>:</p>
+<p>The most straightforward way to specify a commit requires that it have a branch reference pointed at it. Then, you can use a branch name in any Git command that expects a commit object or SHA-1 value. For instance, if you want to show the last commit object on a branch, the following commands are equivalent, assuming that the topic1 branch points to ca82a6d:</p>
 
 <pre><code>$ git show ca82a6dff817ec66f44342007202690a93763949
 $ git show topic1</code></pre>
 
-<p>If you want to see which specific SHA a branch points to, or in fact if you want to see what any of these examples boil down to in terms of SHAs, you can use a Git plumbing tool called <code>rev-parse</code>. You can see Chapter 9 for more information about plumbing tools, but basically it&#8217;s a tool that exists for lower level operations and is not really designed to be used in day to day operations. However, it can be really helpful sometimes to see what&#8217;s really going on. Here we can run <code>rev-parse</code> on our branch.</p>
+<p>If you want to see which specific SHA a branch points to, or if you want to see what any of these examples boils down to in terms of SHAs, you can use a Git plumbing tool called rev-parse. You can see Chapter 9 for more information about plumbing tools; basically, rev-parse exists for lower-level operations and isn’t designed to be used in day-to-day operations. However, it can be helpful sometimes when you need to see what’s really going on. Here you can run rev-parse on your branch.</p>
 
 <pre><code>$ git rev-parse topic1
 ca82a6dff817ec66f44342007202690a93763949</code></pre>
 
-<h4 id='reflog_shortnames'>RefLog Shortnames</h4>
+<h3 id='reflog_shortnames'>RefLog Shortnames</h3>
 
-<p>One of the things Git does in the background while you&#8217;re working away is that it keeps a <code>reflog</code>, a log of where your HEAD and branch references have been for the last few months.</p>
+<p>One of the things Git does in the background while you’re working away is keep a reflog—a log of where your HEAD and branch references have been for the last few months.</p>
 
-<p>You can see your reflog by typing <code>git reflog</code>.</p>
+<p>You can see your reflog by using git reflog:</p>
 
 <pre><code>$ git reflog
 734713b... HEAD@{0}: commit: fixed refs handling, added gc auto, updated
@@ -90,17 +88,17 @@ d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
 1c36188... HEAD@{5}: rebase -i (squash): updating HEAD
 7e05da5... HEAD@{6}: rebase -i (pick): updating HEAD</code></pre>
 
-<p>You can see that everytime your branch tip is updated for any reason, Git stores that information away for you in this temporary history. However, you can specify older commits with this data as well. If you wanted to see what the 5th prior value of the HEAD of my repository was, you can use the &#8216;@{n}&#8217; reference that you see in the output of <code>reflog</code>.</p>
+<p>Every time your branch tip is updated for any reason, Git stores that information for you in this temporary history. And you can specify older commits with this data, as well. If you want to see the fifth prior value of the HEAD of your repository, you can use the @{n} reference that you see in the reflog output:</p>
 
 <pre><code>$ git show HEAD@{5}</code></pre>
 
-<p>You can also use it to see where a branch was some specific amount of time ago. For instance, to see where our &#8216;master&#8217; branch was yesterday, you can actually type:</p>
+<p>You can also use this syntax to see where a branch was some specific amount of time ago. For instance, to see where your master branch was yesterday, you can type</p>
 
 <pre><code>$ git show master@{yesterday}</code></pre>
 
-<p>That will show you where that branch tip was yesterday. This will only work for data still in your reflog however, so you can&#8217;t do it to look for commits older than a few months.</p>
+<p>That shows you where the branch tip was yesterday. This technique only works for data that’s still in your reflog, so you can’t use it to look for commits older than a few months.</p>
 
-<p>If you want to see reflog information with your normal log information to get a better idea of what is recorded in your reflog, you can run <code>git log -g</code>.</p>
+<p>To see reflog information inline with your normal log information, you can run git log -g:</p>
 
 <pre><code>$ git log -g master
 commit 734713bc047d87bf7eac9674765ae793478c50d3
@@ -119,13 +117,11 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
     Merge commit &#39;phedders/rdocs&#39;</code></pre>
 
-<p>It&#8217;s important to note that the reflog information is strictly local - it is a log of what <em>you</em> have done in your repository. The references will probably not be the same on someone else&#8217;s copy of the repository and right after you initially clone a repository, you&#8217;ll have almost no information in it. Running <code>git show HEAD@{2.months.ago}</code> will only work if you cloned the project at least 2 months ago - if you cloned it 5 minutes ago you will get no results.</p>
+<p>It’s important to note that the reflog information is strictly local — it’s a log of what you’ve done in your repository. The references won’t be the same on someone else’s copy of the repository; and right after you initially clone a repository, you&#8217;ll have an empty reflog, as no activity has occurred yet in your repository. Running git show HEAD@{2.months.ago} will work only if you cloned the project at least two months ago—if you cloned it five minutes ago, you’ll get no results.</p>
 
-<h4 id='ancestry_references'>Ancestry References</h4>
+<h3 id='ancestry_references'>Ancestry References</h3>
 
-<p>The other main way you can specify a commit is via it&#8217;s ancestry. If you specify a &#8217;^&#8217; at the end of a reference, Git will resolve that to mean the parent of that commit.</p>
-
-<p>If we take a look at the history of our project:</p>
+<p>The other main way to specify a commit is via its ancestry. If you place a ^ at the end of a reference, Git resolves it to mean the parent of that commit. Suppose you look at the history of your project:</p>
 
 <pre><code>$ git log --pretty=format:&#39;%h %s&#39; --graph
 * 734713b fixed refs handling, added gc auto, updated tests
@@ -137,7 +133,7 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 * 1c36188 ignore *.gem
 * 9b29157 add open3_detach to gemspec file list</code></pre>
 
-<p>Then we can see the previous commit by specifying <code>HEAD^</code>, which means &#8220;the parent of HEAD&#8221;.</p>
+<p>Then, you can see the previous commit by specifying HEAD^, which means “the parent of HEAD”:</p>
 
 <pre><code>$ git show HEAD^
 commit d921970aadf03b3cf0e71becdaab3147ba71cdef
@@ -147,7 +143,7 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
     Merge commit &#39;phedders/rdocs&#39;</code></pre>
 
-<p>We can also specify a number after the <code>^</code>, such as <code>d921970^2</code>, which means &#8220;the second parent of d921970&#8221;. This syntax is only useful for merge commits, which have more than one parent. The first parent is the branch you were on when you merged and the second would be the commit on the branch that you merged in.</p>
+<p>You can also specify a number after the ^—for example, d921970^2 means “the second parent of d921970.” This syntax is only useful for merge commits, which have more than one parent. The first parent is the branch you were on when you merged, and the second is the commit on the branch that you merged in:</p>
 
 <pre><code>$ git show d921970^
 commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
@@ -163,7 +159,7 @@ Date:   Wed Dec 10 22:22:03 2008 +0000
 
     Some rdoc changes</code></pre>
 
-<p>The other main ancestry specification is the <code>~</code>. This also refers to the first parent, so <code>HEAD~</code> and <code>HEAD^</code> are equivalent. The difference is when you specify a number. <code>HEAD~2</code> means &#8220;the first parent of the first parent&#8221;, or &#8220;the grandparent&#8221; - it just traverses the first parents that many times. For example, in the history we listed out earlier, <code>HEAD~3</code> would be</p>
+<p>The other main ancestry specification is the ~. This also refers to the first parent, so HEAD~ and HEAD^ are equivalent. The difference becomes apparent when you specify a number. HEAD~2 means “the first parent of the first parent,” or “the grandparent”—it traverses the first parents the number of times you specify. For example, in the history listed earlier, HEAD~3 would be</p>
 
 <pre><code>$ git show HEAD~3
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
@@ -172,7 +168,7 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
     ignore *.gem</code></pre>
 
-<p>This can also be written as <code>HEAD^^^</code>, which again is the first parent of the first parent of the first parent.</p>
+<p>This can also be written HEAD^^^, which again is the first parent of the first parent of the first parent:</p>
 
 <pre><code>$ git show HEAD^^^
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
@@ -181,60 +177,54 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
     ignore *.gem</code></pre>
 
-<p>You can also combine these syntaxes - you can get the second parent of the previous reference (assuming it was a merge commit) by using <code>HEAD~3^2</code>, and so on.</p>
+<p>You can also combine these syntaxes—you can get the second parent of the previous reference (assuming it was a merge commit) by using HEAD~3^2, and so on.</p>
 
 <h3 id='commit_ranges'>Commit Ranges</h3>
 
-<p>So now that we can specify individual commits, let&#8217;s see how to specify specific ranges of commits. This is particularly useful with managing your branches - if you have a lot of branches, you can use range specifications to answer questions such as &#8220;what work is on this branch that I haven&#8217;t merged into my main branch yet?&#8221;.</p>
+<p>Now that you can specify individual commits, let’s see how to specify ranges of commits. This is particularly useful for managing your branches—if you have a lot of branches, you can use range specifications to answer questions such as, “What work is on this branch that I haven’t yet merged into my main branch?”</p>
 
 <h4 id='double_dot'>Double Dot</h4>
 
-<p>The most common range specification is the &#8216;double dot&#8217; syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but are not reachable from another. For example, let&#8217;s say we have a commit history that looks like this:</p>
+<p>The most common range specification is the double-dot syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but aren’t reachable from another. For example, say you have a commit history that looks like Figure 6-1.</p>
 
-<p>FIG: figure1</p>
+<p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> Figure 6-1. Example history for range selection</p>
 
-<p>Now we want to see what is in our experiemnt branch that has not yet been merged into our master branch. We can ask Git to show us a log of just those commits with <code>master..experiment</code> - that means &#8220;all commits reachable by &#8216;experiment&#8217; that are not reachable by &#8216;master&#8217;&#8220;. For the sake of brevity and clarity in these examples, I&#8217;ll simply use the letters of the commit objects from the diagram in the order that they will display.</p>
+<p>You want to see what is in your experiment branch that hasn’t yet been merged into your master branch. You can ask Git to show you a log of just those commits with master..experiment—that means “all commits reachable by experiment that aren’t reachable by master.” For the sake of brevity and clarity in these examples, I’ll use the letters of the commit objects from the diagram in place of the actual log output in the order that they would display:</p>
 
 <pre><code>$ git log master..experiemnt
 D
 C</code></pre>
 
-<p>If, on the other hand, we want to see the opposite - all commits in &#8216;master&#8217; that are not in &#8216;experiment&#8217;, we can simply reverse the branch names. <code>experiment..master</code> will show us everything in master not reachable from experiment.</p>
+<p>If, on the other hand, you want to see the opposite—all commits in master that aren’t in experiment—you can reverse the branch names. experiment..master shows you everything in master not reachable from experiment:</p>
 
 <pre><code>$ git log experiment..master
 F
 E</code></pre>
 
-<p>This is really useful if you want to keep the experiment branch up to date and you want to preview what you are about to merge in. Another very frequent use of this is to see what you&#8217;re about to push to a remote.</p>
+<p>This is useful if you want to keep the experiment branch up to date and preview what you’re about to merge in. Another very frequent use of this syntax is to see what you’re about to push to a remote:</p>
 
 <pre><code>$ git log origin/master..HEAD</code></pre>
 
-<p>That command will show you any commits you have in your current branch that are not in the &#8216;master&#8217; branch on your &#8216;origin&#8217; remote. If you ran a &#8216;git push&#8217; and your current branch was tracking &#8216;origin/master&#8217;, those are the changes that are then going to be transferred to the server.</p>
-
-<p>You can also leave off one side of the syntax to have Git assume HEAD. For example, I can get the same results as in the previous example by typing <code>git log origin/master..</code> - Git will substitute HEAD if one side is missing.</p>
+<p>This command shows you any commits in your current branch that aren’t in the master branch on your origin remote. If you run a git push and your current branch is tracking origin/master, the commits listed by git log origin/master..HEAD are the commits that will be transferred to the server. You can also leave off one side of the syntax to have Git assume HEAD. For example, you can get the same results as in the previous example by typing git log origin/master..—Git substitutes HEAD if one side is missing.</p>
 
 <h4 id='multiple_points'>Multiple Points</h4>
 
-<p>The double dot syntax is useful as a shorthand, but perhaps you want to specify more than two branches to specify your revision, such as seeing what commits are in any of several branches that are not in the branch you&#8217;re currently on. Git allows you to do this by using either the &#8217;^&#8217; character or a <code>--not</code> before any reference you don&#8217;t want to see reachable commits from. So these three commands are equivalent</p>
+<p>The double-dot syntax is useful as a shorthand; but perhaps you want to specify more than two branches to indicate your revision, such as seeing what commits are in any of several branches that aren’t in the branch you’re currently on. Git allows you to do this by using either the ^ character or &#8211;not before any reference from which you don’t want to see reachable commits. Thus these three commands are equivalent:</p>
 
 <pre><code>$ git log refA..refB
 $ git log ^refA refB
 $ git log refB --not refA</code></pre>
 
-<p>This is nice because then you can specify more than two. If you want to see all commits that are reachable from &#8216;refA&#8217; or &#8216;refB&#8217; but not by &#8216;refC&#8217;, you would type one of these:</p>
+<p>This is nice because with this syntax you can specify more than two references in your query, which you cannot do with the double-dot syntax. For insance, if you want to see all commits that are reachable from refA or refB but not from refC, you can type one of these:</p>
 
 <pre><code>$ git log refA refB ^refC
 $ git log refA refB --not refC</code></pre>
 
-<p>This makes for a very powerful revision query system and should be helpful for you in figuring out what is in your branches.</p>
+<p>This makes for a very powerful revision query system that should help you figure out what is in your branches.</p>
 
 <h4 id='triple_dot'>Triple Dot</h4>
 
-<p>The last major range selection syntax is the &#8216;triple dot&#8217; syntax, which specifies all the commit that are reachable by either of two references, but not by both of them.</p>
-
-<p>FIG: fig1</p>
-
-<p>So if we wanted to see what was in <code>master</code> or <code>experiment</code> but not any common references, we can run</p>
+<p>The last major range-selection syntax is the triple-dot syntax, which specifies all the commits that are reachable by either of two references but not by both of them. Look back at the example commit history in Figure 6-1. If you want to see what is in master or experiment but not any common references, you can run</p>
 
 <pre><code>$ git log master...experiment
 F
@@ -242,9 +232,9 @@ E
 D
 C</code></pre>
 
-<p>Again, this would give you normal <code>log</code> output, but it will only show you the commit information for those four commits, in that order.</p>
+<p>Again, this gives you normal log output but shows you only the commit information for those four commits, appearing in the traditional commit date ordering.</p>
 
-<p>A common switch to use with the <code>log</code> command in this case is the <code>--left-right</code> option, which shows you which side of the range each commit is in. This really helps make this data more useful.</p>
+<p>A common switch to use with the log command in this case is &#8211;left-right, which shows you which side of the range each commit is in. This helps make the data more useful:</p>
 
 <pre><code>$ git log --left-right master...experiment
 &lt; F
@@ -252,7 +242,7 @@ C</code></pre>
 &gt; D
 &gt; C</code></pre>
 
-<p>With these tools, we can much more easily let Git know what commit or commits we want to inspect.</p>
+<p>With these tools, you can much more easily let Git know what commit or commits you want to inspect.</p>
 
 <div id='nav'>
 <a href='ch6-0.html'>prev</a> | <a href='ch6-2.html'>next</a>
