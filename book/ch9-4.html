@@ -19,7 +19,7 @@ title: Pro Git 9.4 Git Internals Packfiles
 .git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1</code></pre>
 
-<p>Git compresses the contents of these files with zlib, and you’re not storing much, so all these files collectively take up only 925 bytes. You’ll add some larger content to the repository to demonstrate an interesting feature of Git. Add the repo.rb file from the Grit library you worked with earlier—this is about a 12K source code file:</p>
+<p>Git compresses the contents of these files with zlib, and you’re not storing much, so all these files collectively take up only 925 bytes. You’ll add some larger content to the repository to demonstrate an interesting feature of Git. Add the repo.rb file from the Grit library you worked with earlier — this is about a 12K source code file:</p>
 
 <pre><code>$ curl http://github.com/mojombo/grit/raw/master/lib/grit/repo.rb &gt; repo.rb
 $ git add repo.rb 
@@ -37,7 +37,7 @@ $ git commit -m &#39;added repo.rb&#39;
 100644 blob 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e      repo.rb
 100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt</code></pre>
 
-<p>You can then use git cat-file to see how big that object is:</p>
+<p>You can then use <code>git cat-file</code> to see how big that object is:</p>
 
 <pre><code>$ git cat-file -s 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e
 12898</code></pre>
@@ -63,7 +63,7 @@ $ git commit -am &#39;modified repo a bit&#39;
 
 <p>You have two nearly identical 12K objects on your disk. Wouldn’t it be nice if Git could store one of them in full but then the second object only as the delta between it and the first?</p>
 
-<p>It turns out that it can. The initial format in which Git saves objects on disk is called a loose object format. However, occasionally Git packs up several of these objects into a single binary file called a packfile in order to save space and be more efficient. Git does this if you have too many loose objects around, if you run the git gc command manually, or if you push to a remote server. To see what happens, you can manually ask Git to pack up the objects by calling the <code>git gc</code> command:</p>
+<p>It turns out that it can. The initial format in which Git saves objects on disk is called a loose object format. However, occasionally Git packs up several of these objects into a single binary file called a packfile in order to save space and be more efficient. Git does this if you have too many loose objects around, if you run the <code>git gc</code> command manually, or if you push to a remote server. To see what happens, you can manually ask Git to pack up the objects by calling the <code>git gc</code> command:</p>
 
 <pre><code>$ git gc
 Counting objects: 17, done.
@@ -81,11 +81,11 @@ Total 17 (delta 1), reused 10 (delta 0)</code></pre>
 .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
 .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack</code></pre>
 
-<p>The objects that remain are the blobs that aren’t pointed to by any commit—in this case, the “what is up, doc?” example and the “test content” example blobs you created earlier. Because you never added them to any commits, they’re considered dangling and aren’t packed up in your new packfile.</p>
+<p>The objects that remain are the blobs that aren’t pointed to by any commit — in this case, the &#8220;what is up, doc?&#8221; example and the &#8220;test content&#8221; example blobs you created earlier. Because you never added them to any commits, they’re considered dangling and aren’t packed up in your new packfile.</p>
 
-<p>The other files are your new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from your filesystem. The index is a file that contains offsets into that packfile so you can quickly seek to a specific object. What is cool is that although the objects on disk before you ran the gc were collectively about 12K in size, the new packfile is only 6K. You’ve halved your disk usage by packing your objects.</p>
+<p>The other files are your new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from your filesystem. The index is a file that contains offsets into that packfile so you can quickly seek to a specific object. What is cool is that although the objects on disk before you ran the <code>gc</code> were collectively about 12K in size, the new packfile is only 6K. You’ve halved your disk usage by packing your objects.</p>
 
-<p>How does Git do this? When Git packs objects, it looks for files that are named and sized similarly, and stores just the deltas from one version of the file to the next. You can look into the packfile and see what Git did to save space. The git verify-pack plumbing command allows you to see what was packed up:</p>
+<p>How does Git do this? When Git packs objects, it looks for files that are named and sized similarly, and stores just the deltas from one version of the file to the next. You can look into the packfile and see what Git did to save space. The <code>git verify-pack</code> plumbing command allows you to see what was packed up:</p>
 
 <pre><code>$ git verify-pack -v pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
 0155eb4229851634a0f03eb265b69f5a2d56f341 tree   71 76 5400
@@ -109,9 +109,9 @@ fdf4fc3344e67ab068f836878b6c4951e3b15f3d commit 177 122 627
 chain length = 1: 1 object
 pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack: ok</code></pre>
 
-<p>Here, the 9bc1d blob, which if you remember was the first version of your repo.rb file, is referencing the 05408 blob, which was the second version of the file. The third column in the output is the size of the object in the pack, so you can see that 05408 takes up 12K of the file but that 9bc1d only takes up 7 bytes. What is also interesting is that the second version of the file is the one that is stored intact, whereas the original version is stored as a delta—this is because you’re most likely to need faster access to the most recent version of the file.</p>
+<p>Here, the <code>9bc1d</code> blob, which if you remember was the first version of your repo.rb file, is referencing the <code>05408</code> blob, which was the second version of the file. The third column in the output is the size of the object in the pack, so you can see that <code>05408</code> takes up 12K of the file but that <code>9bc1d</code> only takes up 7 bytes. What is also interesting is that the second version of the file is the one that is stored intact, whereas the original version is stored as a delta — this is because you’re most likely to need faster access to the most recent version of the file.</p>
 
-<p>The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database automatically, always trying to save more space. You can also manually repack at any time by running git gc by hand.</p>
+<p>The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database automatically, always trying to save more space. You can also manually repack at any time by running <code>git gc</code> by hand.</p>
 
 <div id='nav'>
 <a href='ch9-3.html'>prev</a> | <a href='ch9-5.html'>next</a>

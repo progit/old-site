@@ -4,11 +4,11 @@ title: Pro Git 4.6 Git on the Server GitWeb
 ---
 <h2 id='gitweb'>GitWeb</h2>
 
-<p>Now that you have basic read/write and read-only access to your project, you may want to set up a simple web-based visualizer. Git comes with a CGI script called GitWeb that is commonly used for this. You can see GitWeb in use at sites like http:/git.kernel.org (see Figure 4-1).</p>
+<p>Now that you have basic read/write and read-only access to your project, you may want to set up a simple web-based visualizer. Git comes with a CGI script called GitWeb that is commonly used for this. You can see GitWeb in use at sites like <code>http:/git.kernel.org</code> (see Figure 4-1).</p>
 
 <p><center><img src="/figures/ch4/18333fig0401-tn.png"></center><br/> Figure 4-1. The GitWeb web-based user interface</p>
 
-<p>If you want to check out what GitWeb would look like for your project, Git comes with a command to fire up a temporary instance if you have a lightweight server on your system like lighttpd or webrick. On Linux machines, lighttpd is often installed, so you may be able to get it to run by typing git instaweb in your project directory. If you’re running a Mac, Leopard comes preinstalled with Ruby, so webrick may be your best bet. To start instaweb with a non-lighttpd handler, you can run it with the <code>--httpd</code> option.</p>
+<p>If you want to check out what GitWeb would look like for your project, Git comes with a command to fire up a temporary instance if you have a lightweight server on your system like <code>lighttpd</code> or <code>webrick</code>. On Linux machines, <code>lighttpd</code> is often installed, so you may be able to get it to run by typing <code>git instaweb</code> in your project directory. If you’re running a Mac, Leopard comes preinstalled with Ruby, so <code>webrick</code> may be your best bet. To start <code>instaweb</code> with a non-lighttpd handler, you can run it with the <code>--httpd</code> option.</p>
 
 <pre><code>$ git instaweb --httpd=webrick
 [2009-02-21 10:02:21] INFO  WEBrick 1.3.1
@@ -18,7 +18,7 @@ title: Pro Git 4.6 Git on the Server GitWeb
 
 <pre><code>$ git instaweb --httpd=webrick --stop</code></pre>
 
-<p>If you want to run the web interface on a server all the time for your team or for an open source project you’re hosting, you’ll need to set up the CGI script to be served by your normal web server. Some Linux distributions have a gitweb package that you may be able to install via apt or yum, so you may want to try that first. We’ll walk though installing GitWeb manually very quickly. First, you need to get the Git source code, which GitWeb comes with, and generate the custom CGI script:</p>
+<p>If you want to run the web interface on a server all the time for your team or for an open source project you’re hosting, you’ll need to set up the CGI script to be served by your normal web server. Some Linux distributions have a <code>gitweb</code> package that you may be able to install via <code>apt</code> or <code>yum</code>, so you may want to try that first. We’ll walk though installing GitWeb manually very quickly. First, you need to get the Git source code, which GitWeb comes with, and generate the custom CGI script:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
 $ cd git/
@@ -41,7 +41,7 @@ $ sudo cp -Rf gitweb /var/www/</code></pre>
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;</code></pre>
 
-<p>Again, GitWeb can be served with any CGI capable web server; if you prefer to use something else, it shouldn’t be difficult to set up. At this point, you should be able to visit http://gitserver/ to view your repositories online, and you can use http://git.gitserver to clone and fetch your repositories over HTTP.</p>
+<p>Again, GitWeb can be served with any CGI capable web server; if you prefer to use something else, it shouldn’t be difficult to set up. At this point, you should be able to visit <code>http://gitserver/</code> to view your repositories online, and you can use <code>http://git.gitserver</code> to clone and fetch your repositories over HTTP.</p>
 
 <div id='nav'>
 <a href='ch4-5.html'>prev</a> | <a href='ch4-7.html'>next</a>

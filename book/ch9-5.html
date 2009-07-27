@@ -8,27 +8,27 @@ title: Pro Git 9.5 Git Internals The Refspec
 
 <pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git</code></pre>
 
-<p>It adds a section to your .git/config file, specifying the name of the remote (origin), the URL of the remote repository, and the refspec for fetching:</p>
+<p>It adds a section to your <code>.git/config</code> file, specifying the name of the remote (<code>origin</code>), the URL of the remote repository, and the refspec for fetching:</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/*:refs/remotes/origin/*</code></pre>
 
-<p>The format of the refspec is an optional <code>+</code>, followed by <code>&lt;src&gt;:&lt;dst&gt;</code>, where <code>&lt;src&gt;</code> is the pattern for references on the remote side and <code>&lt;dst&gt;</code> is where those references will be written locally. The + tells Git to update the reference even if it isn’t a fast-forward.</p>
+<p>The format of the refspec is an optional <code>+</code>, followed by <code>&lt;src&gt;:&lt;dst&gt;</code>, where <code>&lt;src&gt;</code> is the pattern for references on the remote side and <code>&lt;dst&gt;</code> is where those references will be written locally. The <code>+</code> tells Git to update the reference even if it isn’t a fast-forward.</p>
 
-<p>In the default case that is automatically written by a git remote add command, Git fetches all the references under refs/heads/ on the server and writes them to refs/remotes/origin/ locally. So, if there is a master branch on the server, you can access the log of that branch locally via</p>
+<p>In the default case that is automatically written by a <code>git remote add</code> command, Git fetches all the references under <code>refs/heads/</code> on the server and writes them to <code>refs/remotes/origin/</code> locally. So, if there is a <code>master</code> branch on the server, you can access the log of that branch locally via</p>
 
 <pre><code>$ git log origin/master
 $ git log remotes/origin/master
 $ git log refs/remotes/origin/master</code></pre>
 
-<p>They’re all equivalent, because Git expands each of them to refs/remotes/origin/master.</p>
+<p>They’re all equivalent, because Git expands each of them to <code>refs/remotes/origin/master</code>.</p>
 
-<p>If you want Git instead to pull down only the master branch each time, and not every other branch on the remote server, you can change the fetch line to</p>
+<p>If you want Git instead to pull down only the <code>master</code> branch each time, and not every other branch on the remote server, you can change the fetch line to</p>
 
 <pre><code>fetch = +refs/heads/master:refs/remotes/origin/master</code></pre>
 
-<p>This is just the default refspec for git fetch for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the master branch on the remote down to origin/mymaster locally, you can run</p>
+<p>This is just the default refspec for <code>git fetch</code> for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the <code>master</code> branch on the remote down to <code>origin/mymaster</code> locally, you can run</p>
 
 <pre><code>$ git fetch origin master:refs/remotes/origin/mymaster</code></pre>
 
@@ -64,20 +64,20 @@ From git@github.com:schacon/simplegit
 
 <h3 id='pushing_refspecs'>Pushing Refspecs</h3>
 
-<p>It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a qa/ namespace in the first place? You accomplish that by using refspecs to push.</p>
+<p>It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a <code>qa/</code> namespace in the first place? You accomplish that by using refspecs to push.</p>
 
-<p>If the QA team wants to push their master branch to qa/master on the remote server, they can run</p>
+<p>If the QA team wants to push their <code>master</code> branch to <code>qa/master</code> on the remote server, they can run</p>
 
 <pre><code>$ git push origin master:refs/heads/qa/master</code></pre>
 
-<p>If they want Git to do that automatically each time they run git push origin, they can add a push value to their config file:</p>
+<p>If they want Git to do that automatically each time they run <code>git push origin</code>, they can add a <code>push</code> value to their config file:</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/*:refs/remotes/origin/*
        push = refs/heads/master:refs/heads/qa/master</code></pre>
 
-<p>Again, this will cause a git push origin to push the local master branch to the remote qa/master branch by default.</p>
+<p>Again, this will cause a <code>git push origin</code> to push the local <code>master</code> branch to the remote <code>qa/master</code> branch by default.</p>
 
 <h3 id='deleting_references'>Deleting References</h3>
 

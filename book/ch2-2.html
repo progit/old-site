@@ -22,7 +22,7 @@ nothing to commit (working directory clean)</code></pre>
 
 <p>This means you have a clean working directory—in other words, there are no tracked and modified files. Git also doesn’t see any untracked files, or they would be listed here. Finally, the command tells you which branch you’re on. For now, that is always master, which is the default; you won’t worry about it here. The next chapter will go over branches and references in detail.</p>
 
-<p>Let’s say you add a new file to your project, a simple README file. If the file didn’t exist before, and you run git status, you see your untracked file like so:</p>
+<p>Let’s say you add a new file to your project, a simple README file. If the file didn’t exist before, and you run <code>git status</code>, you see your untracked file like so:</p>
 
 <pre><code>$ vim README
 $ git status
@@ -37,7 +37,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <h3 id='tracking_new_files'>Tracking New Files</h3>
 
-<p>In order to begin tracking a new file, you use the command git add. To begin tracking the README file, you can run this:</p>
+<p>In order to begin tracking a new file, you use the command <code>git add</code>. To begin tracking the README file, you can run this:</p>
 
 <pre><code>$ git add README</code></pre>
 
@@ -51,11 +51,11 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	new file:   README
 #</code></pre>
 
-<p>You can tell that it’s staged because it’s under the “Changes to be committed” heading. If you commit at this point, the version of the file at the time you ran git add is what will be in the historical snapshot. You may recall that when you ran git init earlier, you then ran git add (files)—that was to begin tracking files in your directory. The git add command takes a path name for either a file or a directory; if it’s a directory, the command adds all the files in that directory recursively.</p>
+<p>You can tell that it’s staged because it’s under the “Changes to be committed” heading. If you commit at this point, the version of the file at the time you ran git add is what will be in the historical snapshot. You may recall that when you ran git init earlier, you then ran git add (files) — that was to begin tracking files in your directory. The git add command takes a path name for either a file or a directory; if it’s a directory, the command adds all the files in that directory recursively.</p>
 
 <h3 id='staging_modified_files'>Staging Modified Files</h3>
 
-<p>Let’s change a file that was already tracked. If you change a previously tracked file called benchmarks.rb and then run your status command again, you get something that looks like this:</p>
+<p>Let’s change a file that was already tracked. If you change a previously tracked file called <code>benchmarks.rb</code> and then run your <code>status</code> command again, you get something that looks like this:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -70,7 +70,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>The benchmarks.rb file appears under a section named “Changed but not updated”—which means that a file that is tracked has been modified in the working directory but not yet staged. To stage it, you run the git add command (it’s a multipurpose command—you use it to begin tracking new files, to stage files, and to do other things like marking merge-conflicted files as resolved). Let’s run git add now to stage the benchmarks.rb file, and then run git status again:</p>
+<p>The benchmarks.rb file appears under a section named “Changed but not updated” — which means that a file that is tracked has been modified in the working directory but not yet staged. To stage it, you run the <code>git add</code> command (it’s a multipurpose command — you use it to begin tracking new files, to stage files, and to do other things like marking merge-conflicted files as resolved). Let’s run <code>git add</code> now to stage the benchmarks.rb file, and then run <code>git status</code> again:</p>
 
 <pre><code>$ git add benchmarks.rb
 $ git status
@@ -82,7 +82,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Both files are staged and will go into your next commit. At this point, suppose you remember one little change that you want to make in benchmarks.rb before you commit it. You open it again and make that change, and you’re ready to commit. However, let’s run git status one more time:</p>
+<p>Both files are staged and will go into your next commit. At this point, suppose you remember one little change that you want to make in benchmarks.rb before you commit it. You open it again and make that change, and you’re ready to commit. However, let’s run <code>git status</code> one more time:</p>
 
 <pre><code>$ vim benchmarks.rb 
 $ git status
@@ -99,7 +99,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>What the heck? Now benchmarks.rb is listed as both staged and unstaged. How is that possible? It turns out that Git stages a file exactly as it is when you run the git add command. If you commit now, the version of benchmarks.rb as it was when you last ran the git add command is how it will go into the commit, not the version of the file as it looks in your working directory when you run git commit. If you modify a file after you run git add, you have to run git add again to stage the latest version of the file:</p>
+<p>What the heck? Now benchmarks.rb is listed as both staged and unstaged. How is that possible? It turns out that Git stages a file exactly as it is when you run the git add command. If you commit now, the version of benchmarks.rb as it was when you last ran the git add command is how it will go into the commit, not the version of the file as it looks in your working directory when you run git commit. If you modify a file after you run <code>git add</code>, you have to run <code>git add</code> again to stage the latest version of the file:</p>
 
 <pre><code>$ git add benchmarks.rb
 $ git status
@@ -119,7 +119,7 @@ $ git status
 *.[oa]
 *~</code></pre>
 
-<p>The first line tells Git to ignore any files ending in .o or .a—object and archive files that may be the product of building your code. The second line tells Git to ignore all files that end with a tilde (~), which is used by many text editors such as Emacs to mark temporary files. You may also include a log, tmp, or pid directory; automatically generated documentation; and so on. Setting up a .gitignore file before you get going is generally a good idea so you don’t accidentally commit files that you really don’t want in your Git repository.</p>
+<p>The first line tells Git to ignore any files ending in .o or .a — object and archive files that may be the product of building your code. The second line tells Git to ignore all files that end with a tilde (<code>~</code>), which is used by many text editors such as Emacs to mark temporary files. You may also include a log, tmp, or pid directory; automatically generated documentation; and so on. Setting up a .gitignore file before you get going is generally a good idea so you don’t accidentally commit files that you really don’t want in your Git repository.</p>
 
 <p>The rules for the patterns you can put in the .gitignore file are as follows:</p>
 
@@ -128,9 +128,9 @@ $ git status
 
 <li>Standard glob patterns work.</li>
 
-<li>You can end patterns with a forward slash (/) to specify a directory.</li>
+<li>You can end patterns with a forward slash (<code>/</code>) to specify a directory.</li>
 
-<li>You can negate a pattern by starting it with an exclamation point (!).</li>
+<li>You can negate a pattern by starting it with an exclamation point (<code>!</code>).</li>
 </ul>
 
 <p>Glob patterns are like simplified regular expressions that shells use. An asterisk (<code>*</code>) matches zero or more characters; <code>[abc]</code> matches any character inside the brackets (in this case a, b, or c); a question mark (<code>?</code>) matches a single character; and brackets enclosing characters seperated by a hyphen(<code>[0-9]</code>) matches any character between them (in this case 0 through 9) .</p>
@@ -146,9 +146,9 @@ doc/*.txt # ignore doc/notes.txt, but not doc/server/arch.txt</code></pre>
 
 <h3 id='viewing_your_staged_and_unstaged_changes'>Viewing Your Staged and Unstaged Changes</h3>
 
-<p>If the git status command is too vague for you—you want to know exactly what you changed, not just which files were changed—you can use the git diff command. We’ll cover git diff in more detail later; but you’ll probably use it most often to answer these two questions: What have you changed but not yet staged? And what have you staged that you are about to commit? Although git status answers those questions very generally, git diff shows you the exact lines added and removed—the patch, as it were.</p>
+<p>If the <code>git status</code> command is too vague for you — you want to know exactly what you changed, not just which files were changed — you can use the <code>git diff</code> command. We’ll cover <code>git diff</code> in more detail later; but you’ll probably use it most often to answer these two questions: What have you changed but not yet staged? And what have you staged that you are about to commit? Although <code>git status</code> answers those questions very generally, <code>git diff</code> shows you the exact lines added and removed — the patch, as it were.</p>
 
-<p>Let’s say you edit and stage the README file again and then edit the benchmarks.rb file without staging it. If you run your status command, you once again see something like this:</p>
+<p>Let’s say you edit and stage the README file again and then edit the benchmarks.rb file without staging it. If you run your <code>status</code> command, you once again see something like this:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -163,7 +163,7 @@ doc/*.txt # ignore doc/notes.txt, but not doc/server/arch.txt</code></pre>
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>To see what you’ve changed but not yet staged, type git diff with no other arguments:</p>
+<p>To see what you’ve changed but not yet staged, type <code>git diff</code> with no other arguments:</p>
 
 <pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -184,7 +184,7 @@ index 3cb747f..da65585 100644
 
 <p>That command compares what is in your working directory with what is in your staging area. The result tells you the changes you’ve made that you haven’t yet staged.</p>
 
-<p>If you want to see what you’ve staged that will go into your next commit, you can use git diff –-cached. (In Git versions 1.6.1 and later, you can also use git diff –-staged, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
+<p>If you want to see what you’ve staged that will go into your next commit, you can use <code>git diff –-cached</code>. (In Git versions 1.6.1 and later, you can also use <code>git diff –-staged</code>, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
 
 <pre><code>$ git diff --cached
 diff --git a/README b/README
@@ -199,9 +199,9 @@ index 0000000..03902a1
 +
 +Grit is a Ruby library for extracting information from a Git repository</code></pre>
 
-<p>It’s important to note that git diff by itself doesn’t show all changes made since your last commit—only changes that are still unstaged. This can be confusing, because if you’ve staged all of your changes, git diff will give you no output.</p>
+<p>It’s important to note that <code>git diff</code> by itself doesn’t show all changes made since your last commit — only changes that are still unstaged. This can be confusing, because if you’ve staged all of your changes, <code>git diff</code> will give you no output.</p>
 
-<p>For another example, if you stage the benchmarks.rb file and then edit it, you can use git diff to see the changes in the file that are staged and the changes that are unstaged:</p>
+<p>For another example, if you stage the benchmarks.rb file and then edit it, you can use <code>git diff</code> to see the changes in the file that are staged and the changes that are unstaged:</p>
 
 <pre><code>$ git add benchmarks.rb
 $ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
@@ -217,7 +217,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Now you can use git diff to see what is still unstaged</p>
+<p>Now you can use <code>git diff</code> to see what is still unstaged</p>
 
 <pre><code>$ git diff 
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -249,11 +249,11 @@ index 3cb747f..e445e28 100644
 
 <h3 id='committing_your_changes'>Committing Your Changes</h3>
 
-<p>Now that your staging area is set up the way you want it, you can commit your changes. Remember that anything that is still unstaged—any files you have created or modified that you haven’t run git add on since you edited them—won’t go into this commit. They will stay as modified files on your disk. In this case, the last time you ran git status, you saw that everything was staged, so you’re ready to commit your changes. The simplest way to commit is to type git commit:</p>
+<p>Now that your staging area is set up the way you want it, you can commit your changes. Remember that anything that is still unstaged — any files you have created or modified that you haven’t run <code>git add</code> on since you edited them — won’t go into this commit. They will stay as modified files on your disk. In this case, the last time you ran <code>git status</code>, you saw that everything was staged, so you’re ready to commit your changes. The simplest way to commit is to type <code>git commit</code>:</p>
 
 <pre><code>$ git commit</code></pre>
 
-<p>Doing so launches your editor of choice. (This is set by your shell’s $EDITOR environment variable—usually vim or emacs, although you can configure it with whatever you want using the git config &#8211;global core.editor command as you saw in Chapter 1).</p>
+<p>Doing so launches your editor of choice. (This is set by your shell’s <code>$EDITOR</code> environment variable — usually vim or emacs, although you can configure it with whatever you want using the <code>git config --global core.editor</code> command as you saw in Chapter 1).</p>
 
 <p>The editor displays the following text (this example is a Vim screen):</p>
 
@@ -270,22 +270,22 @@ index 3cb747f..e445e28 100644
 ~
 &quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
 
-<p>You can see that the default commit message contains the latest output of the git status command commented out and one empty line on top. You can remove these comments and type your commit message, or you can leave them there to help you remember what you’re committing. (For an even more explicit reminder of what you’ve modified, you can pass the -v option to git commit. Doing so also puts the diff of your change in the editor so you can see exactly what you did.) When you exit the editor, Git creates your commit with that commit message (with the comments and diff stripped out).</p>
+<p>You can see that the default commit message contains the latest output of the <code>git status</code> command commented out and one empty line on top. You can remove these comments and type your commit message, or you can leave them there to help you remember what you’re committing. (For an even more explicit reminder of what you’ve modified, you can pass the <code>-v</code> option to <code>git commit</code>. Doing so also puts the diff of your change in the editor so you can see exactly what you did.) When you exit the editor, Git creates your commit with that commit message (with the comments and diff stripped out).</p>
 
-<p>Alternatively, you can type your commit message inline with the commit command by specifying it after a -m flag, like this:</p>
+<p>Alternatively, you can type your commit message inline with the <code>commit</code> command by specifying it after a -m flag, like this:</p>
 
 <pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
 [master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
  2 files changed, 3 insertions(+), 0 deletions(-)
  create mode 100644 README</code></pre>
 
-<p>Now you’ve created your first commit! You can see that the commit has given you some output about itself: which branch you committed to (master), what SHA-1 checksum the commit has (463dc4f), how many files were changed, and statistics about lines added and removed in the commit.</p>
+<p>Now you’ve created your first commit! You can see that the commit has given you some output about itself: which branch you committed to (master), what SHA-1 checksum the commit has (<code>463dc4f</code>), how many files were changed, and statistics about lines added and removed in the commit.</p>
 
 <p>Remember that the commit records the snapshot you set up in your staging area. Anything you didn’t stage is still sitting there modified; you can do another commit to add it to your history. Every time you perform a commit, you’re recording a snapshot of your project that you can revert to or compare to later.</p>
 
 <h3 id='skipping_the_staging_area'>Skipping the Staging Area</h3>
 
-<p>Although it can be amazingly useful for crafting commits exactly how you want them, the staging area is sometimes a bit more complex than you need in your workflow. If you want to skip the staging area, Git provides a simple shortcut. Providing the -a option to the git commit command makes Git automatically stage every file that is already tracked before doing the commit, letting you skip the git add part:</p>
+<p>Although it can be amazingly useful for crafting commits exactly how you want them, the staging area is sometimes a bit more complex than you need in your workflow. If you want to skip the staging area, Git provides a simple shortcut. Providing the <code>-a</code> option to the <code>git commit</code> command makes Git automatically stage every file that is already tracked before doing the commit, letting you skip the <code>git add</code> part:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -298,13 +298,13 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 [master 83e38c7] added new benchmarks
  1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Notice how you don’t have to run git add on the benchmarks.rb file in this case before you commit.</p>
+<p>Notice how you don’t have to run <code>git add</code> on the benchmarks.rb file in this case before you commit.</p>
 
 <h3 id='removing_files'>Removing Files</h3>
 
-<p>To remove a file from Git, you have to remove it from your tracked files (more accurately, remove it from your staging area) and then commit. The git rm command does that and also removes the file from your working directory so you don’t see it as an untracked file next time around.</p>
+<p>To remove a file from Git, you have to remove it from your tracked files (more accurately, remove it from your staging area) and then commit. The <code>git rm</code> command does that and also removes the file from your working directory so you don’t see it as an untracked file next time around.</p>
 
-<p>If you simply remove the file from your working directory, it shows up under the “Changed but not updated” (that is, unstaged) area of your git status output:</p>
+<p>If you simply remove the file from your working directory, it shows up under the “Changed but not updated” (that is, <em>unstaged</em>) area of your <code>git status</code> output:</p>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -316,7 +316,7 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>Then, if you run git rm, it stages the file’s removal:</p>
+<p>Then, if you run <code>git rm</code>, it stages the file’s removal:</p>
 
 <pre><code>$ git rm grit.gemspec
 rm &#39;grit.gemspec&#39;
@@ -329,13 +329,13 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>The next time you commit, the file will be gone and no longer tracked. If you modified the file and added it to the index already, you must force the removal with the -f option. This is a safety feature to prevent accidental removal of data that hasn’t yet been recorded in a snapshot and that can’t be recovered from Git.</p>
+<p>The next time you commit, the file will be gone and no longer tracked. If you modified the file and added it to the index already, you must force the removal with the <code>-f</code> option. This is a safety feature to prevent accidental removal of data that hasn’t yet been recorded in a snapshot and that can’t be recovered from Git.</p>
 
-<p>Another useful thing you may want to do is to keep the file in your working tree but remove it from your staging area. In other words, you may want to keep the file on your hard drive but not have Git track it anymore. This is particularly useful if you forgot to add something to your .gitignore file and accidentally added it, like a large log file or a bunch of .a compiled files. To do this, use the &#8211;cached option:</p>
+<p>Another useful thing you may want to do is to keep the file in your working tree but remove it from your staging area. In other words, you may want to keep the file on your hard drive but not have Git track it anymore. This is particularly useful if you forgot to add something to your <code>.gitignore</code> file and accidentally added it, like a large log file or a bunch of <code>.a</code> compiled files. To do this, use the <code>--cached</code> option:</p>
 
 <pre><code>$ git rm --cached readme.txt</code></pre>
 
-<p>You can pass files, directories, and file-glob patterns to the git rm command. That means you can do things such as</p>
+<p>You can pass files, directories, and file-glob patterns to the <code>git rm</code> command. That means you can do things such as</p>
 
 <pre><code>$ git rm log/\*.log</code></pre>
 
@@ -347,9 +347,9 @@ $ git status
 
 <h3 id='moving_files'>Moving Files</h3>
 
-<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact—we’ll deal with detecting file movement a bit later.</p>
+<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.</p>
 
-<p>Thus it’s a bit confusing that Git has a mv command. If you want to rename a file in Git, you can run something like</p>
+<p>Thus it’s a bit confusing that Git has a <code>mv</code> command. If you want to rename a file in Git, you can run something like</p>
 
 <pre><code>$ git mv file_from file_to</code></pre>
 
@@ -372,7 +372,7 @@ $ git status
 $ git rm README.txt
 $ git add README</code></pre>
 
-<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the mv command. The only real difference is that mv is one command instead of three—it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
+<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the <code>mv</code> command. The only real difference is that <code>mv</code> is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
 
 <div id='nav'>
 <a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>

@@ -8,13 +8,13 @@ title: Pro Git 8.2 Git and Other Systems Migrating to Git
 
 <h3 id='importing'>Importing</h3>
 
-<p>You’ll learn how to import data from two of the bigger professionally used SCM systems—Subversion and Perforce—both because they make up the majority of users I hear of who are currently switching, and because high-quality tools for both systems are distributed with Git.</p>
+<p>You’ll learn how to import data from two of the bigger professionally used SCM systems — Subversion and Perforce — both because they make up the majority of users I hear of who are currently switching, and because high-quality tools for both systems are distributed with Git.</p>
 
 <h3 id='subversion'>Subversion</h3>
 
-<p>If you read the previous section about using git svn, you can easily use those instructions to git svn clone a repository; then, stop using the Subversion server, push to a new Git server, and start using that. If you want the history, you can accomplish that as quickly as you can pull the data out of the Subversion server (which may take a while).</p>
+<p>If you read the previous section about using <code>git svn</code>, you can easily use those instructions to <code>git svn clone</code> a repository; then, stop using the Subversion server, push to a new Git server, and start using that. If you want the history, you can accomplish that as quickly as you can pull the data out of the Subversion server (which may take a while).</p>
 
-<p>However, the import isn’t perfect; and because it will take so long, you may as well do it right. The first problem is the author information. In Subversion, each person committing has a user on the system who is recorded in the commit information. The examples in the previous section show schacon in some places, such as the blame output and the git svn log. If you want to map this to better Git author data, you need a mapping from the Subversion users to the Git authors. Create a file called users.txt that has this mapping in a format like this:</p>
+<p>However, the import isn’t perfect; and because it will take so long, you may as well do it right. The first problem is the author information. In Subversion, each person committing has a user on the system who is recorded in the commit information. The examples in the previous section show <code>schacon</code> in some places, such as the <code>blame</code> output and the <code>git svn log</code>. If you want to map this to better Git author data, you need a mapping from the Subversion users to the Git authors. Create a file called <code>users.txt</code> that has this mapping in a format like this:</p>
 
 <pre><code>schacon = Scott Chacon &lt;schacon@geemail.com&gt;
 selse = Someo Nelse &lt;selse@geemail.com&gt;</code></pre>
@@ -23,9 +23,9 @@ selse = Someo Nelse &lt;selse@geemail.com&gt;</code></pre>
 
 <pre><code>$ svn log --xml | grep author | sort -u | perl -pe &#39;s/.&gt;(.?)&lt;./$1 = /&#39;</code></pre>
 
-<p>That gives you the log output in XML format—you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with grep, sort, and perl installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.</p>
+<p>That gives you the log output in XML format — you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with <code>grep</code>, <code>sort</code>, and <code>perl</code> installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.</p>
 
-<p>You can provide this file to <code>git svn</code> to help it map the author data more accurately. You can also tell git svn not to include the metadata that Subversion normally imports, by passing &#8211;no-metadata to the clone or init command. This makes your import command look like this:</p>
+<p>You can provide this file to <code>git svn</code> to help it map the author data more accurately. You can also tell <code>git svn</code> not to include the metadata that Subversion normally imports, by passing <code>--no-metadata</code> to the <code>clone</code> or <code>init</code> command. This makes your <code>import</code> command look like this:</p>
 
 <pre><code>$ git-svn clone http://my-project.googlecode.com/svn/ \
       --authors-file=users.txt --no-metadata -s my_project</code></pre>
@@ -49,18 +49,18 @@ Date:   Sun May 3 00:12:22 2009 +0000
 
     fixed install - go to trunk</code></pre>
 
-<p>Not only does the Author field look a lot better, but the git-svn-id is no longer there, either.</p>
+<p>Not only does the Author field look a lot better, but the <code>git-svn-id</code> is no longer there, either.</p>
 
-<p>You need to do a bit of post-import cleanup. For one thing, you should clean up the weird references that git svn set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.</p>
+<p>You need to do a bit of <code>post-import</code> cleanup. For one thing, you should clean up the weird references that <code>git svn</code> set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.</p>
 
 <p>To move the tags to be proper Git tags, run</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/tags/* .git/refs/tags/
 $ rm -Rf .git/refs/remotes/tags</code></pre>
 
-<p>This takes the references that were remote branches that started with tag/ and makes them real (lightweight) tags.</p>
+<p>This takes the references that were remote branches that started with <code>tag/</code> and makes them real (lightweight) tags.</p>
 
-<p>Next, move the rest of the references under refs/remotes to be local branches:</p>
+<p>Next, move the rest of the references under <code>refs/remotes</code> to be local branches:</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
@@ -73,16 +73,16 @@ $ rm -Rf .git/refs/remotes</code></pre>
 
 <h3 id='perforce'>Perforce</h3>
 
-<p>The next system you’ll look at importing from is Perforce. A Perforce importer is also distributed with Git, but only in the contrib section of the source code—it isn’t available by default like git svn. To run it, you must get the Git source code, which you can download from git.kernel.org:</p>
+<p>The next system you’ll look at importing from is Perforce. A Perforce importer is also distributed with Git, but only in the <code>contrib</code> section of the source code — it isn’t available by default like <code>git svn</code>. To run it, you must get the Git source code, which you can download from git.kernel.org:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
 $ cd git/contrib/fast-import</code></pre>
 
-<p>In this fast-import directory, you should find an executable Python script named git-p4. You must have Python and the p4 tool installed on your machine for this import to work. For example, you’ll import the Jam project from the Perforce Public Depot. To set up your client, you must export the P4PORT environment variable to point to the Perforce depot:</p>
+<p>In this <code>fast-import</code> directory, you should find an executable Python script named <code>git-p4</code>. You must have Python and the <code>p4</code> tool installed on your machine for this import to work. For example, you’ll import the Jam project from the Perforce Public Depot. To set up your client, you must export the P4PORT environment variable to point to the Perforce depot:</p>
 
 <pre><code>$ export P4PORT=public.perforce.com:1666</code></pre>
 
-<p>Run the git-p4 clone command to import the Jam project from the Perforce server, supplying the depot and project path and the path into which you want to import the project:</p>
+<p>Run the <code>git-p4 clone</code> command to import the Jam project from the Perforce server, supplying the depot and project path and the path into which you want to import the project:</p>
 
 <pre><code>$ git-p4 clone //public/jam/src@all /opt/p4import
 Importing from //public/jam/src@all into /opt/p4import
@@ -90,7 +90,7 @@ Reinitialized existing Git repository in /opt/p4import/.git/
 Import destination: refs/remotes/p4/master
 Importing revision 4409 (100%)</code></pre>
 
-<p>If you go to the /opt/p4import directory and run git log, you can see your imported work:</p>
+<p>If you go to the <code>/opt/p4import</code> directory and run <code>git log</code>, you can see your imported work:</p>
 
 <pre><code>$ git log -2
 commit 1fd4ec126171790efd2db83548b85b1bbbc07dc2
@@ -112,7 +112,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
     [git-p4: depot-paths = &quot;//public/jam/src/&quot;: change = 3108]</code></pre>
 
-<p>You can see the git-p4 identifier in each commit. It’s fine to keep that identifier there, in case you need to reference the Perforce change number later. However, if you’d like to remove the identifier, now is the time to do so—before you start doing work on the new repository. You can use git filter-branch to remove the identifier strings en masse:</p>
+<p>You can see the <code>git-p4</code> identifier in each commit. It’s fine to keep that identifier there, in case you need to reference the Perforce change number later. However, if you’d like to remove the identifier, now is the time to do so — before you start doing work on the new repository. You can use <code>git filter-branch</code> to remove the identifier strings en masse:</p>
 
 <pre><code>$ git filter-branch --msg-filter &#39;
         sed -e &quot;/^\[git-p4:/d&quot;
@@ -120,7 +120,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 Rewrite 1fd4ec126171790efd2db83548b85b1bbbc07dc2 (123/123)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>If you run git log, you can see that all the SHA-1 checksums for the commits have changed, but the git-p4 strings are no longer in the commit messages:</p>
+<p>If you run <code>git log</code>, you can see that all the SHA-1 checksums for the commits have changed, but the <code>git-p4</code> strings are no longer in the commit messages:</p>
 
 <pre><code>$ git log -2
 commit 10a16d60cffca14d454a15c6164378f4082bc5b0
@@ -142,7 +142,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
 <h3 id='a_custom_importer'>A Custom Importer</h3>
 
-<p>If your system isn’t Subversion or Perforce, you should look for an importer online—quality importers are available for CVS, Clear Case, Visual Source Safe, even a directory of archives. If none of these tools works for you, you have a rarer tool, or you otherwise need a more custom importing process, you should use git fast-import. This command reads simple instructions from stdin to write specific Git data. It’s much easier to create Git objects this way than to run the raw Git commands or try to write the raw objects (see Chapter 9 for more information). This way, you can write an import script that reads the necessary information out of the system you’re importing from and prints straightforward instructions to stdout. You can then run this program and pipe its output through git fast-import.</p>
+<p>If your system isn’t Subversion or Perforce, you should look for an importer online — quality importers are available for CVS, Clear Case, Visual Source Safe, even a directory of archives. If none of these tools works for you, you have a rarer tool, or you otherwise need a more custom importing process, you should use <code>git fast-import</code>. This command reads simple instructions from stdin to write specific Git data. It’s much easier to create Git objects this way than to run the raw Git commands or try to write the raw objects (see Chapter 9 for more information). This way, you can write an import script that reads the necessary information out of the system you’re importing from and prints straightforward instructions to stdout. You can then run this program and pipe its output through <code>git fast-import</code>.</p>
 
 <p>To quickly demonstrate, you’ll write a simple importer. Suppose you work in current, you back up your project by occasionally copying the directory into a time-stamped <code>back_YYYY_MM_DD</code> backup directory, and you want to import this into Git. Your directory structure looks like this:</p>
 
@@ -153,9 +153,9 @@ back_2009_01_14
 back_2009_02_03
 current</code></pre>
 
-<p>In order to import a Git directory, you need to review how Git stores its data. As you may remember, Git is fundamentally a linked list of commit objects that point to a snapshot of content. All you have to do is tell fast-import what the content snapshots are, what commit data points to them, and the order they go in. Your strategy will be to go through the snapshots one at a time and create commits with the contents of each directory, linking each commit back to the previous one.</p>
+<p>In order to import a Git directory, you need to review how Git stores its data. As you may remember, Git is fundamentally a linked list of commit objects that point to a snapshot of content. All you have to do is tell <code>fast-import</code> what the content snapshots are, what commit data points to them, and the order they go in. Your strategy will be to go through the snapshots one at a time and create commits with the contents of each directory, linking each commit back to the previous one.</p>
 
-<p>As you did in the “An Example Git Enforced Policy” section of Chapter 7, we’ll write this in Ruby, because it’s what I generally work with and it tends to be easy to read. You can write this example pretty easily in anything you’re familiar with—it just needs to print the appropriate information to stdout.</p>
+<p>As you did in the &#8220;An Example Git Enforced Policy&#8221; section of Chapter 7, we’ll write this in Ruby, because it’s what I generally work with and it tends to be easy to read. You can write this example pretty easily in anything you’re familiar with — it just needs to print the appropriate information to stdout.</p>
 
 <p>To begin, you’ll change into the target directory and identify every subdirectory, each of which is a snapshot that you want to import as a commit. You’ll change into each subdirectory and print the commands necessary to export it. Your basic main loop looks like this:</p>
 
@@ -173,7 +173,7 @@ Dir.chdir(ARGV[0]) do
   end
 end</code></pre>
 
-<p>You run <code>print_export</code> inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. Mark is the fast-import term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your <code>print_export</code> method is generate a mark from the directory name:</p>
+<p>You run <code>print_export</code> inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. &#8220;Mark&#8221; is the <code>fast-import</code> term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your <code>print_export</code> method is generate a mark from the directory name:</p>
 
 <pre><code>mark = convert_dir_to_mark(dir)</code></pre>
 
@@ -226,7 +226,7 @@ puts &#39;from :&#39; + last_mark if last_mark</code></pre>
   print &quot;data #{string.size}\n#{string}&quot;
 end</code></pre>
 
-<p>All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory—you can print out the deleteall command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:</p>
+<p>All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory — you can print out the <code>deleteall</code> command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:</p>
 
 <pre><code>puts &#39;deleteall&#39;
 Dir.glob(&quot;**/*&quot;).each do |file|
@@ -234,7 +234,7 @@ Dir.glob(&quot;**/*&quot;).each do |file|
   inline_data(file)
 end</code></pre>
 
-<p>Note: Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex—you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the fast-import man page for details about how to provide your data in this manner.</p>
+<p>Note: Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex — you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the <code>fast-import</code> man page for details about how to provide your data in this manner.</p>
 
 <p>The format for listing the new file contents or specifying a modified file with the new contents is as follows:</p>
 
@@ -281,7 +281,7 @@ data 16
 new version one
 (...)</code></pre>
 
-<p>To run the importer, pipe this output through <code>git fast-import</code> while in the Git directory you want to import into. You can create a new directory and then run git init in it for a starting point, and then run your script:</p>
+<p>To run the importer, pipe this output through <code>git fast-import</code> while in the Git directory you want to import into. You can create a new directory and then run <code>git init</code> in it for a starting point, and then run your script:</p>
 
 <pre><code>$ git init
 Initialized empty Git repository in /opt/import_to/.git/
@@ -310,7 +310,7 @@ pack_report: pack_open_windows        =          1 /          1
 pack_report: pack_mapped              =       1356 /       1356
 ---------------------------------------------------------------------</code></pre>
 
-<p>As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run git log to see your new history:</p>
+<p>As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run <code>git log</code> to see your new history:</p>
 
 <pre><code>$ git log -2
 commit 10bfe7d22ce15ee25b60a824c8982157ca593d41
@@ -325,7 +325,7 @@ Date:   Tue Feb 3 01:00:00 2009 -0700
 
     imported from back_2009_02_03</code></pre>
 
-<p>There you go — a nice, clean Git repository. It’s important to note that nothing is checked out—you don’t have any files in your working directory at first. To get them, you must reset your branch to where master is now:</p>
+<p>There you go — a nice, clean Git repository. It’s important to note that nothing is checked out — you don’t have any files in your working directory at first. To get them, you must reset your branch to where <code>master</code> is now:</p>
 
 <pre><code>$ ls
 $ git reset --hard master
@@ -333,7 +333,7 @@ HEAD is now at 10bfe7d imported from current
 $ ls
 file.rb  lib</code></pre>
 
-<p>You can do a lot more with the fast-import tool—handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the <code>contrib/fast-import</code> directory of the Git source code; one of the better ones is the <code>git-p4</code> script I just covered.</p>
+<p>You can do a lot more with the <code>fast-import</code> tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the <code>contrib/fast-import</code> directory of the Git source code; one of the better ones is the <code>git-p4</code> script I just covered.</p>
 
 <div id='nav'>
 <a href='ch8-1.html'>prev</a> | <a href='ch8-3.html'>next</a>

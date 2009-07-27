@@ -4,7 +4,7 @@ title: Pro Git 6.2 Git Tools Interactive Staging
 ---
 <h2 id='interactive_staging'>Interactive Staging</h2>
 
-<p>Git comes with a couple of scripts that make some command-line tasks easier. Here, you’ll look at a few interactive commands that can help you easily craft your commits to include only certain combinations and parts of files. These tools are very helpful if you modify a bunch of files and then decide that you want those changes to be in several focused commits rather than one big messy commit. This way, you can make sure your commits are logically separate changesets and can be easily reviewed by the developers working with you. If you run git add with the -i or &#8211;interactive option, Git goes into an interactive shell mode, displaying something like this:</p>
+<p>Git comes with a couple of scripts that make some command-line tasks easier. Here, you’ll look at a few interactive commands that can help you easily craft your commits to include only certain combinations and parts of files. These tools are very helpful if you modify a bunch of files and then decide that you want those changes to be in several focused commits rather than one big messy commit. This way, you can make sure your commits are logically separate changesets and can be easily reviewed by the developers working with you. If you run <code>git add</code> with the <code>-i</code> or <code>--interactive</code> option, Git goes into an interactive shell mode, displaying something like this:</p>
 
 <pre><code>$ git add -i
            staged     unstaged path
@@ -17,13 +17,13 @@ title: Pro Git 6.2 Git Tools Interactive Staging
   5: patch      6: diff        7: quit       8: help
 What now&gt; </code></pre>
 
-<p>You can see that this command shows you a much different view of your staging area—basically the same information you get with git status but a bit more succinct and informative. It lists the changes you’ve staged on the left and unstaged changes on the right.</p>
+<p>You can see that this command shows you a much different view of your staging area — basically the same information you get with <code>git status</code> but a bit more succinct and informative. It lists the changes you’ve staged on the left and unstaged changes on the right.</p>
 
 <p>After this comes a Commands section. Here you can do a number of things, including staging files, unstaging files, staging parts of files, adding untracked files, and seeing diffs of what has been staged.</p>
 
 <h3 id='staging_and_unstaging_files'>Staging and Unstaging Files</h3>
 
-<p>If you type 2 or u at the What now&gt; prompt, the script prompts you for which files you want to stage:</p>
+<p>If you type <code>2</code> or <code>u</code> at the <code>What now&gt;</code> prompt, the script prompts you for which files you want to stage:</p>
 
 <pre><code>What now&gt; 2
            staged     unstaged path
@@ -41,7 +41,7 @@ Update&gt;&gt;</code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>The * next to each file means the file is selected to be staged. If you press Enter after typing nothing at the Update&#187; prompt, Git takes anything selected and stages it for you:</p>
+<p>The <code>*</code> next to each file means the file is selected to be staged. If you press Enter after typing nothing at the <code>Update&gt;&gt;</code> prompt, Git takes anything selected and stages it for you:</p>
 
 <pre><code>Update&gt;&gt; 
 updated 2 paths
@@ -55,7 +55,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>Now you can see that the TODO and index.html files are staged and the simplegit.rb file is still unstaged. If you want to unstage the TODO file at this point, you use the 3 or r (for revert) option:</p>
+<p>Now you can see that the TODO and index.html files are staged and the simplegit.rb file is still unstaged. If you want to unstage the TODO file at this point, you use the <code>3</code> or <code>r</code> (for revert) option:</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -84,7 +84,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>To see the diff of what you’ve staged, you can use the 6 or d (for diff) command. It shows you a list of your staged files, and you can select the ones for which you would like to see the staged diff. This is much like specifying git diff &#8211;cached on the command line:</p>
+<p>To see the diff of what you’ve staged, you can use the <code>6</code> or <code>d</code> (for diff) command. It shows you a list of your staged files, and you can select the ones for which you would like to see the staged diff. This is much like specifying <code>git diff --cached</code> on the command line:</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -110,7 +110,7 @@ index 4d07108..4335f49 100644
 
 <h3 id='staging_patches'>Staging Patches</h3>
 
-<p>It’s also possible for Git to stage certain parts of files and not the rest. For example, if you make two changes to your simplegit.rb file and want to stage one of them and not the other, doing so is very easy in Git. From the interactive prompt, type 5 or p (for patch). Git will ask you which files you would like to partially stage; then, for each section of the selected files, it will display hunks of the file diff and ask if you would like to stage them, one by one:</p>
+<p>It’s also possible for Git to stage certain parts of files and not the rest. For example, if you make two changes to your simplegit.rb file and want to stage one of them and not the other, doing so is very easy in Git. From the interactive prompt, type <code>5</code> or <code>p</code> (for patch). Git will ask you which files you would like to partially stage; then, for each section of the selected files, it will display hunks of the file diff and ask if you would like to stage them, one by one:</p>
 
 <pre><code>diff --git a/lib/simplegit.rb b/lib/simplegit.rb
 index dd5ecc4..57399e0 100644
@@ -127,7 +127,7 @@ index dd5ecc4..57399e0 100644
    def blame(path)
 Stage this hunk [y,n,a,d,/,j,J,g,e,?]? </code></pre>
 
-<p>You have a lot of options at this point. Typing ? shows a list of what you can do:</p>
+<p>You have a lot of options at this point. Typing <code>?</code> shows a list of what you can do:</p>
 
 <pre><code>Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
 y - stage this hunk
@@ -144,7 +144,7 @@ s - split the current hunk into smaller hunks
 e - manually edit the current hunk
 ? - print help</code></pre>
 
-<p>Generally, you’ll type y or n if you want to stage each hunk, but staging all of them in certain files or skipping a hunk decision until later can be helpful too. If you stage one part of the file and leave another part unstaged, your status output will look like this:</p>
+<p>Generally, you’ll type <code>y</code> or <code>n</code> if you want to stage each hunk, but staging all of them in certain files or skipping a hunk decision until later can be helpful too. If you stage one part of the file and leave another part unstaged, your status output will look like this:</p>
 
 <pre><code>What now&gt; 1
            staged     unstaged path
@@ -152,9 +152,9 @@ e - manually edit the current hunk
   2:        +1/-1      nothing index.html
   3:        +1/-1        +4/-0 lib/simplegit.rb</code></pre>
 
-<p>The status of the simplegit.rb file is interesting. It shows you that a couple of lines are staged and a couple are unstaged. You’ve partially staged this file. At this point, you can exit the interactive adding script and run git commit to commit the partially staged files.</p>
+<p>The status of the simplegit.rb file is interesting. It shows you that a couple of lines are staged and a couple are unstaged. You’ve partially staged this file. At this point, you can exit the interactive adding script and run <code>git commit</code> to commit the partially staged files.</p>
 
-<p>Finally, you don’t need to be in interactive add mode to do the partial-file staging—you can start the same script by using git add -p or git add &#8211;patch on the command line.</p>
+<p>Finally, you don’t need to be in interactive add mode to do the partial-file staging — you can start the same script by using <code>git add -p</code> or <code>git add --patch</code> on the command line.</p>
 
 <div id='nav'>
 <a href='ch6-1.html'>prev</a> | <a href='ch6-3.html'>next</a>

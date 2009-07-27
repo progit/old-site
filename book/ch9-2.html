@@ -4,7 +4,7 @@ title: Pro Git 9.2 Git Internals Git Objects
 ---
 <h2 id='git_objects'>Git Objects</h2>
 
-<p>Git is a content-addressable filesystem. Great. What does that mean? It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command hash-object, which takes some data, stores it in your .git directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the objects directory:</p>
+<p>Git is a content-addressable filesystem. Great. What does that mean? It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command <code>hash-object</code>, which takes some data, stores it in your <code>.git</code> directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the <code>objects</code> directory:</p>
 
 <pre><code>$ mkdir test
 $ cd test
@@ -17,19 +17,19 @@ $ find .git/objects
 $ find .git/objects -type f
 $</code></pre>
 
-<p>Git has initialized the objects directory and created pack and info subdirectories in it, but there are no regular files. Now, store some text in your Git database:</p>
+<p>Git has initialized the <code>objects</code> directory and created <code>pack</code> and <code>info</code> subdirectories in it, but there are no regular files. Now, store some text in your Git database:</p>
 
 <pre><code>$ echo &#39;test content&#39; | git hash-object -w --stdin
 d670460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
 
-<p>The -w tells hash-object to store the object; otherwise, the command simply tells you what the key would be. &#8211;stdin tells the command to read the content from stdin; if you don’t specify this, hash-object expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash—a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:</p>
+<p>The <code>-w</code> tells <code>hash-object</code> to store the object; otherwise, the command simply tells you what the key would be. <code>--stdin</code> tells the command to read the content from stdin; if you don’t specify this, <code>hash-object</code> expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash — a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:</p>
 
 <pre><code>$ find .git/objects -type f 
 .git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
 
-<p>You can see a file in the objects directory. This is how Git stores the content initially—as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.</p>
+<p>You can see a file in the <code>objects</code> directory. This is how Git stores the content initially — as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.</p>
 
-<p>You can pull the content back out of Git with the cat-file command. This command is sort of a Swiss army knife for inspecting Git objects. Passing -p to it instructs the cat-file command to figure out the type of content and display it nicely for you:</p>
+<p>You can pull the content back out of Git with the <code>cat-file</code> command. This command is sort of a Swiss army knife for inspecting Git objects. Passing <code>-p</code> to it instructs the <code>cat-file</code> command to figure out the type of content and display it nicely for you:</p>
 
 <pre><code>$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
 test content</code></pre>
@@ -65,7 +65,7 @@ version 1</code></pre>
 $ cat test.txt 
 version 2</code></pre>
 
-<p>But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system—just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with cat-file -t:</p>
+<p>But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system — just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with <code>cat-file -t</code>:</p>
 
 <pre><code>$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
 blob</code></pre>
@@ -79,7 +79,7 @@ blob</code></pre>
 100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
 040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib</code></pre>
 
-<p>The master^{tree} syntax specifies the tree object that is pointed to by the last commit on your master branch. Notice that the lib subdirectory isn’t a blob but a pointer to another tree:</p>
+<p>The <code>master^{tree}</code> syntax specifies the tree object that is pointed to by the last commit on your <code>master</code> branch. Notice that the <code>lib</code> subdirectory isn’t a blob but a pointer to another tree:</p>
 
 <pre><code>$ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
 100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b      simplegit.rb</code></pre>
@@ -88,14 +88,14 @@ blob</code></pre>
 
 <p><center><img src="/figures/ch9/18333fig0901-tn.png"></center><br/> Figure 9-1. Simple version of the Git data model</p>
 
-<p>You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry—the first version of your text.txt file—you can use the plumbing command update-index. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the &#8211;add option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and &#8211;cacheinfo because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:</p>
+<p>You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry — the first version of your text.txt file — you can use the plumbing command <code>update-index</code>. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the <code>--add</code> option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and <code>--cacheinfo</code> because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:</p>
 
 <pre><code>$ git update-index --add --cacheinfo 100644 \
   83baae61804e65cc73a7201a7252750c76066a30 test.txt</code></pre>
 
-<p>In this case, you’re specifying a mode of 100644, which means it’s a normal file. Other options are 100755, which means it’s an executable file; and 120000, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible—these three modes are the only ones that are valid for files in Git (although other modes are used for directories and submodules).</p>
+<p>In this case, you’re specifying a mode of <code>100644</code>, which means it’s a normal file. Other options are <code>100755</code>, which means it’s an executable file; and <code>120000</code>, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible — these three modes are the only ones that are valid for files (blobs) in Git (although other modes are used for directories and submodules).</p>
 
-<p>Now, you can use the write-tree command to write the staging area out to a tree object. No -w option is needed—calling write-tree automatically creates a tree object from the state of the index if that tree doesn’t yet exist:</p>
+<p>Now, you can use the <code>write-tree</code> command to write the staging area out to a tree object. No <code>-w</code> option is needed — calling <code>write-tree</code> automatically creates a tree object from the state of the index if that tree doesn’t yet exist:</p>
 
 <pre><code>$ git write-tree
 d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -121,7 +121,7 @@ $ git cat-file -p 0155eb4229851634a0f03eb265b69f5a2d56f341
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
 
-<p>Notice that this tree has both file entries and also that the test.txt SHA is the version 2 SHA from earlier (1f7a7a). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling read-tree. In this case, you can read an existing tree into your staging area as a subtree by using the &#8211;prefix option to read-tree:</p>
+<p>Notice that this tree has both file entries and also that the test.txt SHA is the &#8220;version 2&#8221; SHA from earlier (<code>1f7a7a</code>). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling <code>read-tree</code>. In this case, you can read an existing tree into your staging area as a subtree by using the <code>--prefix</code> option to <code>read-tree</code>:</p>
 
 <pre><code>$ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 $ git write-tree
@@ -131,7 +131,7 @@ $ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
 
-<p>If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named bak that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.</p>
+<p>If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named <code>bak</code> that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.</p>
 
 <p><center><img src="/figures/ch9/18333fig0902-tn.png"></center><br/> Figure 9-2. The content structure of your current Git data</p>
 
@@ -139,12 +139,12 @@ $ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
 
 <p>You have three trees that specify the different snapshots of your project that you want to track, but the earlier problem remains: you must remember all three SHA-1 values in order to recall the snapshots. You also don’t have any information about who saved the snapshots, when they were saved, or why they were saved. This is the basic information that the commit object stores for you.</p>
 
-<p>To create a commit object, you call commit-tree and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:</p>
+<p>To create a commit object, you call <code>commit-tree</code> and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:</p>
 
 <pre><code>$ echo &#39;first commit&#39; | git commit-tree d8329f
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d</code></pre>
 
-<p>Now you can look at your new commit object with cat-file:</p>
+<p>Now you can look at your new commit object with <code>cat-file</code>:</p>
 
 <pre><code>$ git cat-file -p fdf4fc3
 tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -153,7 +153,7 @@ committer Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
 
 first commit</code></pre>
 
-<p>The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your user.name and user.email configuration settings, with the current timestamp; a blank line, and then the commit message.</p>
+<p>The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your <code>user.name</code> and <code>user.email</code> configuration settings, with the current timestamp; a blank line, and then the commit message.</p>
 
 <p>Next, you’ll write the other two commit objects, each referencing the commit that came directly before it:</p>
 
@@ -162,7 +162,7 @@ cac0cab538b970a37ea1e769cbbde608743bc96d
 $ echo &#39;third commit&#39;  | git commit-tree 3c4e9c -p cac0cab
 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
 
-<p>Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the git log command, if you run it on the last commit SHA-1:</p>
+<p>Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the <code>git log</code> command, if you run it on the last commit SHA-1:</p>
 
 <pre><code>$ git log --stat 1a410e
 commit 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -193,7 +193,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
  test.txt |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the git add and git commit commands—it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects—the blob, the tree, and the commit—are initially stored as separate files in your .git/objects directory. Here are all the objects in the example directory now, commented with what they store:</p>
+<p>Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the <code>git add</code> and <code>git commit</code> commands — it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects — the blob, the tree, and the commit — are initially stored as separate files in your <code>.git/objects</code> directory. Here are all the objects in the example directory now, commented with what they store:</p>
 
 <pre><code>$ find .git/objects -type f
 .git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
@@ -213,7 +213,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
 
 <h3 id='object_storage'>Object Storage</h3>
 
-<p>I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object—in this case, the string “what is up, doc?”—interactively in the Ruby scripting language. You can start up interactive Ruby mode with the irb command:</p>
+<p>I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object — in this case, the string &#8220;what is up, doc?&#8221; — interactively in the Ruby scripting language. You can start up interactive Ruby mode with the <code>irb</code> command:</p>
 
 <pre><code>$ irb
 &gt;&gt; content = &quot;what is up, doc?&quot;
@@ -224,7 +224,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
 <pre><code>&gt;&gt; header = &quot;blob #{content.length}\0&quot;
 =&gt; &quot;blob 16\000&quot;</code></pre>
 
-<p>Git concatenates the header and the original content and then calculates the SHA-1 checksum of that new content. You can calculate the SHA-1 value of a string in Ruby by including the SHA1 digest library with the require command and then calling Digest::SHA1.hexdigest() with the string:</p>
+<p>Git concatenates the header and the original content and then calculates the SHA-1 checksum of that new content. You can calculate the SHA-1 value of a string in Ruby by including the SHA1 digest library with the <code>require</code> command and then calling <code>Digest::SHA1.hexdigest()</code> with the string:</p>
 
 <pre><code>&gt;&gt; store = header + content
 =&gt; &quot;blob 16\000what is up, doc?&quot;
@@ -233,7 +233,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
 &gt;&gt; sha1 = Digest::SHA1.hexdigest(store)
 =&gt; &quot;bd9dbf5aae1a3862dd1526723246b20206e5fc37&quot;</code></pre>
 
-<p>Git compresses the new content with zlib, which you can do in Ruby with the zlib library. First, you need to require the library and then run Zlib::Deflate.deflate() on the content:</p>
+<p>Git compresses the new content with zlib, which you can do in Ruby with the zlib library. First, you need to require the library and then run <code>Zlib::Deflate.deflate()</code> on the content:</p>
 
 <pre><code>&gt;&gt; require &#39;zlib&#39;
 =&gt; true
@@ -251,7 +251,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
 &gt;&gt; File.open(path, &#39;w&#39;) { |f| f.write zlib_content }
 =&gt; 32</code></pre>
 
-<p>That’s it — you’ve created a valid Git blob object. All Git objects are stored the same way, just with different types—instead of the string blob, the header will begin with commit or tree. Also, although the blob content can be nearly anything, the commit and tree content are very specifically formatted.</p>
+<p>That’s it — you’ve created a valid Git blob object. All Git objects are stored the same way, just with different types — instead of the string blob, the header will begin with commit or tree. Also, although the blob content can be nearly anything, the commit and tree content are very specifically formatted.</p>
 
 <div id='nav'>
 <a href='ch9-1.html'>prev</a> | <a href='ch9-3.html'>next</a>

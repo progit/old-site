@@ -14,7 +14,7 @@ find the content helpful, please support this kind of open documentation
 by buying a print version of the book at <a href="http://www.amazon.com/gp/product/1430218339?ie=UTF8&tag=prgi-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=1430218339">Amazon</a>.
 
 The print version of the book is going to the presses soon and should be 
-shipping around the middle of August.  I was first contacted by Apress at the
+shipping around the end of August.  I was first contacted by Apress at the
 very end of November of last year and had my first draft of the first chapter
 in on December 15.  Since then, it has been a whirlwind of writing, reviewing,
 rewriting and re-reviewing of 9 long chapters.  That's about 8 months from

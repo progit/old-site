@@ -9,14 +9,14 @@ title: Pro Git 1.5 Getting Started First-Time Git Setup
 <p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
 
 <ul>
-<li>/etc/gitconfig file: Contains values for every user on the system and all their repositories. If you pass the option &#8211;system to git config, it reads and writes from this file specifically.</li>
+<li><code>/etc/gitconfig</code> file: Contains values for every user on the system and all their repositories. If you pass the option<code> --system</code> to <code>git config</code>, it reads and writes from this file specifically.</li>
 
-<li>~/.gitconfig file: Specific to your user. You can make Git read and write to this file specifically by passing the &#8211;global option.</li>
+<li><code>~/.gitconfig</code> file: Specific to your user. You can make Git read and write to this file specifically by passing the <code>--global</code> option.</li>
 
-<li>config file in the git directory (that is, .git/config) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in .git/config trump those in /etc/sysconfig.</li>
+<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/sysconfig</code>.</li>
 </ul>
 
-<p>On Windows systems, Git looks for the .gitconfig file in the $HOME directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
+<p>On Windows systems, Git looks for the <code>.gitconfig</code> file in the <code>$HOME</code> directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
 
 <h3 id='your_identity'>Your Identity</h3>
 
@@ -25,7 +25,7 @@ title: Pro Git 1.5 Getting Started First-Time Git Setup
 <pre><code>$ git config --global user.name &quot;John Doe&quot;
 $ git config --global user.email johndoe@example.com</code></pre>
 
-<p>Again, you need to do this only once if you pass the &#8211;global option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the &#8211;global option when you’re in that project.</p>
+<p>Again, you need to do this only once if you pass the <code>--global</code> option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the <code>--global</code> option when you’re in that project.</p>
 
 <h3 id='your_editor'>Your Editor</h3>
 
@@ -43,7 +43,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <h3 id='checking_your_settings'>Checking Your Settings</h3>
 
-<p>If you want to check your settings, you can use the git config &#8211;list command to list all the settings Git can find at that point:</p>
+<p>If you want to check your settings, you can use the <code>git config --list</code> command to list all the settings Git can find at that point:</p>
 
 <pre><code>$ git config --list
 user.name=Scott Chacon
@@ -54,9 +54,9 @@ color.interactive=auto
 color.diff=auto
 ...</code></pre>
 
-<p>You may see keys more than once, because Git reads the same key from different files (/etc/gitconfig and ~/.gitconfig, for example). In this case, Git uses the last value for each unique key it sees.</p>
+<p>You may see keys more than once, because Git reads the same key from different files (<code>/etc/gitconfig</code> and <code>~/.gitconfig</code>, for example). In this case, Git uses the last value for each unique key it sees.</p>
 
-<p>You can also check what Git thinks a specific key’s value is by typing git config {key}:</p>
+<p>You can also check what Git thinks a specific key’s value is by typing <code>git config {key}</code>:</p>
 
 <pre><code>$ git config user.name
 Scott Chacon</code></pre>
