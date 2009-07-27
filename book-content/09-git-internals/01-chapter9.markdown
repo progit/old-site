@@ -1,6 +1,6 @@
 # Git Internals #
 
-You may have skipped to this chapter from a previous chapter, or you may have gotten here after reading the rest of the book—in either case, this is where you’ll go over the inner workings and implementation of Git. I found that learning this information was fundamentally important to understanding how useful and powerful Git is, but others have argued to me that it can be confusing and unnecessarily complex for beginners. Thus, I’ve made this discussion the last chapter in the book so you could read it early or later in your learning process. I leave it up to you to decide.
+You may have skipped to this chapter from a previous chapter, or you may have gotten here after reading the rest of the book — in either case, this is where you’ll go over the inner workings and implementation of Git. I found that learning this information was fundamentally important to understanding how useful and powerful Git is, but others have argued to me that it can be confusing and unnecessarily complex for beginners. Thus, I’ve made this discussion the last chapter in the book so you could read it early or later in your learning process. I leave it up to you to decide.
 
 Now that you’re here, let’s get started. First, if it isn’t yet clear, Git is fundamentally a content-addressable filesystem with a VCS user interface written on top of it. You’ll learn more about what this means in a bit.
 
@@ -10,11 +10,11 @@ The content-addressable filesystem layer is amazingly cool, so I’ll cover that
 
 ## Plumbing and Porcelain ##
 
-This book covers how to use Git with 30 or so verbs such as checkout, branch, remote, and so on. But because Git was initially a toolkit for a VCS rather than a full user-friendly VCS, it has a bunch of verbs that do low-level work and were designed to be chained together UNIX style or called from scripts. These commands are generally referred to as plumbing commands, and the more user-friendly commands are called porcelain commands.
+This book covers how to use Git with 30 or so verbs such as `checkout`, `branch`, `remote`, and so on. But because Git was initially a toolkit for a VCS rather than a full user-friendly VCS, it has a bunch of verbs that do low-level work and were designed to be chained together UNIX style or called from scripts. These commands are generally referred to as "plumbing" commands, and the more user-friendly commands are called "porcelain" commands.
 
 The book’s first eight chapters deal almost exclusively with porcelain commands. But in this chapter, you’ll be dealing mostly with the lower-level plumbing commands, because they give you access to the inner workings of Git and help demonstrate how and why Git does what it does. These commands aren’t meant to be used manually on the command line, but rather to be used as building blocks for new tools and custom scripts.
 
-When you run git init in a new or existing directory, Git creates the .git directory, which is where almost everything that Git stores and manipulates is located. If you want to back up or clone your repository, copying this single directory elsewhere gives you nearly everything you need. This entire chapter basically deals with the stuff in this directory. Here’s what it looks like:
+When you run `git init` in a new or existing directory, Git creates the `.git` directory, which is where almost everything that Git stores and manipulates is located. If you want to back up or clone your repository, copying this single directory elsewhere gives you nearly everything you need. This entire chapter basically deals with the stuff in this directory. Here’s what it looks like:
 
 	$ ls 
 	HEAD
@@ -27,14 +27,14 @@ When you run git init in a new or existing directory, Git creates the .git direc
 	objects/
 	refs/
 
-You may see some other files in there, but this is a fresh git init repository—it’s what you see by default. The branches directory isn’t used by newer Git versions, and the description file is only used by the GitWeb program, so don’t worry about those. The config file contains your project-specific configuration options, and the info directory keeps a global exclude file for ignored patterns that you don’t want to track in a .gitignore file. The hooks directory contains your client- or server-side hook scripts, which are discussed in detail in Chapter 6.
+You may see some other files in there, but this is a fresh `git init` repository — it’s what you see by default. The `branches` directory isn’t used by newer Git versions, and the `description` file is only used by the GitWeb program, so don’t worry about those. The `config` file contains your project-specific configuration options, and the `info` directory keeps a global exclude file for ignored patterns that you don’t want to track in a .gitignore file. The `hooks` directory contains your client- or server-side hook scripts, which are discussed in detail in Chapter 6.
 
-This leaves four important entries: the HEAD and index files and the objects and refs directories. These are the core parts of Git. The objects directory stores all the content for your database, the refs directory stores pointers into commit objects in that data (branches), the HEAD file points to the branch you currently have checked out, and the index file is where Git stores your staging area information. You’ll now look at each of these sections in detail to see how Git operates.
+This leaves four important entries: the `HEAD` and `index` files and the `objects` and `refs` directories. These are the core parts of Git. The `objects` directory stores all the content for your database, the `refs` directory stores pointers into commit objects in that data (branches), the `HEAD` file points to the branch you currently have checked out, and the `index` file is where Git stores your staging area information. You’ll now look at each of these sections in detail to see how Git operates.
 
 ## Git Objects ##
 
 Git is a content-addressable filesystem. Great. What does that mean?
-It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command hash-object, which takes some data, stores it in your .git directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the objects directory:
+It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command `hash-object`, which takes some data, stores it in your `.git` directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the `objects` directory:
 
 	$ mkdir test
 	$ cd test
@@ -47,19 +47,19 @@ It means that at the core of Git is a simple key-value data store. You can inser
 	$ find .git/objects -type f
 	$
 
-Git has initialized the objects directory and created pack and info subdirectories in it, but there are no regular files. Now, store some text in your Git database:
+Git has initialized the `objects` directory and created `pack` and `info` subdirectories in it, but there are no regular files. Now, store some text in your Git database:
 
 	$ echo 'test content' | git hash-object -w --stdin
 	d670460b4b4aece5915caf5c68d12f560a9fe3e4
 
-The -w tells hash-object to store the object; otherwise, the command simply tells you what the key would be. --stdin tells the command to read the content from stdin; if you don’t specify this, hash-object expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash—a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:
+The `-w` tells `hash-object` to store the object; otherwise, the command simply tells you what the key would be. `--stdin` tells the command to read the content from stdin; if you don’t specify this, `hash-object` expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash — a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:
 
 	$ find .git/objects -type f 
 	.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4
 
-You can see a file in the objects directory. This is how Git stores the content initially—as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.
+You can see a file in the `objects` directory. This is how Git stores the content initially — as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.
 
-You can pull the content back out of Git with the cat-file command. This command is sort of a Swiss army knife for inspecting Git objects. Passing -p to it instructs the cat-file command to figure out the type of content and display it nicely for you:
+You can pull the content back out of Git with the `cat-file` command. This command is sort of a Swiss army knife for inspecting Git objects. Passing `-p` to it instructs the `cat-file` command to figure out the type of content and display it nicely for you:
 
 	$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
 	test content
@@ -95,7 +95,7 @@ or the second version:
 	$ cat test.txt 
 	version 2
 
-But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system—just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with cat-file -t:
+But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system — just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with `cat-file -t`:
 
 	$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
 	blob
@@ -109,7 +109,7 @@ The next type you’ll look at is the tree object, which solves the problem of s
 	100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
 	040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib
 
-The master^{tree} syntax specifies the tree object that is pointed to by the last commit on your master branch. Notice that the lib subdirectory isn’t a blob but a pointer to another tree:
+The `master^{tree}` syntax specifies the tree object that is pointed to by the last commit on your `master` branch. Notice that the `lib` subdirectory isn’t a blob but a pointer to another tree:
 
 	$ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
 	100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b      simplegit.rb
@@ -119,14 +119,14 @@ Conceptually, the data that Git is storing is something like Figure 9-1.
 Insert 18333fig0901.png 
 Figure 9-1. Simple version of the Git data model
 
-You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry—the first version of your text.txt file—you can use the plumbing command update-index. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the --add option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and --cacheinfo because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:
+You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry — the first version of your text.txt file — you can use the plumbing command `update-index`. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the `--add` option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and `--cacheinfo` because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:
 
 	$ git update-index --add --cacheinfo 100644 \
 	  83baae61804e65cc73a7201a7252750c76066a30 test.txt
 
-In this case, you’re specifying a mode of 100644, which means it’s a normal file. Other options are 100755, which means it’s an executable file; and 120000, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible—these three modes are the only ones that are valid for files in Git (although other modes are used for directories and submodules).
+In this case, you’re specifying a mode of `100644`, which means it’s a normal file. Other options are `100755`, which means it’s an executable file; and `120000`, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible — these three modes are the only ones that are valid for files (blobs) in Git (although other modes are used for directories and submodules).
 
-Now, you can use the write-tree command to write the staging area out to a tree object. No -w option is needed—calling write-tree automatically creates a tree object from the state of the index if that tree doesn’t yet exist:
+Now, you can use the `write-tree` command to write the staging area out to a tree object. No `-w` option is needed — calling `write-tree` automatically creates a tree object from the state of the index if that tree doesn’t yet exist:
 
 	$ git write-tree
 	d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -152,7 +152,7 @@ Your staging area now has the new version of test.txt as well as the new file ne
 	100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 	100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt
 
-Notice that this tree has both file entries and also that the test.txt SHA is the version 2 SHA from earlier (1f7a7a). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling read-tree. In this case, you can read an existing tree into your staging area as a subtree by using the --prefix option to read-tree:
+Notice that this tree has both file entries and also that the test.txt SHA is the "version 2" SHA from earlier (`1f7a7a`). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling `read-tree`. In this case, you can read an existing tree into your staging area as a subtree by using the `--prefix` option to `read-tree`:
 
 	$ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 	$ git write-tree
@@ -162,7 +162,7 @@ Notice that this tree has both file entries and also that the test.txt SHA is th
 	100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 	100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt
 
-If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named bak that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.
+If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named `bak` that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.
 
 Insert 18333fig0902.png 
 Figure 9-2. The content structure of your current Git data
@@ -171,12 +171,12 @@ Figure 9-2. The content structure of your current Git data
 
 You have three trees that specify the different snapshots of your project that you want to track, but the earlier problem remains: you must remember all three SHA-1 values in order to recall the snapshots. You also don’t have any information about who saved the snapshots, when they were saved, or why they were saved. This is the basic information that the commit object stores for you.
 
-To create a commit object, you call commit-tree and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:
+To create a commit object, you call `commit-tree` and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:
 
 	$ echo 'first commit' | git commit-tree d8329f
 	fdf4fc3344e67ab068f836878b6c4951e3b15f3d
 
-Now you can look at your new commit object with cat-file:
+Now you can look at your new commit object with `cat-file`:
 
 	$ git cat-file -p fdf4fc3
 	tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -185,7 +185,7 @@ Now you can look at your new commit object with cat-file:
 
 	first commit
 
-The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your user.name and user.email configuration settings, with the current timestamp; a blank line, and then the commit message.
+The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your `user.name` and `user.email` configuration settings, with the current timestamp; a blank line, and then the commit message.
 
 Next, you’ll write the other two commit objects, each referencing the commit that came directly before it:
 
@@ -194,7 +194,7 @@ Next, you’ll write the other two commit objects, each referencing the commit t
 	$ echo 'third commit'  | git commit-tree 3c4e9c -p cac0cab
 	1a410efbd13591db07496601ebc7a059dd55cfe9
 
-Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the git log command, if you run it on the last commit SHA-1:
+Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the `git log` command, if you run it on the last commit SHA-1:
 
 	$ git log --stat 1a410e
 	commit 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -225,7 +225,7 @@ Each of the three commit objects points to one of the three snapshot trees you c
 	 test.txt |    1 +
 	 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the git add and git commit commands—it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects—the blob, the tree, and the commit—are initially stored as separate files in your .git/objects directory. Here are all the objects in the example directory now, commented with what they store:
+Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the `git add` and `git commit` commands — it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects — the blob, the tree, and the commit — are initially stored as separate files in your `.git/objects` directory. Here are all the objects in the example directory now, commented with what they store:
 
 	$ find .git/objects -type f
 	.git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
@@ -246,7 +246,7 @@ Figure 9-3. All the objects in your Git directory
 
 ### Object Storage ###
 
-I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object—in this case, the string “what is up, doc?”—interactively in the Ruby scripting language. You can start up interactive Ruby mode with the irb command:
+I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object — in this case, the string "what is up, doc?" — interactively in the Ruby scripting language. You can start up interactive Ruby mode with the `irb` command:
 
 	$ irb
 	>> content = "what is up, doc?"
@@ -257,7 +257,7 @@ Git constructs a header that starts with the type of the object, in this case a 
 	>> header = "blob #{content.length}\0"
 	=> "blob 16\000"
 
-Git concatenates the header and the original content and then calculates the SHA-1 checksum of that new content. You can calculate the SHA-1 value of a string in Ruby by including the SHA1 digest library with the require command and then calling Digest::SHA1.hexdigest() with the string:
+Git concatenates the header and the original content and then calculates the SHA-1 checksum of that new content. You can calculate the SHA-1 value of a string in Ruby by including the SHA1 digest library with the `require` command and then calling `Digest::SHA1.hexdigest()` with the string:
 
 	>> store = header + content
 	=> "blob 16\000what is up, doc?"
@@ -266,7 +266,7 @@ Git concatenates the header and the original content and then calculates the SHA
 	>> sha1 = Digest::SHA1.hexdigest(store)
 	=> "bd9dbf5aae1a3862dd1526723246b20206e5fc37"
 
-Git compresses the new content with zlib, which you can do in Ruby with the zlib library. First, you need to require the library and then run Zlib::Deflate.deflate() on the content:
+Git compresses the new content with zlib, which you can do in Ruby with the zlib library. First, you need to require the library and then run `Zlib::Deflate.deflate()` on the content:
 
 	>> require 'zlib'
 	=> true
@@ -284,13 +284,13 @@ Finally, you’ll write your zlib-deflated content to an object on disk. You’l
 	>> File.open(path, 'w') { |f| f.write zlib_content }
 	=> 32
 
-That’s it — you’ve created a valid Git blob object. All Git objects are stored the same way, just with different types—instead of the string blob, the header will begin with commit or tree. Also, although the blob content can be nearly anything, the commit and tree content are very specifically formatted.
+That’s it — you’ve created a valid Git blob object. All Git objects are stored the same way, just with different types — instead of the string blob, the header will begin with commit or tree. Also, although the blob content can be nearly anything, the commit and tree content are very specifically formatted.
 
 ## Git References ##
 
 You can run something like `git log 1a410e` to look through your whole history, but you still have to remember that `1a410e` is the last commit in order to walk that history to find all those objects. You need a file in which you can store the SHA-1 value under a simple name so you can use that pointer rather than the raw SHA-1 value.
 
-In Git, these are called references or refs; you can find the files that contain the SHA-1 values in the .git/refs directory. In the current project, this directory contains no files, but it does contain a simple structure:
+In Git, these are called "references" or "refs"; you can find the files that contain the SHA-1 values in the `.git/refs` directory. In the current project, this directory contains no files, but it does contain a simple structure:
 
 	$ find .git/refs
 	.git/refs
@@ -310,7 +310,7 @@ Now, you can use the head reference you just created instead of the SHA-1 value 
 	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 
-You aren’t encouraged to directly edit the reference files. Git provides a safer command to do this if you want to update a reference called update-ref:
+You aren’t encouraged to directly edit the reference files. Git provides a safer command to do this if you want to update a reference called `update-ref`:
 
 	$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9
 
@@ -329,23 +329,23 @@ Now, your Git database conceptually looks something like Figure 9-4.
 Insert 18333fig0904.png 
 Figure 9-4. Git directory objects with branch head references included
 
-When you run commands like git branch (branchname), Git basically runs that update-ref command to add the SHA-1 of the last commit of the branch you’re on into whatever new reference you want to create.
+When you run commands like `git branch (branchname)`, Git basically runs that `update-ref` command to add the SHA-1 of the last commit of the branch you’re on into whatever new reference you want to create.
 
 ### The HEAD ###
 
-The question now is, when you run git branch (branchname), how does Git know the SHA-1 of the last commit? The answer is the HEAD file. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, I mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference. If you look at the file, you’ll normally see something like this:
+The question now is, when you run `git branch (branchname)`, how does Git know the SHA-1 of the last commit? The answer is the HEAD file. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, I mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference. If you look at the file, you’ll normally see something like this:
 
 	$ cat .git/HEAD 
 	ref: refs/heads/master
 
-If you run git checkout test, Git updates the file to look like this:
+If you run `git checkout test`, Git updates the file to look like this:
 
 	$ cat .git/HEAD 
 	ref: refs/heads/test
 
-When you run git commit, it creates the commit object, specifying the parent of that commit object to be whatever SHA-1 value the reference in HEAD points to.
+When you run `git commit`, it creates the commit object, specifying the parent of that commit object to be whatever SHA-1 value the reference in HEAD points to.
 
-You can also manually edit this file, but again a safer command exists to do so: symbolic-ref. You can read the value of your HEAD via this command:
+You can also manually edit this file, but again a safer command exists to do so: `symbolic-ref`. You can read the value of your HEAD via this command:
 
 	$ git symbolic-ref HEAD
 	refs/heads/master
@@ -363,13 +363,13 @@ You can’t set a symbolic reference outside of the refs style:
 
 ### Tags ###
 
-You’ve just gone over Git’s three main object types, but there is a fourth. The tag object is very much like a commit object—it contains a tagger, a date, a message, and a pointer. The main difference is that a tag object points to a commit rather than a tree. It’s like a branch reference, but it never moves—it always points to the same commit but gives it a friendlier name.
+You’ve just gone over Git’s three main object types, but there is a fourth. The tag object is very much like a commit object — it contains a tagger, a date, a message, and a pointer. The main difference is that a tag object points to a commit rather than a tree. It’s like a branch reference, but it never moves — it always points to the same commit but gives it a friendlier name.
 
 As discussed in Chapter 2, there are two types of tags: annotated and lightweight. You can make a lightweight tag by running something like this:
 
 	$ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d
 
-That is all a lightweight tag is—a branch that never moves. An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit. You can see this by creating an annotated tag (-a specifies that it’s an annotated tag):
+That is all a lightweight tag is — a branch that never moves. An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit. You can see this by creating an annotated tag (`-a` specifies that it’s an annotated tag):
 
 	$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m 'test tag'
 
@@ -378,7 +378,7 @@ Here’s the object SHA-1 value it created:
 	$ cat .git/refs/tags/v1.1 
 	9585191f37f7b0fb9444f35a9bf50de191beadc2
 
-Now, run the cat-file command on that SHA-1 value:
+Now, run the `cat-file` command on that SHA-1 value:
 
 	$ git cat-file -p 9585191f37f7b0fb9444f35a9bf50de191beadc2
 	object 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -392,11 +392,11 @@ Notice that the object entry points to the commit SHA-1 value that you tagged. A
 
 	$ git cat-file blob junio-gpg-pub
 
-in the Git source code. The Linux kernel also has a non-commit-pointing tag object—the first tag created points to the initial tree of the import of the source code.
+in the Git source code. The Linux kernel also has a non-commit-pointing tag object — the first tag created points to the initial tree of the import of the source code.
 
 ### Remotes ###
 
-The third type of reference that you’ll see are is a remote reference. If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the refs/remotes directory. For instance, you can add a remote called origin and push your master branch to it:
+The third type of reference that you’ll see is a remote reference. If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the `refs/remotes` directory. For instance, you can add a remote called `origin` and push your `master` branch to it:
 
 	$ git remote add origin git@github.com:schacon/simplegit-progit.git
 	$ git push origin master
@@ -407,12 +407,12 @@ The third type of reference that you’ll see are is a remote reference. If you 
 	To git@github.com:schacon/simplegit-progit.git
 	   a11bef0..ca82a6d  master -> master
 
-Then, you can see what the master branch on the origin remote was the last time you communicated with the server, by checking the refs/remotes/origin/master file:
+Then, you can see what the `master` branch on the `origin` remote was the last time you communicated with the server, by checking the `refs/remotes/origin/master` file:
 
 	$ cat .git/refs/remotes/origin/master 
 	ca82a6dff817ec66f44342007202690a93763949
 
-Remote references differ from branches (refs/heads references) mainly in that they can’t be checked out. Git moves them around as bookmarks to the last known state of where those branches were on those servers.
+Remote references differ from branches (`refs/heads` references) mainly in that they can’t be checked out. Git moves them around as bookmarks to the last known state of where those branches were on those servers.
 
 ## Packfiles ##
 
@@ -431,7 +431,7 @@ Let’s go back to the objects database for your test Git repository. At this po
 	.git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
 	.git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1
 
-Git compresses the contents of these files with zlib, and you’re not storing much, so all these files collectively take up only 925 bytes. You’ll add some larger content to the repository to demonstrate an interesting feature of Git. Add the repo.rb file from the Grit library you worked with earlier—this is about a 12K source code file:
+Git compresses the contents of these files with zlib, and you’re not storing much, so all these files collectively take up only 925 bytes. You’ll add some larger content to the repository to demonstrate an interesting feature of Git. Add the repo.rb file from the Grit library you worked with earlier — this is about a 12K source code file:
 
 	$ curl http://github.com/mojombo/grit/raw/master/lib/grit/repo.rb > repo.rb
 	$ git add repo.rb 
@@ -449,7 +449,7 @@ If you look at the resulting tree, you can see the SHA-1 value your repo.rb file
 	100644 blob 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e      repo.rb
 	100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt
 
-You can then use git cat-file to see how big that object is:
+You can then use `git cat-file` to see how big that object is:
 
 	$ git cat-file -s 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e
 	12898
@@ -475,7 +475,7 @@ The blob is now a different blob, which means that although you added only a sin
 
 You have two nearly identical 12K objects on your disk. Wouldn’t it be nice if Git could store one of them in full but then the second object only as the delta between it and the first?
 
-It turns out that it can. The initial format in which Git saves objects on disk is called a loose object format. However, occasionally Git packs up several of these objects into a single binary file called a packfile in order to save space and be more efficient. Git does this if you have too many loose objects around, if you run the git gc command manually, or if you push to a remote server. To see what happens, you can manually ask Git to pack up the objects by calling the `git gc` command:
+It turns out that it can. The initial format in which Git saves objects on disk is called a loose object format. However, occasionally Git packs up several of these objects into a single binary file called a packfile in order to save space and be more efficient. Git does this if you have too many loose objects around, if you run the `git gc` command manually, or if you push to a remote server. To see what happens, you can manually ask Git to pack up the objects by calling the `git gc` command:
 
 	$ git gc
 	Counting objects: 17, done.
@@ -493,11 +493,11 @@ If you look in your objects directory, you’ll find that most of your objects a
 	.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
 	.git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack
 
-The objects that remain are the blobs that aren’t pointed to by any commit—in this case, the “what is up, doc?” example and the “test content” example blobs you created earlier. Because you never added them to any commits, they’re considered dangling and aren’t packed up in your new packfile.
+The objects that remain are the blobs that aren’t pointed to by any commit — in this case, the "what is up, doc?" example and the "test content" example blobs you created earlier. Because you never added them to any commits, they’re considered dangling and aren’t packed up in your new packfile.
 
-The other files are your new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from your filesystem. The index is a file that contains offsets into that packfile so you can quickly seek to a specific object. What is cool is that although the objects on disk before you ran the gc were collectively about 12K in size, the new packfile is only 6K. You’ve halved your disk usage by packing your objects.
+The other files are your new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from your filesystem. The index is a file that contains offsets into that packfile so you can quickly seek to a specific object. What is cool is that although the objects on disk before you ran the `gc` were collectively about 12K in size, the new packfile is only 6K. You’ve halved your disk usage by packing your objects.
 
-How does Git do this? When Git packs objects, it looks for files that are named and sized similarly, and stores just the deltas from one version of the file to the next. You can look into the packfile and see what Git did to save space. The git verify-pack plumbing command allows you to see what was packed up:
+How does Git do this? When Git packs objects, it looks for files that are named and sized similarly, and stores just the deltas from one version of the file to the next. You can look into the packfile and see what Git did to save space. The `git verify-pack` plumbing command allows you to see what was packed up:
 
 	$ git verify-pack -v pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
 	0155eb4229851634a0f03eb265b69f5a2d56f341 tree   71 76 5400
@@ -521,9 +521,9 @@ How does Git do this? When Git packs objects, it looks for files that are named 
 	chain length = 1: 1 object
 	pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack: ok
 
-Here, the 9bc1d blob, which if you remember was the first version of your repo.rb file, is referencing the 05408 blob, which was the second version of the file. The third column in the output is the size of the object in the pack, so you can see that 05408 takes up 12K of the file but that 9bc1d only takes up 7 bytes. What is also interesting is that the second version of the file is the one that is stored intact, whereas the original version is stored as a delta—this is because you’re most likely to need faster access to the most recent version of the file.
+Here, the `9bc1d` blob, which if you remember was the first version of your repo.rb file, is referencing the `05408` blob, which was the second version of the file. The third column in the output is the size of the object in the pack, so you can see that `05408` takes up 12K of the file but that `9bc1d` only takes up 7 bytes. What is also interesting is that the second version of the file is the one that is stored intact, whereas the original version is stored as a delta — this is because you’re most likely to need faster access to the most recent version of the file.
 
-The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database automatically, always trying to save more space. You can also manually repack at any time by running git gc by hand.
+The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database automatically, always trying to save more space. You can also manually repack at any time by running `git gc` by hand.
 
 ## The Refspec ##
 
@@ -532,27 +532,27 @@ Suppose you add a remote like this:
 
 	$ git remote add origin git@github.com:schacon/simplegit-progit.git
 
-It adds a section to your .git/config file, specifying the name of the remote (origin), the URL of the remote repository, and the refspec for fetching:
+It adds a section to your `.git/config` file, specifying the name of the remote (`origin`), the URL of the remote repository, and the refspec for fetching:
 
 	[remote "origin"]
 	       url = git@github.com:schacon/simplegit-progit.git
 	       fetch = +refs/heads/*:refs/remotes/origin/*
 
-The format of the refspec is an optional `+`, followed by `<src>:<dst>`, where `<src>` is the pattern for references on the remote side and `<dst>` is where those references will be written locally. The + tells Git to update the reference even if it isn’t a fast-forward.
+The format of the refspec is an optional `+`, followed by `<src>:<dst>`, where `<src>` is the pattern for references on the remote side and `<dst>` is where those references will be written locally. The `+` tells Git to update the reference even if it isn’t a fast-forward.
 
-In the default case that is automatically written by a git remote add command, Git fetches all the references under refs/heads/ on the server and writes them to refs/remotes/origin/ locally. So, if there is a master branch on the server, you can access the log of that branch locally via
+In the default case that is automatically written by a `git remote add` command, Git fetches all the references under `refs/heads/` on the server and writes them to `refs/remotes/origin/` locally. So, if there is a `master` branch on the server, you can access the log of that branch locally via
 
 	$ git log origin/master
 	$ git log remotes/origin/master
 	$ git log refs/remotes/origin/master
 
-They’re all equivalent, because Git expands each of them to refs/remotes/origin/master.
+They’re all equivalent, because Git expands each of them to `refs/remotes/origin/master`.
 
-If you want Git instead to pull down only the master branch each time, and not every other branch on the remote server, you can change the fetch line to
+If you want Git instead to pull down only the `master` branch each time, and not every other branch on the remote server, you can change the fetch line to
 
 	fetch = +refs/heads/master:refs/remotes/origin/master
 
-This is just the default refspec for git fetch for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the master branch on the remote down to origin/mymaster locally, you can run
+This is just the default refspec for `git fetch` for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the `master` branch on the remote down to `origin/mymaster` locally, you can run
 
 	$ git fetch origin master:refs/remotes/origin/mymaster
 
@@ -588,20 +588,20 @@ If you have a complex workflow process that has a QA team pushing branches, deve
 
 ### Pushing Refspecs ###
 
-It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a qa/ namespace in the first place? You accomplish that by using refspecs to push.
+It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a `qa/` namespace in the first place? You accomplish that by using refspecs to push.
 
-If the QA team wants to push their master branch to qa/master on the remote server, they can run
+If the QA team wants to push their `master` branch to `qa/master` on the remote server, they can run
 
 	$ git push origin master:refs/heads/qa/master
 
-If they want Git to do that automatically each time they run git push origin, they can add a push value to their config file:
+If they want Git to do that automatically each time they run `git push origin`, they can add a `push` value to their config file:
 
 	[remote "origin"]
 	       url = git@github.com:schacon/simplegit-progit.git
 	       fetch = +refs/heads/*:refs/remotes/origin/*
 	       push = refs/heads/master:refs/heads/qa/master
 
-Again, this will cause a git push origin to push the local master branch to the remote qa/master branch by default.
+Again, this will cause a `git push origin` to push the local `master` branch to the remote `qa/master` branch by default.
 
 ### Deleting References ###
 
@@ -613,15 +613,15 @@ Because the refspec is `<src>:<dst>`, by leaving off the `<src>` part, this basi
 
 ## Transfer Protocols ##
 
-Git can transfer data between two repositories in two major ways: over HTTP and via the so-called smart protocols used in the file://, ssh://, and git:// transports. This section will quickly cover how these two main protocols operate.
+Git can transfer data between two repositories in two major ways: over HTTP and via the so-called smart protocols used in the `file://`, `ssh://`, and `git://` transports. This section will quickly cover how these two main protocols operate.
 
 ### The Dumb Protocol ###
 
-Git transport over HTTP is often referred to as the dumb protocol because it requires no Git-specific code on the server side during the transport process. The fetch process is a series of GET requests, where the client can assume the layout of the Git repository on the server. Let’s follow the http-fetch process for the simplegit library:
+Git transport over HTTP is often referred to as the dumb protocol because it requires no Git-specific code on the server side during the transport process. The fetch process is a series of GET requests, where the client can assume the layout of the Git repository on the server. Let’s follow the `http-fetch` process for the simplegit library:
 
 	$ git clone http://github.com/schacon/simplegit-progit.git
 
-The first thing this command does is pull down the info/refs file. This file is written by the update-server-info command, which is why you need to enable that as a post-receive hook in order for the HTTP transport to work properly:
+The first thing this command does is pull down the `info/refs` file. This file is written by the `update-server-info` command, which is why you need to enable that as a `post-receive` hook in order for the HTTP transport to work properly:
 
 	=> GET info/refs
 	ca82a6dff817ec66f44342007202690a93763949     refs/heads/master
@@ -631,13 +631,13 @@ Now you have a list of the remote references and SHAs. Next, you look for what t
 	=> GET HEAD
 	ref: refs/heads/master
 
-You need to check out the master branch when you’ve completed the process. 
-At this point, you’re ready to start the walking process. Because your starting point is the ca82a6 commit object you saw in the info/refs file, you start by fetching that:
+You need to check out the `master` branch when you’ve completed the process. 
+At this point, you’re ready to start the walking process. Because your starting point is the `ca82a6` commit object you saw in the `info/refs` file, you start by fetching that:
 
 	=> GET objects/ca/82a6dff817ec66f44342007202690a93763949
 	(179 bytes of binary data)
 
-You get an object back—that object is in loose format on the server, and you fetched it over a static HTTP GET request. You can zlib-uncompress it, strip off the header, and look at the commit content:
+You get an object back — that object is in loose format on the server, and you fetched it over a static HTTP GET request. You can zlib-uncompress it, strip off the header, and look at the commit content:
 
 	$ git cat-file -p ca82a6dff817ec66f44342007202690a93763949
 	tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
@@ -647,7 +647,7 @@ You get an object back—that object is in loose format on the server, and you f
 
 	changed the verison number
 
-Next, you have two more objects to retrieve — cfda3b, which is the tree of content that the commit we just retrieved points to; and 085bb3, which is the parent commit:
+Next, you have two more objects to retrieve — `cfda3b`, which is the tree of content that the commit we just retrieved points to; and `085bb3`, which is the parent commit:
 
 	=> GET objects/08/5bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 	(179 bytes of data)
@@ -657,12 +657,12 @@ That gives you your next commit object. Grab the tree object:
 	=> GET objects/cf/da3bf379e4f8dba8717dee55aab78aef7f4daf
 	(404 - Not Found)
 
-Oops — it looks like that tree object isn’t in loose format on the server, so you get a 404 response back. There are a couple of reasons for this—the object could be in an alternate repository, or it could be in a packfile in this repository. Git checks for any listed alternates first:
+Oops — it looks like that tree object isn’t in loose format on the server, so you get a 404 response back. There are a couple of reasons for this — the object could be in an alternate repository, or it could be in a packfile in this repository. Git checks for any listed alternates first:
 
 	=> GET objects/info/http-alternates
 	(empty file)
 
-If this comes back with a list of alternate URLs, Git checks for loose files and packfiles there—this is a nice mechanism for projects that are forks of one another to share objects on disk. However, because no alternates are listed in this case, your object must be in a packfile. To see what packfiles are available on this server, you need to get the `objects/info/packs` file, which contains a listing of them (also generated by `update-server-info`):
+If this comes back with a list of alternate URLs, Git checks for loose files and packfiles there — this is a nice mechanism for projects that are forks of one another to share objects on disk. However, because no alternates are listed in this case, your object must be in a packfile. To see what packfiles are available on this server, you need to get the `objects/info/packs` file, which contains a listing of them (also generated by `update-server-info`):
 
 	=> GET objects/info/packs
 	P pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack
@@ -672,12 +672,12 @@ There is only one packfile on the server, so your object is obviously in there, 
 	=> GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.idx
 	(4k of binary data)
 
-Now that you have the packfile index, you can see if your object is in it—because the index lists the SHAs of the objects contained in the packfile and the offsets to those objects. Your object is there, so go ahead and get the whole packfile:
+Now that you have the packfile index, you can see if your object is in it — because the index lists the SHAs of the objects contained in the packfile and the offsets to those objects. Your object is there, so go ahead and get the whole packfile:
 
 	=> GET objects/pack/pack-816a9b2334da9953e530f27bcac22082a9f5b835.pack
 	(13k of binary data)
 
-You have your tree object, so you continue walking your commits. They’re all also within the packfile you just downloaded, so you don’t have to do any more requests to your server. Git checks out a working copy of the master branch that was pointed to by the HEAD reference you downloaded at the beginning.
+You have your tree object, so you continue walking your commits. They’re all also within the packfile you just downloaded, so you don’t have to do any more requests to your server. Git checks out a working copy of the `master` branch that was pointed to by the HEAD reference you downloaded at the beginning.
 
 The entire output of this process looks like this:
 
@@ -696,30 +696,30 @@ The entire output of this process looks like this:
 
 ### The Smart Protocol ###
 
-The HTTP method is simple but a bit inefficient. Using smart protocols is a more common method of transferring data. These protocols have a process on the remote end that is intelligent about Git—it can read local data and figure out what the client has or needs and generate custom data for it. There are two sets of processes for transferring data: a pair for uploading data and a pair for downloading data.
+The HTTP method is simple but a bit inefficient. Using smart protocols is a more common method of transferring data. These protocols have a process on the remote end that is intelligent about Git — it can read local data and figure out what the client has or needs and generate custom data for it. There are two sets of processes for transferring data: a pair for uploading data and a pair for downloading data.
 
 #### Uploading Data ####
 
-To upload data to a remote process, Git uses the send-pack and receive-pack processes. The send-pack process runs on the client and connects to a receive-pack process on the remote side.
+To upload data to a remote process, Git uses the `send-pack` and `receive-pack` processes. The `send-pack` process runs on the client and connects to a `receive-pack` process on the remote side.
 
-For example, say you run git push origin master in your project, and origin is defined as a URL that uses the SSH protocol. Git fires up the send-pack process, which initiates a connection over SSH to your server. It tries to run a command on the remote server via an SSH call that looks something like this:
+For example, say you run `git push origin master` in your project, and `origin` is defined as a URL that uses the SSH protocol. Git fires up the `send-pack` process, which initiates a connection over SSH to your server. It tries to run a command on the remote server via an SSH call that looks something like this:
 
 	$ ssh -x git@github.com "git-receive-pack 'schacon/simplegit-progit.git'"
 	005bca82a6dff817ec66f4437202690a93763949 refs/heads/master report-status delete-refs
 	003e085bb3bcb608e1e84b2432f8ecbe6306e7e7 refs/heads/topic
 	0000
 
-The `git-receive-pack` command immediately responds with one line for each reference it currently has—in this case, just the master branch and its SHA. The first line also has a list of the server’s capabilities (here, report-status and delete-refs).
+The `git-receive-pack` command immediately responds with one line for each reference it currently has — in this case, just the `master` branch and its SHA. The first line also has a list of the server’s capabilities (here, `report-status` and `delete-refs`).
 
 Each line starts with a 4-byte hex value specifying how long the rest of the line is. Your first line starts with 005b, which is 91 in hex, meaning that 91 bytes remain on that line. The next line starts with 003e, which is 62, so you read the remaining 62 bytes. The next line is 0000, meaning the server is done with its references listing.
 
-Now that it knows the server’s state, your send-pack process determines what commits it has that the server doesn’t. For each reference that this push will update, the send-pack process tells the receive-pack process that information. For instance, if you’re updating the master branch and adding an experiment branch, the send-pack response may look something like this:
+Now that it knows the server’s state, your `send-pack` process determines what commits it has that the server doesn’t. For each reference that this push will update, the `send-pack` process tells the `receive-pack` process that information. For instance, if you’re updating the `master` branch and adding an `experiment` branch, the `send-pack` response may look something like this:
 
 	0085ca82a6dff817ec66f44342007202690a93763949  15027957951b64cf874c3557a0f3547bd83b3ff6 refs/heads/master report-status
 	00670000000000000000000000000000000000000000 cdfdb42577e2506715f8cfeacdbabc092bf63e8d refs/heads/experiment
 	0000
 
-The SHA-1 value of all 0s means that nothing was there before—because you’re adding the experiment reference. If you were deleting a reference, you would see the opposite: all 0s on the right side.
+The SHA-1 value of all '0's means that nothing was there before — because you’re adding the experiment reference. If you were deleting a reference, you would see the opposite: all '0's on the right side.
 
 Git sends a line for each reference you’re updating with the old SHA, the new SHA, and the reference that is being updated. The first line also has the client’s capabilities. Next, the client uploads a packfile of all the objects the server doesn’t have yet. Finally, the server responds with a success (or failure) indication:
 
@@ -727,19 +727,19 @@ Git sends a line for each reference you’re updating with the old SHA, the new 
 
 #### Downloading Data ####
 
-When you download data, the fetch-pack and upload-pack processes are involved. The client initiates a fetch-pack process that connects to an upload-pack process on the remote side to negotiate what data will be transferred down.
+When you download data, the `fetch-pack` and `upload-pack` processes are involved. The client initiates a `fetch-pack` process that connects to an `upload-pack` process on the remote side to negotiate what data will be transferred down.
 
-There are different ways to initiate the upload-pack process on the remote repository. You can run via SSH in the same manner as the receive-pack process. You can also initiate the process via the Git daemon, which listens on a server on port 9418 by default. The fetch-pack process sends data that looks like this to the daemon after connecting:
+There are different ways to initiate the `upload-pack` process on the remote repository. You can run via SSH in the same manner as the `receive-pack` process. You can also initiate the process via the Git daemon, which listens on a server on port 9418 by default. The `fetch-pack` process sends data that looks like this to the daemon after connecting:
 
 	003fgit-upload-pack schacon/simplegit-progit.git\0host=myserver.com\0
 
-It starts with the 4 bytes specifying how much data is following, then the command to run followed by a null byte, and then the server’s hostname followed by a final null byte. The Git daemon checks that the command can be run and that the repository exists and has public permissions. If everything is cool, it fires up the upload-pack process and hands off the request to it.
+It starts with the 4 bytes specifying how much data is following, then the command to run followed by a null byte, and then the server’s hostname followed by a final null byte. The Git daemon checks that the command can be run and that the repository exists and has public permissions. If everything is cool, it fires up the `upload-pack` process and hands off the request to it.
 
-If you’re doing the fetch over SSH, fetch-pack instead runs something like this:
+If you’re doing the fetch over SSH, `fetch-pack` instead runs something like this:
 
 	$ ssh -x git@github.com "git-upload-pack 'schacon/simplegit-progit.git'"
 
-In either case, after fetch-pack connects, upload-pack sends back something like this:
+In either case, after `fetch-pack` connects, `upload-pack` sends back something like this:
 
 	0088ca82a6dff817ec66f44342007202690a93763949 HEAD\0multi_ack thin-pack \
 	  side-band side-band-64k ofs-delta shallow no-progress include-tag
@@ -747,32 +747,32 @@ In either case, after fetch-pack connects, upload-pack sends back something like
 	003e085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 refs/heads/topic
 	0000
 
-This is very similar to what receive-pack responds with, but the capabilities are different. In addition, it sends back the HEAD reference so the client knows what to check out if this is a clone.
+This is very similar to what `receive-pack` responds with, but the capabilities are different. In addition, it sends back the HEAD reference so the client knows what to check out if this is a clone.
 
-At this point, the fetch-pack process looks at what objects it has and responds with the objects that it needs by sending “want” and then the SHA it wants. It sends all the objects it already has with “have” and then the SHA. At the end of this list, it writes “done” to initiate the upload-pack process to begin sending the packfile of the data it needs:
+At this point, the `fetch-pack` process looks at what objects it has and responds with the objects that it needs by sending "want" and then the SHA it wants. It sends all the objects it already has with "have" and then the SHA. At the end of this list, it writes "done" to initiate the `upload-pack` process to begin sending the packfile of the data it needs:
 
 	0054want ca82a6dff817ec66f44342007202690a93763949 ofs-delta
 	0032have 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 	0000
 	0009done
 
-That is a very basic case of the transfer protocols. In more complex cases, the client supports `multi_ack` or side-band capabilities; but this example shows you the basic back and forth used by the smart protocol processes.
+That is a very basic case of the transfer protocols. In more complex cases, the client supports `multi_ack` or `side-band` capabilities; but this example shows you the basic back and forth used by the smart protocol processes.
 
 ## Maintenance and Data Recovery ##
 
-Occasionally, you may have to do some cleanup—make a repository more compact, clean up an imported repository, or recover lost work. This section will cover some of these scenarios.
+Occasionally, you may have to do some cleanup — make a repository more compact, clean up an imported repository, or recover lost work. This section will cover some of these scenarios.
 
 ### Maintenance ###
 
-Occasionally, Git automatically runs a command called auto gc. Most of the time, this command does nothing. However, if there are too many loose objects (objects not in a packfile) or too many packfiles, Git launches a full-fledged git gc command. The gc stands for garbage collect, and the command does a number of things: it gathers up all the loose objects and places them in packfiles, it consolidates packfiles into one big packfile, and it removes objects that aren’t reachable from any commit and are a few months old.
+Occasionally, Git automatically runs a command called "auto gc". Most of the time, this command does nothing. However, if there are too many loose objects (objects not in a packfile) or too many packfiles, Git launches a full-fledged `git gc` command. The `gc` stands for garbage collect, and the command does a number of things: it gathers up all the loose objects and places them in packfiles, it consolidates packfiles into one big packfile, and it removes objects that aren’t reachable from any commit and are a few months old.
 
 You can run auto gc manually as follows:
 
 	$ git gc --auto
 
-Again, this generally does nothing. You must have around 7,000 loose objects or more than 50 packfiles for Git to fire up a real gc command. You can modify these limits with the gc.auto and gc.autopacklimit config settings, respectively.
+Again, this generally does nothing. You must have around 7,000 loose objects or more than 50 packfiles for Git to fire up a real gc command. You can modify these limits with the `gc.auto` and `gc.autopacklimit` config settings, respectively.
 
-The other thing gc will do is pack up your references into a single file. Suppose your repository contains the following branches and tags:
+The other thing `gc` will do is pack up your references into a single file. Suppose your repository contains the following branches and tags:
 
 	$ find .git/refs -type f
 	.git/refs/heads/experiment
@@ -780,7 +780,7 @@ The other thing gc will do is pack up your references into a single file. Suppos
 	.git/refs/tags/v1.0
 	.git/refs/tags/v1.1
 
-If you run git gc, you’ll no longer have these files in the refs directory. Git will move them for the sake of efficiency into a file named .git/packed-refs that looks like this:
+If you run `git gc`, you’ll no longer have these files in the `refs` directory. Git will move them for the sake of efficiency into a file named `.git/packed-refs` that looks like this:
 
 	$ cat .git/packed-refs 
 	# pack-refs with: peeled 
@@ -790,9 +790,9 @@ If you run git gc, you’ll no longer have these files in the refs directory. Gi
 	9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
 	^1a410efbd13591db07496601ebc7a059dd55cfe9
 
-If you update a reference, Git doesn’t edit this file but instead writes a new file to refs/heads. To get the appropriate SHA for a given reference, Git checks for that reference in the refs directory and then checks the packed-refs file as a fallback. However, if you can’t find a reference in the refs directory, it’s probably in your packed-refs file.
+If you update a reference, Git doesn’t edit this file but instead writes a new file to `refs/heads`. To get the appropriate SHA for a given reference, Git checks for that reference in the `refs` directory and then checks the `packed-refs` file as a fallback. However, if you can’t find a reference in the `refs` directory, it’s probably in your `packed-refs` file.
 
-Notice the last line of the file, which begins with a ^. This means the tag directly above is an annotated tag and that line is the commit that the annotated tag points to.
+Notice the last line of the file, which begins with a `^`. This means the tag directly above is an annotated tag and that line is the commit that the annotated tag points to.
 
 ### Data Recovery ###
 
@@ -807,7 +807,7 @@ Here’s an example that hard-resets the master branch in your test repository t
 	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 
-Now, move the master branch back to the middle commit:
+Now, move the `master` branch back to the middle commit:
 
 	$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
 	HEAD is now at 1a410ef third commit
@@ -816,9 +816,9 @@ Now, move the master branch back to the middle commit:
 	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 
-You’ve effectively lost the top two commits—you have no branch from which those commits are reachable. You need to find the latest commit SHA and then add a branch that points to it. The trick is finding that latest commit SHA—it’s not like you’ve memorized it, right?
+You’ve effectively lost the top two commits — you have no branch from which those commits are reachable. You need to find the latest commit SHA and then add a branch that points to it. The trick is finding that latest commit SHA — it’s not like you’ve memorized it, right?
 
-Often, the quickest way is to use a tool called git reflog. As you’re working, Git silently records what your HEAD is every time you change it. Each time you commit or change branches, the reflog is updated. The reflog is also updated by the git update-ref command, which is another reason to use it instead of just writing the SHA value to your ref files, as we covered in the "Git References" section of this chapter earlier.  You can see where you’ve been at any time by running git reflog:
+Often, the quickest way is to use a tool called `git reflog`. As you’re working, Git silently records what your HEAD is every time you change it. Each time you commit or change branches, the reflog is updated. The reflog is also updated by the `git update-ref` command, which is another reason to use it instead of just writing the SHA value to your ref files, as we covered in the "Git References" section of this chapter earlier.  You can see where you’ve been at any time by running `git reflog`:
 
 	$ git reflog
 	1a410ef HEAD@{0}: 1a410efbd13591db07496601ebc7a059dd55cfe9: updating HEAD
@@ -843,7 +843,7 @@ Here we can see the two commits that we have had checked out, however there is n
 
 	     modified repo a bit
 
-It looks like the bottom commit is the one you lost, so you can recover it by creating a new branch at that commit. For example, you can start a branch named recover-branch at that commit (ab1afef):
+It looks like the bottom commit is the one you lost, so you can recover it by creating a new branch at that commit. For example, you can start a branch named `recover-branch` at that commit (ab1afef):
 
 	$ git branch recover-branch ab1afef
 	$ git log --pretty=oneline recover-branch
@@ -853,13 +853,13 @@ It looks like the bottom commit is the one you lost, so you can recover it by cr
 	cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 	fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 
-Cool — now you have a branch named recover-branch that is where your master branch used to be, making the first two commits reachable again. 
-Next, suppose your loss was for some reason not in the reflog—you can simulate that by removing recover-branch and deleting the reflog. Now the first two commits aren’t reachable by anything:
+Cool — now you have a branch named `recover-branch` that is where your `master` branch used to be, making the first two commits reachable again. 
+Next, suppose your loss was for some reason not in the reflog — you can simulate that by removing `recover-branch` and deleting the reflog. Now the first two commits aren’t reachable by anything:
 
 	$ git branch –D recover-branch
 	$ rm -Rf .git/logs/
 
-Because the reflog data is kept in the .git/logs/ directory, you effectively have no reflog. How can you recover that commit at this point? One way is to use the `git fsck` utility, which checks your database for integrity. If you run it with the `--full` option, it shows you all objects that aren’t pointed to by another object:
+Because the reflog data is kept in the `.git/logs/` directory, you effectively have no reflog. How can you recover that commit at this point? One way is to use the `git fsck` utility, which checks your database for integrity. If you run it with the `--full` option, it shows you all objects that aren’t pointed to by another object:
 
 	$ git fsck --full
 	dangling blob d670460b4b4aece5915caf5c68d12f560a9fe3e4
@@ -871,11 +871,11 @@ In this case, you can see your missing commit after the dangling commit. You can
 
 ### Removing Objects ###
 
-There are a lot of great things about Git, but one feature that can cause issues is the fact that a Git clone downloads the entire history of the project, including every version of every file. This is fine if the whole thing is source code, because Git is highly optimized to compress that data efficiently. However, if someone at any point in the history of your project added a single huge file, every clone for all time will be forced to download that large file, even if it was removed from the project in the very next commit. Because it’s reachable from the history, it will always be there.
+There are a lot of great things about Git, but one feature that can cause issues is the fact that a `git clone` downloads the entire history of the project, including every version of every file. This is fine if the whole thing is source code, because Git is highly optimized to compress that data efficiently. However, if someone at any point in the history of your project added a single huge file, every clone for all time will be forced to download that large file, even if it was removed from the project in the very next commit. Because it’s reachable from the history, it will always be there.
 
 This can be a huge problem when you’re converting Subversion or Perforce repositories into Git. Because you don’t download the whole history in those systems, this type of addition carries few consequences. If you did an import from another system or otherwise find that your repository is much larger than it should be, here is how you can find and remove large objects.
 
-Be warned: this technique is destructive to your commit history. It rewrites every commit object downstream from the earliest tree you have to modify to remove a large file reference. If you do this immediately after an import, before anyone has started to base work on the commit, you’re fine—otherwise, you have to notify all contributors that they must rebase their work onto your new commits.
+Be warned: this technique is destructive to your commit history. It rewrites every commit object downstream from the earliest tree you have to modify to remove a large file reference. If you do this immediately after an import, before anyone has started to base work on the commit, you’re fine — otherwise, you have to notify all contributors that they must rebase their work onto your new commits.
 
 To demonstrate, you’ll add a large file into your test repository, remove it in the next commit, find it, and remove it permanently from the repository. First, add a large object to your history:
 
@@ -895,7 +895,7 @@ Oops — you didn’t want to add a huge tarball to your project. Better get rid
 	 1 files changed, 0 insertions(+), 0 deletions(-)
 	 delete mode 100644 git.tbz2
 
-Now, gc your database and see how much space you’re using:
+Now, `gc` your database and see how much space you’re using:
 
 	$ git gc
 	Counting objects: 21, done.
@@ -915,16 +915,16 @@ You can run the `count-objects` command to quickly see how much space you’re u
 	prune-packable: 0
 	garbage: 0
 
-The size-pack entry is the size of your packfiles in kilobytes, so you’re using 2MB. Before the last commit, you were using closer to 2K—clearly, removing the file from the previous commit didn’t remove it from your history. Every time anyone clones this repository, they will have to clone all 2MB just to get this tiny project, because you accidentally added a big file. Let’s get rid of it.
+The `size-pack` entry is the size of your packfiles in kilobytes, so you’re using 2MB. Before the last commit, you were using closer to 2K — clearly, removing the file from the previous commit didn’t remove it from your history. Every time anyone clones this repository, they will have to clone all 2MB just to get this tiny project, because you accidentally added a big file. Let’s get rid of it.
 
-First you have to find it. In this case, you already know what file it is. But suppose you didn’t; how would you identify what file or files were taking up so much space? If you run git gc, all the objects are in a packfile; you can identify the big objects by running another plumbing command called git verify-pack and sorting on the third field in the output, which is file size. You can also pipe it through the tail command because you’re only interested in the last few largest files:
+First you have to find it. In this case, you already know what file it is. But suppose you didn’t; how would you identify what file or files were taking up so much space? If you run `git gc`, all the objects are in a packfile; you can identify the big objects by running another plumbing command called `git verify-pack` and sorting on the third field in the output, which is file size. You can also pipe it through the `tail` command because you’re only interested in the last few largest files:
 
 	$ git verify-pack -v .git/objects/pack/pack-3f8c0...bb.idx | sort -k 3 -n | tail -3
 	e3f094f522629ae358806b17daf78246c27c007b blob   1486 734 4667
 	05408d195263d853f09dca71d55116663690c27c blob   12908 3478 1189
 	7a9eb2fba2b1811321254ac360970fc169ba2330 blob   2056716 2056872 5401
 
-The big object is at the bottom: 2MB. To find out what file it is, you’ll use the rev-list command, which you used briefly in Chapter 7. If you pass --objects to rev-list, it lists all the commit SHAs and also the blob SHAs with the file paths associated with them. You can use this to find your blob’s name:
+The big object is at the bottom: 2MB. To find out what file it is, you’ll use the `rev-list` command, which you used briefly in Chapter 7. If you pass `--objects` to `rev-list`, it lists all the commit SHAs and also the blob SHAs with the file paths associated with them. You can use this to find your blob’s name:
 
 	$ git rev-list --objects --all | grep 7a9eb2fb
 	7a9eb2fba2b1811321254ac360970fc169ba2330 git.tbz2
@@ -935,7 +935,7 @@ Now, you need to remove this file from all trees in your past. You can easily se
 	da3f30d019005479c99eb4c3406225613985a1db oops - removed large tarball
 	6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 added git tarball
 
-You must rewrite all the commits downstream from 6df76 to fully remove this file from your Git history. To do so, you use filter-branch, which you used in Chapter 6:
+You must rewrite all the commits downstream from `6df76` to fully remove this file from your Git history. To do so, you use `filter-branch`, which you used in Chapter 6:
 
 	$ git filter-branch --index-filter \
 	   'git rm --cached --ignore-unmatch git.tbz2' -- 6df7640^..
@@ -943,9 +943,9 @@ You must rewrite all the commits downstream from 6df76 to fully remove this file
 	Rewrite da3f30d019005479c99eb4c3406225613985a1db (2/2)
 	Ref 'refs/heads/master' was rewritten
 
-The --index-filter option is similar to the `--tree-filter` option used in Chapter 6, except that instead of passing a command that modifies files checked out on disk, you’re modifying your staging area or index each time. Rather than remove a specific file with something like rm file, you have to remove it with `git rm --cached` — you must remove it from the index, not from disk. The reason to do it this way is speed—because Git doesn’t have to check out each revision to disk before running your filter, the process can be much, much faster. You can accomplish the same task with `--tree-filter` if you want. The --ignore-unmatch option to git rm tells it not to error out if the pattern you’re trying to remove isn’t there. Finally, you ask filter-branch to rewrite your history only from the `6df7640` commit up, because you know that is where this problem started. Otherwise, it will start from the beginning and will unnecessarily take longer.
+The `--index-filter` option is similar to the `--tree-filter` option used in Chapter 6, except that instead of passing a command that modifies files checked out on disk, you’re modifying your staging area or index each time. Rather than remove a specific file with something like `rm file`, you have to remove it with `git rm --cached` — you must remove it from the index, not from disk. The reason to do it this way is speed — because Git doesn’t have to check out each revision to disk before running your filter, the process can be much, much faster. You can accomplish the same task with `--tree-filter` if you want. The `--ignore-unmatch` option to `git rm` tells it not to error out if the pattern you’re trying to remove isn’t there. Finally, you ask `filter-branch` to rewrite your history only from the `6df7640` commit up, because you know that is where this problem started. Otherwise, it will start from the beginning and will unnecessarily take longer.
 
-Your history no longer contains a reference to that file. However, your reflog and a new set of refs that Git added when you did the filter-branch under .git/refs/original still do, so you have to remove them and then repack the database. You need to get rid of anything that has a pointer to those old commits before you repack:
+Your history no longer contains a reference to that file. However, your reflog and a new set of refs that Git added when you did the `filter-branch` under `.git/refs/original` still do, so you have to remove them and then repack the database. You need to get rid of anything that has a pointer to those old commits before you repack:
 
 	$ rm -Rf .git/refs/original
 	$ rm -Rf .git/logs/
@@ -971,6 +971,6 @@ The packed repository size is down to 7K, which is much better than 2MB. You can
 
 ## Summary ##
 
-You should have a pretty good understanding of what Git does in the background and, to some degree, how it’s implemented. This chapter has covered a number of plumbing commands—commands that are lower level and simpler than the porcelain commands you’ve learned about in the rest of the book. Understanding how Git works at a lower level should make it easier to understand why it’s doing what it’s doing and also to write your own tools and helping scripts to make your specific workflow work for you.
+You should have a pretty good understanding of what Git does in the background and, to some degree, how it’s implemented. This chapter has covered a number of plumbing commands — commands that are lower level and simpler than the porcelain commands you’ve learned about in the rest of the book. Understanding how Git works at a lower level should make it easier to understand why it’s doing what it’s doing and also to write your own tools and helping scripts to make your specific workflow work for you.
 
 Git as a content-addressable filesystem is a very powerful tool that you can easily use as more than just a VCS. I hope you can use your newfound knowledge of Git internals to implement your own cool application of this technology and feel more comfortable using Git in more advanced ways.
