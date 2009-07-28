@@ -38,7 +38,7 @@ title: Pro Git 1.3 Getting Started Git Basics
 
 <h3 id='git_generally_only_adds_data'>Git Generally Only Adds Data</h3>
 
-<p>When you do actions in Git, nearly all of them only add data to the Git database. It is very difficult to get the system to do anything that is undoable or make it erase data in any way. As in any VCS, you can lose or mess up changes you haven’t committed yet; but after you commit a snapshot into Git, it is very difficult to lose, especially if you regularly push your database to another repository.</p>
+<p>When you do actions in Git, nearly all of them only add data to the Git database. It is very difficult to get the system to do anything that is not undoable or to make it erase data in any way. As in any VCS, you can lose or mess up changes you haven’t committed yet; but after you commit a snapshot into Git, it is very difficult to lose, especially if you regularly push your database to another repository.</p>
 
 <p>This makes using Git a joy because we know we can experiment without the danger of severely screwing things up. For a more in-depth look at how Git stores its data and how you can recover data that seems lost, see “Under the Covers” in Chapter 9.</p>
 
@@ -66,7 +66,7 @@ title: Pro Git 1.3 Getting Started Git Basics
 <li>You do a commit, which takes the files as they are in the staging area and stores that snapshot permanently to your Git directory.</li>
 </ol>
 
-<p>If a particular version of a file is in the git directory, it’t considered committed. If it’s modified but has been added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified. In Chapter 2, you’ll learn more about these states and how you can either take advantage of them or skip the staged part entirely.</p>
+<p>If a particular version of a file is in the git directory, it’s considered committed. If it’s modified but has been added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified. In Chapter 2, you’ll learn more about these states and how you can either take advantage of them or skip the staged part entirely.</p>
 
 <div id='nav'>
 <a href='ch1-2.html'>prev</a> | <a href='ch1-4.html'>next</a>

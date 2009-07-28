@@ -13,7 +13,7 @@ title: Pro Git 1.5 Getting Started First-Time Git Setup
 
 <li><code>~/.gitconfig</code> file: Specific to your user. You can make Git read and write to this file specifically by passing the <code>--global</code> option.</li>
 
-<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/sysconfig</code>.</li>
+<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/gitconfig</code>.</li>
 </ul>
 
 <p>On Windows systems, Git looks for the <code>.gitconfig</code> file in the <code>$HOME</code> directory (C:\Documents and Settings\$USER for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
