@@ -1,3 +1,5 @@
 git fetch gitbook
 git rm -r book-content
 git read-tree --prefix=book-content/ -u gitbook/master:en
+rake
+git add book
