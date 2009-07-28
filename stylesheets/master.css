@@ -92,7 +92,6 @@ a:visited {
 
 #content p {
   line-height: 140%;
-  letter-spacing: -0.03em;
 }
 
 span.date {
@@ -220,7 +219,6 @@ div.related {
   border: 2px solid #dda;
   padding: 0.7em 1em;
   font-size: 0.8em;
-  letter-spacing: -0.03em;
   margin: 1em 1em 0 0;
   -moz-border-radius: 0.5em;
   -webkit-border-radius: 0.5em;
@@ -232,7 +230,6 @@ div.related {
 .repo h3 a {
   font-weight: bold;
   color: black;
-  letter-spacing: 0;
   font-size: 1.1em;
 }
 
