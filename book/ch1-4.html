@@ -15,8 +15,8 @@ title: Pro Git 1.4 Getting Started Installing Git
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
 
-$ apt-get install curl-devel expat-devel gettext-devel \
-  openssl-devel zlib-devel</code></pre>
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev</code></pre>
 
 <p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
 
@@ -47,11 +47,11 @@ $ sudo make prefix=/usr/local install</code></pre>
 
 <p>There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Figure 1-7):</p>
 
-<p>http://code.google.com/p/git-osx-installer</p>
+<pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
 <p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Git OS X installer</p>
 
-<p>The other major way is to install Git via MacPorts (http://www.macports.org). If you have MacPorts installed, install Git via</p>
+<p>The other major way is to install Git via MacPorts (<code>http://www.macports.org</code>). If you have MacPorts installed, install Git via</p>
 
 <pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
 

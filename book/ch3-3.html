@@ -36,9 +36,10 @@ title: Pro Git 3.3 Git Branching Branch Management
 <p>This shows your other branch. Because it contains work that isn’t merged in yet, trying to delete it with <code>git branch -d</code> will fail:</p>
 
 <pre><code>$ git branch -d testing
-error: The branch &#39;testing&#39; is not an ancestor of your current HEAD.</code></pre>
+error: The branch &#39;testing&#39; is not an ancestor of your current HEAD.
+If you are sure you want to delete it, run &#39;git branch -D testing&#39;.</code></pre>
 
-<p>If you are sure you want to delete it, run <code>git branch -D testing</code>. If you really do want to delete the branch and lose that work, you can force it with <code>-D</code>, as the helpful message points out.</p>
+<p>If you really do want to delete the branch and lose that work, you can force it with <code>-D</code>, as the helpful message points out.</p>
 
 <div id='nav'>
 <a href='ch3-2.html'>prev</a> | <a href='ch3-4.html'>next</a>

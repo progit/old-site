@@ -15,7 +15,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>The next place Git looks is the <code>~/.gitconfig</code> file, which is specific to each user. You can make Git read and write to this file by passing the <code>--global</code> option.</p>
 
-<p>Finally, Git looks for configuration values in the config file in the Git directory (<code>.git/config</code>) of whatever repository you’re currently using. These values are specific to that single repository. Each level overwrites values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/sysconfig</code>, for instance. You can also set these values by manually editing the file and inserting the correct syntax, but it’s generally easier to run the <code>git config</code> command.</p>
+<p>Finally, Git looks for configuration values in the config file in the Git directory (<code>.git/config</code>) of whatever repository you’re currently using. These values are specific to that single repository. Each level overwrites values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/gitconfig</code>, for instance. You can also set these values by manually editing the file and inserting the correct syntax, but it’s generally easier to run the <code>git config</code> command.</p>
 
 <h3 id='basic_client_configuration'>Basic Client Configuration</h3>
 

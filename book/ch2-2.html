@@ -10,7 +10,7 @@ title: Pro Git 2.2 Git Basics Recording Changes to the Repository
 
 <p>As you edit files, Git sees them as modified, because you’ve changed them since your last commit. You stage these modified files and then commit all your staged changes, and the cycle repeats. This lifecycle is illustrated in Figure 2-1.</p>
 
-<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Fig 2-1. The lifecycle of the status of your files</p>
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figure 2-1. The lifecycle of the status of your files</p>
 
 <h3 id='checking_the_status_of_your_files'>Checking the Status of Your Files</h3>
 
@@ -228,9 +228,11 @@ index e445e28..86b2f7c 100644
  main()
 
  ##pp Grit::GitRuby.cache_client.stats 
-+# test line
-and git diff --cached to see what you’ve staged so far:
-$ git diff --cached
++# test line</code></pre>
+
+<p>and <code>git diff --cached</code> to see what you’ve staged so far:</p>
+
+<pre><code>$ git diff --cached
 diff --git a/benchmarks.rb b/benchmarks.rb
 index 3cb747f..e445e28 100644
 --- a/benchmarks.rb

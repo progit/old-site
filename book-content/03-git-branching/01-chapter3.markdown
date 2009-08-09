@@ -12,7 +12,7 @@ When you commit in Git, Git stores a commit object that contains a pointer to th
 
 To visualize this, let’s assume that you have a directory containing three files, and you stage them all and commit. Staging the files checksums each one (the SHA-1 hash we mentioned in Chapter 1), stores that version of the file in the Git repository (Git refers to them as blobs), and adds that checksum to the staging area:
 
-	$ git add README test.rb LICENSE2
+	$ git add README test.rb LICENSE
 	$ git commit -m 'initial commit of my project'
 
 When you create the commit by running `git commit`, Git checksums each subdirectory (in this case, just the root project directory) and stores those tree objects in the Git repository. Git then creates a commit object that has the metadata and a pointer to the root project tree so it can re-create that snapshot when needed.
@@ -332,8 +332,8 @@ This shows your other branch. Because it contains work that isn’t merged in ye
 
 	$ git branch -d testing
 	error: The branch 'testing' is not an ancestor of your current HEAD.
+	If you are sure you want to delete it, run 'git branch -D testing'.
 
-If you are sure you want to delete it, run `git branch -D testing`.
 If you really do want to delete the branch and lose that work, you can force it with `-D`, as the helpful message points out.
 
 ## Branching Workflows ##
@@ -410,7 +410,7 @@ Figure 3-26. You get a reference to teamone’s master branch position locally.
 
 ### Pushing ###
 
-When you want to share a branch with the world, you need to push it up to a remote that you have write access to. Your local branches aren’t automatically synchronized to the remotes you write to — you have to explicitly push the branches you want to share. That way, you can use private branches do work you don’t want to share, and push up only the topic branches you want to collaborate on.
+When you want to share a branch with the world, you need to push it up to a remote that you have write access to. Your local branches aren’t automatically synchronized to the remotes you write to — you have to explicitly push the branches you want to share. That way, you can use private branches for work you don’t want to share, and push up only the topic branches you want to collaborate on.
 
 If you have a branch named `serverfix` that you want to work on with others, you can push it up the same way you pushed your first branch. Run `git push (remote) (branch)`:
 
