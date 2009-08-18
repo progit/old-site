@@ -1,5 +1,10 @@
 git fetch gitbook
-git rm -r book-content
-git read-tree --prefix=book-content/ -u gitbook/master:en
-rake
+git rm -r translations
+git read-tree --prefix=translations/en -u gitbook/master:en
+git read-tree --prefix=translations/de -u gitbook/master:de
+git read-tree --prefix=translations/zh -u gitbook/master:zh
+git read-tree --prefix=translations/es-ni -u gitbook/master:es-ni
+git read-tree --prefix=translations/ja -u gitbook/master:ja
+git read-tree --prefix=translations/pt-br -u gitbook/master:pt-br
+git read-tree --prefix=translations/ru -u gitbook/master:ru
 git add book

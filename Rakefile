@@ -3,7 +3,7 @@ require 'erb'
 require 'maruku'
 require 'pp'
 
-def update_toc(toc)
+def update_toc(lang, toc)
   # update all the [[nav-prev]], [[nav-next]] links
   # write a table of contents
 
@@ -32,23 +32,37 @@ title: Table of Contents
 "
   html += index
 
-  File.open('book/index.html', 'w+') { |f| f.write(html) }
+  if lang == 'en'
+    File.open('../book/index.html', 'w+') { |f| f.write(html) }
+  else
+    print `pwd`
+    File.open("../book/#{lang}/index.html", 'w+') { |f| f.write(html) }
+  end
+
   
   i = 1
   while i < (pages.size - 1)
     filter = pages[i]
     prevp = pages[i - 1]
     nextp = pages[i + 1]
-    content = File.read("book/#{filter}")
+    if lang == 'en'
+      content = File.read("../book/#{filter}")
+    else
+      content = File.read("../book/#{lang}/#{filter}")
+    end
     content.gsub!('[[nav-prev]]', prevp)
     content.gsub!('[[nav-next]]', nextp)
-    File.open("book/#{filter}", 'w+') { |f| f.write(content) }
+    if lang == 'en'
+      File.open("../book/#{filter}", 'w+') { |f| f.write(content) }
+    else
+      File.open("../book/#{lang}/#{filter}", 'w+') { |f| f.write(content) }
+    end
     i += 1
   end
 
 end
 
-def generate_pages(chapter, content)
+def generate_pages(lang, chapter, content)
   #pname = "p/#{page}.html"
   #out = ERB.new(File.read('template/page.erb.html')).result
 
@@ -82,8 +96,13 @@ def generate_pages(chapter, content)
       toc[:sections] << [section, nil]
     end
     
-    
-    pname = "../../book/ch#{chapter}-#{section}.html"
+    if lang == 'en' 
+      pname = "../../../book/ch#{chapter}-#{section}.html"
+    else
+      FileUtils.mkdir("../../../book/#{lang}") rescue nil
+      pname = "../../../book/#{lang}/ch#{chapter}-#{section}.html"
+    end
+
     full_title = section_match ? "#{chapter_title} #{section_title}" : chapter_title
     html = "---
 layout: master
@@ -116,24 +135,27 @@ task :genbook do
   # git read-tree --prefix=book-content/ -u gitbook/master
   # git rm -rf book-content/
 
-  toc = []
-  
-  chapter_number = 0
-  Dir.chdir('book-content') do
-    Dir.glob("*").each do |chapter|
-      puts 'generating : ' + chapter
-      content = ''
-      Dir.chdir(chapter) do
-        Dir.glob('*').each do |section|
-          content += File.read(section)
+  Dir.chdir('translations') do 
+    Dir.glob("*").each do |lang|
+      chapter_number = 0
+      toc = []
+      Dir.chdir(lang) do
+        Dir.glob("*").each do |chapter|
+          puts 'generating : ' + lang + '/' + chapter
+          content = ''
+          Dir.chdir(chapter) do
+            Dir.glob('*').each do |section|
+              content += File.read(section)
+            end
+            chapter_number += 1
+            toc << [chapter_number, generate_pages(lang, chapter_number, content)]
+          end rescue nil
         end
-        chapter_number += 1
-        toc << [chapter_number, generate_pages(chapter_number, content)]
       end
+      update_toc(lang, toc)  
     end
   end
   
-  update_toc(toc)  
 end
 
 # generate the site
