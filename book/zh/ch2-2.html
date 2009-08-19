@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 ---
-<h2 id='id33'>记录每次更新到仓库</h2>
+<h2 id='id31'>记录每次更新到仓库</h2>
 
 <p>现在我们手上已经有了一个真实项目的 Git 仓库，并从这个仓库中取出了所有文件的工作拷贝。接下来，对这些文件作些修改，在完成了一个阶段的目标之后，提交本次更新到仓库。</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 
 <p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> 图 2-1. 文件的状态变化周期</p>
 
-<h3 id='id34'>检查当前文件状态</h3>
+<h3 id='id32'>检查当前文件状态</h3>
 
 <p>要确定哪些文件当前处于什么状态，可以用 git status 命令。如果在克隆仓库之后立即执行此命令，会看到类似这样的输出：</p>
 
@@ -35,7 +35,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>就是在“Untracked files”这行下面。Git 不会自动将之纳入跟踪范围，除非你明明白白地告诉它这么做，因而不用担心把临时文件什么的也归入版本管理。不过现在我们确实想要跟踪管理 README 这个文件。</p>
 
-<h3 id='id35'>跟踪新文件</h3>
+<h3 id='id33'>跟踪新文件</h3>
 
 <p>使用命令 <code>git add</code> 开始跟踪一个新文件。所以，要跟踪 README 文件，运行：</p>
 
@@ -53,7 +53,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>只要在 “Changes to be committed” 这行下面的，就说明是已暂存状态。如果此时提交，那么该文件此时此刻的版本将被留存在历史记录中。你可能会想起之前我们使用 <code>git init</code> 后就运行了 <code>git add</code> 命令，开始跟踪当前目录下的文件。git add 后可以接要跟踪的文件或目录的路径。如果是目录的话，就说明要递归跟踪所有该目录下的文件。</p>
 
-<h3 id='id36'>暂存已修改文件</h3>
+<h3 id='id34'>暂存已修改文件</h3>
 
 <p>现在我们修改下之前已跟踪过的文件 <code>benchmarks.rb</code>，然后再次运行 <code>status</code> 命令，会看到这样的状态报告：</p>
 
@@ -111,7 +111,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<h3 id='id37'>忽略某些文件</h3>
+<h3 id='id35'>忽略某些文件</h3>
 
 <p>一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，像是日志或者编译过程中创建的等等。我们可以创建一个名为 .gitignore 的文件，列出要忽略的文件模式，来看一个简单的例子：</p>
 

@@ -82,7 +82,7 @@ Switched to a new branch &quot;sf&quot;</code></pre>
 
 <p>Now, your local branch sf will automatically push to and pull from origin/serverfix.</p>
 
-<h3 id='id42'>删除远程分支</h3>
+<h3 id='id40'>删除远程分支</h3>
 
 <p>Suppose you’re done with a remote branch — say, you and your collaborators are finished with a feature and have merged it into your remote’s <code>master</code> branch (or whatever branch your stable codeline is in). You can delete a remote branch using the rather obtuse syntax <code>git push [remotename] :[branch]</code>. If you want to delete your <code>serverfix</code> branch from the server, you run the following:</p>
 
@@ -127,7 +127,7 @@ Applying: added staged command</code></pre>
 
 <p>Note that the snapshot pointed to by the final commit you end up with, whether it’s the last of the rebased commits for a rebase or the final merge commit after a merge, is the same snapshot — it’s only the history that is different. Rebasing replays changes from one line of work onto another in the order they were introduced, whereas merging takes the endpoints and merges them together.</p>
 
-<h3 id='id43'>更多有趣的衍合</h3>
+<h3 id='id41'>更多有趣的衍合</h3>
 
 <p>You can also have your rebase replay on something other than the rebase branch. Take a history like 图 3-31, for example. You branched a topic branch (<code>server</code>) to add some server-side functionality to your project, and made a commit. Then, you branched off that to make the client-side changes (<code>client</code>) and committed a few times. Finally, you went back to your server branch and did a few more commits.</p>
 
@@ -168,7 +168,7 @@ $ git branch -d server</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0335-tn.png"></center><br/> 图 3-35. Final commit history</p>
 
-<h3 id='id44'>衍合的风险</h3>
+<h3 id='id42'>衍合的风险</h3>
 
 <p>Ahh, but the bliss of rebasing isn’t without its drawbacks, which can be summed up in a single line:</p>
 
