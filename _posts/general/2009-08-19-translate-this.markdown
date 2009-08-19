@@ -9,7 +9,11 @@ souls go about translating it into another language.  Well, it's happened
 again with Pro Git.  Since I released it under the Creative Commons license
 and put the code <a href="http://github.com/progit/progit">up on GitHub</a>,
 several people have forked and started translating the book into other
-languages such as German, Chinese, Spanish, Japanese, Portuguese and Russian.
+languages such as 
+<a href="/book/de">German</a>, 
+<a href="/book/zh">Chinese</a>, 
+<a href="/book/ja">Japanese</a> and
+<a href="/book/ru">Russian</a>.
 
 I've been merging this work into <a href="http://github.com/progit/progit">my 
 main repository</a> to make it easier for people who want to help and now I've
