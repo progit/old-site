@@ -1,0 +1,67 @@
+---
+layout: translation
+title: Pro Git 2.2 Git Basics Ein Git Repository anlegen
+---
+<h2 id='ein_git_repository_anlegen'>Ein Git Repository anlegen</h2>
+
+<p>You can get a Git project using two main approaches. The first takes an existing project or directory and imports it into Git. The second clones an existing Git repository from another server.</p>
+
+<p>Es gibt grundsätzlich zwei Wege, ein Git Repository auf dem eigenen Rechner anzulegen. Im ersten Fall nimmt man ein existierendes Projekt oder Verzeichnis und initialisiert es als ein Git Repository. Im zweiten Fall klont man ein existierendes Repository von einem anderen Rechner, der als Server fungiert.</p>
+
+<h3 id='initializing_a_repository_in_an_existing_directory'>Initializing a Repository in an Existing Directory</h3>
+
+<h3 id='ein_existierendes_verzeichnis_als_git_repository_initialisieren'>Ein existierendes Verzeichnis als Git Repository initialisieren</h3>
+
+<p>If you’re starting to track an existing project in Git, you need to go to the project’s directory and type</p>
+
+<p>Wenn Du ein existierendes Projekt auf Deinem Rechner mit Git nachverfolgen willst, kannst Du dazu in das jeweilige Verzeichnis gehen und diesen Befehl ausführen:</p>
+
+<pre><code>$ git init</code></pre>
+
+<p>This creates a new subdirectory named .git that contains all of your necessary repository files — a Git repository skeleton. At this point, nothing in your project is tracked yet. (See Chapter 9 for more information about exactly what files are contained in the <code>.git</code> directory you just created.)</p>
+
+<p>Dies erzeugt ein Git Verzeichnis .git, in dem alle relevanten Git Repository Dateien enthalten sind - ein Git Repository Grundgerüst also. Zu diesem Zeitpunkt werden aber noch keine Dateien nachverfolgt. (In Kapitel 9 werden wir genauer darauf eingehen, welche Dateien im .git Verzeichnis gerade erzeugt wurden.)</p>
+
+<p>If you want to start version-controlling existing files (as opposed to an empty directory), you should probably begin tracking those files and do an initial commit. You can accomplish that with a few git add commands that specify the files you want to track, followed by a commit:</p>
+
+<p>Wenn in deinem Projekt bereits Dateien vorhanden sind (und es sich nicht nur um ein leeres Verzeichnis handelt), willst Du diese vermutlich zur Versionskontrolle hinzufügen, damit Du Änderungen daran künftig nachverfolgen kannst. Du kannst das mit den folgenden Git Befehlen tun, die Dateien zur Versionskontrolle hinzufügen und anschließend einen ersten Commit anlegen:</p>
+
+<pre><code>$ git add *.c
+$ git add README
+$ git commit –m &#39;initial project version&#39;</code></pre>
+
+<p>We’ll go over what these commands do in just a minute. At this point, you have a Git repository with tracked files and an initial commit.</p>
+
+<p>Wir werden gleich noch einmal genauer auf diese Befehle eingehen. Im Moment ist nur wichtig zu verstehen, daß Du jetzt ein neues, funktionierendes Git Repository erzeugt und einen ersten Commit angelegt hast.</p>
+
+<h3 id='cloning_an_existing_repository'>Cloning an Existing Repository</h3>
+
+<h3 id='ein_existierendes_repository_klonen'>Ein existierendes Repository klonen</h3>
+
+<p>If you want to get a copy of an existing Git repository — for example, a project you’d like to contribute to — the command you need is git clone. If you’re familiar with other VCS systems such as Subversion, you’ll notice that the command is clone and not checkout. This is an important distinction — Git receives a copy of nearly all data that the server has. Every version of every file for the history of the project is pulled down when you run <code>git clone</code>. In fact, if your server disk gets corrupted, you can use any of the clones on any client to set the server back to the state it was in when it was cloned (you may lose some server-side hooks and such, but all the versioned data would be there—see Chapter 4 for more details).</p>
+
+<p>Wenn Du eine Kopie eines existierenden Git Repositories anlegen willst - z.B. um an einem existierenden Projekt mitzuarbeiten - dann kannst Du dazu den Befehl <code>git clone</code> verwenden. Wenn Du schon mit anderen VCS Sytemen wie Subversion gearbeitet hast, wird dir auffallen, daß der Befehl <code>clone</code> heißt und nicht <code>checkout</code>. Dies ist ein wichtiger Unterschied, den Du verstehen solltest. Git holt eine Kopie praktisch aller Daten, die sich in dem Repository befinden, das Du klonst. Mit <code>git clone</code> wird jede einzelne Version jeder einzelnen Datei in der Historie des Repositories heruntergeladen. Wenn ein Repository auf einem Server einmal beschädigt wird (z.B. weil die Festplatte beschädigt wird xxx), kann man tatsächlich jeden beliebigen Klon des Repositories verwenden, um das Repository auf dem Server wieder in dem Zustand wieder herzustellen, in dem es sich befand, als es geklont wurde. (Es kann passieren, daß man einige Hooks xxx auf dem Server verliert, aber alle versionierten Daten bleiben erhalten. In Kapitel 4 gehen wir darauf noch einmal genauer ein.)</p>
+
+<p>You clone a repository with <code>git clone [url]</code>. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:</p>
+
+<p>Du kannst ein Repository mit dem Befehl <code>git clone [url]</code> klonen. Um beispielsweise das Repository der Ruby Git Bibliothek Grit zu klonen, führst Du den folgenden Befehl aus:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
+
+<p>That creates a directory named &#8220;grit&#8221;, initializes a <code>.git</code> directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version. If you go into the new <code>grit</code> directory, you’ll see the project files in there, ready to be worked on or used. If you want to clone the repository into a directory named something other than grit, you can specify that as the next command-line option:</p>
+
+<p>Das erzeugt ein Verzeichnis <code>grit</code>, initialisiert ein <code>.git</code> Verzeichnis darin, lädt alle Daten für das Repository herunter, und checkt (xxx) eine Arbeitskopie der letzten Version aus. Wenn Du in das neue <code>grit</code> Verzeichnis gehst, siehst Du die in diesem Projekt enthaltenen Dateien und kannst sie benutzen oder bearbeiten. Wenn Du das Repository in ein Verzeichnis mit einem anderen Namen als <code>grit</code> klonen willst, kannst Du das wie folgt angeben:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
+
+<p>That command does the same thing as the previous one, but the target directory is called mygrit.</p>
+
+<p>Dieser Befehl tut das gleiche wie der vorhergehende, aber das Zielverzeichnis ist diesmal <code>mygrit</code>.</p>
+
+<p>Git has a number of different transfer protocols you can use. The previous example uses the <code>git://</code> protocol, but you may also see <code>http(s)://</code> or <code>user@server:/path.git</code>, which uses the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can set up to access your Git repository and the pros and cons of each.</p>
+
+<p>Git unterstützt eine Reihe unterschiedlicher Übertragungsprotokolle, die Du verwenden kannst. Das vorhergehende Beispiel verwendet das <code>git://</code> Protokoll, aber Du wirst auch <code>http(s)://</code> oder <code>user@server:/path.git</code> begegnen, die das SSH Protokoll verwenden. In Kapitel 4 werden wir die verschiedenen Optionen besprechen, die ein Server hat, um Zugriff auf ein Git Repository zu erlauben - ebenso wie ihre jeweiligen Vor- und Nachteile.</p>
+
+<div id='nav'>
+<a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
+</div>

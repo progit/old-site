@@ -25,8 +25,10 @@ def update_toc(lang, toc)
   index += "</ul>"
   pages << "index.html"
 
+  layout = lang == 'en' ? 'master' : 'translation'
+
   html = "---
-layout: master
+layout: #{layout}
 title: Table of Contents
 ---
 "
@@ -104,8 +106,9 @@ def generate_pages(lang, chapter, content)
     end
 
     full_title = section_match ? "#{chapter_title} #{section_title}" : chapter_title
+    layout = lang == 'en' ? 'master' : 'translation'
     html = "---
-layout: master
+layout: #{layout}
 title: Pro Git #{chapter}.#{section} #{full_title}
 ---
 "

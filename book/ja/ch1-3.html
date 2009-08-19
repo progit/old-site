@@ -1,0 +1,73 @@
+---
+layout: translation
+title: Pro Git 1.3 まずはじめに Git の基本
+---
+<h2 id='git_'>Git の基本</h2>
+
+<p>では, 小さな容器の中で Git は何なのでしょう. これは理解すべき重要な部分です. Git とは何か, そして基本的動作を理解すれば, Git を効果的に使うのがより簡単になるはずです. Git 学習のため, Subversion や Perforce など他の VCS は忘れて下さい. これはこのツールを使うときの混乱を避けるのに役立ちます. Git の情報の格納方法と考え方は他 VCS と大きく異なります. そうでありながらユーザインタフェースはかなり似ています. これら違いを理解することが使用時の混乱を防ぎます.</p>
+
+<h3 id='__'>スナップショット != 相違</h3>
+
+<p>Git と他の VCS (Subversion とその類を含む)の代表的な相違は, Git のデータについての考え方です. 概念的に, 他システムのほとんどが情報をファイルごとの変更のリストとして格納します. これらシステム(CVS, Subversion, Perforce, Bazaar 等々)はシステムが保持するファイル群と各ファイルの時間ごとの変更を考えます. 図1-4に表しました.</p>
+
+<p><center><img src="/figures/ch1/18333fig0104-tn.png"></center><br/> 図1-4. 他システムはデータを各ファイルの元となるバージョンへの変更として格納します.</p>
+
+<p>Git は考え方もデータ格納方法も上記とは異なります. 代わりに Git は データをミニ・ファイルシステムのスナップショット群のように考えます. コミットする度, Git でプロジェクトの状態を保存する度, 全てのファイルがどのように見えるか, その瞬間の写真を撮るのです. そしてそのスナップショットへの参照を格納します. 効果的にするため, そのファイルは変更されません. Git は2度とそのファイルを格納しません. ちょうど以前の識別可能な格納済みファイルへのリンクのようなものです. Git はデータを図1-5のように考えます.</p>
+
+<p><center><img src="/figures/ch1/18333fig0105-tn.png"></center><br/> 図1-5. Git は時間とともにプロジェクトのスナップショットをデータとして格納します.</p>
+
+<p>これは Git と ほぼそれ以外全ての VCS における相違です. Git はほぼ全ての面で, 過去の世代からコピーされたほとんどのバージョン管理システムを見直しています. これは Git をミニ・ファイルシステムとその上に組み上げられた驚くほど力強いツールとしています. ただの VCS 以上のものにです. 第3章, Git ブランチを扱う時, データに対するこの考え方で得られる利益を見出せるでしょう.</p>
+
+<h3 id='id8'>ほぼ全ての操作はローカル</h3>
+
+<p>Git のほとんどの操作はローカルファイルと操作のためのリソースだけで十分です. 基本的にネットワーク上の他コンピュータから情報は必要ありません. ほとんどの操作を呼び出し時間のオーバヘッドがあるネットワークで行う集中型バージョン管理に慣れていると, この面で Git は, この世のものでない, 神に祝福をされたスピードだと思えるでしょう. これはプロジェクト全体の履歴を目前のコンピュータが全て持っているからに他なりません. ほとんどの操作が一瞬に感じられます.</p>
+
+<p>例えば, プロジェクトの履歴を参照するのに, Git はサーバにアクセスして履歴を取得する必要がありません. 単純にローカルデータベースを直接参照します. つまりプロジェクトの履歴をほぼ即座に確認できます. 現バージョンのファイルと1ヶ月前の変更を確認したければ, Git は1ヶ月前のファイルを検索しローカルで相違の確認が出来ます. サーバに相違の確認を問い合わせる必要も古いバージョンをサーバから入手してローカルで確認する手間もありません.</p>
+
+<p>つまるところ, オフラインや VPN に接続していないコンピュータで何も出来ないわけではありません. 飛行機や電車で作業したい場合, どこかでネットワーク接続するまでコミットを続けられます. もし自宅で VPN クライアントが正常に動作しなくても, 作業は続けられます. 多くの他システムでこれは不可能か現実的ではありません. Perforce では例えばネットワーク接続がないと大したことができません. Subversion と CVS ではファイルの編集は出来ますが変更のコミットをデータベースに反映できません(データベースに接続できないので). これは大きな問題ではないかも知れません. しかし Git のもたらす大きな利点には驚いたのではないでしょうか.</p>
+
+<h3 id='git_'>Git は誠実です</h3>
+
+<p>Git のリソースは全て, 格納前と参照前にチェックサムが実施されます. つまり Git に感知されずにファイルやディレクトリに変更を加えることは不可能です. これは根本的な機能として組み込まれ, Git の哲学にもなっています. 情報伝達を失うこともファイルを破壊することも, Git 抜きでは不可能です.</p>
+
+<p>Git の用いるこのチェックサム・メカニズムは SHA-1 ハッシュです. これは40文字からなる16進数(0-9 と a-f)と ファイルの中身や Git のディレクトリ構造を計算した物を基本としています. SHA-1 ハッシュは下記のようなものです:</p>
+
+<pre><code>24b9da6552252987aa493b52f8696cd6d3b00373</code></pre>
+
+<p>Git の中ではこのようなハッシュをいたるところで目にするでしょう. 実際, Git は全てをファイル名でなく, ファイルの内容をハッシュ値でデータベースに記録します.</p>
+
+<h3 id='git_generally_only_adds_data'>Git Generally Only Adds Data</h3>
+
+<p>When you do actions in Git, nearly all of them only add data to the Git database. It is very difficult to get the system to do anything that is not undoable or to make it erase data in any way. As in any VCS, you can lose or mess up changes you haven’t committed yet; but after you commit a snapshot into Git, it is very difficult to lose, especially if you regularly push your database to another repository.</p>
+
+<p>This makes using Git a joy because we know we can experiment without the danger of severely screwing things up. For a more in-depth look at how Git stores its data and how you can recover data that seems lost, see “Under the Covers” in Chapter 9.</p>
+
+<h3 id='the_three_states'>The Three States</h3>
+
+<p>Now, pay attention. This is the main thing to remember about Git if you want the rest of your learning process to go smoothly. Git has three main states that your files can reside in: committed, modified, and staged. Committed means that the data is safely stored in your local database. Modified means that you have changed the file but have not committed it to your database yet. Staged means that you have marked a modified file in its current version to go into your next commit snapshot.</p>
+
+<p>This leads us to the three main sections of a Git project: the Git directory, the working directory, and the staging area.</p>
+
+<p><center><img src="/figures/ch1/18333fig0106-tn.png"></center><br/> Figure 1-6. Working directory, staging area, and git directory</p>
+
+<p>The Git directory is where Git stores the metadata and object database for your project. This is the most important part of Git, and it is what is copied when you clone a repository from another computer.</p>
+
+<p>The working directory is a single checkout of one version of the project. These files are pulled out of the compressed database in the Git directory and placed on disk for you to use or modify.</p>
+
+<p>The staging area is a simple file, generally contained in your Git directory, that stores information about what will go into your next commit. It’s sometimes referred to as the index, but it’s becoming standard to refer to it as the staging area.</p>
+
+<p>The basic Git workflow goes something like this:</p>
+
+<ol>
+<li>You modify files in your working directory.</li>
+
+<li>You stage the files, adding snapshots of them to your staging area.</li>
+
+<li>You do a commit, which takes the files as they are in the staging area and stores that snapshot permanently to your Git directory.</li>
+</ol>
+
+<p>If a particular version of a file is in the git directory, it’s considered committed. If it’s modified but has been added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified. In Chapter 2, you’ll learn more about these states and how you can either take advantage of them or skip the staged part entirely.</p>
+
+<div id='nav'>
+<a href='ch1-2.html'>prev</a> | <a href='ch1-4.html'>next</a>
+</div>

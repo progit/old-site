@@ -80,6 +80,14 @@ a:visited {
   font-weight: normal;
 }
 
+#message {
+  padding: 20px;
+  margin: 10px 30px;
+  border: 1px solid #383;
+  background: #aea;
+  text-align: center;
+}
+
 #content {
   padding: 2em;
 }

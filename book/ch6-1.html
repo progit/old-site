@@ -45,7 +45,7 @@ $ git show 1c002d</code></pre>
 <p>Git can figure out a short, unique abbreviation for your SHA-1 values. If you pass <code>--abbrev-commit</code> to the <code>git log</code> command, the output will use shorter values but keep them unique; it defaults to using seven characters but makes them longer if necessary to keep the SHA-1 unambiguous:</p>
 
 <pre><code>$ git log --abbrev-commit --pretty=oneline
-ca82a6d changed the verison number
+ca82a6d changed the version number
 085bb3b removed unnecessary test code
 a11bef0 first commit</code></pre>
 
@@ -215,7 +215,7 @@ E</code></pre>
 $ git log ^refA refB
 $ git log refB --not refA</code></pre>
 
-<p>This is nice because with this syntax you can specify more than two references in your query, which you cannot do with the double-dot syntax. For insance, if you want to see all commits that are reachable from <code>refA</code> or <code>refB</code> but not from <code>refC</code>, you can type one of these:</p>
+<p>This is nice because with this syntax you can specify more than two references in your query, which you cannot do with the double-dot syntax. For instance, if you want to see all commits that are reachable from <code>refA</code> or <code>refB</code> but not from <code>refC</code>, you can type one of these:</p>
 
 <pre><code>$ git log refA refB ^refC
 $ git log refA refB --not refC</code></pre>

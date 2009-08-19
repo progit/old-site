@@ -1,0 +1,96 @@
+---
+layout: translation
+title: Pro Git 1.4 Введение Установка Git
+---
+<h2 id='_git'>Установка Git</h2>
+
+<p>Настало время немного ознакомиться с использованием Git. Первое, что вам необходимо сделать – установить его. Есть несколько способов сделать это; два основных ― установка из исходников и установка собранного пакета для вашей платформы.</p>
+
+<p>Let’s get into using some Git. First things first—you have to install it. You can get it a number of ways; the two major ones are to install it from source or to install an existing package for your platform.</p>
+
+<h3 id='__'>Установка из исходников</h3>
+
+<p>Установка из исходного кода обычно лучше, поскольку вы получаете самую свежую версию. Каждая новая версия Git обычно включает полезные улучшения интерфейса, поэтому установка последней версии - часто лучший выбор, если конечно вас не затрудняет установка программ из исходников. Это также правильный выбор, поскольку многие дистрибутивы Linux содержат очень старые пакеты, поэтому если вы не используете очень свежий дистрибутив или , установка из исходников лучше.</p>
+
+<p>If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.</p>
+
+<p>Для установки Git, вам понадобятся следующие библиотеки, являющиеся зависимостями: curl, zlib, openssl, expat, and libiconv. Если вы, к примеру, используете систему, в которой есть yum (такую как Fedora) или apt-get (такую как системы основаные на Debian), вы можете использовать одну из следующих команд, чтобы разрешить все зависимости.</p>
+
+<p>To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:</p>
+
+<pre><code>$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev </code></pre>
+
+<p>После того, как вы поставите все необходимые библиотеки, вы можете начинать установку, скачав последнюю версию с сайта Git:</p>
+
+<p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
+
+<pre><code>http://git-scm.com/download</code></pre>
+
+<p>Теперь скомпилируйте и установите:</p>
+
+<p>Then, compile and install:</p>
+
+<pre><code>$ tar -zxf git-1.6.0.5.tar.gz
+$ cd git-1.6.0.5
+$ make prefix=/usr/local all
+$ sudo make prefix=/usr/local install</code></pre>
+
+<p>После этого вы можете клонировать исходный код Git с помощью Git, для получения обновлений:</p>
+
+<p>After this is done, you can also get Git via Git itself for updates:</p>
+
+<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
+
+<h3 id='__linux'>Установка в Linux</h3>
+
+<p>Если вы хотитие установить Git под Linux как бинарный пакет, вы можете это сделать, используя утилиту для управления пакетами, входящую в ваш дистрибутив. Если вы используете Fedora, вы можете воспользоваться yum:</p>
+
+<p>If you want to install Git on Linux via a binary installer, you can generally do so through the basic package-management tool that comes with your distribution. If you’re on Fedora, you can use yum:</p>
+
+<pre><code>$ yum install git-core</code></pre>
+
+<p>Если ж у вас дистрибутив основаный на Debian, например Ubuntu, попробуйте apt-get:</p>
+
+<p>Or if you’re on a Debian-based distribution like Ubuntu, try apt-get:</p>
+
+<pre><code>$ apt-get install git-core</code></pre>
+
+<h3 id='__mac'>Установка на Mac</h3>
+
+<p>Есть два простых способа установить Git на Mac. Более простой ― использовать графический инсталлятор Git, который вы можете скачать со страницы Google Code (см. рисунок 1-7):</p>
+
+<p>There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Рисунок 1-7):</p>
+
+<pre><code>http://code.google.com/p/git-osx-installer</code></pre>
+
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Рисунок 1-7. Инсталлятор Git под OS X</p>
+
+<p>Другой распространенный способ установка Git через MacPorts (<code>http://www.macports.org</code>). Если у вас установлены MacPorts, инсталлируйте Git так:</p>
+
+<p>The other major way is to install Git via MacPorts (<code>http://www.macports.org</code>). If you have MacPorts installed, install Git via</p>
+
+<pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
+
+<p>Вы не обязаны включать все дополнения, но возможно вы захотите включить +svn в случае, если вам нужно использовать Git совместно с репозиториями Subversion (см. главу 8).</p>
+
+<p>You don’t have to add all the extras, but you’ll probably want to include +svn in case you ever have to use Git with Subversion repositories (see Chapter 8).</p>
+
+<h3 id='__windows'>Установка в Windows</h3>
+
+<p>Установка Git в Windows очень проста. Проект msysGit предлагает очень простую процедуру установки. Просто скачайте exe файл инсталлятора со страницы Google Code и запустите его:</p>
+
+<p>Installing Git on Windows is very easy. The msysGit project has one of the easier installation procedures. Simply download the installer exe file from the Google Code page, and run it:</p>
+
+<pre><code>http://code.google.com/p/msysgit</code></pre>
+
+<p>После установки у вас будет как консольная версия (включающая SSH-клиент, который пригодится позднее), так и стандартная графическая.</p>
+
+<p>After it’s installed, you have both a command-line version (including an SSH client that will come in handy later) and the standard GUI.</p>
+
+<div id='nav'>
+<a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>
+</div>

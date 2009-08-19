@@ -135,7 +135,18 @@ members = scott josie jessica
 readonly = iphone_project
 members = john</code></pre>
 
-<p>Now John can clone the project and get updates, but Gitosis won’t allow him to push back up to the project. You can create as many of these groups as you want, each containing different users and projects. You can also specify another group as one of the members, to inherit all of its members automatically.</p>
+<p>Now John can clone the project and get updates, but Gitosis won’t allow him to push back up to the project. You can create as many of these groups as you want, each containing different users and projects. You can also specify another group as one of the members (using <code>@</code> as prefix), to inherit all of its members automatically:</p>
+
+<pre><code>[group mobile_committers]
+members = scott josie jessica
+
+[group mobile]
+writable  = iphone_project
+members   = @mobile_committers
+
+[group mobile_2]
+writable  = another_iphone_project
+members   = @mobile_committers john</code></pre>
 
 <p>If you have any issues, it may be useful to add <code>loglevel=DEBUG</code> under the <code>[gitosis]</code> section. If you’ve lost push access by pushing a messed-up configuration, you can manually fix the file on the server under <code>/home/git/.gitosis.conf</code> — the file from which Gitosis reads its info. A push to the project takes the <code>gitosis.conf</code> file you just pushed up and sticks it there. If you edit that file manually, it remains like that until the next successful push to the <code>gitosis-admin</code> project.</p>
 
