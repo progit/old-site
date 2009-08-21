@@ -6,3 +6,4 @@ git read-tree --prefix=translations/zh -u gitbook/master:zh
 git read-tree --prefix=translations/ja -u gitbook/master:ja
 git read-tree --prefix=translations/ru -u gitbook/master:ru
 git add book
+rake
