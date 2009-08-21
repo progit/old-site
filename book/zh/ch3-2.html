@@ -12,7 +12,7 @@ title: Pro Git 3.2 Git 分支 基本的分支与合并(merge)
 
 <p>1. 返回你的主分支。 2. 为这次紧急修补建立一个新分支。 3. 经过测试，合并这个修补分支，把它推送到主分支。 4. 转换到你原来的作品继续工作。</p>
 
-<h3 id='id36'>基本分支</h3>
+<h3 id='id65'>基本分支</h3>
 
 <p>首先，我们假设你正在你的项目中工作并且已经进行了几次提交：（见图 3-10）。</p>
 
@@ -92,7 +92,7 @@ $ git commit -a -m &#39;finished the new footer [issue 53]&#39;
 
 <p><code>hotfix</code>分支的内容没有包含在<code>iss53</code>不值得担心。如果需要它的存在，你可以用<code>git merge master</code>把master分支合并得到<code>iss53</code>，或者等到你把<code>iss53</code>分支整合到<code>master</code>的时候。</p>
 
-<h3 id='id37'>基本合并</h3>
+<h3 id='id66'>基本合并</h3>
 
 <p>假设你觉得问题#53相关的工作已经完成并且可以合并到<code>master</code>分支了。要这样做，你可以用与之前合并<code>hotfix</code>分支差不多的方式来合并<code>iss53</code>。只需签出你想要合并进去的分支并运行<code>git merge</code>命令：</p>
 

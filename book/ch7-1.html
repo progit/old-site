@@ -71,7 +71,7 @@ what happened
 
 <h4 id='corepager'>core.pager</h4>
 
-<p>The core.pager setting determines what pager is used when Git pages output such as <code>log</code> and <code>diff</code>. You can set it to more or to your favorite pager (by default, it’s <code>less</code>), or you can turn it off by setting it to a blank string:</p>
+<p>The core.pager setting determines what pager is used when Git pages output such as <code>log</code> and <code>diff</code>. You can set it to <code>more</code> or to your favorite pager (by default, it’s <code>less</code>), or you can turn it off by setting it to a blank string:</p>
 
 <pre><code>$ git config --global core.pager &#39;&#39;</code></pre>
 
@@ -189,7 +189,7 @@ $ git config --global diff.external extDiff</code></pre>
 
 <p>Instead of getting the diff output on the command line, Git fires up P4Merge, which looks something like Figure 7-1.</p>
 
-<p><center><img src="/figures/ch7/18333fig0701-tn.png"></center><br/> Figure 7-1. P4Merge</p>
+<p><center><img src="/figures/ch7/18333fig0701-tn.png"></center><br/> Figure 7-1. P4Merge.</p>
 
 <p>If you try to merge two branches and subsequently have merge conflicts, you can run the command <code>git mergetool</code>; it starts P4Merge to let you resolve the conflicts through that GUI tool.</p>
 

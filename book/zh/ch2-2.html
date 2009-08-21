@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 ---
-<h2 id='id31'>记录每次更新到仓库</h2>
+<h2 id='id43'>记录每次更新到仓库</h2>
 
 <p>现在我们手上已经有了一个真实项目的 Git 仓库，并从这个仓库中取出了所有文件的工作拷贝。接下来，对这些文件作些修改，在完成了一个阶段的目标之后，提交本次更新到仓库。</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 
 <p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> 图 2-1. 文件的状态变化周期</p>
 
-<h3 id='id32'>检查当前文件状态</h3>
+<h3 id='id44'>检查当前文件状态</h3>
 
 <p>要确定哪些文件当前处于什么状态，可以用 git status 命令。如果在克隆仓库之后立即执行此命令，会看到类似这样的输出：</p>
 
@@ -35,7 +35,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>就是在“Untracked files”这行下面。Git 不会自动将之纳入跟踪范围，除非你明明白白地告诉它这么做，因而不用担心把临时文件什么的也归入版本管理。不过现在我们确实想要跟踪管理 README 这个文件。</p>
 
-<h3 id='id33'>跟踪新文件</h3>
+<h3 id='id45'>跟踪新文件</h3>
 
 <p>使用命令 <code>git add</code> 开始跟踪一个新文件。所以，要跟踪 README 文件，运行：</p>
 
@@ -53,7 +53,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>只要在 “Changes to be committed” 这行下面的，就说明是已暂存状态。如果此时提交，那么该文件此时此刻的版本将被留存在历史记录中。你可能会想起之前我们使用 <code>git init</code> 后就运行了 <code>git add</code> 命令，开始跟踪当前目录下的文件。git add 后可以接要跟踪的文件或目录的路径。如果是目录的话，就说明要递归跟踪所有该目录下的文件。</p>
 
-<h3 id='id34'>暂存已修改文件</h3>
+<h3 id='id46'>暂存已修改文件</h3>
 
 <p>现在我们修改下之前已跟踪过的文件 <code>benchmarks.rb</code>，然后再次运行 <code>status</code> 命令，会看到这样的状态报告：</p>
 
@@ -111,7 +111,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<h3 id='id35'>忽略某些文件</h3>
+<h3 id='id47'>忽略某些文件</h3>
 
 <p>一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，像是日志或者编译过程中创建的等等。我们可以创建一个名为 .gitignore 的文件，列出要忽略的文件模式，来看一个简单的例子：</p>
 
@@ -140,11 +140,11 @@ $ git status
 build/    # 忽略 build/ 目录下的所有文件
 doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</code></pre>
 
-<h3 id='viewing_your_staged_and_unstaged_changes'>Viewing Your Staged and Unstaged Changes</h3>
+<h3 id='id48'>查看已暂存和未暂存的更新</h3>
 
-<p>If the <code>git status</code> command is too vague for you — you want to know exactly what you changed, not just which files were changed — you can use the <code>git diff</code> command. We’ll cover <code>git diff</code> in more detail later; but you’ll probably use it most often to answer these two questions: What have you changed but not yet staged? And what have you staged that you are about to commit? Although <code>git status</code> answers those questions very generally, <code>git diff</code> shows you the exact lines added and removed — the patch, as it were.</p>
+<p>实际上 <code>git status</code> 的显示比较简单，仅仅是列出了修改过的文件，如果要查看具体修改了什么地方，可以用 <code>git diff</code> 命令。稍后我们会详细介绍 <code>git diff</code>，不过现在，它已经能回答我们的两个问题了：当前作的哪些更新还没有暂存？有哪些更新已经暂存起来准备好了下次提交？ <code>git diff</code> 会使用文件补丁的格式显示具体添加和删除的行。</p>
 
-<p>Let’s say you edit and stage the README file again and then edit the benchmarks.rb file without staging it. If you run your <code>status</code> command, you once again see something like this:</p>
+<p>假如再次修改 README 文件后暂存，然后编辑 benchmarks.rb 文件后先别暂存，运行 <code>status</code> 命令，会看到：</p>
 
 <pre><code>$ git status
 # On branch master
@@ -159,7 +159,7 @@ doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</code></pre
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>To see what you’ve changed but not yet staged, type <code>git diff</code> with no other arguments:</p>
+<p>要查看尚未暂存的文件更新了哪些部分，不加参数直接输入 <code>git diff</code>：</p>
 
 <pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -178,9 +178,9 @@ index 3cb747f..da65585 100644
            log = git.commits(&#39;master&#39;, 15)
            log.size</code></pre>
 
-<p>That command compares what is in your working directory with what is in your staging area. The result tells you the changes you’ve made that you haven’t yet staged.</p>
+<p>此命令比较的是工作目录中当前文件和暂存区域快照之间的差异，也就是修改之后还没有暂存起来的变化内容。</p>
 
-<p>If you want to see what you’ve staged that will go into your next commit, you can use <code>git diff –-cached</code>. (In Git versions 1.6.1 and later, you can also use <code>git diff –-staged</code>, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
+<p>若要看已经暂存起来的文件和上次提交时的快照之间的差异，可以用 <code>git diff --cached</code> 命令。（Git 1.6.1 及更高版本还允许使用 <code>git diff --staged</code>，效果是相同的，但更好记些。）来看看实际的效果：</p>
 
 <pre><code>$ git diff --cached
 diff --git a/README b/README
@@ -195,9 +195,9 @@ index 0000000..03902a1
 +
 +Grit is a Ruby library for extracting information from a Git repository</code></pre>
 
-<p>It’s important to note that <code>git diff</code> by itself doesn’t show all changes made since your last commit — only changes that are still unstaged. This can be confusing, because if you’ve staged all of your changes, <code>git diff</code> will give you no output.</p>
+<p>请注意，单单 <code>git diff</code> 不过是显示还没有暂存起来的改动，而不是这次工作和上次提交之间的差异。所以有时候你一下子暂存了所有更新过的文件后，运行 <code>git diff</code> 后却什么也没有，就是这个原因。</p>
 
-<p>For another example, if you stage the benchmarks.rb file and then edit it, you can use <code>git diff</code> to see the changes in the file that are staged and the changes that are unstaged:</p>
+<p>像之前说的，暂存 benchmarks.rb 后再编辑，运行 <code>git status</code> 会看到暂存前后的两个版本：</p>
 
 <pre><code>$ git add benchmarks.rb
 $ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
@@ -213,7 +213,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Now you can use <code>git diff</code> to see what is still unstaged</p>
+<p>现在运行 <code>git diff</code> 看暂存前后的变化：</p>
 
 <pre><code>$ git diff 
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -243,15 +243,15 @@ index 3cb747f..e445e28 100644
           log = git.commits(&#39;master&#39;, 15)
           log.size</code></pre>
 
-<h3 id='committing_your_changes'>Committing Your Changes</h3>
+<h3 id='id49'>提交更新</h3>
 
-<p>Now that your staging area is set up the way you want it, you can commit your changes. Remember that anything that is still unstaged — any files you have created or modified that you haven’t run <code>git add</code> on since you edited them — won’t go into this commit. They will stay as modified files on your disk. In this case, the last time you ran <code>git status</code>, you saw that everything was staged, so you’re ready to commit your changes. The simplest way to commit is to type <code>git commit</code>:</p>
+<p>现在的暂存区域已经准备妥当可以提交了。在此之前，请一定要确认还有什么修改过的或新建的文件还没有 <code>git add</code> 过，否则提交的时候不会记录这些还没暂存起来的变化。所以，每次准备提交前，先用 <code>git status</code> 看下，是不是都已暂存起来了，然后再运行提交命令 <code>git commit</code>：</p>
 
 <pre><code>$ git commit</code></pre>
 
-<p>Doing so launches your editor of choice. (This is set by your shell’s <code>$EDITOR</code> environment variable — usually vim or emacs, although you can configure it with whatever you want using the <code>git config --global core.editor</code> command as you saw in Chapter 1).</p>
+<p>这种方式会启动文本编辑器以便输入本次提交的说明。（默认会启用 shell 的环境变量 $EDITOR 所指定的软件，一般都是 vim 或 emacs。当然也可以按照第一章介绍的方式，使用 <code>git config --global core.editor</code> 命令设定你喜欢的编辑软件。）</p>
 
-<p>The editor displays the following text (this example is a Vim screen):</p>
+<p>编辑器会显示类似下面的文本信息（本例选用 Vim 的屏显方式展示）：</p>
 
 <pre><code># Please enter the commit message for your changes. Lines starting
 # with &#39;#&#39; will be ignored, and an empty message aborts the commit.
@@ -266,22 +266,22 @@ index 3cb747f..e445e28 100644
 ~
 &quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
 
-<p>You can see that the default commit message contains the latest output of the <code>git status</code> command commented out and one empty line on top. You can remove these comments and type your commit message, or you can leave them there to help you remember what you’re committing. (For an even more explicit reminder of what you’ve modified, you can pass the <code>-v</code> option to <code>git commit</code>. Doing so also puts the diff of your change in the editor so you can see exactly what you did.) When you exit the editor, Git creates your commit with that commit message (with the comments and diff stripped out).</p>
+<p>可以看到，默认的提交消息包含最后一次运行 <code>git status</code> 的输出，放在注释行里，另外开头还有一空行，供你输入提交说明。你完全可以去掉这些注释行，不过留着也没关系，多少能帮你回想起这次更新的内容有哪些。（如果觉得这还不够，可以用 <code>-v</code> 选项将修改差异的每一行都包含到注释中来。）退出编辑器时，Git 会丢掉注释行，将说明内容和本次更新提交到仓库。</p>
 
-<p>Alternatively, you can type your commit message inline with the <code>commit</code> command by specifying it after a -m flag, like this:</p>
+<p>也可以使用 -m 参数后跟提交说明的方式，在一行命令中提交更新：</p>
 
 <pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
 [master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
  2 files changed, 3 insertions(+), 0 deletions(-)
  create mode 100644 README</code></pre>
 
-<p>Now you’ve created your first commit! You can see that the commit has given you some output about itself: which branch you committed to (master), what SHA-1 checksum the commit has (<code>463dc4f</code>), how many files were changed, and statistics about lines added and removed in the commit.</p>
+<p>好，现在你已经创建了第一个提交！可以看到，提交后它会告诉你，当前是在哪个分支（master）提交的，本次提交的完整 SHA-1 校验和是什么（<code>463dc4f</code>），以及在本次提交中，有多少文件修订过，多少行添改和删改过。</p>
 
-<p>Remember that the commit records the snapshot you set up in your staging area. Anything you didn’t stage is still sitting there modified; you can do another commit to add it to your history. Every time you perform a commit, you’re recording a snapshot of your project that you can revert to or compare to later.</p>
+<p>记住，提交时记录的是放在暂存区域的快照，任何还未暂存的仍然保持已修改状态，可以在下次提交时纳入版本管理。每一次运行提交操作，都是对你项目作一次快照，以后可以回到这个状态，或者进行比较。</p>
 
-<h3 id='skipping_the_staging_area'>Skipping the Staging Area</h3>
+<h3 id='id50'>跳过使用暂存区域</h3>
 
-<p>Although it can be amazingly useful for crafting commits exactly how you want them, the staging area is sometimes a bit more complex than you need in your workflow. If you want to skip the staging area, Git provides a simple shortcut. Providing the <code>-a</code> option to the <code>git commit</code> command makes Git automatically stage every file that is already tracked before doing the commit, letting you skip the <code>git add</code> part:</p>
+<p>尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。Git 提供了一个跳过使用暂存区域的方式，只要在提交的时候，给 <code>git commit</code> 加上 <code>-a</code> 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 <code>git add</code> 步骤：</p>
 
 <pre><code>$ git status
 # On branch master
@@ -294,13 +294,13 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 [master 83e38c7] added new benchmarks
  1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Notice how you don’t have to run <code>git add</code> on the benchmarks.rb file in this case before you commit.</p>
+<p>看到了吗？提交之前不再需要 <code>git add</code> 文件 benchmarks.rb 了。</p>
 
-<h3 id='removing_files'>Removing Files</h3>
+<h3 id='id51'>移除文件</h3>
 
-<p>To remove a file from Git, you have to remove it from your tracked files (more accurately, remove it from your staging area) and then commit. The <code>git rm</code> command does that and also removes the file from your working directory so you don’t see it as an untracked file next time around.</p>
+<p>要从 Git 中移除某个文件，就必须要从已跟踪文件清单中移除（确切地说，是从暂存区域移除），然后提交。可以用 <code>git rm</code> 命令完成此项工作，并连带从工作目录中删除指定的文件，这样以后就不会出现在未跟踪文件清单中了。</p>
 
-<p>If you simply remove the file from your working directory, it shows up under the “Changed but not updated” (that is, <em>unstaged</em>) area of your <code>git status</code> output:</p>
+<p>如果只是简单地从工作目录中手工删除文件，运行 <code>git status</code> 时就会在 “Changed but not updated” 部分（也就是<em>未暂存</em>清单）看到：</p>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -312,7 +312,7 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>Then, if you run <code>git rm</code>, it stages the file’s removal:</p>
+<p>然后再运行 <code>git rm</code> 记录下此次移除文件的操作：</p>
 
 <pre><code>$ git rm grit.gemspec
 rm &#39;grit.gemspec&#39;
@@ -325,31 +325,31 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>The next time you commit, the file will be gone and no longer tracked. If you modified the file and added it to the index already, you must force the removal with the <code>-f</code> option. This is a safety feature to prevent accidental removal of data that hasn’t yet been recorded in a snapshot and that can’t be recovered from Git.</p>
+<p>最后提交的时候，该文件就不再纳入版本管理了。如果删除之前修改过并且已经放到暂存区域的话，则必须要用强制删除选项 <code>-f</code>（译注：即 force 的首字母），以防误删除文件后丢失修改的内容。</p>
 
-<p>Another useful thing you may want to do is to keep the file in your working tree but remove it from your staging area. In other words, you may want to keep the file on your hard drive but not have Git track it anymore. This is particularly useful if you forgot to add something to your <code>.gitignore</code> file and accidentally added it, like a large log file or a bunch of <code>.a</code> compiled files. To do this, use the <code>--cached</code> option:</p>
+<p>另外一种情况是，我们想把文件从 Git 仓库中删除（亦即从暂存区域移除），但仍然希望保留在当前工作目录中。换句话说，仅是从跟踪清单中删除。比如一些大型日志文件或者一堆 <code>.a</code> 编译文件，不小心纳入仓库后，要移除跟踪但不删除文件，以便稍后在 <code>.gitignore</code> 文件中补上，用 <code>--cached</code> 选项即可：</p>
 
 <pre><code>$ git rm --cached readme.txt</code></pre>
 
-<p>You can pass files, directories, and file-glob patterns to the <code>git rm</code> command. That means you can do things such as</p>
+<p>后面可以列出文件或者目录的名字，也可以使用 glob 模式。比方说：</p>
 
 <pre><code>$ git rm log/\*.log</code></pre>
 
-<p>Note the backslash (<code>\</code>) in front of the <code>*</code>. This is necessary because Git does its own filename expansion in addition to your shell’s filename expansion. This command removes all files that have the <code>.log</code> extension in the <code>log/</code> directory. Or, you can do something like this:</p>
+<p>注意到星号 <code>*</code> 之前的反斜杠 <code>\</code>，因为 Git 有它自己的文件模式扩展匹配方式，所以我们不用 shell 来帮忙展开（译注：实际上不加反斜杠也可以运行，只不过按照 shell 扩展的话，仅仅删除指定目录下的文件而不会递归匹配。上面的例子本来就指定了目录，所以效果等同，但下面的例子就会用递归方式匹配，所以必须加反斜杠。）。此命令删除所有 <code>log/</code> 目录下扩展名为 <code>.log</code> 的文件。类似的比如：</p>
 
 <pre><code>$ git rm \*~</code></pre>
 
-<p>This command removes all files that end with <code>~</code>.</p>
+<p>会递归删除当前目录及其子目录中所有 <code>~</code> 结尾的文件。</p>
 
-<h3 id='moving_files'>Moving Files</h3>
+<h3 id='id52'>移动文件</h3>
 
-<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.</p>
+<p>不像其他的 VCS 系统，Git 并不跟踪文件移动操作。如果在 Git 中重命名了某个文件，从仓库中存储的所有元数据来看，都无法指征这仅是一次改名操作。不过 Git 非常聪明，它会意识到究竟发生了什么，至于具体是如何做到的，我们稍后再谈。</p>
 
-<p>Thus it’s a bit confusing that Git has a <code>mv</code> command. If you want to rename a file in Git, you can run something like</p>
+<p>既然如此，当你看到 Git 的 <code>mv</code> 命令时一定会困惑不已。要在 Git 中对文件改名，可以这么做：</p>
 
 <pre><code>$ git mv file_from file_to</code></pre>
 
-<p>and it works fine. In fact, if you run something like this and look at the status, you’ll see that Git considers it a renamed file:</p>
+<p>它会恰如预期般正常工作。实际上，即便此时查看状态信息，也会明白无误地看到关于重命名操作的说明：</p>
 
 <pre><code>$ git mv README.txt README
 $ git status
@@ -362,13 +362,13 @@ $ git status
 #       renamed:    README.txt -&gt; README
 #</code></pre>
 
-<p>However, this is equivalent to running something like this:</p>
+<p>其实，运行 <code>git mv</code> 就相当于运行了下面三条命令：</p>
 
 <pre><code>$ mv README.txt README
 $ git rm README.txt
 $ git add README</code></pre>
 
-<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the <code>mv</code> command. The only real difference is that <code>mv</code> is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
+<p>如此分开操作，Git 也会意识到这是一次改名，所以不管何种方式都一样。当然，直接用 <code>git mv</code> 轻便得多，不过有时候用其他工具批处理改名的话，要记得在提交前删除老的文件名，再添加新的文件名。</p>
 
 <div id='nav'>
 <a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>

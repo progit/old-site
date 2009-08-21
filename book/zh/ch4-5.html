@@ -1,0 +1,50 @@
+---
+layout: translation
+title: Pro Git 4.5 服务器上的Git Public Access
+---
+<h2 id='public_access'>Public Access</h2>
+
+<p>What if you want anonymous read access to your project? Perhaps instead of hosting an internal private project, you want to host an open source project. Or maybe you have a bunch of automated build servers or continuous integration servers that change a lot, and you don’t want to have to generate SSH keys all the time — you just want to add simple anonymous read access.</p>
+
+<p>Probably the simplest way for smaller setups is to run a static web server with its document root where your Git repositories are, and then enable that <code>post-update</code> hook we mentioned in the first section of this chapter. Let’s work from the previous example. Say you have your repositories in the <code>/opt/git</code> directory, and an Apache server is running on your machine. Again, you can use any web server for this; but as an example, we’ll demonstrate some basic Apache configurations that should give you an idea of what you might need.</p>
+
+<p>First you need to enable the hook:</p>
+
+<pre><code>$ cd project.git
+$ mv hooks/post-update.sample hooks/post-update
+$ chmod a+x hooks/post-update</code></pre>
+
+<p>If you’re using a version of Git earlier than 1.6, the <code>mv</code> command isn’t necessary — Git started naming the hooks examples with the .sample postfix only recently.</p>
+
+<p>What does this <code>post-update</code> hook do? It looks basically like this:</p>
+
+<pre><code>$ cat .git/hooks/post-update 
+#!/bin/sh
+exec git-update-server-info</code></pre>
+
+<p>This means that when you push to the server via SSH, Git will run this command to update the files needed for HTTP fetching.</p>
+
+<p>Next, you need to add a VirtualHost entry to your Apache configuration with the document root as the root directory of your Git projects. Here, we’re assuming that you have wildcard DNS set up to send <code>*.gitserver</code> to whatever box you’re using to run all this:</p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerName git.gitserver
+    DocumentRoot /opt/git
+    &lt;Directory /opt/git/&gt;
+        Order allow, deny
+        allow from all
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre>
+
+<p>You’ll also need to set the Unix user group of the <code>/opt/git</code> directories to <code>www-data</code> so your web server can read-access the repositories, because the Apache instance running the CGI script will (by default) be running as that user:</p>
+
+<pre><code>$ chgrp -R www-data /opt/git</code></pre>
+
+<p>When you restart Apache, you should be able to clone your repositories under that directory by specifying the URL for your project:</p>
+
+<pre><code>$ git clone http://git.gitserver/project.git</code></pre>
+
+<p>This way, you can set up HTTP-based read access to any of your projects for a fair number of users in a few minutes. Another simple option for public unauthenticated access is to start a Git daemon, although that requires you to daemonize the process - we’ll cover this option in the next section, if you prefer that route.</p>
+
+<div id='nav'>
+<a href='ch4-4.html'>prev</a> | <a href='ch4-6.html'>next</a>
+</div>
