@@ -30,21 +30,21 @@ title: Pro Git 3.4 Ветвление в Git Basic Branching and Merging
 
 <p>First, let’s say you’re working on your project and have a couple of commits already (see Figure 3-10).</p>
 
-<p><center><img src="/figures/ch3/18333fig0310-tn.png"></center><br/> Figure 3-10. A short and simple commit history</p>
+<p><center><img src="/figures/ch3/18333fig0310-tn.png"></center><br/> Figure 3-10. A short and simple commit history.</p>
 
 <p>You’ve decided that you’re going to work on issue #53 in whatever issue-tracking system your company uses. To be clear, Git isn’t tied into any particular issue-tracking system; but because issue #53 is a focused topic that you want to work on, you’ll create a new branch in which to work. To create a branch and switch to it at the same time, you can run the <code>git checkout</code> command with the <code>-b</code> switch:</p>
 
 <pre><code>$ git checkout -b iss53
 Switched to a new branch &quot;iss53&quot;</code></pre>
 
-<p>This is shorthand for</p>
+<p>This is shorthand for:</p>
 
 <pre><code>$ git branch iss53
 $ git checkout iss53</code></pre>
 
 <p>Figure 3-11 illustrates the result.</p>
 
-<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> Figure 3-11. Creating a new branch pointer</p>
+<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> Figure 3-11. Creating a new branch pointer.</p>
 
 <p>You work on your web site and do some commits. Doing so moves the <code>iss53</code> branch forward, because you have it checked out (that is, your HEAD is pointing to it; see Figure 3-12):</p>
 
@@ -71,7 +71,7 @@ $ git commit -a -m &#39;fixed the broken email address&#39;
 [hotfix]: created 3a0874c: &quot;fixed the broken email address&quot;
  1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Figure 3-13. hotfix branch based back at your master branch point</p>
+<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Figure 3-13. hotfix branch based back at your master branch point.</p>
 
 <p>You can run your tests, make sure the hotfix is what you want, and merge it back into your master branch to deploy to production. You do this with the <code>git merge</code> command:</p>
 
@@ -88,7 +88,7 @@ Fast forward
 
 <p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> Figure 3-14. Your master branch points to the same place as your hotfix branch after the merge.</p>
 
-<p>After that your super-important fix is deployed, you’re ready to switch back to the work you were doing before you were interrupted. However, first you’ll delete the <code>hotfix</code> branch, because you no longer need it — the <code>master</code> branch points at the same place. You can delete it with the <code>-d</code> option to <code>git branch</code>:</p>
+<p>After your super-important fix is deployed, you’re ready to switch back to the work you were doing before you were interrupted. However, first you’ll delete the <code>hotfix</code> branch, because you no longer need it — the <code>master</code> branch points at the same place. You can delete it with the <code>-d</code> option to <code>git branch</code>:</p>
 
 <pre><code>$ git branch -d hotfix
 Deleted branch hotfix (3a0874c).</code></pre>

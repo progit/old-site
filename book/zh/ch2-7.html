@@ -1,60 +1,60 @@
 ---
 layout: translation
-title: Pro Git 2.7 Git 基础 Tips and Tricks
+title: Pro Git 2.7 Git 基础 技巧和窍门
 ---
-<h2 id='tips_and_tricks'>Tips and Tricks</h2>
+<h2 id='id175'>技巧和窍门</h2>
 
-<p>Before we finish this chapter on basic Git, a few little tips and tricks may make your Git experience a bit simpler, easier, or more familiar. Many people use Git without using any of these tips, and we won’t refer to them or assume you’ve used them later in the book; but you should probably know how to do them.</p>
+<p>在结束本章之前，我还想和大家分享一些 Git 使用的技巧和窍门。很多使用 Git 的开发者可能根本就没用过这些技巧，我们也不是说在读过本书后非得用这些技巧不可，但至少应该有所了解吧。说实话，有了这些小窍门，我们的工作可以变得更简单，更轻松，更高效。</p>
 
-<h3 id='autocompletion'>Auto-Completion</h3>
+<h3 id='id176'>自动完成</h3>
 
-<p>If you use the Bash shell, Git comes with a nice auto-completion script you can enable. Download the Git source code, and look in the <code>contrib/completion</code> directory; there should be a file called <code>git-completion.bash</code>. Copy this file to your home directory, and add this to your <code>.bashrc</code> file:</p>
+<p>如果你用的是 Bash shell，可以试试看 Git 提供的自动完成脚本。下载 Git 的源代码，进入 <code>contrib/completion</code> 目录，会看到一个 <code>git-completion.bash</code> 文件。将此文件复制到你自己的用户主目录中（译注：按照下面的示例，还应改名加上点：cp git-completion.bash ~/.git-completion.bash），并把下面一行内容添加到你的 <code>.bashrc</code> 文件中：</p>
 
 <pre><code>source ~/.git-completion.bash</code></pre>
 
-<p>If you want to set up Git to automatically have Bash shell completion for all users, copy this script to the <code>/opt/local/etc/bash_completion.d</code> directory on Mac systems or to the <code>/etc/bash_completion.d/</code> directory on Linux systems. This is a directory of scripts that Bash will automatically load to provide shell completions.</p>
+<p>也可以为系统上所有用户都设置默认使用此脚本。Mac 上将此脚本复制到 <code>/opt/local/etc/bash_completion.d</code> 目录中，Linux 上则复制到 <code>/etc/bash_completion.d/</code> 目录中即可。这两处目录中的脚本，都会在 Bash 启动时自动加载。</p>
 
-<p>If you’re using Windows with Git Bash, which is the default when installing Git on Windows with msysGit, auto-completion should be preconfigured.</p>
+<p>如果在 Windows 上安装了 msysGit，默认使用的 Git Bash 就已经配好了这个自动完成脚本，可以直接使用。</p>
 
-<p>Press the Tab key when you’re writing a Git command, and it should return a set of suggestions for you to pick from:</p>
+<p>在输入 Git 命令的时候可以敲两次跳格键（Tab），就会看到列出所有匹配的可用命令建议：</p>
 
 <pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
 commit config</code></pre>
 
-<p>In this case, typing git co and then pressing the Tab key twice suggests commit and config. Adding <code>m&lt;tab&gt;</code> completes <code>git commit</code> automatically.</p>
+<p>此例中，键入 git co 然后连按两次 Tab 键，会看到两个相关的建议（命令） commit 和 config。继而输入 <code>m&lt;tab&gt;</code> 会自动完成 <code>git commit</code> 命令的输入。</p>
 
-<p>This also works with options, which is probably more useful. For instance, if you’re running a <code>git log</code> command and can’t remember one of the options, you can start typing it and press Tab to see what matches:</p>
+<p>命令的选项也可以用这种方式自动完成，其实这种情况更实用些。比如运行 <code>git log</code> 的时候忘了相关选项的名字，可以输入开头的几个字母，然后敲 Tab 键看看有哪些匹配的：</p>
 
 <pre><code>$ git log --s&lt;tab&gt;
 --shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
 
-<p>That’s a pretty nice trick and may save you some time and documentation reading.</p>
+<p>这个技巧不错吧，可以节省很多输入和查阅文档的时间。</p>
 
-<h3 id='git_aliases'>Git Aliases</h3>
+<h3 id='git_'>Git 命令别名</h3>
 
-<p>Git doesn’t infer your command if you type it in partially. If you don’t want to type the entire text of each of the Git commands, you can easily set up an alias for each command using <code>git config</code>. Here are a couple of examples you may want to set up:</p>
+<p>Git 并不会推断你输入的几个字符将会是哪条命令，不过如果想偷懒，少敲几个命令的字符，可以用 <code>git config</code> 为命令设置别名。来看看下面的例子：</p>
 
 <pre><code>$ git config --global alias.co checkout
 $ git config --global alias.br branch
 $ git config --global alias.ci commit
 $ git config --global alias.st status</code></pre>
 
-<p>This means that, for example, instead of typing <code>git commit</code>, you just need to type <code>git ci</code>. As you go on using Git, you’ll probably use other commands frequently as well; in this case, don’t hesitate to create new aliases.</p>
+<p>现在，如果要输入 <code>git commit</code> 只需键入 <code>git ci</code> 即可。而随着 Git 使用的深入，会有很多经常要用到的命令，遇到这种情况，不妨建个别名提高效率。</p>
 
-<p>This technique can also be very useful in creating commands that you think should exist. For example, to correct the usability problem you encountered with unstaging a file, you can add your own unstage alias to Git:</p>
+<p>使用这种技术还可以创造出新的命令，比方说取消暂存文件时的输入比较繁琐，可以自己设置一下：</p>
 
 <pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
 
-<p>This makes the following two commands equivalent:</p>
+<p>这样一来，下面的两条命令完全等同：</p>
 
 <pre><code>$ git unstage fileA
 $ git reset HEAD fileA</code></pre>
 
-<p>This seems a bit clearer. It’s also common to add a <code>last</code> command, like this:</p>
+<p>显然，使用别名的方式看起来更清楚。另外，我们还经常设置 <code>last</code> 命令：</p>
 
 <pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
 
-<p>This way, you can see the last commit easily:</p>
+<p>然后要看最后一次的提交信息，就变得简单多了：</p>
 
 <pre><code>$ git last
 commit 66938dae3329c7aebe598c2246a8e6af90d04646
@@ -65,7 +65,7 @@ Date:   Tue Aug 26 19:48:51 2008 +0800
 
     Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
 
-<p>As you can tell, Git simply replaces the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a <code>!</code> character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing <code>git visual</code> to run <code>gitk</code>:</p>
+<p>可以看出，实际上 Git 只是简单地在命令中替换了你设置的别名。不过有时候我们希望运行某个外部命令，而非 Git 的附属工具，这个好办，只需要在命令前加上 <code>!</code> 就行。如果你自己写了些处理 Git 仓库信息的脚本的话，就可以用这种技术包装起来。作为演示，我们可以设置用 <code>git visual</code> 启动 <code>gitk</code>：</p>
 
 <pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
 

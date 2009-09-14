@@ -1,73 +1,271 @@
 ---
 layout: translation
-title: Pro Git 2.12 Git Basics Tips and Tricks
+title: Pro Git 2.12 Git Basics Tagging
 ---
-<h2 id='tips_and_tricks'>Tips and Tricks</h2>
+<h2 id='tagging'>Tagging</h2>
 
-<p>Before we finish this chapter on basic Git, a few little tips and tricks may make your Git experience a bit simpler, easier, or more familiar. Many people use Git without using any of these tips, and we won’t refer to them or assume you’ve used them later in the book; but you should probably know how to do them.</p>
+<p>Like most VCSs, Git has the ability to tag specific points in history as being important. Generally, people use this functionality to mark release points (v1.0, and so on). In this section, you’ll learn how to list the available tags, how to create new tags, and what the different types of tags are.</p>
 
-<h3 id='autocompletion'>Auto-Completion</h3>
+<p>Wie die meisten anderen VCS kann Git bestimmte Punkte in der Historie als besonders wichtig markieren, also taggen. Normalerweise verwendet man diese Funktionalität, um Release Versionen zu markieren (z.B. v1.0). In diesem Abschnitt gehen wir darauf ein, wie du die vorhandenen Tags anzuzeigen und neue Tags erstellen kannst, und worin die Unterschiede zwischen verschiedenen Typen von Tags bestehen.</p>
 
-<p>If you use the Bash shell, Git comes with a nice auto-completion script you can enable. Download the Git source code, and look in the <code>contrib/completion</code> directory; there should be a file called <code>git-completion.bash</code>. Copy this file to your home directory, and add this to your <code>.bashrc</code> file:</p>
+<h3 id='listing_your_tags'>Listing Your Tags</h3>
 
-<pre><code>source ~/.git-completion.bash</code></pre>
+<h3 id='vorhandene_tags_anzeigen'>Vorhandene Tags anzeigen</h3>
 
-<p>If you want to set up Git to automatically have Bash shell completion for all users, copy this script to the <code>/opt/local/etc/bash_completion.d</code> directory on Mac systems or to the <code>/etc/bash_completion.d/</code> directory on Linux systems. This is a directory of scripts that Bash will automatically load to provide shell completions.</p>
+<p>Listing the available tags in Git is straightforward. Just type <code>git tag</code>:</p>
 
-<p>If you’re using Windows with Git Bash, which is the default when installing Git on Windows with msysGit, auto-completion should be preconfigured.</p>
+<p>Um die in einem Repository vorhandenen Tags anzuzeigen, kannst den Befehl <code>git tag</code> ohne irgendwelche weiteren Optionen verwenden:</p>
 
-<p>Press the Tab key when you’re writing a Git command, and it should return a set of suggestions for you to pick from:</p>
+<pre><code>$ git tag
+v0.1
+v1.3</code></pre>
 
-<pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
-commit config</code></pre>
+<p>This command lists the tags in alphabetical order; the order in which they appear has no real importance.</p>
 
-<p>In this case, typing git co and then pressing the Tab key twice suggests commit and config. Adding <code>m&lt;tab&gt;</code> completes <code>git commit</code> automatically.</p>
+<p>Dieser Befehl listet die Tags in alphabetischer Reihenfolge auf.</p>
 
-<p>This also works with options, which is probably more useful. For instance, if you’re running a <code>git log</code> command and can’t remember one of the options, you can start typing it and press Tab to see what matches:</p>
+<p>You can also search for tags with a particular pattern. The Git source repo, for instance, contains more than 240 tags. If you’re only interested in looking at the 1.4.2 series, you can run this:</p>
 
-<pre><code>$ git log --s&lt;tab&gt;
---shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
+<p>Du kannst auch nach Tags mit einem bestimmten Muster suchen. Das Git Quellcode Repository enthält beispielsweise mehr als 240 Tags. Wenn du nur an denjenigen interessiert bist, die zur 1.4.2 Serie gehören, kannst du folgendes tun:</p>
 
-<p>That’s a pretty nice trick and may save you some time and documentation reading.</p>
+<pre><code>$ git tag -l &#39;v1.4.2.*&#39;
+v1.4.2.1
+v1.4.2.2
+v1.4.2.3
+v1.4.2.4</code></pre>
 
-<h3 id='git_aliases'>Git Aliases</h3>
+<h3 id='creating_tags'>Creating Tags</h3>
 
-<p>Git doesn’t infer your command if you type it in partially. If you don’t want to type the entire text of each of the Git commands, you can easily set up an alias for each command using <code>git config</code>. Here are a couple of examples you may want to set up:</p>
+<h3 id='neue_tags_anlegen'>Neue Tags anlegen</h3>
 
-<pre><code>$ git config --global alias.co checkout
-$ git config --global alias.br branch
-$ git config --global alias.ci commit
-$ git config --global alias.st status</code></pre>
+<p>Git uses two main types of tags: lightweight and annotated. A lightweight tag is very much like a branch that doesn’t change — it’s just a pointer to a specific commit. Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, e-mail, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information; but if you want a temporary tag or for some reason don’t want to keep the other information, lightweight tags are available too.</p>
 
-<p>This means that, for example, instead of typing <code>git commit</code>, you just need to type <code>git ci</code>. As you go on using Git, you’ll probably use other commands frequently as well; in this case, don’t hesitate to create new aliases.</p>
+<p>Git kennt im wesentlichen zwei Typen von Tags: leichte und kommentierte (xxx) (&#8220;lightweight&#8221; und &#8220;annotated&#8221;) Tags. Ein leichter Tag ist ein Branch, der sich niemals ändert - es ist lediglich ein Zeiger auf einen bestimmten Commit. Kommentierte Tags dagegen werden als vollwertige Objekte in der Git Datenbank gespeichert. Sie haben eine Checksumme, beinhalten Namen und E-Mail Adresse desjenigen, der den Tag angelegt hat, das jeweilige Datum sowie eine Meldung. Sie können überdies mit GNU Privacy Guard (GPG) signiert und verifiziert werden. Generell empfiehlt sich deshalb, kommentierte Tags anzulegen. Wenn man aber aus irgendeinem Grund einen temporären Tag anlegen will, für den all diese zusätzlichen Informationen nicht nötig sind, dann kann man auf leichte Tags zurückgreifen.</p>
 
-<p>This technique can also be very useful in creating commands that you think should exist. For example, to correct the usability problem you encountered with unstaging a file, you can add your own unstage alias to Git:</p>
+<h3 id='annotated_tags'>Annotated Tags</h3>
 
-<pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
+<h3 id='kommentierte_tags_xxx'>Kommentierte Tags (xxx)</h3>
 
-<p>This makes the following two commands equivalent:</p>
+<p>Creating an annotated tag in Git is simple. The easiest way is to specify <code>-a</code> when you run the <code>tag</code> command:</p>
 
-<pre><code>$ git unstage fileA
-$ git reset HEAD fileA</code></pre>
+<p>Einen kommentierten Tag legst du an, indem du dem <code>git tag</code> Befehl die Option <code>-a</code> übergibst:</p>
 
-<p>This seems a bit clearer. It’s also common to add a <code>last</code> command, like this:</p>
+<pre><code>$ git tag -a v1.4 -m &#39;my version 1.4&#39;
+$ git tag
+v0.1
+v1.3
+v1.4</code></pre>
 
-<pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
+<p>The <code>-m</code> specifies a tagging message, which is stored with the tag. If you don’t specify a message for an annotated tag, Git launches your editor so you can type it in.</p>
 
-<p>This way, you can see the last commit easily:</p>
+<p>Die Option <code>-m</code> gibt dabei wiederum die Meldung an, die zum Tag hinzugefügt wird. Wenn du keine Meldung angibst, startet Git wie üblich deinen Editor, so daß du eine Meldung eingeben kannst.</p>
 
-<pre><code>$ git last
-commit 66938dae3329c7aebe598c2246a8e6af90d04646
-Author: Josh Goebel &lt;dreamer3@example.com&gt;
-Date:   Tue Aug 26 19:48:51 2008 +0800
+<p>You can see the tag data along with the commit that was tagged by using the <code>git show</code> command:</p>
 
-    test for current head
+<p><code>git show</code> zeigt dir dann folgenden Tag Daten zusammen mit dem jeweiligen Commit, auf den der Tag verweist:</p>
 
-    Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
+<pre><code>$ git show v1.4
+tag v1.4
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 14:45:11 2009 -0800
 
-<p>As you can tell, Git simply replaces the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a <code>!</code> character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing <code>git visual</code> to run <code>gitk</code>:</p>
+my version 1.4
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
 
-<pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>That shows the tagger information, the date the commit was tagged, and the annotation message before showing the commit information.</p>
+
+<p>Die Ausgabe listet also zunächst die Informationen über denjenigen, der den Tag angelegt hat, sowie die Tag Meldung und dann die Commit Informationen selbst.</p>
+
+<h3 id='signed_tags'>Signed Tags</h3>
+
+<h3 id='signierte_tags'>Signierte Tags</h3>
+
+<p>You can also sign your tags with GPG, assuming you have a private key. All you have to do is use <code>-s</code> instead of <code>-a</code>:</p>
+
+<p>Wenn du einen privaten GPG Schlüssel hast, kannst du deine Tags zusätzlich mit GPG signieren. Dazu verwendest du einfach die Option <code>-s</code> anstelle von <code>-a</code>:</p>
+
+<pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
+You need a passphrase to unlock the secret key for
+user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
+1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
+
+<p>If you run <code>git show</code> on that tag, you can see your GPG signature attached to it:</p>
+
+<p>Wenn du jetzt <code>git show</code> auf diesen Tag anwendest, siehst du, daß der Tag deine GPG Signatur kennt:</p>
+
+<pre><code>$ git show v1.5
+tag v1.5
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:22:20 2009 -0800
+
+my signed 1.5 tag
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (Darwin)
+
+iEYEABECAAYFAkmQurIACgkQON3DxfchxFr5cACeIMN+ZxLKggJQf0QYiQBwgySN
+Ki0An2JeAVUCAiJ7Ox6ZEtK+NvZAj82/
+=WryJ
+-----END PGP SIGNATURE-----
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>A bit later, you’ll learn how to verify signed tags.</p>
+
+<p>Darauf, wie du signierte Tags verifizieren kannst, werden wir gleich noch eingehen.</p>
+
+<h3 id='lightweight_tags'>Lightweight Tags</h3>
+
+<h3 id='leichte_tags_xxx'>Leichte Tags (xxx)</h3>
+
+<p>Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept. To create a lightweight tag, don’t supply the <code>-a</code>, <code>-s</code>, or <code>-m</code> option:</p>
+
+<p>Leichte Tags sind die zweite Form von Tags, die Git kennt. Für einen leichten Tag wird im wesentlichen die jeweilige Commit Checksumme, und sonst keine andere Information, in einer Datei gespeichert. Um einen leichten Tag anzulegen, verwendest du einfach keine der drei Optionen <code>-a</code>, <code>-s</code> und <code>-m</code>:</p>
+
+<pre><code>$ git tag v1.4-lw
+$ git tag
+v0.1
+v1.3
+v1.4
+v1.4-lw
+v1.5</code></pre>
+
+<p>This time, if you run <code>git show</code> on the tag, you don’t see the extra tag information. The command just shows the commit:</p>
+
+<p>Wenn du jetzt <code>git show</code> auf den Tag ausführst, siehst du keine der zusätzlichen Tag Informationen. Der Befehl zeigt einfach den jeweiligen Commit:</p>
+
+<pre><code>$ git show v1.4-lw
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<h3 id='verifying_tags'>Verifying Tags</h3>
+
+<h3 id='tags_verifizieren'>Tags verifizieren</h3>
+
+<p>To verify a signed tag, you use <code>git tag -v [tag-name]</code>. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:</p>
+
+<p>Um einen signierten Tag zu verifizieren, kannst du <code>git tag -v [tag-name]</code> verwenden. Dieser Befehl verwendet GPG, um die Signatur mit Hilfe des öffentlichen Schlüssels des Signierenden zu verifizieren - weshalb du diesen Schlüssel in deinem Schlüsselbund haben mußt:</p>
+
+<pre><code>$ git tag -v v1.4.2.1
+object 883653babd8ee7ea23e6a5c392bb739348b1eb61
+type commit
+tag v1.4.2.1
+tagger Junio C Hamano &lt;junkio@cox.net&gt; 1158138501 -0700
+
+GIT 1.4.2.1
+
+Minor fixes since 1.4.2, including git-mv and git-http with alternates.
+gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Good signature from &quot;Junio C Hamano &lt;junkio@cox.net&gt;&quot;
+gpg:                 aka &quot;[jpeg image of size 1513]&quot;
+Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A</code></pre>
+
+<p>If you don’t have the signer’s public key, you get something like this instead:</p>
+
+<p>Wenn du den öffentlichen Schlüssel des Signierenden nicht in deinem Schlüsselbund hast, wirst du statt dessen eine Meldung sehen wie:</p>
+
+<pre><code>gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Can&#39;t check signature: public key not found
+error: could not verify the tag &#39;v1.4.2.1&#39;</code></pre>
+
+<h3 id='tagging_later'>Tagging Later</h3>
+
+<h3 id='nachtrglich_taggen'>Nachträglich taggen</h3>
+
+<p>You can also tag commits after you’ve moved past them. Suppose your commit history looks like this:</p>
+
+<p>Du kannst Commits jederzeit taggen, auch lange Zeit nachdem sie angelegt wurden. Nehmen wir an, deine Commit Historie sieht wie folgt aus:</p>
+
+<pre><code>$ git log --pretty=oneline
+15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch &#39;experiment&#39;
+a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
+0d52aaab4479697da7686c15f77a3d64d9165190 one more thing
+6d52a271eda8725415634dd79daabbc4d9b6008e Merge branch &#39;experiment&#39;
+0b7434d86859cc7b8c3d5e1dddfed66ff742fcbc added a commit function
+4682c3261057305bdd616e23b64b0857d832627b added a todo file
+166ae0c4d3f420721acbb115cc33848dfcc2121a started write support
+9fceb02d0ae598e95dc970b74767f19372d61af8 updated rakefile
+964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
+8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme</code></pre>
+
+<p>Now, suppose you forgot to tag the project at v1.2, which was at the &#8220;updated rakefile&#8221; commit. You can add it after the fact. To tag that commit, you specify the commit checksum (or part of it) at the end of the command:</p>
+
+<p>Nehmen wir außerdem an, daß du vergessen hast, Version v1.2 des Projektes zu taggen, und daß dies der Commit &#8220;updated rakefile&#8221; gewesen ist. Du kannst diesen jetzt im Nachhinein taggen, indem du die Checksumme des Commits (oder einen Teil davon) am Ende des Befehls angibst:</p>
+
+<pre><code>$ git tag -a v1.2 9fceb02</code></pre>
+
+<p>You can see that you’ve tagged the commit:</p>
+
+<p>Du siehst jetzt, daß du einen Tag für den Commit angelegt hast:</p>
+
+<pre><code>$ git tag 
+v0.1
+v1.2
+v1.3
+v1.4
+v1.4-lw
+v1.5
+
+$ git show v1.2
+tag v1.2
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:32:16 2009 -0800
+
+version 1.2
+commit 9fceb02d0ae598e95dc970b74767f19372d61af8
+Author: Magnus Chacon &lt;mchacon@gee-mail.com&gt;
+Date:   Sun Apr 27 20:43:35 2008 -0700
+
+    updated rakefile
+...</code></pre>
+
+<h3 id='sharing_tags'>Sharing Tags</h3>
+
+<h3 id='tags_hochladen_xxx'>Tags hochladen (xxx)</h3>
+
+<p>By default, the <code>git push</code> command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them. This process is just like sharing remote branches – you can run <code>git push origin [tagname]</code>.</p>
+
+<p>Der <code>git push</code> Befehl lädt Tags nicht von sich aus auf externe Server. Stattdessen muß Du Tags explizit auf einen externen Server hochladen, nachdem du sie angelegt hast. Der Vorgang ist derselbe wie mit Branches: du kannst den Befehl <code>git push origin [tagname]</code> verwenden.</p>
+
+<pre><code>$ git push origin v1.5
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+* [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>If you have a lot of tags that you want to push up at once, you can also use the <code>--tags</code> option to the <code>git push</code> command. This will transfer all of your tags to the remote server that are not already there.</p>
+
+<p>Wenn du viele Tags auf einmal hochladen willst, kannst du dem <code>git push</code> Befehl außerdem die <code>--tags</code> Option übergeben und auf diese Weise sämtliche Tags auf den externen Server transferieren, die dort noch nicht bekannt sind.</p>
+
+<pre><code>$ git push origin --tags
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+ * [new tag]         v0.1 -&gt; v0.1
+ * [new tag]         v1.2 -&gt; v1.2
+ * [new tag]         v1.4 -&gt; v1.4
+ * [new tag]         v1.4-lw -&gt; v1.4-lw
+ * [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>Now, when someone else clones or pulls from your repository, they will get all your tags as well.</p>
+
+<p>Wenn jetzt jemand anderes das Repository klont oder von dort aktualisiert, wird er all diese Tags ebenfalls erhalten.</p>
 
 <div id='nav'>
 <a href='ch2-11.html'>prev</a> | <a href='ch2-13.html'>next</a>

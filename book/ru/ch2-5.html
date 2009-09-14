@@ -17,7 +17,7 @@ commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
 commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
@@ -42,7 +42,7 @@ commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
 diff --git a/Rakefile b/Rakefile
 index a874b73..8f94139 100644
@@ -82,7 +82,7 @@ commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
  Rakefile |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
@@ -110,14 +110,14 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 <p>As you can see, the <code>--stat</code> option prints below each commit entry a list of modified files, how many files were changed, and how many lines in those files were added and removed. It also puts a summary of the information at the end. Another really useful option is <code>--pretty</code>. This option changes the log output to formats other than the default. A few prebuilt options are available for you to use. The oneline option prints each commit on a single line, which is useful if you’re looking at a lot of commits. In addition, the <code>short</code>, <code>full</code>, and <code>fuller</code> options show the output in roughly the same format but with less or more information, respectively:</p>
 
 <pre><code>$ git log --pretty=oneline
-ca82a6dff817ec66f44342007202690a93763949 changed the verison number
+ca82a6dff817ec66f44342007202690a93763949 changed the version number
 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
 a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
 
 <p>The most interesting option is <code>format</code>, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
-ca82a6d - Scott Chacon, 11 months ago : changed the verison number
+ca82a6d - Scott Chacon, 11 months ago : changed the version number
 085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
 a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 
@@ -209,7 +209,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual <code>git log</code> tool, and it accepts nearly all the filtering options that <code>git log</code> does. If you type gitk on the command line in your project, you should see something like Figure 2-2.</p>
 
-<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Figure 2-2. The gitk history visualizer</p>
+<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Figure 2-2. The gitk history visualizer.</p>
 
 <p>You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.</p>
 

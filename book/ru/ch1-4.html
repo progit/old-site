@@ -14,9 +14,7 @@ title: Pro Git 1.4 Введение Установка Git
 
 <p>If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.</p>
 
-<p>Для установки Git, вам понадобятся следующие библиотеки, являющиеся зависимостями: curl, zlib, openssl, expat, and libiconv. Если вы, к примеру, используете систему, в которой есть yum (такую как Fedora) или apt-get (такую как системы основаные на Debian), вы можете использовать одну из следующих команд, чтобы разрешить все зависимости.</p>
-
-<p>To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:</p>
+<p>Для установки Git вам понадобятся библиотеки, от которых Git зависит: curl, zlib, openssl, expat, and libiconv. Например, если в вашей системе менеджер пакетов - yum (Fedora), или apt-get (Debian, Ubuntu), можно воспользоваться следующими командами, чтобы разрешить все зависимости:</p>
 
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
@@ -24,24 +22,18 @@ title: Pro Git 1.4 Введение Установка Git
 $ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
   libz-dev </code></pre>
 
-<p>После того, как вы поставите все необходимые библиотеки, вы можете начинать установку, скачав последнюю версию с сайта Git:</p>
-
-<p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
+<p>Установив все требуемые библиотеки, можно идти дальше и скачать последнюю версию с сайта Git:</p>
 
 <pre><code>http://git-scm.com/download</code></pre>
 
 <p>Теперь скомпилируйте и установите:</p>
-
-<p>Then, compile and install:</p>
 
 <pre><code>$ tar -zxf git-1.6.0.5.tar.gz
 $ cd git-1.6.0.5
 $ make prefix=/usr/local all
 $ sudo make prefix=/usr/local install</code></pre>
 
-<p>После этого вы можете клонировать исходный код Git с помощью Git, для получения обновлений:</p>
-
-<p>After this is done, you can also get Git via Git itself for updates:</p>
+<p>После этого можно скачать при помощи Git его же исходный код, чтобы получать обновления:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
 
@@ -67,7 +59,7 @@ $ sudo make prefix=/usr/local install</code></pre>
 
 <pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
-<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Рисунок 1-7. Инсталлятор Git под OS X</p>
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Рисунок 1-7. Инсталлятор Git под OS X.</p>
 
 <p>Другой распространенный способ установка Git через MacPorts (<code>http://www.macports.org</code>). Если у вас установлены MacPorts, инсталлируйте Git так:</p>
 

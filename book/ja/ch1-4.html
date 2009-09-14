@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 1.4 まずはじめに Installing Git
+title: Pro Git 1.4 使い始める Gitのインストール
 ---
-<h2 id='installing_git'>Installing Git</h2>
+<h2 id='git'>Gitのインストール</h2>
 
-<p>Let’s get into using some Git. First things first—you have to install it. You can get it a number of ways; the two major ones are to install it from source or to install an existing package for your platform.</p>
+<p>少しGitを使う事に入りましょう。何よりも最初に、Gitをインストールしなければなりません。幾つもの経路で入手することができ、主要な二つの方法のうちの一つはソースからインストールすることで、もう一つはプラットフォームに応じて存在するパッケージをインストールすることです。</p>
 
-<h3 id='installing_from_source'>Installing from Source</h3>
+<h3 id='id10'>ソースからのインストール</h3>
 
-<p>If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.</p>
+<p>もし可能であれば、もっとも最新のバージョンを入手できるので、一般的にソースからGitをインストールするのが便利です。Gitのそれぞれのバージョンは、実用的なユーザー・インターフェイスの向上が含まれており、もしソースからソフトウェアをコンパイルすることに違和感を感じないのであれば、最新バージョンを入手することは、大抵は最も良い経路になります。また、多くのLinuxディストリビューションがとても古いパッケージを収録している事は良くあることであり、最新のディストリビューションを使っているか、バックポート（訳者注：最新のパッケージを古いディストリビューションで使えるようにする事）をしていない限りは、ソースからのインストールがベストな選択になるでしょう。</p>
 
-<p>To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:</p>
+<p>Gitをインストールするためには、Gitが依存するライブラリーである、curl、zlib、openssl、expat、libiconvを入手する必要があります。例えば、もし（Fedoraなどで）yumか（Debianベースのシステムなどで）apt-getが入ったシステムを使っているのであれば、これらのコマンドの一つを依存対象の全てをインストールするのに使う事ができます：</p>
 
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
@@ -18,52 +18,52 @@ title: Pro Git 1.4 まずはじめに Installing Git
 $ apt-get install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel</code></pre>
 
-<p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
+<p>全ての必要な依存対象を持っているのであれば、先に進んでGitのウェブサイトから最新版のスナップショットを持ってくる事ができます：</p>
 
 <pre><code>http://git-scm.com/download</code></pre>
 
-<p>Then, compile and install:</p>
+<p>そして、コンパイルしてインストールします：</p>
 
 <pre><code>$ tar -zxf git-1.6.0.5.tar.gz
 $ cd git-1.6.0.5
 $ make prefix=/usr/local all
 $ sudo make prefix=/usr/local install</code></pre>
 
-<p>After this is done, you can also get Git via Git itself for updates:</p>
+<p>また、Gitのインストール後、アップデートでGitを通して最新版のGitを得ることができます。</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
 
-<h3 id='installing_on_linux'>Installing on Linux</h3>
+<h3 id='linux'>Linuxにインストール</h3>
 
-<p>If you want to install Git on Linux via a binary installer, you can generally do so through the basic package-management tool that comes with your distribution. If you’re on Fedora, you can use yum:</p>
+<p>バイナリのインストーラーを通じてLinux上にGitをインストールしたいのであれば、大抵はディストリビューションに付属する基本的なパッケージ・マネジメント・ツールを使って、それを行なう事ができます。もしFedoraを使っているのであれば、yumを使う事が出来ます：</p>
 
 <pre><code>$ yum install git-core</code></pre>
 
-<p>Or if you’re on a Debian-based distribution like Ubuntu, try apt-get:</p>
+<p>もしくは、もしUbuntuのようなDebianベースのディストリュビューションを使っているのであれば、apt-getをやってみましょう：</p>
 
 <pre><code>$ apt-get install git-core</code></pre>
 
-<h3 id='installing_on_mac'>Installing on Mac</h3>
+<h3 id='mac'>Macにインストール</h3>
 
-<p>There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Figure 1-7):</p>
+<p>MacにGitをインストールするには2つの簡単な方法があります。もっとも簡単な方法は、グラフィカルなGitインストーラーを使うことで、このGitインストーラーはGoogle Codeのページ（図1-7参照）からダウンロードすることができます：</p>
 
 <pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
 <p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Git OS X installer</p>
 
-<p>The other major way is to install Git via MacPorts (<code>http://www.macports.org</code>). If you have MacPorts installed, install Git via</p>
+<p>もう一つの主要な方法は、MacPorts (<code>http://www.macports.org</code>) からGitをインストールすることです。MacPortsをインストールした状態であれば、Gitを以下のようにインストールできます。</p>
 
 <pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
 
-<p>You don’t have to add all the extras, but you’ll probably want to include +svn in case you ever have to use Git with Subversion repositories (see Chapter 8).</p>
+<p>全てのvariantsを追加する必要はありませんが、SubversionのリポジトリーでGitを使う必要がまだあるなら、恐らく+svnを含めないといけないでしょう（第8章参照）。</p>
 
-<h3 id='installing_on_windows'>Installing on Windows</h3>
+<h3 id='windows'>Windowsにインストール</h3>
 
-<p>Installing Git on Windows is very easy. The msysGit project has one of the easier installation procedures. Simply download the installer exe file from the Google Code page, and run it:</p>
+<p>WindowsにGitをインストールするのはとても簡単です。msysGitプロジェクトは、より簡単なインストール手続きの一つを備えています。Google Codeのページから、単純にインストーラーのexeファイルをダウンロードをし、実行してください：</p>
 
 <pre><code>http://code.google.com/p/msysgit</code></pre>
 
-<p>After it’s installed, you have both a command-line version (including an SSH client that will come in handy later) and the standard GUI.</p>
+<p>インストール後、コマンドライン版（後で役に立つSSHクライアントを含む）とスタンダードGUI版の両方を使う事ができます。</p>
 
 <div id='nav'>
 <a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>

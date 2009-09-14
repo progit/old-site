@@ -6,11 +6,11 @@ title: Pro Git 1.9 Los geht&#8217;s Git konfigurieren
 
 <p>Now that you have Git on your system, you’ll want to do a few things to customize your Git environment. You should have to do these things only once; they’ll stick around between upgrades. You can also change them at any time by running through the commands again.</p>
 
-<p>Nachdem Du jetzt Git auf deinem System installiert hast, solltest Du deine Git Umgebung anpassen. Das brauchst Du nur einmal zu tun, diese Konfiguration wird auch bestehen bleiben, wenn Du Git auf eine neuere Version aktualisierst. Du kannst sie jederzeit ändern, indem Du die folgenden Befehle einfach nochmals ausführst.</p>
+<p>Nachdem Du jetzt Git auf deinem System installiert hast, solltest Du deine Git Konfiguration anpassen. Das brauchst Du nur einmal zu tun, die Konfiguration bleibt auch bestehen, wenn Du Git auf eine neuere Version aktualisierst. Du kannst sie jederzeit ändern, indem Du die folgenden Befehle einfach noch einmal ausführst.</p>
 
 <p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
 
-<p>Git umfasst das Werkzeug git config, das dir erlaubt, Konfigurationswerte zu verändern. Auf diese Weise kannst Du anpassen, wie Git arbeitet und aussieht. Diese Werte sind an drei verschiedenen Orten gespeichert:</p>
+<p>Git umfasst das Werkzeug <code>git config</code>, das dir erlaubt, Konfigurationswerte zu verändern. Auf diese Weise kannst Du anpassen, wie Git aussieht und arbeitet. Diese Werte sind an drei verschiedenen Orten gespeichert:</p>
 
 <ul>
 <li>
@@ -55,7 +55,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>Again, you need to do this only once if you pass the <code>--global</code> option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the <code>--global</code> option when you’re in that project.</p>
 
-<p>Du brauchst diese Konfiguration wie gesagt nur einmal vorzunehmen, wenn Du die <code>--global</code> Option verwendest, weil Git diese Information dann für all deine Projekte verwenden wird. Wenn Du sie für ein spezielles Projekt mit einem anderen Namen oder einer anderen E-Mail Adresse überschreiben willst, kannst Du dazu den Befehl ohne die <code>--global</code> Option innerhalb dieses Projektes ausführen.</p>
+<p>Du brauchst diese Konfiguration, wie schon erwähnt, nur einmal vorzunehmen, wenn Du die <code>--global</code> Option verwendest, weil Git diese Information dann für all deine Projekte verwenden wird. Wenn Du sie für ein spezielles Projekt mit einem anderen Namen oder einer anderen E-Mail Adresse überschreiben willst, kannst Du dazu den Befehl ohne die <code>--global</code> Option innerhalb dieses Projektes ausführen.</p>
 
 <h3 id='your_editor'>Your Editor</h3>
 
@@ -63,7 +63,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>Now that your identity is set up, you can configure the default text editor that will be used when Git needs you to type in a message. By default, Git uses your system’s default editor, which is generally Vi or Vim. If you want to use a different text editor, such as Emacs, you can do the following:</p>
 
-<p>Nachdem Du deine Identität jetzt konfiguriert hast, kannst Du einstellen, welchen Texteditor Git in Situationen verwenden soll, in denen Du eine Nachricht eingeben musst. Normalerweise verwendet Git den Standard-Texteditor deines Systems - das ist üblicherweise Vi oder Vim. Wenn Du einen anderen Texteditor, z.B. Emacs, verwenden willst, kannst Du das wie folgt festlegen:</p>
+<p>Nachdem Du deine Identität jetzt konfiguriert hast, kannst Du einstellen, welchen Texteditor Git in Situationen verwenden soll, in denen Du eine Nachricht eingeben mußt. Normalerweise verwendet Git den Standard-Texteditor deines Systems - das ist üblicherweise Vi oder Vim. Wenn Du einen anderen Texteditor, z.B. Emacs, verwenden willst, kannst Du das wie folgt festlegen:</p>
 
 <pre><code>$ git config --global core.editor emacs</code></pre>
 
@@ -73,13 +73,13 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>Another useful option you may want to configure is the default diff tool to use to resolve merge conflicts. Say you want to use vimdiff:</p>
 
-<p>Eine andere nützliche Einstellung, die Du möglicherweise vornehmen willst, ist das Diff Programm, mit dem Du Konflikte auflösen kannst, die während der Arbeit mit Git manchmal auftreten. Wenn Du beispielsweise vimdiff verwenden willst, kannst Du das so festlegen:</p>
+<p>Eine andere nützliche Einstellung, die Du möglicherweise vornehmen willst, ist welches Diff Programm Git verwendet. Mit diesem Programm kannst Du Konflikte auflösen, die während der Arbeit mit Git manchmal auftreten. Wenn Du beispielsweise vimdiff verwenden willst, kannst Du das so festlegen:</p>
 
 <pre><code>$ git config --global merge.tool vimdiff</code></pre>
 
 <p>Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff as valid merge tools. You can also set up a custom tool; see Chapter 7 for more information about doing that.</p>
 
-<p>Git kann von Hause aus mit den folgenden Diff Programmen arbeiten: kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff. Du kannst auch ein anderes Programm aufsetzen. In Kapitel 7 gehen wir näher darauf ein, wie das geht.</p>
+<p>Git kann von Hause aus mit den folgenden Diff Programmen arbeiten: kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff. Außerdem kannst Du ein eigenes Programm aufsetzen. Wir werden in Kapitel 7 darauf eingehen, wie das geht.</p>
 
 <h3 id='checking_your_settings'>Checking Your Settings</h3>
 
@@ -87,7 +87,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>If you want to check your settings, you can use the <code>git config --list</code> command to list all the settings Git can find at that point:</p>
 
-<p>Wenn Du deine Einstellungen überprüfen willst, kannst Du den Befehl <code>git config --list</code> verwenden, um alle Einstellungen anzuzeigen, die Git an dieser Stelle (z.B. innerhalb eines bestimmten Projektes) bekannt sind:</p>
+<p>Wenn Du deine Einstellungen überprüfen willst, kannst Du mit dem Befehl <code>git config --list</code> alle Einstellungen anzuzeigen, die Git an dieser Stelle (z.B. innerhalb eines bestimmten Projektes) bekannt sind:</p>
 
 <pre><code>$ git config --list
 user.name=Scott Chacon
@@ -100,7 +100,7 @@ color.diff=auto
 
 <p>You may see keys more than once, because Git reads the same key from different files (<code>/etc/gitconfig</code> and <code>~/.gitconfig</code>, for example). In this case, Git uses the last value for each unique key it sees.</p>
 
-<p>Manche Variablen werden möglicherweise mehrfach aufgelistet, weil Git dieselbe Variable in verschiedenen Dateien (z.B. <code>/etc/gitconfig</code> und <code>~/.gitconfig</code>) findet. In diesem Fall verwendet Git den jeweils zuletzt aufgelisteten Wert.</p>
+<p>Manche Variablen werden möglicherweise mehrfach aufgelistet, weil Git dieselbe Variable in verschiedenen Dateien (z.B. <code>/etc/gitconfig</code> und <code>~/.gitconfig</code>) findet. In diesem Fall verwendet Git dann den jeweils zuletzt aufgelisteten Wert.</p>
 
 <p>You can also check what Git thinks a specific key’s value is by typing <code>git config {key}</code>:</p>
 

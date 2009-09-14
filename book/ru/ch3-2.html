@@ -16,7 +16,7 @@ title: Pro Git 3.2 Ветвление в Git What a Branch Is
 
 <p>To visualize this, let’s assume that you have a directory containing three files, and you stage them all and commit. Staging the files checksums each one (the SHA-1 hash we mentioned in Chapter 1), stores that version of the file in the Git repository (Git refers to them as blobs), and adds that checksum to the staging area:</p>
 
-<pre><code>$ git add README test.rb LICENSE2
+<pre><code>$ git add README test.rb LICENSE
 $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>Когда вы создаете коммит запуском <code>git commit</code>, Git вычисляет контрольную сумму каждой подиректории (в нашем случае, только корневой директории) и сохраняет это дерево объектов в Git репозиторий. Затем Git создает фиксируемый объект, который имеет метаданные и указатель на корень проектного дерева, таким образом, он может снова создать слепок, когда нужно.</p>
@@ -27,25 +27,25 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>Your Git repository now contains five objects: one blob for the contents of each of your three files, one tree that lists the contents of the directory and specifies which file names are stored as which blobs, and one commit with the pointer to that root tree and all the commit metadata. Conceptually, the data in your Git repository looks something like Figure 3-1.</p>
 
-<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Рисунок 3-1. Репозиторий данный с единственным комитом</p>
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Рисунок 3-1. Данные репозитория с единственным комитом.</p>
 
-<p>Figure 3-1. Single commit repository data</p>
+<p>Figure 3-1. Single commit repository data.</p>
 
 <p>Если вы делаете какие-то изменения и фиксируете их снова, следующий коммит хранит указатель на коммит, который прошел непосредственно перед ним. После еще двух коммитов ваша история может выглядеть, как показано на Рисунке 3-2.</p>
 
 <p>If you make some changes and commit again, the next commit stores a pointer to the commit that came immediately before it. After two more commits, your history might look something like Figure 3-2.</p>
 
-<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Рисунок 3-2. Объектные данные Git для множественных коммитов</p>
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Рисунок 3-2. Объектные данные Git для множественных коммитов.</p>
 
-<p>Figure 3-2. Git object data for multiple commits</p>
+<p>Figure 3-2. Git object data for multiple commits.</p>
 
 <p>Ветвь в Git - это просто легковесный подвижный указатель на один из этих коммитов. Имя ветви по умолчанию в Git - master. Когда вы впервые создаете коммит, вам отдается ветвь master, которая является указателем на последний коммит, который вы сделали. Каждый раз когда вы фиксируетесь, он (указатель) двигается вперед автоматически.</p>
 
 <p>A branch in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master. As you initially make commits, you’re given a master branch that points to the last commit you made. Every time you commit, it moves forward automatically.</p>
 
-<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Рисунок 3-3. Ветвь, указывающая на историю зафиксированных данных</p>
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Рисунок 3-3. Ветвь, указывающая на историю зафиксированных данных.</p>
 
-<p>Figure 3-3. Branch pointing into the commit data’s history</p>
+<p>Figure 3-3. Branch pointing into the commit data’s history.</p>
 
 <p>Что произойдет, когда вы создаете новую ветвь? Ну, это действие создает новый указатель для вас для перемещения. Например, вы создаете новую ветвь под названием testing. Это производится коммандой <code>git branch</code>:</p>
 
@@ -57,17 +57,17 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>This creates a new pointer at the same commit you’re currently on (see Figure 3-4).</p>
 
-<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Рисунок 3-4. Несколько ветвей, указывающих на историю зафиксированных данных</p>
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Рисунок 3-4. Несколько ветвей, указывающих на историю зафиксированных данных.</p>
 
-<p>Figure 3-4. Multiple branches pointing into the commit’s data history</p>
+<p>Figure 3-4. Multiple branches pointing into the commit’s data history.</p>
 
 <p>Как Git узнает, на какой ветви вы находитесь в данный момент? Он хранит специальный указатель, который называется HEAD (верхушка). Учтите, что существует множество различий с концепцией HEAD в других VCS, которые вы может быть использовали, таких как Subversion или CVS. В Git это указатель на локальную ветвь, на которой вы находитесь. В данном случае вы все еще на ветви master. Команда git branch только создала новую ветвь; она не передвинула вас на нее.</p>
 
 <p>How does Git know what branch you’re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you’re currently on. In this case, you’re still on master. The git branch command only created a new branch — it didn’t switch to that branch (see Figure 3-5).</p>
 
-<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Рисунок 3-5. HEAD файл, указывающий на текущую ветвь</p>
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Рисунок 3-5. HEAD файл, указывающий на текущую ветвь.</p>
 
-<p>Figure 3-5. HEAD file pointing to the branch you’re on</p>
+<p>Figure 3-5. HEAD file pointing to the branch you’re on.</p>
 
 <p>Чтобы перейти на существующую ветвь, вам надо выполнить команду <code>git checkout</code>. Давайте перейдем на новую ветвь testing:</p>
 

@@ -6,11 +6,11 @@ title: Pro Git 2.6 Git Basics Die Commit Historie anzeigen
 
 <p>After you have created several commits, or if you have cloned a repository with an existing commit history, you’ll probably want to look back to see what has happened. The most basic and powerful tool to do this is the <code>git log</code> command.</p>
 
-<p>Nachdem du einige Commits angelegt oder ein bestehendes Repository geklont hast, willst du vielleicht herausfinden, welche Änderungen zuletzt vorgenommen wurden. Der grundlegendste Befehl, mit dem du das tun kannst, ist <code>git log</code>.</p>
+<p>Nachdem du einige Commits angelegt oder ein bestehendes Repository geklont hast, willst du vielleicht wissen, welche Änderungen zuletzt vorgenommen wurden. Der grundlegendste Befehl, mit dem du das tun kannst, ist <code>git log</code>.</p>
 
 <p>These examples use a very simple project called simplegit that I often use for demonstrations. To get the project, run</p>
 
-<p>In den folgenden Beispielen verwende ich ein sehr einfaches Repository mit dem Namen &#8220;simplegit&#8221;, das ich oft für Demonstationszwecke verwende:</p>
+<p>Die folgende Beispielen beziehen sich auf ein sehr simples Repository mit dem Namen &#8220;simplegit&#8221;, das ich oft für Demonstationszwecke verwende:</p>
 
 <pre><code>git clone git://github.com/schacon/simplegit-progit.git</code></pre>
 
@@ -39,7 +39,7 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
 <p>By default, with no arguments, <code>git log</code> lists the commits made in that repository in reverse chronological order. That is, the most recent commits show up first. As you can see, this command lists each commit with its SHA-1 checksum, the author’s name and e-mail, the date written, and the commit message.</p>
 
-<p>Der Befehl <code>git log</code> listet die Historie der Commits eines Projektes in umgekehrter chronologischer Reihenfolge auf, wenn man ihn ohne weitere Argumente ausführt, d.h., die letzten Commits stehen oben. Wie du sehen kannst wird jeder Commit mit seiner SHA-1 Checksumme, Namen und E-Mail Adresse des Autors, dem Datum und der Commit Meldung aufgelistet.</p>
+<p>Der Befehl <code>git log</code> listet die Historie der Commits eines Projektes in umgekehrter chronologischer Reihenfolge auf, wenn man ihn ohne weitere Argumente ausführt, d.h. die letzten Commits stehen oben. Wie du sehen kannst wird jeder Commit mit seiner SHA-1 Checksumme, Namen und E-Mail Adresse des Autors, dem Datum und der Commit Meldung aufgelistet.</p>
 
 <p>A huge number and variety of options to the <code>git log</code> command are available to show you exactly what you’re looking for. Here, we’ll show you some of the most-used options.</p>
 
@@ -47,7 +47,7 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
 <p>One of the more helpful options is <code>-p</code>, which shows the diff introduced in each commit. You can also use <code>-2</code>, which limits the output to only the last two entries:</p>
 
-<p>Eine sehr nützliche Option ist <code>-p</code>, was das Diff der Änderungen anzeigt, die in einem Commit enthalten sind. Du kannst außerdem -2 angeben, wodurch nur die letzten beiden Einträge angezeigt werden:</p>
+<p>Eine sehr nützliche Option ist <code>-p</code>. Sie zeigt das Diff der Änderungen an, die in einem Commit enthalten sind. Du kannst außerdem -2 angeben, wodurch nur die letzten beiden Einträge angezeigt werden:</p>
 
 <pre><code>$ git log –p -2
 commit ca82a6dff817ec66f44342007202690a93763949
@@ -89,7 +89,7 @@ index a0a60ae..47c6340 100644
 
 <p>This option displays the same information but with a diff directly following each entry. This is very helpful for code review or to quickly browse what happened during a series of commits that a collaborator has added. You can also use a series of summarizing options with <code>git log</code>. For example, if you want to see some abbreviated stats for each commit, you can use the <code>--stat</code> option:</p>
 
-<p>Diese Option zeigt also im Prinzip die gleiche Information, aber zusätzlich ein Diff nach jedem Eintrag. Das ist nützlich, um einen Code Review zu machen oder eben mal eine Reihe von Commits durch zu sehen, die ein Mitarbeiter angelegt hat. Außerdem gibt es verschiedene Optionen, die nützlich sind, um Dinge zusammen zu fassen. Beispielsweise kannst du eine kurze Statistik über die jeden Commit mit der Option <code>--stat</code> anzeigen lassen:</p>
+<p>Diese Option zeigt also im Prinzip die gleiche Information wie zuvor, aber zusätzlich zu jedem Eintrag ein Diff. Das ist nützlich, um einen Code Review zu machen oder eben mal eine Reihe von Commits durch zu schauen, die ein Mitarbeiter angelegt hat. Außerdem gibt es verschiedene Optionen, die nützlich sind, um Dinge zusammen zu fassen. Beispielsweise kannst du eine kurze Statistik über die jeden Commit mit der Option <code>--stat</code> anzeigen lassen:</p>
 
 <pre><code>$ git log --stat 
 commit ca82a6dff817ec66f44342007202690a93763949
@@ -123,7 +123,7 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
 <p>As you can see, the <code>--stat</code> option prints below each commit entry a list of modified files, how many files were changed, and how many lines in those files were added and removed. It also puts a summary of the information at the end. Another really useful option is <code>--pretty</code>. This option changes the log output to formats other than the default. A few prebuilt options are available for you to use. The oneline option prints each commit on a single line, which is useful if you’re looking at a lot of commits. In addition, the <code>short</code>, <code>full</code>, and <code>fuller</code> options show the output in roughly the same format but with less or more information, respectively:</p>
 
-<p>Wie du sehen kannst, zeigt die <code>--stat</code> Option unterhalb jedes Commits eine kurze Statistik über die enthaltenen Änderungen an, welche Dateien geändert wurden und wieviele Zeilen insgesamt hinzugefügt oder entfernt wurden. Eine weitere nützliche Option ist <code>--pretty</code>. Diese Option ändert das Format der Ausgabe und es gibt eine Anzahl mitgelieferter Formate. Das <code>oneline</code> Format listet jeden Commit in einer einzigen Zeile, was nützlich ist, wenn du eine große Anzahl von Commits durchsuchen willst. Die <code>short</code>, <code>full</code> und <code>fuller</code> Formate zeigen die Commits in ähnlicher Weise an, aber mit jeweils mehr oder weniger Informationen.</p>
+<p>Die <code>--stat</code> Option zeigt unterhalb jedes Commits eine kurze Statistik über die jeweiligen Änderungen an: welche Dateien geändert wurden und wieviele Zeilen insgesamt hinzugefügt oder entfernt wurden. Eine weitere nützliche Option ist <code>--pretty</code>. Diese Option ändert das Format der Ausgabe und es gibt eine Anzahl mitgelieferter Formate. Das <code>oneline</code> Format listet jeden Commit in einer einzigen Zeile, was nützlich ist, wenn du eine große Anzahl von Commits durchsuchen willst. Die <code>short</code>, <code>full</code> und <code>fuller</code> Formate zeigen die Commits in ähnlicher Form an, aber mit jeweils mehr oder weniger Informationen.</p>
 
 <pre><code>$ git log --pretty=oneline
 ca82a6dff817ec66f44342007202690a93763949 changed the verison number
@@ -132,7 +132,7 @@ a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
 
 <p>The most interesting option is <code>format</code>, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:</p>
 
-<p>Eines der interessantesten Formate ist <code>format</code>, das die erlaubt, dein eigenes Format zu verwenden. Dies ist inbesondere nützlich, wenn du eine Ausgabe in ein anderes Programm einlesen willst - und da du das Format explizit angibst, kannst du sicher sein, daß es sich nicht ändert, wenn du Git auf eine neuere Version aktualisierst:</p>
+<p>Eines der interessantesten Formate ist <code>format</code>, das dir erlaubt, dein eigenes Format zu verwenden. Dies ist inbesondere nützlich, wenn du die Ausgabe in ein anderes Programm einlesen willst (da du das Format explizit angibst, kannst du sicher sein, daß es sich nicht ändert, wenn du Git auf eine neuere Version aktualisierst):</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
 ca82a6d - Scott Chacon, 11 months ago : changed the verison number
@@ -179,11 +179,11 @@ Option	Beschreibung
 
 <p>You may be wondering what the difference is between <em>author</em> and <em>committer</em>. The author is the person who originally wrote the work, whereas the committer is the person who last applied the work. So, if you send in a patch to a project and one of the core members applies the patch, both of you get credit — you as the author and the core member as the committer. We’ll cover this distinction a bit more in Chapter 5.</p>
 
-<p>Du fragst dich vielleicht, was der Unterschied zwischen <em>Autor</em> und <em>Committer</em> ist. Der Autor ist diejenige Person, die eine Änderung ursprünglich vorgenommen hat. Der Committer dagegen ist diejenige Person, die den Commit vorgenommen hat. D.h., wenn du einen Patch an ein Projekt Team schickst und eines der Team Mitglieder den Patch akzeptiert und verwendet, wird beiden Anerkennung gezollt (xxx) - sowohl dir als Autor als auch dem Team Mitglied als Comitter. Wir werden auf diese Unterschiedung in Kapitel 5 noch einmal genauer eingehen.</p>
+<p>Du fragst dich vielleicht, was der Unterschied zwischen <em>Autor</em> und <em>Committer</em> ist. Der Autor ist diejenige Person, die eine Änderung ursprünglich vorgenommen hat. Der Committer dagegen ist diejenige Person, die den Commit angelegt hat. D.h., wenn du einen Patch an ein Projekt Team schickst und eines der Team Mitglieder den Patch akzeptiert und verwendet, wird beiden Anerkennung gezollt (xxx) - sowohl dir als Autor als auch dem Team Mitglied als Comitter. Wir werden auf diese Unterschiedung in Kapitel 5 noch einmal genauer eingehen.</p>
 
 <p>The oneline and format options are particularly useful with another <code>log</code> option called <code>--graph</code>. This option adds a nice little ASCII graph showing your branch and merge history, which we can see our copy of the Grit project repository:</p>
 
-<p>Die <code>oneline</code> und <code>format</code> Optionen sind außerdem nützlich zusammen mit einer weiteren Option <code>--graph</code>. Diese Option fügt einen hübschen kleinen ASCII Graphen hinzu, der die Branch- und Merge-Historie des Projektes anzeigt. Das kannst du z.B. in deinem Klon des Grit Projekt Repositories sehen:</p>
+<p>Die <code>oneline</code> und <code>format</code> Optionen können außerdem zusammen mit einer weiteren Option <code>--graph</code> verwendet werden. Diese Option fügt einen netten kleinen ASCII Graphen hinzu, der die Branch- und Merge-Historie des Projektes anzeigt. Das kannst du z.B. in deinem Klon des Grit Projekt Repositories sehen:</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
 * 2d3acf9 ignore errors from SIGCHLD on trap
@@ -199,7 +199,7 @@ Option	Beschreibung
 
 <p>Those are only some simple output-formatting options to <code>git log</code> — there are many more. Table 2-2 lists the options we’ve covered so far and some other common formatting options that may be useful, along with how they change the output of the log command.</p>
 
-<p>Das sind nur einige eher simple Format Optionen für die Ausgabe von <code>git log</code> - es gibt sehr viel mehr davon. Tabelle 2-2 listet die Optionen auf, die wir bisher besprochen haben sowie einige weitere, die nützlich sind:</p>
+<p>Das sind nur einige eher simple Format Optionen für die Ausgabe von <code>git log</code> - es gibt sehr viel mehr davon. Tabelle 2-2 listet diejenigen Optionen auf, die wir bisher besprochen haben, und einige weitere, die besonders nützlich sind:</p>
 
 <pre><code>Option	Description
 -p	Show the patch introduced with each commit.
@@ -215,9 +215,9 @@ Option	Beschreibung
 Option	Beschreibung
 -p	Zeigt den Patch, der einem Commit entspricht.
 --stat	Zeigt Statistiken über die in einem Commit geänderten Dateien und eingefügten/entfernten Zeilen.
---shortstat	Zeigt lediglich die Kurzstatistik über eingefügte/entfernte Zeilen aus der `--stat` Option.
+--shortstat	Zeigt nur die Kurzstatistik über eingefügte/entfernte Zeilen aus der `--stat` Option.
 --name-only	Zeigt die Liste der geänderte Dateien nach der Commit Information.
---name-status	Zeigt die Liste der Dateien mit hinzugefügt/geändert/entfernt Informationen (xxx).
+--name-status	Zeigt die Liste der Dateien mit der hinzugefügt/geändert/entfernt Statistik.
 --abbrev-commit	Zeigt nur die ersten Zeichen einer SHA-1 Checksumme, nicht alle 40.
 --relative-date	Zeigt das Datum in relativem Format (z.B. &quot;2 weeks ago&quot;), nicht als vollständiges Datumsformat.
 --graph	Zeigt einen ASCII Graphen der Branch- und Merge-Historie neben der Ausgabe.
@@ -231,7 +231,7 @@ Option	Beschreibung
 
 <p>However, the time-limiting options such as <code>--since</code> and <code>--until</code> are very useful. For example, this command gets the list of commits made in the last two weeks:</p>
 
-<p>Allerdings gibt es auch Optionen, die Ausgabe auf der Basis von Zeitangaben zu einzugrenzen, die sehr nützlich sein können. Beispielsweise gibt der folgende Befehl eine Liste aller Commits aus, die in den letzten zwei Wochen angelegt wurden:</p>
+<p>Aber es gibt auch Optionen, die Ausgabe auf der Basis von Zeitangaben zu einzugrenzen und sehr hilfreich sein können. Beispielsweise gibt der folgende Befehl eine Liste aller Commits aus, die in den letzten zwei Wochen angelegt wurden:</p>
 
 <pre><code>$ git log --since=2.weeks</code></pre>
 
@@ -241,7 +241,7 @@ Option	Beschreibung
 
 <p>You can also filter the list to commits that match some search criteria. The <code>--author</code> option allows you to filter on a specific author, and the <code>--grep</code> option lets you search for keywords in the commit messages. (Note that if you want to specify both author and grep options, you have to add <code>--all-match</code> or the command will match commits with either.)</p>
 
-<p>Du kannst außerdem die Liste der Commits nach Suchkriterien filtern. Die <code>--author</code> Option erlaubt, nach einem bestimmten Autoren zu suchen, und die <code>--grep</code> Option nach Stichworten in den Commit Meldungen. (Wenn du sowohl nach dem Autor als auch nach Stichworten suchen willst, mußt du zusätzlich <code>--all-match</code> angeben - andernfalls zeigt der Befehl alle Commits, die das eine oder das andere Kriterium erfüllen.)</p>
+<p>Du kannst außerdem die Liste der Commits nach Suchkriterien filtern. Die <code>--author</code> Option erlaubt, nach einem bestimmten Autoren zu suchen, und die <code>--grep</code> Option nach Stichworten in den Commit Meldungen. (Wenn du sowohl nach dem Autor als auch nach Stichworten suchen willst, mußt du zusätzlich <code>--all-match</code> angeben - andernfalls zeigt der Befehl alle Commits, die das eine <em>oder</em> das andere Kriterium erfüllen.)</p>
 
 <p>The last really useful option to pass to <code>git log</code> as a filter is a path. If you specify a directory or file name, you can limit the log output to commits that introduced a change to those files. This is always the last option and is generally preceded by double dashes (<code>--</code>) to separate the paths from the options.</p>
 
@@ -267,7 +267,7 @@ Option	Beschreibung
 
 <p>For example, if you want to see which commits modifying test files in the Git source code history were committed by Junio Hamano and were not merges in the month of October 2008, you can run something like this:</p>
 
-<p>Wenn du bespielsweise sehen willst, welche Commits den Tests im Git Quelltext von Junio Hamano im Oktober 2008 angelegt wurden und keine Merges (xxx) waren, kannst du folgendes tun:</p>
+<p>Wenn du bespielsweise sehen willst, welche Commits den Tests im Git Quelltext von Junio Hamano im Oktober 2008 angelegt wurden <em>und</em> keine Merges waren, kannst du folgendes tun:</p>
 
 <pre><code>$ git log --pretty=&quot;%h:%s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
    --before=&quot;2008-11-01&quot; --no-merges -- t/
@@ -280,7 +280,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>Of the nearly 20,000 commits in the Git source code history, this command shows the 6 that match those criteria.</p>
 
-<p>Von etwa 20.000 Commits in der Git Quellcode Historie zeigt dieser Befehl nur 6 Commits, die diesen Kriterien entsprechen.</p>
+<p>Aus etwa 20.000 Commits in der Git Quellcode Historie filtert dieser Befehl gerade einmal 6 Commits heraus, die diesen Kriterien entsprechen.</p>
 
 <h3 id='using_a_gui_to_visualize_history'>Using a GUI to Visualize History</h3>
 
@@ -288,7 +288,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual <code>git log</code> tool, and it accepts nearly all the filtering options that <code>git log</code> does. If you type gitk on the command line in your project, you should see something like Figure 2-2.</p>
 
-<p>Wenn du lieber eine grafische Oberfläche (xxx) verwenden willst, um die Commit Historie anzuzeigen, kannst du die das Tcl/Tk Programm <code>gitk</code> ausprobieren, das mit Git ausgeliefert wird. <code>gitk</code> ist im wesentlichen eine grafische Version von <code>git log</code> und akzeptiert fast alle Filteroptionen, die <code>git log</code> auch akzeptiert. Wenn du <code>gitk</code> in einem Projekt ausführst, siehst du etwas wie:</p>
+<p>Wenn dir eine grafische Darstellung lieber ist, um die Commit Historie anzuzeigen, kannst du die das Tcl/Tk Programm <code>gitk</code> ausprobieren, das mit Git ausgeliefert wird. <code>gitk</code> ist im wesentlichen eine grafische Version von <code>git log</code> und akzeptiert fast alle Filteroptionen, die <code>git log</code> auch akzeptiert. Wenn du <code>gitk</code> in einem Projekt ausführst, siehst du etwas wie:</p>
 
 <p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Figure 2-2. The gitk history visualizer</p>
 
@@ -296,7 +296,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.</p>
 
-<p>Du siehst die Commit Historie in der oberen Hälfte des Fensters zusammen mit einem Graphen, der die Branches und Merges anzeigt. Die Diff Anzeige in der unteren Hälfte des Fensters zeigt die jeweiligen Änderungen, wenn du auf einen Commit klickst.</p>
+<p>Die Commit Historie wird in der oberen Hälfte des Fensters dargestellt, zusammen mit einem Graphen, der die Branches und Merges zeigt. Wenn du einen Commit anklickst, zeigt die Diff Anzeige in der unteren Hälfte des Fensters die jeweiligen Änderungen in diesem Commit.</p>
 
 <div id='nav'>
 <a href='ch2-5.html'>prev</a> | <a href='ch2-7.html'>next</a>
