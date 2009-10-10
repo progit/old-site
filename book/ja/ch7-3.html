@@ -1,133 +1,64 @@
 ---
 layout: translation
-title: Pro Git 7.3 Gitの内側 Git References
+title: Pro Git 7.3 Git のカスタマイズ Git Hooks
 ---
-<h2 id='git_references'>Git References</h2>
+<h2 id='git_hooks'>Git Hooks</h2>
 
-<p>You can run something like <code>git log 1a410e</code> to look through your whole history, but you still have to remember that <code>1a410e</code> is the last commit in order to walk that history to find all those objects. You need a file in which you can store the SHA-1 value under a simple name so you can use that pointer rather than the raw SHA-1 value.</p>
+<p>Like many other Version Control Systems, Git has a way to fire off custom scripts when certain important actions occur. There are two groups of these hooks: client side and server side. The client-side hooks are for client operations such as committing and merging. The server-side hooks are for Git server operations such as receiving pushed commits. You can use these hooks for all sorts of reasons, and you’ll learn about a few of them here.</p>
 
-<p>In Git, these are called &#8220;references&#8221; or &#8220;refs&#8221;; you can find the files that contain the SHA-1 values in the <code>.git/refs</code> directory. In the current project, this directory contains no files, but it does contain a simple structure:</p>
+<h3 id='installing_a_hook'>Installing a Hook</h3>
 
-<pre><code>$ find .git/refs
-.git/refs
-.git/refs/heads
-.git/refs/tags
-$ find .git/refs -type f
-$</code></pre>
+<p>The hooks are all stored in the <code>hooks</code> subdirectory of the Git directory. In most projects, that’s <code>.git/hooks</code>. By default, Git populates this directory with a bunch of example scripts, many of which are useful by themselves; but they also document the input values of each script. All the examples are written as shell scripts, with some Perl thrown in, but any properly named executable scripts will work fine — you can write them in Ruby or Python or what have you. For post-1.6 versions of Git, these example hook files end with .sample; you’ll need to rename them. For pre-1.6 versions of Git, the example files are named properly but are not executable.</p>
 
-<p>To create a new reference that will help you remember where your latest commit is, you can technically do something as simple as this:</p>
+<p>To enable a hook script, put a file in the <code>hooks</code> subdirectory of your Git directory that is named appropriately and is executable. From that point forward, it should be called. I’ll cover most of the major hook filenames here.</p>
 
-<pre><code>$ echo &quot;1a410efbd13591db07496601ebc7a059dd55cfe9&quot; &gt; .git/refs/heads/master</code></pre>
+<h3 id='clientside_hooks'>Client-Side Hooks</h3>
 
-<p>Now, you can use the head reference you just created instead of the SHA-1 value in your Git commands:</p>
+<p>There are a lot of client-side hooks. This section splits them into committing-workflow hooks, e-mail–workflow scripts, and the rest of the client-side scripts.</p>
 
-<pre><code>$ git log --pretty=oneline  master
-1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
-cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
+<h4 id='committingworkflow_hooks'>Committing-Workflow Hooks</h4>
 
-<p>You aren’t encouraged to directly edit the reference files. Git provides a safer command to do this if you want to update a reference called <code>update-ref</code>:</p>
+<p>The first four hooks have to do with the committing process. The <code>pre-commit</code> hook is run first, before you even type in a commit message. It’s used to inspect the snapshot that’s about to be committed, to see if you’ve forgotten something, to make sure tests run, or to examine whatever you need to inspect in the code. Exiting non-zero from this hook aborts the commit, although you can bypass it with <code>git commit --no-verify</code>. You can do things like check for code style (run lint or something equivalent), check for trailing whitespace (the default hook does exactly that), or check for appropriate documentation on new methods.</p>
 
-<pre><code>$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
+<p>The <code>prepare-commit-msg</code> hook is run before the commit message editor is fired up but after the default message is created. It lets you edit the default message before the commit author sees it. This hook takes a few options: the path to the file that holds the commit message so far, the type of commit, and the commit SHA-1 if this is an amended commit. This hook generally isn’t useful for normal commits; rather, it’s good for commits where the default message is auto-generated, such as templated commit messages, merge commits, squashed commits, and amended commits. You may use it in conjunction with a commit template to programmatically insert information.</p>
 
-<p>That’s basically what a branch in Git is: a simple pointer or reference to the head of a line of work. To create a branch back at the second commit, you can do this:</p>
+<p>The <code>commit-msg</code> hook takes one parameter, which again is the path to a temporary file that contains the current commit message. If this script exits non-zero, Git aborts the commit process, so you can use it to validate your project state or commit message before allowing a commit to go through. In the last section of this chapter, I’ll demonstrate using this hook to check that your commit message is conformant to a required pattern.</p>
 
-<pre><code>$ git update-ref refs/heads/test cac0ca</code></pre>
+<p>After the entire commit process is completed, the <code>post-commit</code> hook runs. It doesn’t take any parameters, but you can easily get the last commit by running <code>git log -1 HEAD</code>. Generally, this script is used for notification or something similar.</p>
 
-<p>Your branch will contain only work from that commit down:</p>
+<p>The committing-workflow client-side scripts can be used in just about any workflow. They’re often used to enforce certain policies, although it’s important to note that these scripts aren’t transferred during a clone. You can enforce policy on the server side to reject pushes of commits that don’t conform to some policy, but it’s entirely up to the developer to use these scripts on the client side. So, these are scripts to help developers, and they must be set up and maintained by them, although they can be overridden or modified by them at any time.</p>
 
-<pre><code>$ git log --pretty=oneline test
-cac0cab538b970a37ea1e769cbbde608743bc96d second commit
-fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
+<h4 id='email_workflow_hooks'>E-mail Workflow Hooks</h4>
 
-<p>Now, your Git database conceptually looks something like Figure 9-4.</p>
+<p>You can set up three client-side hooks for an e-mail–based workflow. They’re all invoked by the <code>git am</code> command, so if you aren’t using that command in your workflow, you can safely skip to the next section. If you’re taking patches over e-mail prepared by <code>git format-patch</code>, then some of these may be helpful to you.</p>
 
-<p><center><img src="/figures/ch7/18333fig0904-tn.png"></center><br/> Figure 9-4. Git directory objects with branch head references included.</p>
+<p>The first hook that is run is <code>applypatch-msg</code>. It takes a single argument: the name of the temporary file that contains the proposed commit message. Git aborts the patch if this script exits non-zero. You can use this to make sure a commit message is properly formatted or to normalize the message by having the script edit it in place.</p>
 
-<p>When you run commands like <code>git branch (branchname)</code>, Git basically runs that <code>update-ref</code> command to add the SHA-1 of the last commit of the branch you’re on into whatever new reference you want to create.</p>
+<p>The next hook to run when applying patches via <code>git am</code> is <code>pre-applypatch</code>. It takes no arguments and is run after the patch is applied, so you can use it to inspect the snapshot before making the commit. You can run tests or otherwise inspect the working tree with this script. If something is missing or the tests don’t pass, exiting non-zero also aborts the <code>git am</code> script without committing the patch.</p>
 
-<h3 id='the_head'>The HEAD</h3>
+<p>The last hook to run during a <code>git am</code> operation is <code>post-applypatch</code>. You can use it to notify a group or the author of the patch you pulled in that you’ve done so. You can’t stop the patching process with this script.</p>
 
-<p>The question now is, when you run <code>git branch (branchname)</code>, how does Git know the SHA-1 of the last commit? The answer is the HEAD file. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, I mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference. If you look at the file, you’ll normally see something like this:</p>
+<h4 id='other_client_hooks'>Other Client Hooks</h4>
 
-<pre><code>$ cat .git/HEAD 
-ref: refs/heads/master</code></pre>
+<p>The <code>pre-rebase</code> hook runs before you rebase anything and can halt the process by exiting non-zero. You can use this hook to disallow rebasing any commits that have already been pushed. The example <code>pre-rebase</code> hook that Git installs does this, although it assumes that next is the name of the branch you publish. You’ll likely need to change that to whatever your stable, published branch is.</p>
 
-<p>If you run <code>git checkout test</code>, Git updates the file to look like this:</p>
+<p>After you run a successful <code>git checkout</code>, the <code>post-checkout</code> hook runs; you can use it to set up your working directory properly for your project environment. This may mean moving in large binary files that you don’t want source controlled, auto-generating documentation, or something along those lines.</p>
 
-<pre><code>$ cat .git/HEAD 
-ref: refs/heads/test</code></pre>
+<p>Finally, the <code>post-merge</code> hook runs after a successful <code>merge</code> command. You can use it to restore data in the working tree that Git can’t track, such as permissions data. This hook can likewise validate the presence of files external to Git control that you may want copied in when the working tree changes.</p>
 
-<p>When you run <code>git commit</code>, it creates the commit object, specifying the parent of that commit object to be whatever SHA-1 value the reference in HEAD points to.</p>
+<h3 id='serverside_hooks'>Server-Side Hooks</h3>
 
-<p>You can also manually edit this file, but again a safer command exists to do so: <code>symbolic-ref</code>. You can read the value of your HEAD via this command:</p>
+<p>In addition to the client-side hooks, you can use a couple of important server-side hooks as a system administrator to enforce nearly any kind of policy for your project. These scripts run before and after pushes to the server. The pre hooks can exit non-zero at any time to reject the push as well as print an error message back to the client; you can set up a push policy that’s as complex as you wish.</p>
 
-<pre><code>$ git symbolic-ref HEAD
-refs/heads/master</code></pre>
+<h4 id='prereceive_and_postreceive'>pre-receive and post-receive</h4>
 
-<p>You can also set the value of HEAD:</p>
+<p>The first script to run when handling a push from a client is <code>pre-receive</code>. It takes a list of references that are being pushed from stdin; if it exits non-zero, none of them are accepted. You can use this hook to do things like make sure none of the updated references are non-fast-forwards; or to check that the user doing the pushing has create, delete, or push access or access to push updates to all the files they’re modifying with the push.</p>
 
-<pre><code>$ git symbolic-ref HEAD refs/heads/test
-$ cat .git/HEAD 
-ref: refs/heads/test</code></pre>
+<p>The <code>post-receive</code> hook runs after the entire process is completed and can be used to update other services or notify users. It takes the same stdin data as the <code>pre-receive</code> hook. Examples include e-mailing a list, notifying a continuous integration server, or updating a ticket-tracking system — you can even parse the commit messages to see if any tickets need to be opened, modified, or closed. This script can’t stop the push process, but the client doesn’t disconnect until it has completed; so, be careful when you try to do anything that may take a long time.</p>
 
-<p>You can’t set a symbolic reference outside of the refs style:</p>
+<h4 id='update'>update</h4>
 
-<pre><code>$ git symbolic-ref HEAD test
-fatal: Refusing to point HEAD outside of refs/</code></pre>
-
-<h3 id='tags'>Tags</h3>
-
-<p>You’ve just gone over Git’s three main object types, but there is a fourth. The tag object is very much like a commit object — it contains a tagger, a date, a message, and a pointer. The main difference is that a tag object points to a commit rather than a tree. It’s like a branch reference, but it never moves — it always points to the same commit but gives it a friendlier name.</p>
-
-<p>As discussed in Chapter 2, there are two types of tags: annotated and lightweight. You can make a lightweight tag by running something like this:</p>
-
-<pre><code>$ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d</code></pre>
-
-<p>That is all a lightweight tag is — a branch that never moves. An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit. You can see this by creating an annotated tag (<code>-a</code> specifies that it’s an annotated tag):</p>
-
-<pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m &#39;test tag&#39;</code></pre>
-
-<p>Here’s the object SHA-1 value it created:</p>
-
-<pre><code>$ cat .git/refs/tags/v1.1 
-9585191f37f7b0fb9444f35a9bf50de191beadc2</code></pre>
-
-<p>Now, run the <code>cat-file</code> command on that SHA-1 value:</p>
-
-<pre><code>$ git cat-file -p 9585191f37f7b0fb9444f35a9bf50de191beadc2
-object 1a410efbd13591db07496601ebc7a059dd55cfe9
-type commit
-tag v1.1
-tagger Scott Chacon &lt;schacon@gmail.com&gt; Sat May 23 16:48:58 2009 -0700
-
-test tag</code></pre>
-
-<p>Notice that the object entry points to the commit SHA-1 value that you tagged. Also notice that it doesn’t need to point to a commit; you can tag any Git object. In the Git source code, for example, the maintainer has added their GPG public key as a blob object and then tagged it. You can view the public key by running</p>
-
-<pre><code>$ git cat-file blob junio-gpg-pub</code></pre>
-
-<p>in the Git source code. The Linux kernel also has a non-commit-pointing tag object — the first tag created points to the initial tree of the import of the source code.</p>
-
-<h3 id='remotes'>Remotes</h3>
-
-<p>The third type of reference that you’ll see is a remote reference. If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the <code>refs/remotes</code> directory. For instance, you can add a remote called <code>origin</code> and push your <code>master</code> branch to it:</p>
-
-<pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git
-$ git push origin master
-Counting objects: 11, done.
-Compressing objects: 100% (5/5), done.
-Writing objects: 100% (7/7), 716 bytes, done.
-Total 7 (delta 2), reused 4 (delta 1)
-To git@github.com:schacon/simplegit-progit.git
-   a11bef0..ca82a6d  master -&gt; master</code></pre>
-
-<p>Then, you can see what the <code>master</code> branch on the <code>origin</code> remote was the last time you communicated with the server, by checking the <code>refs/remotes/origin/master</code> file:</p>
-
-<pre><code>$ cat .git/refs/remotes/origin/master 
-ca82a6dff817ec66f44342007202690a93763949</code></pre>
-
-<p>Remote references differ from branches (<code>refs/heads</code> references) mainly in that they can’t be checked out. Git moves them around as bookmarks to the last known state of where those branches were on those servers.</p>
+<p>The update script is very similar to the <code>pre-receive</code> script, except that it’s run once for each branch the pusher is trying to update. If the pusher is trying to push to multiple branches, <code>pre-receive</code> runs only once, whereas update runs once per branch they’re pushing to. Instead of reading from stdin, this script takes three arguments: the name of the reference (branch), the SHA-1 that reference pointed to before the push, and the SHA-1 the user is trying to push. If the update script exits non-zero, only that reference is rejected; other references can still be updated.</p>
 
 <div id='nav'>
 <a href='ch7-2.html'>prev</a> | <a href='ch7-4.html'>next</a>

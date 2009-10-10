@@ -1,0 +1,70 @@
+---
+layout: translation
+title: Pro Git 1.4 Aan de Slag Git Installeren
+---
+<h2 id='git_installeren'>Git Installeren</h2>
+
+<p>Laten we eens een beetje Git gebruiken. Je kan natuurlijk niet meteen beginnen — je moet het eerst installeren. Er zijn een aantal manieren om eraan te komen; te belangrijkste twee zijn installeren vanaf broncode, en een bestaand pakket voor jouw platform te gebruiken.</p>
+
+<h3 id='installeren_vanaf_de_bron'>Installeren Vanaf de Bron</h3>
+
+<p>Als het mogelijk is, is het meestal handig om Git vanaf de broncode te installeren, omdat je dan altijd de nieuwste versie hebt. Elke versie van Git brengt meestal goede verbeteringen aan de gebruikersinterface met zich mee, dus de laatste versie is vaak de beste manier als je het gewend bent software vanaf de broncode te compileren. Vaak hebben Linuxdistributies behoorlijk oude pakketen; dus tenzij je een hele up-to-date distro hebt of ‘backports’ (verbeteringen van een nieuwe versie op een oudere versie toepassen) gebruikt, is installeren vanaf broncode misschien wel de beste manier voor jou.</p>
+
+<p>Om Git te installeren heb je de volgende bibliotheken (‘libraries’) nodig: curl, zlib, openssl, expat, and libiconv. Als je bijvoorbeeld op een systeem zit dat yum heeft (zoals Fedora) of apt-get (zoals systemen gebaseerd op Debian), kan je één van de volgende commando&#8217;s gebruiken om alle bibliotheken waar Git van afhangt te installeren:</p>
+
+<pre><code>$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev</code></pre>
+
+<p>Als je alle benodigdheden hebt, kan je de laatste momentopname van Git van de officiële website downloaden:</p>
+
+<pre><code>http://git-scm.com/download</code></pre>
+
+<p>Daarna compileren en installeren:</p>
+
+<pre><code>$ tar -zxf git-1.6.0.5.tar.gz
+$ cd git-1.6.0.5
+$ make prefix=/usr/local all
+$ sudo make prefix=/usr/local install</code></pre>
+
+<p>Als dat allemaal klaar is, kan je de nieuwste versie van Git ophalen met dit commando:</p>
+
+<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
+
+<h3 id='op_linux_installeren'>Op Linux Installeren</h3>
+
+<p>Als je direct de uitvoerbare bestanden van Git op Linux wilt installeren, kan je dat meestal doen door het standaard pakketbeheersysteem dat meegeleverd is met je distributie. Als je Fedora gebruikt kan je yum gebruiken:</p>
+
+<pre><code>$ yum install git-core</code></pre>
+
+<p>Of als je een distributie hebt dat op Debian gebaseerd is, zoals Ubuntu, kan je apt-get proberen:</p>
+
+<pre><code>$ apt-get install git-core</code></pre>
+
+<h3 id='op_een_mac_installeren'>Op een Mac Installeren</h3>
+
+<p>Er zijn twee makkelijke manieren om Git op een Mac te installeren. De simpelste is om het grafische Gitinstallatieprogram te gebruiken, wat je van de volgende pagina op Google Code kan downloaden (zie Figuur 1-7):</p>
+
+<pre><code>http://code.google.com/p/git-osx-installer</code></pre>
+
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figuur 1-7. Gitinstallatieprogramma voor OS X.</p>
+
+<p>De andere veelgebruikte manier is om Git via MacPorts (<code>http://www.macports.org</code>) te installeren. Als je MacPorts hebt, kun je Git installeren met</p>
+
+<pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
+
+<p>Je hoeft niet al die extra’s toe te voegen, maar je wil waarschijnlijk +svn erbij hebben voor het geval je ooit onder Git met Subversion repositories moet omgaan (zie Hoofdstuk 8).</p>
+
+<h3 id='op_windows_installeren'>Op Windows Installeren</h3>
+
+<p>Git op Windows installeren is erg eenvoudig. Het msysGitproject heeft één van de eenvoudigste installatieprocedures. Je hoeft alleen maar het installatieprogramma te downloaden van Google Code, en het uit te voeren:</p>
+
+<pre><code>http://code.google.com/p/msysgit</code></pre>
+
+<p>Als het geïnstalleerd is, kan je Git zowel vanaf de commandprompt gebruiken (waar ook een SSH client bijzit die later nog van pas zal komen) en de standaard GUI.</p>
+
+<div id='nav'>
+<a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>
+</div>

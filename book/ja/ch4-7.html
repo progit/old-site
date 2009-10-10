@@ -1,14 +1,14 @@
 ---
 layout: translation
-title: Pro Git 4.7 Git サーバ Gitosis
+title: Pro Git 4.7 Git サーバー Gitosis
 ---
 <h2 id='gitosis'>Gitosis</h2>
 
-<p>ユーザの公開鍵を <code>authorized_keys</code> にまとめてアクセス管理する方法は、しばらくの間はうまくいくでしょう。しかし、何百人ものユーザを管理する段階になると、この方式はとても面倒になります。サーバのシェルでの操作が毎回発生するわけですし、またアクセス制御が皆無な状態、つまり公開鍵を登録した人はすべてのプロジェクトのすべてのファイルを読み書きできる状態になってしまいます。</p>
+<p>ユーザーの公開鍵を <code>authorized_keys</code> にまとめてアクセス管理する方法は、しばらくの間はうまくいくでしょう。しかし、何百人ものユーザーを管理する段階になると、この方式はとても面倒になります。サーバーのシェルでの操作が毎回発生するわけですし、またアクセス制御が皆無な状態、つまり公開鍵を登録した人はすべてのプロジェクトのすべてのファイルを読み書きできる状態になってしまいます。</p>
 
-<p>ここで、よく使われている Gitosis というソフトウェアについて紹介しましょう。Gitosis は、<code>authorized_keys</code> ファイルを管理したりちょっとしたアクセス制御を行ったりするためのスクリプト群です。ユーザを追加したりアクセス権を定義したりするための UI に、ウェブではなく独自の Git リポジトリを採用しているというのが興味深い点です。プロジェクトに関する情報を準備してそれをプッシュすると、その情報に基づいて Gitosis がサーバを設定するというクールな仕組みになっています。</p>
+<p>ここで、よく使われている Gitosis というソフトウェアについて紹介しましょう。Gitosis は、<code>authorized_keys</code> ファイルを管理したりちょっとしたアクセス制御を行ったりするためのスクリプト群です。ユーザーを追加したりアクセス権を定義したりするための UI に、ウェブではなく独自の Git リポジトリを採用しているというのが興味深い点です。プロジェクトに関する情報を準備してそれをプッシュすると、その情報に基づいて Gitosis がサーバーを設定するというクールな仕組みになっています。</p>
 
-<p>Gitosis のインストールは簡単だとはいえませんが、それほど難しくもありません。Linux サーバ上で運用するのがいちばん簡単でしょう。今回の例では、ごく平凡な Ubuntu 8.10 サーバを使います。</p>
+<p>Gitosis のインストールは簡単だとはいえませんが、それほど難しくもありません。Linux サーバー上で運用するのがいちばん簡単でしょう。今回の例では、ごく平凡な Ubuntu 8.10 サーバーを使います。</p>
 
 <p>Gitosis は Python のツールを使います。まずは Python の setuptools パッケージをインストールしなければなりません。Ubuntu なら python-setuptools というパッケージがあります。</p>
 
@@ -28,7 +28,7 @@ $ sudo python setup.py install</code></pre>
 
 <pre><code>$ mv /home/git/.ssh/authorized_keys /home/git/.ssh/ak.bak</code></pre>
 
-<p>次は &#8216;git&#8217; ユーザのシェルをもし <code>git-shell</code> コマンドに変更していたのなら、元に戻さなければなりません。人にログインさせるのではなく、かわりに Gitosis に管理してもらうのです。<code>/etc/passwd</code> ファイルにある</p>
+<p>次は &#8216;git&#8217; ユーザーのシェルをもし <code>git-shell</code> コマンドに変更していたのなら、元に戻さなければなりません。人にログインさせるのではなく、かわりに Gitosis に管理してもらうのです。<code>/etc/passwd</code> ファイルにある</p>
 
 <pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
@@ -36,17 +36,17 @@ $ sudo python setup.py install</code></pre>
 
 <pre><code>git:x:1000:1000::/home/git:/bin/sh</code></pre>
 
-<p>いよいよ Gitosis の初期設定です。自分の秘密鍵を使って <code>gitosis-init</code> コマンドを実行します。サーバ上に自分の公開鍵をおいていない場合は、まず公開鍵をコピーしましょう。</p>
+<p>いよいよ Gitosis の初期設定です。自分の秘密鍵を使って <code>gitosis-init</code> コマンドを実行します。サーバー上に自分の公開鍵をおいていない場合は、まず公開鍵をコピーしましょう。</p>
 
 <pre><code>$ sudo -H -u git gitosis-init &lt; /tmp/id_dsa.pub
 Initialized empty Git repository in /opt/git/gitosis-admin.git/
 Reinitialized existing Git repository in /opt/git/gitosis-admin.git/</code></pre>
 
-<p>これで、指定した鍵を持つユーザが Gitosis 用の Git リポジトリを変更できるようになりました。次に、新しいリポジトリの <code>post-update</code> スクリプトに実行ビットを設定します。</p>
+<p>これで、指定した鍵を持つユーザーが Gitosis 用の Git リポジトリを変更できるようになりました。次に、新しいリポジトリの <code>post-update</code> スクリプトに実行ビットを設定します。</p>
 
 <pre><code>$ sudo chmod 755 /opt/git/gitosis-admin.git/hooks/post-update</code></pre>
 
-<p>これで準備完了です。きちんと設定できていれば、Gitosis の初期設定時に登録した公開鍵を使って SSH でサーバにログインできるはずです。結果はこのようになります。</p>
+<p>これで準備完了です。きちんと設定できていれば、Gitosis の初期設定時に登録した公開鍵を使って SSH でサーバーにログインできるはずです。結果はこのようになります。</p>
 
 <pre><code>$ ssh git@gitserver
 PTY allocation request failed on channel 0
@@ -66,7 +66,7 @@ $ find .
 ./keydir
 ./keydir/scott.pub</code></pre>
 
-<p><code>gitosis.conf</code> が、ユーザやリポジトリそしてパーミッションを指定するためのファイルです。<code>keydir</code> ディレクトリには、リポジトリへの何らかのアクセス権を持つ全ユーザの公開鍵ファイルを格納します。ユーザごとにひとつのファイルとなります。<code>keydir</code> ディレクトリ内のファイル名 (この例では <code>scott.pub</code>) は人によって異なるでしょう。これは、<code>gitosis-init</code> スクリプトでインポートした公開鍵の最後にある説明をもとにして Gitosis がつけた名前です。</p>
+<p><code>gitosis.conf</code> が、ユーザーやリポジトリそしてパーミッションを指定するためのファイルです。<code>keydir</code> ディレクトリには、リポジトリへの何らかのアクセス権を持つ全ユーザーの公開鍵ファイルを格納します。ユーザーごとにひとつのファイルとなります。<code>keydir</code> ディレクトリ内のファイル名 (この例では <code>scott.pub</code>) は人によって異なるでしょう。これは、<code>gitosis-init</code> スクリプトでインポートした公開鍵の最後にある説明をもとにして Gitosis がつけた名前です。</p>
 
 <p><code>gitosis.conf</code> ファイルを見ると、今のところは先ほどクローンした <code>gitosis-admin</code> プロジェクトについての情報しか書かれていません。</p>
 
@@ -77,15 +77,15 @@ $ find .
 writable = gitosis-admin
 members = scott</code></pre>
 
-<p>これは、&#8217;scott&#8217; ユーザ（Gitosis の初期化時に公開鍵を指定したユーザ）だけが <code>gitosis-admin</code> プロジェクトにアクセスできるという意味です。</p>
+<p>これは、&#8217;scott&#8217; ユーザー（Gitosis の初期化時に公開鍵を指定したユーザー）だけが <code>gitosis-admin</code> プロジェクトにアクセスできるという意味です。</p>
 
-<p>では、新しいプロジェクトを追加してみましょう。<code>mobile</code> という新しいセクションを作成し、モバイルチームのメンバーとモバイルチームがアクセスするプロジェクトを書き入れます。今のところ存在するユーザは &#8216;scott&#8217; だけなので、とりあえずは彼をメンバーとして追加します。そして、新しいプロジェクト <code>iphone_project</code> を作ることにしましょう。</p>
+<p>では、新しいプロジェクトを追加してみましょう。<code>mobile</code> という新しいセクションを作成し、モバイルチームのメンバーとモバイルチームがアクセスするプロジェクトを書き入れます。今のところ存在するユーザーは &#8216;scott&#8217; だけなので、とりあえずは彼をメンバーとして追加します。そして、新しいプロジェクト <code>iphone_project</code> を作ることにしましょう。</p>
 
 <pre><code>[group mobile]
 writable = iphone_project
 members = scott</code></pre>
 
-<p><code>gitosis-admin</code> プロジェクトに手を入れたら、それをコミットしてサーバにプッシュしないと変更が反映されません。</p>
+<p><code>gitosis-admin</code> プロジェクトに手を入れたら、それをコミットしてサーバーにプッシュしないと変更が反映されません。</p>
 
 <pre><code>$ git commit -am &#39;add iphone_project and mobile group&#39;
 [master]: created 8962da8: &quot;changed name&quot;
@@ -98,7 +98,7 @@ Total 3 (delta 1), reused 0 (delta 0)
 To git@gitserver:/opt/git/gitosis-admin.git
    fb27aec..8962da8  master -&gt; master</code></pre>
 
-<p>新しい <code>iphone_project</code> プロジェクトにプッシュするには、ローカル側のプロジェクトに、このサーバをリモートとして追加します。サーバ側でわざわざベアリポジトリを作る必要はありません。先ほどプッシュした地点で、Gitosis が自動的にベアリポジトリの作成を済ませています。</p>
+<p>新しい <code>iphone_project</code> プロジェクトにプッシュするには、ローカル側のプロジェクトに、このサーバーをリモートとして追加します。サーバー側でわざわざベアリポジトリを作る必要はありません。先ほどプッシュした地点で、Gitosis が自動的にベアリポジトリの作成を済ませています。</p>
 
 <pre><code>$ git remote add origin git@gitserver:iphone_project.git
 $ git push origin master
@@ -111,7 +111,7 @@ To git@gitserver:iphone_project.git
 
 <p>パスを指定する必要がないことに注目しましょう (実際、パスを指定しても動作しません)。コロンの後にプロジェクト名を指定するだけで、Gitosis がプロジェクトを見つけてくれます。</p>
 
-<p>このプロジェクトに新たなメンバーを迎え入れることになりました、公開鍵を追加しなければなりません。しかし、今までのようにサーバ上の <code>~/.ssh/authorized_keys</code> に追記する必要はありません。ユーザ単位の鍵ファイルを <code>keydir</code> ディレクトリ内に置くだけです。鍵ファイルにつけた名前が、<code>gitosis.conf</code> でその人を指定するときの名前となります。では、John と Josie そして Jessica の公開鍵を追加しましょう。</p>
+<p>このプロジェクトに新たなメンバーを迎え入れることになりました、公開鍵を追加しなければなりません。しかし、今までのようにサーバー上の <code>~/.ssh/authorized_keys</code> に追記する必要はありません。ユーザー単位の鍵ファイルを <code>keydir</code> ディレクトリ内に置くだけです。鍵ファイルにつけた名前が、<code>gitosis.conf</code> でその人を指定するときの名前となります。では、John と Josie そして Jessica の公開鍵を追加しましょう。</p>
 
 <pre><code>$ cp /tmp/id_rsa.john.pub keydir/john.pub
 $ cp /tmp/id_rsa.josie.pub keydir/josie.pub
@@ -123,7 +123,7 @@ $ cp /tmp/id_rsa.jessica.pub keydir/jessica.pub</code></pre>
 writable = iphone_project
 members = scott john josie jessica</code></pre>
 
-<p>この変更をコミットしてプッシュすると、この四人のユーザがプロジェクトへの読み書きをできるようになります。</p>
+<p>この変更をコミットしてプッシュすると、この四人のユーザーがプロジェクトへの読み書きをできるようになります。</p>
 
 <p>Gitosis にはシンプルなアクセス制御機能もあります。John には読み込み専用のアクセス権を設定したいという場合は、このようにします。</p>
 
@@ -135,7 +135,7 @@ members = scott josie jessica
 readonly = iphone_project
 members = john</code></pre>
 
-<p>John はプロジェクトをクローンして変更内容を受け取れます。しかし、手元での変更をプッシュしようとすると Gitosis に拒否されます。このようにして好きなだけのグループを作成し、それぞれに個別のユーザとプロジェクトを含めることができます。また、グループのメンバーとして別のグループを指定し (その場合は先頭に <code>@</code> をつけます)、メンバーを自動的に継承することもできます。</p>
+<p>John はプロジェクトをクローンして変更内容を受け取れます。しかし、手元での変更をプッシュしようとすると Gitosis に拒否されます。このようにして好きなだけのグループを作成し、それぞれに個別のユーザーとプロジェクトを含めることができます。また、グループのメンバーとして別のグループを指定し (その場合は先頭に <code>@</code> をつけます)、メンバーを自動的に継承することもできます。</p>
 
 <pre><code>[group mobile_committers]
 members = scott josie jessica
@@ -148,7 +148,7 @@ members   = @mobile_committers
 writable  = another_iphone_project
 members   = @mobile_committers john</code></pre>
 
-<p>何か問題が発生した場合には、<code>[gitosis]</code> セクションの下に <code>loglevel=DEBUG</code> を書いておくと便利です。設定ミスでプッシュ権限を奪われてしまった場合は、サーバ上の <code>/home/git/.gitosis.conf</code> を直接編集して元に戻します。Gitosis は、このファイルから情報を読み取っています。<code>gitosis.conf</code> ファイルへの変更がプッシュされてきたときに、その内容をこのファイルに書き出します。このファイルを手動で変更しても、次に <code>gitosis-admin</code> プロジェクトへのプッシュが成功した時点でその内容が書き換えられることになります。</p>
+<p>何か問題が発生した場合には、<code>[gitosis]</code> セクションの下に <code>loglevel=DEBUG</code> を書いておくと便利です。設定ミスでプッシュ権限を奪われてしまった場合は、サーバー上の <code>/home/git/.gitosis.conf</code> を直接編集して元に戻します。Gitosis は、このファイルから情報を読み取っています。<code>gitosis.conf</code> ファイルへの変更がプッシュされてきたときに、その内容をこのファイルに書き出します。このファイルを手動で変更しても、次に <code>gitosis-admin</code> プロジェクトへのプッシュが成功した時点でその内容が書き換えられることになります。</p>
 
 <div id='nav'>
 <a href='ch4-6.html'>prev</a> | <a href='ch4-8.html'>next</a>

@@ -1,17 +1,17 @@
 ---
 layout: translation
-title: Pro Git 4.3 服务器上的Git Generating Your SSH Public Key
+title: Pro Git 4.3 服务器上的 Git 生成 SSH 公钥
 ---
-<h2 id='generating_your_ssh_public_key'>Generating Your SSH Public Key</h2>
+<h2 id='_ssh_'>生成 SSH 公钥</h2>
 
-<p>That being said, many Git servers authenticate using SSH public keys. In order to provide a public key, each user in your system must generate one if they don’t already have one. This process is similar across all operating systems. First, you should check to make sure you don’t already have a key. By default, a user’s SSH keys are stored in that user’s <code>~/.ssh</code> directory. You can easily check to see if you have a key already by going to that directory and listing the contents:</p>
+<p>话虽如此，大多数 Git 服务器使用 SSH 公钥来授权。为了得到授权，系统中的每个没有公钥用户都得生成一个新的。该过程在所有操作系统上都差不多。 首先，确定一下是否已经有一个公钥了。SSH 公钥默认储存在账户的 <code>~/.ssh</code> 目录。进入那里并查看其内容，有没有公钥一目了然：</p>
 
 <pre><code>$ cd ~/.ssh
 $ ls
 authorized_keys2  id_dsa       known_hosts
 config            id_dsa.pub</code></pre>
 
-<p>You’re looking for a pair of files named something and something.pub, where the something is usually <code>id_dsa</code> or <code>id_rsa</code>. The <code>.pub</code> file is your public key, and the other file is your private key. If you don’t have these files (or you don’t even have a <code>.ssh</code> directory), you can create them by running a program called <code>ssh-keygen</code>, which is provided with the SSH package on Linux/Mac systems and comes with the MSysGit package on Windows:</p>
+<p>关键是看有没有用 文件名 和 文件名.pub 来命名的一对文件，这个 文件名 通常是 <code>id_dsa</code> 或者 <code>id_rsa</code>。 <code>.pub</code> 文件是公钥，另一个文件是密钥。假如没有这些文件（或者干脆连 <code>.ssh</code> 目录都没有），你可以用 <code>ssh-keygen</code> 的程序来建立它们，该程序在 Linux/Mac 系统由 SSH 包提供， 在 Windows 上则包含在 MSysGit 包里：</p>
 
 <pre><code>$ ssh-keygen 
 Generating public/private rsa key pair.
@@ -23,9 +23,9 @@ Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
 The key fingerprint is:
 43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a schacon@agadorlaptop.local</code></pre>
 
-<p>First it confirms where you want to save the key (<code>.ssh/id_rsa</code>), and then it asks twice for a passphrase, which you can leave empty if you don’t want to type a password when you use the key.</p>
+<p>它先要求你确认保存公钥的位置（<code>.ssh/id_rsa</code>），然后它会让你重复一个密码两次，如果不想在使用公钥的时候输入密码，可以留空。</p>
 
-<p>Now, each user that does this has to send their public key to you or whoever is administrating the Git server (assuming you’re using an SSH server setup that requires public keys). All they have to do is copy the contents of the <code>.pub</code> file and e-mail it. The public keys look something like this:</p>
+<p>现在，所有做过这一步的用户都得把它们的公钥给你或者 Git 服务器的管理者（假设 SSH 服务被设定为使用公钥机制）。他们只需要复制 <code>.put</code> 文件的内容然后 e-email 之。公钥的样子大致如下：</p>
 
 <pre><code>$ cat ~/.ssh/id_rsa.pub 
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
@@ -35,7 +35,7 @@ t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
 mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
 NrRFi9wrf+M7Q== schacon@agadorlaptop.local</code></pre>
 
-<p>For a more in-depth tutorial on creating an SSH key on multiple operating systems, see the GitHub guide on SSH keys at <code>http://github.com/guides/providing-your-ssh-key</code>.</p>
+<p>关于在多个操作系统上设立相同 SSH 公钥的教程，可以在 GitHub 有关 SSH 公钥的向导中找到：<code>http://github.com/guides/providing-your-ssh-key</code>。</p>
 
 <div id='nav'>
 <a href='ch4-2.html'>prev</a> | <a href='ch4-4.html'>next</a>

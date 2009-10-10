@@ -6,25 +6,25 @@ title: Pro Git 3.5 Git のブランチ機能 リモートブランチ
 
 <p>リモートブランチは、リモートリポジトリ上のブランチの状態を指すものです。ネットワーク越しの操作をしたときに自動的に移動します。リモートブランチは、前回リモートリポジトリに接続したときにブランチがどの場所を指していたかを示すブックマークのようなものです。</p>
 
-<p>ブランチ名は <code>(remote)/(branch)</code> のようになります。たとえば、<code>origin</code> サーバに最後に接続したときの <code>master</code> ブランチの状態を知りたければ <code>origin/master</code> ブランチをチェックします。誰かとかの人と共同で問題に対応しており、相手が <code>iss53</code> ブランチにプッシュしたとしましょう。あなたの手元にはローカルの <code>iss53</code> ブランチがあります。しかし、サーバ側のブランチは <code>origin/iss53</code> のコミットを指しています。</p>
+<p>ブランチ名は <code>(remote)/(branch)</code> のようになります。たとえば、<code>origin</code> サーバーに最後に接続したときの <code>master</code> ブランチの状態を知りたければ <code>origin/master</code> ブランチをチェックします。誰かとかの人と共同で問題に対応しており、相手が <code>iss53</code> ブランチにプッシュしたとしましょう。あなたの手元にはローカルの <code>iss53</code> ブランチがあります。しかし、サーバー側のブランチは <code>origin/iss53</code> のコミットを指しています。</p>
 
-<p>……ちょっと混乱してきましたか? では、具体例で考えてみましょう。ネットワーク上の <code>git.ourcompany.com</code> に Git サーバがあるとします。これをクローンすると、Git はそれに <code>origin</code> という名前をつけ、すべてのデータを引き出し、<code>master</code> ブランチを指すポインタを作成し、そのポインタにローカルで <code>origin/master</code> という名前をつけます。それを自分で移動させることはできません。Ｇit はまた、<code>master</code> というブランチも作成します。これは origin の <code>master</code> ブランチと同じ場所を指しており、ここから何らかの作業を始めます (図 3-22 を参照ください)。</p>
+<p>……ちょっと混乱してきましたか? では、具体例で考えてみましょう。ネットワーク上の <code>git.ourcompany.com</code> に Git サーバーがあるとします。これをクローンすると、Git はそれに <code>origin</code> という名前をつけ、すべてのデータを引き出し、<code>master</code> ブランチを指すポインタを作成し、そのポインタにローカルで <code>origin/master</code> という名前をつけます。それを自分で移動させることはできません。Ｇit はまた、<code>master</code> というブランチも作成します。これは origin の <code>master</code> ブランチと同じ場所を指しており、ここから何らかの作業を始めます (図 3-22 を参照ください)。</p>
 
 <p><center><img src="/figures/ch3/18333fig0322-tn.png"></center><br/> 図 3-22. git clone により、ローカルの master ブランチのほかに origin の master ブランチを指す origin/master が作られる</p>
 
-<p>ローカルの master ブランチで何らかの作業をしている間に、誰かが <code>git.ourcompany.com</code> にプッシュして master ブランチを更新したとしましょう。この時点であなたの歴史とはことなる状態になってしまいます。また、origin サーバと再度接続しない限り、<code>origin/master</code> が指す先は移動しません (図 3-23 を参照ください)。</p>
+<p>ローカルの master ブランチで何らかの作業をしている間に、誰かが <code>git.ourcompany.com</code> にプッシュして master ブランチを更新したとしましょう。この時点であなたの歴史とはことなる状態になってしまいます。また、origin サーバーと再度接続しない限り、<code>origin/master</code> が指す先は移動しません (図 3-23 を参照ください)。</p>
 
-<p><center><img src="/figures/ch3/18333fig0323-tn.png"></center><br/> 図 3-23. ローカルで作業している間に誰かがリモートサーバにプッシュすると、両者の歴史が異なるものとなる</p>
+<p><center><img src="/figures/ch3/18333fig0323-tn.png"></center><br/> 図 3-23. ローカルで作業している間に誰かがリモートサーバーにプッシュすると、両者の歴史が異なるものとなる</p>
 
-<p>手元での作業を同期させるには、<code>git fetch origin</code> コマンドを実行します。このコマンドは、まず origin が指すサーバ (今回の場合は <code>git.ourcompany.com</code>) を探し、まだ手元にないデータをすべて取得し、ローカルデータベースを更新し、<code>origin/master</code> が指す先を最新の位置に変更します (図 3-24 を参照ください)。</p>
+<p>手元での作業を同期させるには、<code>git fetch origin</code> コマンドを実行します。このコマンドは、まず origin が指すサーバー (今回の場合は <code>git.ourcompany.com</code>) を探し、まだ手元にないデータをすべて取得し、ローカルデータベースを更新し、<code>origin/master</code> が指す先を最新の位置に変更します (図 3-24 を参照ください)。</p>
 
 <p><center><img src="/figures/ch3/18333fig0324-tn.png"></center><br/> 図 3-24. git fetch コマンドによるリモートへの参照の更新</p>
 
-<p>複数のリモートサーバがあった場合にリモートのブランチがどのようになるのかを知るために、もうひとつ Git サーバがあるものと仮定しましょう。こちらのサーバは、チームの一部のメンバーが開発目的にのみ使用しています。このサーバは <code>git.team1.ourcompany.com</code> にあるものとしましょう。このサーバをあなたの作業中のプロジェクトから参照できるようにするには、第 2 章で紹介した <code>git remote add</code> コマンドを使用します。このリモートに <code>teamone</code> という名前をつけ、URL ではなく短い名前で参照できるようにします (図 3-25 を参照ください)。</p>
+<p>複数のリモートサーバーがあった場合にリモートのブランチがどのようになるのかを知るために、もうひとつ Git サーバーがあるものと仮定しましょう。こちらのサーバーは、チームの一部のメンバーが開発目的にのみ使用しています。このサーバーは <code>git.team1.ourcompany.com</code> にあるものとしましょう。このサーバーをあなたの作業中のプロジェクトから参照できるようにするには、第 2 章で紹介した <code>git remote add</code> コマンドを使用します。このリモートに <code>teamone</code> という名前をつけ、URL ではなく短い名前で参照できるようにします (図 3-25 を参照ください)。</p>
 
-<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> 図 3-25. 別のサーバをリモートとして追加</p>
+<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> 図 3-25. 別のサーバーをリモートとして追加</p>
 
-<p><code>git fetch teamone</code> を実行すれば、まだ手元にないデータをすべてサーバから取得できるようになりました。このサーバは <code>origin</code> サーバの現在の状態のサブセットなので、実際のところ Git は何のデータも取得しません。<code>teamone/master</code> というリモートブランチの指す先を、<code>teamone</code> の <code>master</code> ブランチが指す先にあわせます (図 3-26 を参照ください)。</p>
+<p><code>git fetch teamone</code> を実行すれば、まだ手元にないデータをすべてサーバーから取得できるようになりました。このサーバーは <code>origin</code> サーバーの現在の状態のサブセットなので、実際のところ Git は何のデータも取得しません。<code>teamone/master</code> というリモートブランチの指す先を、<code>teamone</code> の <code>master</code> ブランチが指す先にあわせます (図 3-26 を参照ください)。</p>
 
 <p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> 図 3-26. teamone の master ブランチの位置をローカルに取得する</p>
 
@@ -44,7 +44,7 @@ To git@github.com:schacon/simplegit.git
 
 <p>これは、ちょっとしたショートカットです。Git はまずブランチ名 <code>serverfix</code> を <code>refs/heads/serverfix:refs/heads/serverfix</code> に展開します。これは「手元のローカルブランチ serverfix をプッシュして、リモートの serverfix ブランチを更新しろ」という意味です。<code>refs/heads/</code> の部分の意味については第 9 章で詳しく説明しますが、これは一般的に省略可能です。<code>git push origin serverfix:serverfix</code> とすることもできます。これも同じことで、「こっちの serverfix で、リモートの serverfix を更新しろ」という意味になります。この方式を使えば、ローカルブランチの内容をリモートにある別の名前のブランチにプッシュすることができます。リモートの <code>serverfix</code> を呼び出したくない場合は、<code>git push origin serverfix:awesomebranch</code> とすればローカルの <code>serverfix</code> ブランチをリモートの <code>awesomebranch</code> ブランチにプッシュすることができます。</p>
 
-<p>次に誰かがサーバからフェッチしたときには、その人が取得するサーバ上の <code>serverfix</code> はリモートブランチ <code>origin/serverfix</code> となります。</p>
+<p>次に誰かがサーバーからフェッチしたときには、その人が取得するサーバー上の <code>serverfix</code> はリモートブランチ <code>origin/serverfix</code> となります。</p>
 
 <pre><code>$ git fetch origin
 remote: Counting objects: 20, done.
@@ -66,7 +66,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <h3 id='id63'>追跡ブランチ</h3>
 
-<p>リモートブランチからローカルブランチにチェックアウトすると、<em>追跡ブランチ (tracking branch)</em> というブランチが自動的に作成されます。追跡ブランチとは、リモートブランチと直接のつながりを持つローカルブランチのことです。追跡ブランチ上で git push を実行すると、Git は自動的にプッシュ先のサーバとブランチを判断します。また、追跡ブランチ上で <code>git pull</code> を実行すると、リモートの参照先からすべてのデータを取得し、対応するリモートブランチの内容を自動的にマージします。</p>
+<p>リモートブランチからローカルブランチにチェックアウトすると、<em>追跡ブランチ (tracking branch)</em> というブランチが自動的に作成されます。追跡ブランチとは、リモートブランチと直接のつながりを持つローカルブランチのことです。追跡ブランチ上で git push を実行すると、Git は自動的にプッシュ先のサーバーとブランチを判断します。また、追跡ブランチ上で <code>git pull</code> を実行すると、リモートの参照先からすべてのデータを取得し、対応するリモートブランチの内容を自動的にマージします。</p>
 
 <p>あるリポジトリをクローンしたら、自動的に <code>master</code> ブランチを作成し、<code>origin/master</code> を追跡するようになります。これが、<code>git push</code> や <code>git pull</code> が引数なしでもうまく動作する理由です。しかし、必要に応じてそれ以外の追跡ブランチを作成し、<code>origin</code> 以外にあるブランチや <code>master</code> 以外のブランチを追跡させることも可能です。シンプルな方法としては、<code>git checkout -b [branch] [remotename]/[branch]</code> を実行します。Git バージョン 1.6.2 以降では、より簡単に <code>--track</code> を使うことができます。</p>
 
@@ -84,13 +84,13 @@ Switched to a new branch &quot;sf&quot;</code></pre>
 
 <h3 id='id64'>リモートブランチの削除</h3>
 
-<p>リモートブランチでの作業が終わったとしましょう。つまり、あなたや他のメンバーが一通りの作業を終え、それをリモートの <code>master</code> ブランチ (あるいは安定版のコードラインとなるその他のブランチ) にマージし終えたということです。リモートブランチを削除するコマンドは、少しわかりにくい構文ですが <code>git push [remotename] :[branch]</code> となります。サーバの <code>serverfix</code> ブランチを削除したい場合は次のようになります。</p>
+<p>リモートブランチでの作業が終わったとしましょう。つまり、あなたや他のメンバーが一通りの作業を終え、それをリモートの <code>master</code> ブランチ (あるいは安定版のコードラインとなるその他のブランチ) にマージし終えたということです。リモートブランチを削除するコマンドは、少しわかりにくい構文ですが <code>git push [remotename] :[branch]</code> となります。サーバーの <code>serverfix</code> ブランチを削除したい場合は次のようになります。</p>
 
 <pre><code>$ git push origin :serverfix
 To git@github.com:schacon/simplegit.git
  - [deleted]         serverfix</code></pre>
 
-<p>ドッカーン。これでブランチはサーバから消えてしまいました。このページの端を折っておいたほうがいいかもしれませんね。実際にこのコマンドが必要になったときには、おそらくこの構文を忘れてしまっているでしょうから。このコマンドを覚えるコツは、少し前に説明した構文 <code>git push [remotename] [localbranch]:[remotebranch]</code> を思い出すことです。<code>[localbranch]</code> の部分をそのまま残して考えると、これは基本的に「こっちの (何もなし) で、向こうの <code>[remotebranch]</code> を更新しろ」と言っていることになります。</p>
+<p>ドッカーン。これでブランチはサーバーから消えてしまいました。このページの端を折っておいたほうがいいかもしれませんね。実際にこのコマンドが必要になったときには、おそらくこの構文を忘れてしまっているでしょうから。このコマンドを覚えるコツは、少し前に説明した構文 <code>git push [remotename] [localbranch]:[remotebranch]</code> を思い出すことです。<code>[localbranch]</code> の部分をそのまま残して考えると、これは基本的に「こっちの (何もなし) で、向こうの <code>[remotebranch]</code> を更新しろ」と言っていることになります。</p>
 
 <div id='nav'>
 <a href='ch3-4.html'>prev</a> | <a href='ch3-6.html'>next</a>

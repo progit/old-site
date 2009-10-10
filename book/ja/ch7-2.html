@@ -1,257 +1,201 @@
 ---
 layout: translation
-title: Pro Git 7.2 Gitの内側 Git Objects
+title: Pro Git 7.2 Git のカスタマイズ Git の属性
 ---
-<h2 id='git_objects'>Git Objects</h2>
+<h2 id='git_'>Git の属性</h2>
 
-<p>Git is a content-addressable filesystem. Great. What does that mean? It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command <code>hash-object</code>, which takes some data, stores it in your <code>.git</code> directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the <code>objects</code> directory:</p>
+<p>設定項目の中には、パスにも指定できるものがあります。Git はその設定を、指定したパスのサブディレクトリやファイルにのみ適用するのです。これらのパス固有の設定は Git の属性と呼ばれ、あるディレクトリ (通常はプロジェクトのルートディレクトリ) の直下の <code>.gitattributes</code> か、あるいはそのファイルをプロジェクトとともにコミットしたくない場合は <code>.git/info/attributes</code> に設定します。</p>
 
-<pre><code>$ mkdir test
-$ cd test
-$ git init
-Initialized empty Git repository in /tmp/test/.git/
-$ find .git/objects
-.git/objects
-.git/objects/info
-.git/objects/pack
-$ find .git/objects -type f
-$</code></pre>
+<p>属性を使うと、ファイルやディレクトリ単位で個別のマージ戦略を指定したりテキストファイル以外での diff の取得方法を指示したり、あるいはチェックインやチェックアウトの前に Git にフィルタリングさせたりすることができます。このセクションでは、Git プロジェクトでパスに設定できる属性のいくつかについて学び、実際にその機能を使う例を見ていきます。</p>
 
-<p>Git has initialized the <code>objects</code> directory and created <code>pack</code> and <code>info</code> subdirectories in it, but there are no regular files. Now, store some text in your Git database:</p>
+<h3 id='id151'>バイナリファイル</h3>
 
-<pre><code>$ echo &#39;test content&#39; | git hash-object -w --stdin
-d670460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+<p>Git の属性を使ってできるちょっとした技として、どのファイルがバイナリファイルなのかを (その他の方法で判別できない場合のために) 指定して Git に対してバイナリファイルの扱い方を指示するというものがあります。たとえば、機械で生成したテキストファイルの中には diff が取得できないものがありますし、バイナリファイルであっても diff が取得できるものもあります。それを Git に指示する方法を紹介します。</p>
 
-<p>The <code>-w</code> tells <code>hash-object</code> to store the object; otherwise, the command simply tells you what the key would be. <code>--stdin</code> tells the command to read the content from stdin; if you don’t specify this, <code>hash-object</code> expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash — a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:</p>
+<h4 id='id152'>バイナリファイルの特定</h4>
 
-<pre><code>$ find .git/objects -type f 
-.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+<p>テキストファイルのように見えるファイルであっても、何らかの目的のために意図的にバイナリデータとして扱いたいこともあります。たとえば、Mac の Xcode プロジェクトの中には <code>.pbxproj</code> で終わる名前のファイルがあります。これは JSON (プレーンテキスト形式の javascript のデータフォーマット) のデータセットで、IDE がビルド設定などをディスクに書き出したものです。すべて ASCII で構成されるので、理論上はこれはテキストファイルです。しかしこのファイルをテキストファイルとして扱いたくはありません。実際のところ、このファイルは軽量なデータベースとして使われているからです。他の人が変更した内容をマージすることはできませんし、diff をとってもあまり意味がありません。このファイルは、基本的に機械が処理するものなのです。要するに、バイナリファイルと同じように扱いたいということです。</p>
 
-<p>You can see a file in the <code>objects</code> directory. This is how Git stores the content initially — as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.</p>
+<p>すべての <code>pbxproj</code> ファイルをバイナリデータとして扱うよう Git に指定するには、次の行を <code>.gitattributes</code> ファイルに追加します。</p>
 
-<p>You can pull the content back out of Git with the <code>cat-file</code> command. This command is sort of a Swiss army knife for inspecting Git objects. Passing <code>-p</code> to it instructs the <code>cat-file</code> command to figure out the type of content and display it nicely for you:</p>
+<pre><code>*.pbxproj -crlf -diff</code></pre>
 
-<pre><code>$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
-test content</code></pre>
+<p>これで、Git が CRLF 問題の対応をすることもなくなりますし、git show や git diff を実行したときにもこのファイルの diff を調べることはなくなります。Git 1.6 系では、次のようなマクロを使うこともできます。これは <code>-crlf -diff</code> と同じ意味です。</p>
 
-<p>Now, you can add content to Git and pull it back out again. You can also do this with content in files. For example, you can do some simple version control on a file. First, create a new file and save its contents in your database:</p>
+<pre><code>*.pbxproj binary</code></pre>
 
-<pre><code>$ echo &#39;version 1&#39; &gt; test.txt
-$ git hash-object -w test.txt 
-83baae61804e65cc73a7201a7252750c76066a30</code></pre>
+<h4 id='diffing_binary_files'>Diffing Binary Files</h4>
 
-<p>Then, write some new content to the file, and save it again:</p>
+<p>In the 1.6 series of Git, you can use the Git attributes functionality to effectively diff binary files. You do this by telling Git how to convert your binary data to a text format that can be compared via the normal diff.</p>
 
-<pre><code>$ echo &#39;version 2&#39; &gt; test.txt
-$ git hash-object -w test.txt 
-1f7a7a472abf3dd9643fd615f6da379c4acb3e3a</code></pre>
+<p>Because this is a pretty cool and not widely known feature, I’ll go over a few examples. First, you’ll use this technique to solve one of the most annoying problems known to humanity: version-controlling Word documents. Everyone knows that Word is the most horrific editor around; but, oddly, everyone uses it. If you want to version-control Word documents, you can stick them in a Git repository and commit every once in a while; but what good does that do? If you run <code>git diff</code> normally, you only see something like this:</p>
 
-<p>Your database contains the two new versions of the file as well as the first content you stored there:</p>
+<pre><code>$ git diff 
+diff --git a/chapter1.doc b/chapter1.doc
+index 88839c4..4afcb7c 100644
+Binary files a/chapter1.doc and b/chapter1.doc differ</code></pre>
 
-<pre><code>$ find .git/objects -type f 
-.git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a
-.git/objects/83/baae61804e65cc73a7201a7252750c76066a30
-.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
+<p>You can’t directly compare two versions unless you check them out and scan them manually, right? It turns out you can do this fairly well using Git attributes. Put the following line in your <code>.gitattributes</code> file:</p>
 
-<p>Now you can revert the file back to the first version</p>
+<pre><code>*.doc diff=word</code></pre>
 
-<pre><code>$ git cat-file -p 83baae61804e65cc73a7201a7252750c76066a30 &gt; test.txt 
+<p>This tells Git that any file that matches this pattern (.doc) should use the &#8220;word&#8221; filter when you try to view a diff that contains changes. What is the &#8220;word&#8221; filter? You have to set it up. Here you’ll configure Git to use the <code>strings</code> program to convert Word documents into readable text files, which it will then diff properly:</p>
+
+<pre><code>$ git config diff.word.textconv strings</code></pre>
+
+<p>Now Git knows that if it tries to do a diff between two snapshots, and any of the files end in <code>.doc</code>, it should run those files through the &#8220;word&#8221; filter, which is defined as the <code>strings</code> program. This effectively makes nice text-based versions of your Word files before attempting to diff them.</p>
+
+<p>Here’s an example. I put Chapter 1 of this book into Git, added some text to a paragraph, and saved the document. Then, I ran <code>git diff</code> to see what changed:</p>
+
+<pre><code>$ git diff
+diff --git a/chapter1.doc b/chapter1.doc
+index c1c8a0a..b93c9e4 100644
+--- a/chapter1.doc
++++ b/chapter1.doc
+@@ -8,7 +8,8 @@ re going to cover Version Control Systems (VCS) and Git basics
+ re going to cover how to get it and set it up for the first time if you don
+ t already have it on your system.
+ In Chapter Two we will go over basic Git usage - how to use Git for the 80% 
+-s going on, modify stuff and contribute changes. If the book spontaneously 
++s going on, modify stuff and contribute changes. If the book spontaneously 
++Let&#39;s see if this works.</code></pre>
+
+<p>Git successfully and succinctly tells me that I added the string &#8220;Let’s see if this works&#8221;, which is correct. It’s not perfect — it adds a bunch of random stuff at the end — but it certainly works. If you can find or write a Word-to-plain-text converter that works well enough, that solution will likely be incredibly effective. However, <code>strings</code> is available on most Mac and Linux systems, so it may be a good first try to do this with many binary formats.</p>
+
+<p>Another interesting problem you can solve this way involves diffing image files. One way to do this is to run JPEG files through a filter that extracts their EXIF information — metadata that is recorded with most image formats. If you download and install the <code>exiftool</code> program, you can use it to convert your images into text about the metadata, so at least the diff will show you a textual representation of any changes that happened:</p>
+
+<pre><code>$ echo &#39;*.png diff=exif&#39; &gt;&gt; .gitattributes
+$ git config diff.exif.textconv exiftool</code></pre>
+
+<p>If you replace an image in your project and run <code>git diff</code>, you see something like this:</p>
+
+<pre><code>diff --git a/image.png b/image.png
+index 88839c4..4afcb7c 100644
+--- a/image.png
++++ b/image.png
+@@ -1,12 +1,12 @@
+ ExifTool Version Number         : 7.74
+-File Size                       : 70 kB
+-File Modification Date/Time     : 2009:04:21 07:02:45-07:00
++File Size                       : 94 kB
++File Modification Date/Time     : 2009:04:21 07:02:43-07:00
+ File Type                       : PNG
+ MIME Type                       : image/png
+-Image Width                     : 1058
+-Image Height                    : 889
++Image Width                     : 1056
++Image Height                    : 827
+ Bit Depth                       : 8
+ Color Type                      : RGB with Alpha</code></pre>
+
+<p>You can easily see that the file size and image dimensions have both changed.</p>
+
+<h3 id='keyword_expansion'>Keyword Expansion</h3>
+
+<p>SVN- or CVS-style keyword expansion is often requested by developers used to those systems. The main problem with this in Git is that you can’t modify a file with information about the commit after you’ve committed, because Git checksums the file first. However, you can inject text into a file when it’s checked out and remove it again before it’s added to a commit. Git attributes offers you two ways to do this.</p>
+
+<p>First, you can inject the SHA-1 checksum of a blob into an <code>$Id$</code> field in the file automatically. If you set this attribute on a file or set of files, then the next time you check out that branch, Git will replace that field with the SHA-1 of the blob. It’s important to notice that it isn’t the SHA of the commit, but of the blob itself:</p>
+
+<pre><code>$ echo &#39;*.txt ident&#39; &gt;&gt; .gitattributes
+$ echo &#39;$Id$&#39; &gt; test.txt</code></pre>
+
+<p>The next time you check out this file, Git injects the SHA of the blob:</p>
+
+<pre><code>$ rm text.txt
+$ git checkout -- text.txt
 $ cat test.txt 
-version 1</code></pre>
+$Id: 42812b7653c7b88933f8a9d6cad0ca16714b9bb3 $</code></pre>
 
-<p>or the second version:</p>
+<p>However, that result is of limited use. If you’ve used keyword substitution in CVS or Subversion, you can include a datestamp — the SHA isn’t all that helpful, because it’s fairly random and you can’t tell if one SHA is older or newer than another.</p>
 
-<pre><code>$ git cat-file -p 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a &gt; test.txt 
-$ cat test.txt 
-version 2</code></pre>
+<p>It turns out that you can write your own filters for doing substitutions in files on commit/checkout. These are the &#8220;clean&#8221; and &#8220;smudge&#8221; filters. In the <code>.gitattributes</code> file, you can set a filter for particular paths and then set up scripts that will process files just before they’re committed (&#8220;clean&#8221;, see Figure 7-2) and just before they’re checked out (&#8220;smudge&#8221;, see Figure 7-3). These filters can be set to do all sorts of fun things.</p>
 
-<p>But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system — just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with <code>cat-file -t</code>:</p>
+<p><center><img src="/figures/ch7/18333fig0702-tn.png"></center><br/> Figure 7-2. The “smudge” filter is run on checkout.</p>
 
-<pre><code>$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
-blob</code></pre>
+<p><center><img src="/figures/ch7/18333fig0703-tn.png"></center><br/> Figure 7-3. The “clean” filter is run when files are staged.</p>
 
-<h3 id='tree_objects'>Tree Objects</h3>
+<p>The original commit message for this functionality gives a simple example of running all your C source code through the <code>indent</code> program before committing. You can set it up by setting the filter attribute in your <code>.gitattributes</code> file to filter <code>*.c</code> files with the &#8220;indent&#8221; filter:</p>
 
-<p>The next type you’ll look at is the tree object, which solves the problem of storing the filename and also allows you to store a group of files together. Git stores content in a manner similar to a UNIX filesystem, but a bit simplified. All the content is stored as tree and blob objects, with trees corresponding to UNIX directory entries and blobs corresponding more or less to inodes or file contents. A single tree object contains one or more tree entries, each of which contains a SHA-1 pointer to a blob or subtree with its associated mode, type, and filename. For example, the most recent tree in the simplegit project may look something like this:</p>
+<pre><code>*.c     filter=indent</code></pre>
 
-<pre><code>$ git cat-file -p master^{tree}
-100644 blob a906cb2a4a904a152e80877d4088654daad0c859      README
-100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
-040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib</code></pre>
+<p>Then, tell Git what the &#8220;indent&#8221;&#8221; filter does on smudge and clean:</p>
 
-<p>The <code>master^{tree}</code> syntax specifies the tree object that is pointed to by the last commit on your <code>master</code> branch. Notice that the <code>lib</code> subdirectory isn’t a blob but a pointer to another tree:</p>
+<pre><code>$ git config --global filter.indent.clean indent
+$ git config --global filter.indent.smudge cat</code></pre>
 
-<pre><code>$ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
-100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b      simplegit.rb</code></pre>
+<p>In this case, when you commit files that match <code>*.c</code>, Git will run them through the indent program before it commits them and then run them through the <code>cat</code> program before it checks them back out onto disk. The <code>cat</code> program is basically a no-op: it spits out the same data that it gets in. This combination effectively filters all C source code files through <code>indent</code> before committing.</p>
 
-<p>Conceptually, the data that Git is storing is something like Figure 9-1.</p>
+<p>Another interesting example gets <code>$Date$</code> keyword expansion, RCS style. To do this properly, you need a small script that takes a filename, figures out the last commit date for this project, and inserts the date into the file. Here is a small Ruby script that does that:</p>
 
-<p><center><img src="/figures/ch7/18333fig0901-tn.png"></center><br/> Figure 9-1. Simple version of the Git data model.</p>
+<pre><code>#! /usr/bin/env ruby
+data = STDIN.read
+last_date = `git log --pretty=format:&quot;%ad&quot; -1`
+puts data.gsub(&#39;$Date$&#39;, &#39;$Date: &#39; + last_date.to_s + &#39;$&#39;)</code></pre>
 
-<p>You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry — the first version of your text.txt file — you can use the plumbing command <code>update-index</code>. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the <code>--add</code> option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and <code>--cacheinfo</code> because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:</p>
+<p>All the script does is get the latest commit date from the <code>git log</code> command, stick that into any <code>$Date$</code> strings it sees in stdin, and print the results — it should be simple to do in whatever language you’re most comfortable in. You can name this file <code>expand_date</code> and put it in your path. Now, you need to set up a filter in Git (call it <code>dater</code>) and tell it to use your <code>expand_date</code> filter to smudge the files on checkout. You’ll use a Perl expression to clean that up on commit:</p>
 
-<pre><code>$ git update-index --add --cacheinfo 100644 \
-  83baae61804e65cc73a7201a7252750c76066a30 test.txt</code></pre>
+<pre><code>$ git config filter.dater.smudge expand_date
+$ git config filter.dater.clean &#39;perl -pe &quot;s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/&quot;&#39;</code></pre>
 
-<p>In this case, you’re specifying a mode of <code>100644</code>, which means it’s a normal file. Other options are <code>100755</code>, which means it’s an executable file; and <code>120000</code>, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible — these three modes are the only ones that are valid for files (blobs) in Git (although other modes are used for directories and submodules).</p>
+<p>This Perl snippet strips out anything it sees in a <code>$Date$</code> string, to get back to where you started. Now that your filter is ready, you can test it by setting up a file with your <code>$Date$</code> keyword and then setting up a Git attribute for that file that engages the new filter:</p>
 
-<p>Now, you can use the <code>write-tree</code> command to write the staging area out to a tree object. No <code>-w</code> option is needed — calling <code>write-tree</code> automatically creates a tree object from the state of the index if that tree doesn’t yet exist:</p>
+<pre><code>$ echo &#39;# $Date$&#39; &gt; date_test.txt
+$ echo &#39;date*.txt filter=dater&#39; &gt;&gt; .gitattributes</code></pre>
 
-<pre><code>$ git write-tree
-d8329fc1cc938780ffdd9f94e0d364e0ea74f579
-$ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
-100644 blob 83baae61804e65cc73a7201a7252750c76066a30      test.txt</code></pre>
+<p>If you commit those changes and check out the file again, you see the keyword properly substituted:</p>
 
-<p>You can also verify that this is a tree object:</p>
+<pre><code>$ git add date_test.txt .gitattributes
+$ git commit -m &quot;Testing date expansion in Git&quot;
+$ rm date_test.txt
+$ git checkout date_test.txt
+$ cat date_test.txt
+# $Date: Tue Apr 21 07:26:52 2009 -0700$</code></pre>
 
-<pre><code>$ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
-tree</code></pre>
+<p>You can see how powerful this technique can be for customized applications. You have to be careful, though, because the <code>.gitattributes</code> file is committed and passed around with the project but the driver (in this case, <code>dater</code>) isn’t; so, it won’t work everywhere. When you design these filters, they should be able to fail gracefully and have the project still work properly.</p>
 
-<p>You’ll now create a new tree with the second version of test.txt and a new file as well:</p>
+<h3 id='exporting_your_repository'>Exporting Your Repository</h3>
 
-<pre><code>$ echo &#39;new file&#39; &gt; new.txt
-$ git update-index test.txt 
-$ git update-index --add new.txt </code></pre>
+<p>Git attribute data also allows you to do some interesting things when exporting an archive of your project.</p>
 
-<p>Your staging area now has the new version of test.txt as well as the new file new.txt. Write out that tree (recording the state of the staging area or index to a tree object) and see what it looks like:</p>
+<h4 id='exportignore'>export-ignore</h4>
 
-<pre><code>$ git write-tree
-0155eb4229851634a0f03eb265b69f5a2d56f341
-$ git cat-file -p 0155eb4229851634a0f03eb265b69f5a2d56f341
-100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
-100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
+<p>You can tell Git not to export certain files or directories when generating an archive. If there is a subdirectory or file that you don’t want to include in your archive file but that you do want checked into your project, you can determine those files via the <code>export-ignore</code> attribute.</p>
 
-<p>Notice that this tree has both file entries and also that the test.txt SHA is the &#8220;version 2&#8221; SHA from earlier (<code>1f7a7a</code>). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling <code>read-tree</code>. In this case, you can read an existing tree into your staging area as a subtree by using the <code>--prefix</code> option to <code>read-tree</code>:</p>
+<p>For example, say you have some test files in a <code>test/</code> subdirectory, and it doesn’t make sense to include them in the tarball export of your project. You can add the following line to your Git attributes file:</p>
 
-<pre><code>$ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
-$ git write-tree
-3c4e9cd789d88d8d89c1073707c3585e41b0e614
-$ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
-040000 tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579      bak
-100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
-100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
+<pre><code>test/ export-ignore</code></pre>
 
-<p>If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named <code>bak</code> that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.</p>
+<p>Now, when you run git archive to create a tarball of your project, that directory won’t be included in the archive.</p>
 
-<p><center><img src="/figures/ch7/18333fig0902-tn.png"></center><br/> Figure 9-2. The content structure of your current Git data.</p>
+<h4 id='exportsubst'>export-subst</h4>
 
-<h3 id='commit_objects'>Commit Objects</h3>
+<p>Another thing you can do for your archives is some simple keyword substitution. Git lets you put the string <code>$Format:$</code> in any file with any of the <code>--pretty=format</code> formatting shortcodes, many of which you saw in Chapter 2. For instance, if you want to include a file named <code>LAST_COMMIT</code> in your project, and the last commit date was automatically injected into it when <code>git archive</code> ran, you can set up the file like this:</p>
 
-<p>You have three trees that specify the different snapshots of your project that you want to track, but the earlier problem remains: you must remember all three SHA-1 values in order to recall the snapshots. You also don’t have any information about who saved the snapshots, when they were saved, or why they were saved. This is the basic information that the commit object stores for you.</p>
+<pre><code>$ echo &#39;Last commit date: $Format:%cd$&#39; &gt; LAST_COMMIT
+$ echo &quot;LAST_COMMIT export-subst&quot; &gt;&gt; .gitattributes
+$ git add LAST_COMMIT .gitattributes
+$ git commit -am &#39;adding LAST_COMMIT file for archives&#39;</code></pre>
 
-<p>To create a commit object, you call <code>commit-tree</code> and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:</p>
+<p>When you run <code>git archive</code>, the contents of that file when people open the archive file will look like this:</p>
 
-<pre><code>$ echo &#39;first commit&#39; | git commit-tree d8329f
-fdf4fc3344e67ab068f836878b6c4951e3b15f3d</code></pre>
+<pre><code>$ cat LAST_COMMIT
+Last commit date: $Format:Tue Apr 21 08:38:48 2009 -0700$</code></pre>
 
-<p>Now you can look at your new commit object with <code>cat-file</code>:</p>
+<h3 id='merge_strategies'>Merge Strategies</h3>
 
-<pre><code>$ git cat-file -p fdf4fc3
-tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
-author Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
-committer Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
+<p>You can also use Git attributes to tell Git to use different merge strategies for specific files in your project. One very useful option is to tell Git to not try to merge specific files when they have conflicts, but rather to use your side of the merge over someone else’s.</p>
 
-first commit</code></pre>
+<p>This is helpful if a branch in your project has diverged or is specialized, but you want to be able to merge changes back in from it, and you want to ignore certain files. Say you have a database settings file called database.xml that is different in two branches, and you want to merge in your other branch without messing up the database file. You can set up an attribute like this:</p>
 
-<p>The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your <code>user.name</code> and <code>user.email</code> configuration settings, with the current timestamp; a blank line, and then the commit message.</p>
+<pre><code>database.xml merge=ours</code></pre>
 
-<p>Next, you’ll write the other two commit objects, each referencing the commit that came directly before it:</p>
+<p>If you merge in the other branch, instead of having merge conflicts with the database.xml file, you see something like this:</p>
 
-<pre><code>$ echo &#39;second commit&#39; | git commit-tree 0155eb -p fdf4fc3
-cac0cab538b970a37ea1e769cbbde608743bc96d
-$ echo &#39;third commit&#39;  | git commit-tree 3c4e9c -p cac0cab
-1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
+<pre><code>$ git merge topic
+Auto-merging database.xml
+Merge made by recursive.</code></pre>
 
-<p>Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the <code>git log</code> command, if you run it on the last commit SHA-1:</p>
-
-<pre><code>$ git log --stat 1a410e
-commit 1a410efbd13591db07496601ebc7a059dd55cfe9
-Author: Scott Chacon &lt;schacon@gmail.com&gt;
-Date:   Fri May 22 18:15:24 2009 -0700
-
-    third commit
-
- bak/test.txt |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-commit cac0cab538b970a37ea1e769cbbde608743bc96d
-Author: Scott Chacon &lt;schacon@gmail.com&gt;
-Date:   Fri May 22 18:14:29 2009 -0700
-
-    second commit
-
- new.txt  |    1 +
- test.txt |    2 +-
- 2 files changed, 2 insertions(+), 1 deletions(-)
-
-commit fdf4fc3344e67ab068f836878b6c4951e3b15f3d
-Author: Scott Chacon &lt;schacon@gmail.com&gt;
-Date:   Fri May 22 18:09:34 2009 -0700
-
-    first commit
-
- test.txt |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
-
-<p>Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the <code>git add</code> and <code>git commit</code> commands — it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects — the blob, the tree, and the commit — are initially stored as separate files in your <code>.git/objects</code> directory. Here are all the objects in the example directory now, commented with what they store:</p>
-
-<pre><code>$ find .git/objects -type f
-.git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
-.git/objects/1a/410efbd13591db07496601ebc7a059dd55cfe9 # commit 3
-.git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a # test.txt v2
-.git/objects/3c/4e9cd789d88d8d89c1073707c3585e41b0e614 # tree 3
-.git/objects/83/baae61804e65cc73a7201a7252750c76066a30 # test.txt v1
-.git/objects/ca/c0cab538b970a37ea1e769cbbde608743bc96d # commit 2
-.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4 # &#39;test content&#39;
-.git/objects/d8/329fc1cc938780ffdd9f94e0d364e0ea74f579 # tree 1
-.git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
-.git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1</code></pre>
-
-<p>If you follow all the internal pointers, you get an object graph something like Figure 9-3.</p>
-
-<p><center><img src="/figures/ch7/18333fig0903-tn.png"></center><br/> Figure 9-3. All the objects in your Git directory.</p>
-
-<h3 id='object_storage'>Object Storage</h3>
-
-<p>I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object — in this case, the string &#8220;what is up, doc?&#8221; — interactively in the Ruby scripting language. You can start up interactive Ruby mode with the <code>irb</code> command:</p>
-
-<pre><code>$ irb
-&gt;&gt; content = &quot;what is up, doc?&quot;
-=&gt; &quot;what is up, doc?&quot;</code></pre>
-
-<p>Git constructs a header that starts with the type of the object, in this case a blob. Then, it adds a space followed by the size of the content and finally a null byte:</p>
-
-<pre><code>&gt;&gt; header = &quot;blob #{content.length}\0&quot;
-=&gt; &quot;blob 16\000&quot;</code></pre>
-
-<p>Git concatenates the header and the original content and then calculates the SHA-1 checksum of that new content. You can calculate the SHA-1 value of a string in Ruby by including the SHA1 digest library with the <code>require</code> command and then calling <code>Digest::SHA1.hexdigest()</code> with the string:</p>
-
-<pre><code>&gt;&gt; store = header + content
-=&gt; &quot;blob 16\000what is up, doc?&quot;
-&gt;&gt; require &#39;digest/sha1&#39;
-=&gt; true
-&gt;&gt; sha1 = Digest::SHA1.hexdigest(store)
-=&gt; &quot;bd9dbf5aae1a3862dd1526723246b20206e5fc37&quot;</code></pre>
-
-<p>Git compresses the new content with zlib, which you can do in Ruby with the zlib library. First, you need to require the library and then run <code>Zlib::Deflate.deflate()</code> on the content:</p>
-
-<pre><code>&gt;&gt; require &#39;zlib&#39;
-=&gt; true
-&gt;&gt; zlib_content = Zlib::Deflate.deflate(store)
-=&gt; &quot;x\234K\312\311OR04c(\317H,Q\310,V(-\320QH\311O\266\a\000_\034\a\235&quot;</code></pre>
-
-<p>Finally, you’ll write your zlib-deflated content to an object on disk. You’ll determine the path of the object you want to write out (the first two characters of the SHA-1 value being the subdirectory name, and the last 38 characters being the filename within that directory). In Ruby, you can use the <code>FileUtils.mkdir_p()</code> function to create the subdirectory if it doesn’t exist. Then, open the file with <code>File.open()</code> and write out the previously zlib-compressed content to the file with a <code>write()</code> call on the resulting file handle:</p>
-
-<pre><code>&gt;&gt; path = &#39;.git/objects/&#39; + sha1[0,2] + &#39;/&#39; + sha1[2,38]
-=&gt; &quot;.git/objects/bd/9dbf5aae1a3862dd1526723246b20206e5fc37&quot;
-&gt;&gt; require &#39;fileutils&#39;
-=&gt; true
-&gt;&gt; FileUtils.mkdir_p(File.dirname(path))
-=&gt; &quot;.git/objects/bd&quot;
-&gt;&gt; File.open(path, &#39;w&#39;) { |f| f.write zlib_content }
-=&gt; 32</code></pre>
-
-<p>That’s it — you’ve created a valid Git blob object. All Git objects are stored the same way, just with different types — instead of the string blob, the header will begin with commit or tree. Also, although the blob content can be nearly anything, the commit and tree content are very specifically formatted.</p>
+<p>In this case, database.xml stays at whatever version you originally had.</p>
 
 <div id='nav'>
 <a href='ch7-1.html'>prev</a> | <a href='ch7-3.html'>next</a>

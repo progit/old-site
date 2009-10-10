@@ -1,65 +1,96 @@
 ---
-layout: master
-title: Pro Git 6.5 起步 初次运行 Git 前的配置
+layout: translation
+title: Pro Git 6.5 Git 工具 使用 Git 调试
 ---
-<h2 id='_git_'>初次运行 Git 前的配置</h2>
+<h2 id='_git_'>使用 Git 调试</h2>
 
-<p>一般在新的系统上，我们都需要先配置下自己的 Git 工作环境。配置工作只需一次，以后升级时还会沿用现在的配置。当然，如果需要，你随时可以用相同的命令修改已有的配置。</p>
+<p>Git also provides a couple of tools to help you debug issues in your projects. Because Git is designed to work with nearly any type of project, these tools are pretty generic, but they can often help you hunt for a bug or culprit when things go wrong.</p>
 
-<p>Git 提供了一个叫做 git config 的工具（译注：实际是 git-config 命令，只不过可以通过 git 加一个名字来呼叫此命令。），专门用来配置或读取相应的工作环境变量。而正是由这些环境变量，决定了 Git 在各个环节的具体工作方式和行为。这些变量可以存放在以下三个不同的地方：</p>
+<h3 id='file_annotation'>File Annotation</h3>
 
-<ul>
-<li><code>/etc/gitconfig</code>文件：系统中对所有用户都普遍适用的配置。若使用 <code>git config</code> 时用 <code> --system</code> 选项，读写的就是这个文件。</li>
+<p>If you track down a bug in your code and want to know when it was introduced and why, file annotation is often your best tool. It shows you what commit was the last to modify each line of any file. So, if you see that a method in your code is buggy, you can annotate the file with <code>git blame</code> to see when each line of the method was last edited and by whom. This example uses the <code>-L</code> option to limit the output to lines 12 through 22:</p>
 
-<li><code>~/.gitconfig</code>文件：用户目录下的配置文件只适用于该用户。若使用 <code>git config</code> 时用 <code> --global</code> 选项，读写的就是这个文件。</li>
+<pre><code>$ git blame -L 12,22 simplegit.rb 
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 12)  def show(tree = &#39;master&#39;)
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 13)   command(&quot;git show #{tree}&quot;)
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 14)  end
+^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 15)
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 16)  def log(tree = &#39;master&#39;)
+79eaf55d (Scott Chacon  2008-04-06 10:15:08 -0700 17)   command(&quot;git log #{tree}&quot;)
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 18)  end
+9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 19) 
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 20)  def blame(path)
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 21)   command(&quot;git blame #{path}&quot;)
+42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 22)  end</code></pre>
 
-<li>当前项目的 git 目录中的配置文件（也就是工作目录中的 <code>.git/config</code> 文件）：这里的配置仅仅针对当前项目有效。每一个级别的配置都会覆盖上层的相同配置，所以 <code>.git/config</code> 里的配置会覆盖 <code>/etc/gitconfig</code> 中的同名变量。</li>
-</ul>
+<p>Notice that the first field is the partial SHA-1 of the commit that last modified that line. The next two fields are values extracted from that commit—the author name and the authored date of that commit — so you can easily see who modified that line and when. After that come the line number and the content of the file. Also note the <code>^4832fe2</code> commit lines, which designate that those lines were in this file’s original commit. That commit is when this file was first added to this project, and those lines have been unchanged since. This is a tad confusing, because now you’ve seen at least three different ways that Git uses the <code>^</code> to modify a commit SHA, but that is what it means here.</p>
 
-<p>在 Windows 系统上，Git 会找寻用户主目录下的 <code>.gitconfig</code> 文件。主目录即 <code>$HOME</code> 变量指定的目录，一般都是 C:\Documents and Settings\$USER。此外，Git 还会尝试找寻 /etc/gitconfig 文件，只不过看当初 Git 装在什么目录，就以此作为根目录来定位。</p>
+<p>Another cool thing about Git is that it doesn’t track file renames explicitly. It records the snapshots and then tries to figure out what was renamed implicitly, after the fact. One of the interesting features of this is that you can ask it to figure out all sorts of code movement as well. If you pass <code>-C</code> to <code>git blame</code>, Git analyzes the file you’re annotating and tries to figure out where snippets of code within it originally came from if they were copied from elsewhere. Recently, I was refactoring a file named <code>GITServerHandler.m</code> into multiple files, one of which was <code>GITPackUpload.m</code>. By blaming <code>GITPackUpload.m</code> with the <code>-C</code> option, I could see where sections of the code originally came from:</p>
 
-<h3 id='id12'>用户信息</h3>
+<pre><code>$ git blame -C -L 141,153 GITPackUpload.m 
+f344f58d GITServerHandler.m (Scott 2009-01-04 141) 
+f344f58d GITServerHandler.m (Scott 2009-01-04 142) - (void) gatherObjectShasFromC
+f344f58d GITServerHandler.m (Scott 2009-01-04 143) {
+70befddd GITServerHandler.m (Scott 2009-03-22 144)         //NSLog(@&quot;GATHER COMMI
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 145)
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 146)         NSString *parentSha;
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 147)         GITCommit *commit = [g
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 148)
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 149)         //NSLog(@&quot;GATHER COMMI
+ad11ac80 GITPackUpload.m    (Scott 2009-03-24 150)
+56ef2caf GITServerHandler.m (Scott 2009-01-05 151)         if(commit) {
+56ef2caf GITServerHandler.m (Scott 2009-01-05 152)                 [refDict setOb
+56ef2caf GITServerHandler.m (Scott 2009-01-05 153)</code></pre>
 
-<p>第一个要配置的是你个人的用户名称和电子邮件地址。这两条配置很重要，每次 Git 提交时都会引用这两条信息，说明是谁提交了更新，所以会随更新内容一起被永久纳入历史记录：</p>
+<p>This is really useful. Normally, you get as the original commit the commit where you copied the code over, because that is the first time you touched those lines in this file. Git tells you the original commit where you wrote those lines, even if it was in another file.</p>
 
-<pre><code>$ git config --global user.name &quot;John Doe&quot;
-$ git config --global user.email johndoe@example.com</code></pre>
+<h3 id='binary_search'>Binary Search</h3>
 
-<p>如果用了 <code>--global</code> 选项，那么更改的配置文件就是位于你用户主目录下的那个，以后你所有的项目都会默认使用这里配置的用户信息。如果要在某个特定的项目中使用其他名字或者电邮，只要去掉 <code>--global</code> 选项重新配置即可，新的设定保存在当前项目的 <code>.git/config</code> 文件里。</p>
+<p>Annotating a file helps if you know where the issue is to begin with. If you don’t know what is breaking, and there have been dozens or hundreds of commits since the last state where you know the code worked, you’ll likely turn to <code>git bisect</code> for help. The <code>bisect</code> command does a binary search through your commit history to help you identify as quickly as possible which commit introduced an issue.</p>
 
-<h3 id='id13'>文本编辑器</h3>
+<p>Let’s say you just pushed out a release of your code to a production environment, you’re getting bug reports about something that wasn’t happening in your development environment, and you can’t imagine why the code is doing that. You go back to your code, and it turns out you can reproduce the issue, but you can’t figure out what is going wrong. You can bisect the code to find out. First you run <code>git bisect start</code> to get things going, and then you use <code>git bisect bad</code> to tell the system that the current commit you’re on is broken. Then, you must tell bisect when the last known good state was, using <code>git bisect good [good_commit]</code>:</p>
 
-<p>接下来要设置的是默认使用的文本编辑器。Git 需要你输入一些额外消息的时候，会自动调用一个外部文本编辑器给你用。默认会使用操作系统指定的默认编辑器，一般可能会是 Vi 或者 Vim。如果你有其他偏好，比如 Emacs 的话，可以重新设置：</p>
+<pre><code>$ git bisect start
+$ git bisect bad
+$ git bisect good v1.0
+Bisecting: 6 revisions left to test after this
+[ecb6e1bc347ccecc5f9350d878ce677feb13d3b2] error handling on repo</code></pre>
 
-<pre><code>$ git config --global core.editor emacs</code></pre>
+<p>Git figured out that about 12 commits came between the commit you marked as the last good commit (v1.0) and the current bad version, and it checked out the middle one for you. At this point, you can run your test to see if the issue exists as of this commit. If it does, then it was introduced sometime before this middle commit; if it doesn’t, then the problem was introduced sometime after the middle commit. It turns out there is no issue here, and you tell Git that by typing <code>git bisect good</code> and continue your journey:</p>
 
-<h3 id='id14'>差异分析工具</h3>
+<pre><code>$ git bisect good
+Bisecting: 3 revisions left to test after this
+[b047b02ea83310a70fd603dc8cd7a6cd13d15c04] secure this thing</code></pre>
 
-<p>还有一个比较常用的是，在解决合并冲突时使用哪种差异分析工具。比如要改用 vimdiff 的话：</p>
+<p>Now you’re on another commit, halfway between the one you just tested and your bad commit. You run your test again and find that this commit is broken, so you tell Git that with <code>git bisect bad</code>:</p>
 
-<pre><code>$ git config --global merge.tool vimdiff</code></pre>
+<pre><code>$ git bisect bad
+Bisecting: 1 revisions left to test after this
+[f71ce38690acf49c1f3c9bea38e09d82a5ce6014] drop exceptions table</code></pre>
 
-<p>Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。当然，你也可以指定使用自己开发的工具，具体怎么做可以参阅第七章。</p>
+<p>This commit is fine, and now Git has all the information it needs to determine where the issue was introduced. It tells you the SHA-1 of the first bad commit and show some of the commit information and which files were modified in that commit so you can figure out what happened that may have introduced this bug:</p>
 
-<h3 id='id15'>查看配置信息</h3>
+<pre><code>$ git bisect good
+b047b02ea83310a70fd603dc8cd7a6cd13d15c04 is first bad commit
+commit b047b02ea83310a70fd603dc8cd7a6cd13d15c04
+Author: PJ Hyett &lt;pjhyett@example.com&gt;
+Date:   Tue Jan 27 14:48:32 2009 -0800
 
-<p>要检查已有的配置信息，可以使用 <code>git config --list</code> 命令：</p>
+    secure this thing
 
-<pre><code>$ git config --list
-user.name=Scott Chacon
-user.email=schacon@gmail.com
-color.status=auto
-color.branch=auto
-color.interactive=auto
-color.diff=auto
-...</code></pre>
+:040000 040000 40ee3e7821b895e52c1695092db9bdc4c61d1730
+f24d3c6ebcfc639b1a3814550e62d60b8e68a8e4 M  config</code></pre>
 
-<p>有时候会看到重复的变量名，那就说明它们来自不同的配置文件（比如 <code>/etc/gitconfig</code> 和 <code>~/.gitconfig</code>），不过最终 Git 实际采用的是最后一个。</p>
+<p>When you’re finished, you should run <code>git bisect reset</code> to reset your HEAD to where you were before you started, or you’ll end up in a weird state:</p>
 
-<p>也可以直接查阅某个环境变量的设定，只要把特定的名字跟在后面即可，像这样：</p>
+<pre><code>$ git bisect reset</code></pre>
 
-<pre><code>$ git config user.name
-Scott Chacon</code></pre>
+<p>This is a powerful tool that can help you check hundreds of commits for an introduced bug in minutes. In fact, if you have a script that will exit 0 if the project is good or non-0 if the project is bad, you can fully automate <code>git bisect</code>. First, you again tell it the scope of the bisect by providing the known bad and good commits. You can do this by listing them with the <code>bisect start</code> command if you want, listing the known bad commit first and the known good commit second:</p>
+
+<pre><code>$ git bisect start HEAD v1.0
+$ git bisect run test-error.sh</code></pre>
+
+<p>Doing so automatically runs <code>test-error.sh</code> on each checked-out commit until Git finds the first broken commit. You can also run something like <code>make</code> or <code>make tests</code> or whatever you have that runs automated tests for you.</p>
 
 <div id='nav'>
 <a href='ch6-4.html'>prev</a> | <a href='ch6-6.html'>next</a>

@@ -1,0 +1,381 @@
+---
+layout: translation
+title: Pro Git 2.2 De Basis van Git Wijzigingen Aan Het Repository Vastleggen
+---
+<h2 id='wijzigingen_aan_het_repository_vastleggen'>Wijzigingen Aan Het Repository Vastleggen</h2>
+
+<p>Je hebt een bona fide Git repository en een checkout of werkkopie van de bestanden voor dat project. Je moet wat wijzigingen maken en deze committen in je repository, iedere keer zodra het project een status bereikt die je wilt vastleggen.</p>
+
+<p>Onthoud dat ieder bestand in je werkmap in twee statussen kan verkeren: gevolgd (tracked) of niet gevolgd (untracked). Gevolgde bestanden zijn bestanden die in het laatste snapshot zaten; ze kunnen ongewijzigd, gewijzigd of staged zijn. Niet gevolgde bestanden zijn al het andere - ieder bestand in je werkmap dat niet in je laatste snapshot en niet in je staging gebied zit. Als je voor het eerst een repository cloned, zullen al je bestanden gevolgd en ongewijzigd zijn, omdat je ze zojuist ge-checkout en niet gewijzigd hebt.</p>
+
+<p>Zodra je bestanden wijzigt, ziet Git ze als gewijzigd omdat je ze veranderd hebt sinds je laatste commit. Je staged deze gewijzigde bestanden en commit al je ge-stagede wijzigingen, en de cyclus herhaalt zichzelf. Deze cyclus wordt in Figuur 2-1 geïllusteerd.</p>
+
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figuur 2-1. De levenscyclus van de status van je bestanden.</p>
+
+<h3 id='de_status_van_je_bestanden_controleren'>De Status Van Je Bestanden Controleren</h3>
+
+<p>Het hoofdcommando dat je zult gebruiken om te bepalen welk bestand zich in welke status bevindt is git status. Als je dit commando direct na een clone uitvoert, dan zul je zoiets als het volgende zien:</p>
+
+<pre><code>$ git status
+# On branch master
+nothing to commit (working directory clean)</code></pre>
+
+<p>Dit betekend dat je een schone werkmap hebt-met andere woorden, er zijn geen gevolgde en gewijzigde bestanden. Git ziet ook geen ongevolgde bestanden, anders zouden ze hier getoond worden. Als laatste verteld het commando op welke tak (branch) je nu zit. Voor nu is dit altijd de master, dat is de standaard; maak je je hier nog niet druk om. Het volgende hoofdstuk gaat in detail over takken en referenties.</p>
+
+<p>Stel dat je een nieuw bestand toevoegd aan je project, en simpel README bestand. Als het bestand voorheen nog niet bestond, en je doet <code>git status</code>, dan zul je je ongevolgde bestand zo zien:</p>
+
+<pre><code>$ vim README
+$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	README
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
+
+<p>Je kunt zien dat je nieuwe README bestand ongevolgd is, omdat het onder de “Untracked files” kop staat in je status output. Ongevolgd betekend eigenlijk dat Git een bestand ziet dat je niet in het vorige snapshot (commit) had; Git zal het niet in je commit snapshots toevoegen totdat jij haar er expliciet om vraagt. Ze doet dit zodat jij niet per ongeluk gegenereerde binaire bestanden toevoegd, of andere bestanden die je niet wou toevoegen. Je wilt dit README bestand wel toevoegen, dus laten we het gaan volgen.</p>
+
+<h3 id='nieuwe_bestanden_volgen_tracking'>Nieuwe Bestanden Volgen (Tracking)</h3>
+
+<p>Om een nieuw bestand te beginnen te volgen, gebruik je het commando <code>git add</code>. Om de README te volgen, kun je dit uitvoeren:</p>
+
+<pre><code>$ git add README</code></pre>
+
+<p>Als je je status commando nogmaals uitvoert, zie je dat je README bestand nu gevolgd en ge-staged is:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#</code></pre>
+
+<p>Je kunt zien dat het ge-staged is, omdat het onder de kop “Changes to be committed” staat. Als je op dit punt een commit doet, zal de versie van het bestand zoals het wat ten tijde van je git add commando in de historische snapshot toegevoegd worden. Je zult je misschien herinneren dat, toen je git init eerder uitvoerde, je daarna git add (bestanden) uitvooerde — dat was om bestanden in je map te beginnen te volgden. Het git add commando neemt een padnaam voor een bestand of een map; als het een map is, dan voegt het commando alle bestanden in die map recursief toe.</p>
+
+<h3 id='gewijzigde_bestanden_stagen'>Gewijzigde Bestanden Stagen</h3>
+
+<p>Laten we een gevolgd bestand wijzigen. Als je een voorheen gewijzigd bestand genaamd <code>benchmarks.rb</code> wijzigd, en dan je <code>status</code> commando nog eens uitvoerd, krijg je iets dat er zo uitziet:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Het benchmarks.rb bestand verschijnt onder een sectie genaamd “Changed but not updated” — wat betekend dat een bestand dat gevolgd wordt gewijzigd is in de werkmap, maar nog niet ge-staged. Om het te stagen, voer je het <code>git add</code> commando uit (het is een veelzijdig commando — je gebruikt het om bestanden te volgen, om bestanden te stagen, en andere dingen zoals een bestand met een mergeconflict als opgelost te markeren). Laten we <code>git add</code> nu uitvoeren om het benchmarks.rb bestand nu te stagen, en dan nog eens <code>git status</code>:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Beide bestanden zijn ge-staged en zullen in je volgende commit gaan. Stel dat je je op dit punt herinnert dat je een kleine wijziging in benchmarks.rb wil maken voor je volgende commit. Je kunt het opnieuw openen en die wijziging maken, en dan ben je klaar voor de commit. Maar, laten we <code>git status</code> nog een keer uitvoeren:</p>
+
+<pre><code>$ vim benchmarks.rb 
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Hé! Nu staat benchmarks.rb zowel bij de staged en unstaged. Hoe kan dat? Het blijkt dat Git een bestand staged precies zoals het is wanneer je het git add commando uitvoerd. Als je nu commit, dan zal de versie van benchmarks.rb zoals het was toen je voor &#8216;t laatst git add uitvoerde worden toegevoegd in de commit, en niet de versie van het bestand zoals ie eruit zit in je map wanneer je git commit uitvoerd. Als je een bestand wijzigd nadat je <code>git add</code> uitvoert, dan moet je <code>git add</code> nogmaals uitvoeren om de laatste versie van het bestand te stagen:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<h3 id='bestanden_negeren'>Bestanden Negeren</h3>
+
+<p>Vaak zul je een klasse bestanden hebben waarvan je niet wilt dat Git deze automatisch toevoegd of zelfs maar als ongevolgd toont. Dit zijn doorgaans automatisch gegenereerde bestanden zoals logbestanden of bestanden die geproduceerd worden door je bouwsysteem. In die gevallen kun je een bestand genaamd .gitignore maken, waarin patronen staan die die bestanden passen. Hier is een voorbeeld .gitignore bestand:</p>
+
+<pre><code>$ cat .gitignore
+*.[oa]
+*~</code></pre>
+
+<p>De eerste regel verteld Git om ieder bestand dat eindigt op een .o of .a – object en archief bestanden die het product kunnen zijn van het bouwen van je code. De tweede regel verteld Git dat ze alle bestanden die eindigen op een tilde (<code>~</code>), wat gebruikt wordt door editors zoals Emacs om tijdelijke bestanden te markeren, mag negeren. Je mag ook log, tmp of een pid map toevoegen; automatisch gegenereerde documentatie; enzovoort. Een .gitignore bestand aanmaken voordat je gaat beginnen is over &#8216;t algemeen een goed idee, zodat je niet per ongelijk bestanden commit die je echt niet in je repository wilt hebben.</p>
+
+<p>De regels voor patronen die je in het .gitignore bestand kunt zetten zijn als volgt:</p>
+
+<ul>
+<li>Lege regels of regels die beginnen met een # worden genegeerd.</li>
+
+<li>Standaard expansie patronen werken.</li>
+
+<li>Je mag patronen laten eindigen op een slash (<code>\</code>) om een map te specificeren.</li>
+
+<li>Je mag een patroon ontkennend maken door het te laten beginnen met een uitroepteken (<code>!</code>).</li>
+</ul>
+
+<p>Expansie (<code>glob</code>) patronen zijn vereenvoudigde reguliere expressies die shell omgevingen gebruiken. Een sterretje (<code>*</code>) komt overeen met nul of meer karakters; <code>[abc]</code> komt overeen met ieder karakter dat tussen de blokhaken staat (in dit geval a, b of c); een vraagteken (<code>?</code>) komt overeen met een enkel karakter; en blokhaken waar tussen karakters staan die gescheiden zijn door een streepje (<code>[0-9]</code>) komen overeen met ieder karakter wat tussen die karakters zit (in dit geval 0 tot en met 9).</p>
+
+<p>Hier is nog een voorbeeld van een .gitignore bestand:</p>
+
+<pre><code># a comment – this is ignored
+*.a       # no .a files
+!lib.a    # but do track lib.a, even though you&#39;re ignoring .a files above
+/TODO     # only ignore the root TODO file, not subdir/TODO
+build/    # ignore all files in the build/ directory
+doc/*.txt # ignore doc/notes.txt, but not doc/server/arch.txt</code></pre>
+
+<h3 id='je_staged_en_unstaged_wijzigigen_zien'>Je Staged En Unstaged Wijzigigen Zien</h3>
+
+<p>Als het <code>git status</code> commando te vaag is voor je – je wilt precies weten wat je vernanderd hebt, niet alleen welke bestanden veranderd zijn – dan kun je het <code>git diff</code> commando gebruiken. We zullen <code>git diff</code> later in meer detail bespreken; maar je zult het het meest gebruiken om deze twee vragen te beantwoorden: Wat heb je veranderd maar nog niet gestaged? En wat heb je gestaged en sta je op het punt te committen? Alhoewel <code>git status</code> deze vragen heel generiek beantwoord, laat <code>git diff</code> je de exacte toegevoegde en verwijderde regels zien – de patch, als het ware.</p>
+
+<p>Stel dat je het README bestand opnieuw veranderd en staged, en dan het benchmarks.rb bestand veranderd zonder het te stagen. Als je je <code>status</code> commando uitvoert, dan zie je nogmaals zoiets als dit:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Om te zien wat je gewijzigd maar nog niet gestaged hebt, typ <code>git diff</code> in zonder verdere argumenten:</p>
+
+<pre><code>$ git diff
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..da65585 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+           @commit.parents[0].parents[0].parents[0]
+         end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++
+         run_code(x, &#39;commits 2&#39;) do
+           log = git.commits(&#39;master&#39;, 15)
+           log.size</code></pre>
+
+<p>Dat commando vergelijkt wat er in je werkmap zit met wat er in je staging gebied zit. Het resultaat laat je zien welke wijzigingen je gedaan hebt, die je nog niet gestaged hebt.</p>
+
+<p>Als je wilt zien wat je gestaged hebt en in je volgende commit zal zitten, dan kun je <code>git diff –-cached</code> gebruiken. (In Git versie 1.6.1 en nieuwer kun je ook <code>git diff --staged</code> gebruiken, wat misschien beter te onthouden is.) Dit commando vergelijkt je staged wijzigingen met je laatste commit:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/README b/README
+new file mode 100644
+index 0000000..03902a1
+--- /dev/null
++++ b/README2
+@@ -0,0 +1,5 @@
++grit
++ by Tom Preston-Werner, Chris Wanstrath
++ http://github.com/mojombo/grit
++
++Grit is a Ruby library for extracting information from a Git repository</code></pre>
+
+<p>Het is belangrijk om te zien dat <code>git diff</code> zelf niet alle wijzigingen sinds je laatste commit laat zien – alleen wijzigingen die nog niet gestaged zijn. Dit kan verwarrend zijn, omdat als je al je wijzigingen gestaged hebt, <code>git diff</code> geen output zal geven.</p>
+
+<p>Nog een voorbeeld. Als je het benchmarks.rb bestand staged, en vervolgens veranderd, dan kun je <code>git diff</code> gebruiken om de wijzigingen in het bestand te zien dat gestaged is en de wijzigingen die niet gestaged zijn:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Nu kun je <code>git diff</code> gebruiken om te zien wat nog niet gestaged is</p>
+
+<pre><code>$ git diff 
+diff --git a/benchmarks.rb b/benchmarks.rb
+index e445e28..86b2f7c 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -127,3 +127,4 @@ end
+ main()
+
+ ##pp Grit::GitRuby.cache_client.stats 
++# test line</code></pre>
+
+<p>en <code>git diff --cached</code> om te zien wat je tot nog toe gestaged hebt:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..e445e28 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+          @commit.parents[0].parents[0].parents[0]
+        end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++              
+        run_code(x, &#39;commits 2&#39;) do
+          log = git.commits(&#39;master&#39;, 15)
+          log.size</code></pre>
+
+<h3 id='je_wijzigingen_committen'>Je Wijzigingen Committen</h3>
+
+<p>Nu dat je staging gebied ingesteld is op de manier zoals jij het wilt, kun je je wijzigingen committen. Onthoud dat alles wat niet gestaged is – ieder bestand dat je gemaakt of gewijzigd hebt en waarop je nog geen <code>git add</code> op uitgevoerd hebt – niet in deze commit mee zal gaan. Ze zullen als gewijzigde bestanden op je disk blijven staan. In dit geval zag je de laatste keer dat je <code>git status</code> uitvoerde, dat alles gestaged was. Dus je bent er klaar voor om je wijzigingen te committen. De makkelijkste manier om te committen is om <code>git commit</code> in te typen:</p>
+
+<pre><code>$ git commit</code></pre>
+
+<p>Dit start de door jou gekozen editor op. (Dit wordt bepaald door de <code>$EDITOR</code> omgevings variabele in je shell – meestal vim of emacs, alhoewel je dit kunt instellen op welke je ook wilt gebruiken met het <code>git config --global core.editor</code> commando zoals je in Hoofdstuk 1 gezien hebt).</p>
+
+<p>De editor laat de volgende tekst zien (dit voorbeeld is een Vim scherm):</p>
+
+<pre><code># Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       new file:   README
+#       modified:   benchmarks.rb 
+~
+~
+~
+&quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
+
+<p>Je kunt zien dat de standaard commit boodschap de laatste output van het <code>git status</code> commando in commentaar bevat en een lege regel bovenaan. Je kunt deze commentaren verwijderen en je eigen commit boodschap intypen, of je kunt ze laten staan om je eraan te helpe herinneren wat je aan het committen bent. (Om een meer expliciete herinnering van je wijzigingen te zien kun je de <code>-v</code> optie meegeven aan <code>git commit</code>. Als je dit doet zet git de diff van je verandering in je editor zodat je precies kunt zien wat je gedaan hebt.) Als je de editor verlaat, crëeert Git je commit boodschap (zonder de commentaren of de diff).</p>
+
+<p>Als alternatief kun je je commit boodschap met het <code>commit</code> commando meegeven door hem achter de -m optie te specificeren, zoals hier:</p>
+
+<pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
+[master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+ create mode 100644 README</code></pre>
+
+<p>Nu heb je je eerste commit gemaakt! Je kunt zien dat de commit je wat output over zichzelf heeft gegeven: op welke branch je gecommit hebt (master), welke SHA-1 checksum de commit heeft (<code>463dc4f</code>), hoeveel bestandend er veranderd zijn, en statistieken over toegevoegde en verwijderde regels in de commit.</p>
+
+<p>Onthoud dat de commit de snapshot, die je in je staging gebied ingesteld hebt, opslaat. Alles wat je niet gestaged hebt staat daar nog steeds gewijzigd; je kunt een volgende commit doen om het aan je geschiedenis toe te voegen. Iedere keer dat je een commit doet, leg je een snapshot van je project vast dat je later terug kunt draaien of mee kunt vergelijken.</p>
+
+<h3 id='het_staging_gebied_overslaan'>Het Staging Gebied overslaan</h3>
+
+<p>Alhoewel het ontzettend makkelijk kan zijn om commits precies zoals je wilt te maken, is het staging gebied soms iets ingewikkelder dan je in je manier van werken nodig hebt. Als je het staging gebied wilt overslaan, dan biedt Git een makkelijke route binnendoor. Door de <code>-a</code> optie aan het <code>git commit</code> commando mee te geven, zal Git automatisch ieder bestand dat al getracked wordt voor de commit stagen, zodat je het <code>git add</code> gedeelte kunt overslaan:</p>
+
+<pre><code>$ git status
+# On branch master
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#
+$ git commit -a -m &#39;added new benchmarks&#39;
+[master 83e38c7] added new benchmarks
+ 1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Let op dat je nu geen <code>git add</code> op het benchmarks.rb bestand hoeft te doen voordat je commit.</p>
+
+<h3 id='bestanden_verwijderen'>Bestanden Verwijderen</h3>
+
+<p>Om een bestand van Git te verwijderen, moet je het van de tracked bestanden verwijderen (om precies te zijn, verwijderen van je staging gebied) en dan een commit doen. Het <code>git rm</code> commando doet dat, en verwijderd het bestand ook van je werkmap zodat je het de volgende keer niet als een untracked bestand ziet.</p>
+
+<p>Als je het bestand simpelweg verwijderd uit je werkmap, zal het te zien zijn onder het &#8220;Changed but not updated&#8221; (dat wil zeggen, <em>unstaged</em>) gedeelte van je <code>git status</code> output:</p>
+
+<pre><code>$ rm grit.gemspec
+$ git status
+# On branch master
+#
+# Changed but not updated:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Als je daarna <code>git rm</code> uitvoerd, zal de verwijdering van het bestand gestaged worden:</p>
+
+<pre><code>$ git rm grit.gemspec
+rm &#39;grit.gemspec&#39;
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Als je de volgende keer een commit doet, zal het bestand verdwenen zijn en niet meer getracked worden. Als je het bestand veranderd hebt en al aan de index toegevoegd hebt, dan zul je de verwijdering moeten forceren met de <code>-f</code> optie. Dit is een veiligheids maatregel om te voorkomen dat je per ongeluk data die nog niet in een snapshot zit, en dus niet teruggehaald kan worden uit Git, weggooit.</p>
+
+<p>Een ander handigheidje wat je misschien wilt doen is het bestand in je werkmap houden, maar van je staging gebied verwijderen. Met andere woorden, je wilt het bestand misschien op je harde schijf bewaren, maar niet dat Git het bestand nog tracked. Dit is erg handig als je iets vergeten bent aan je <code>.gitignore</code> bestand toe te voegen, en het per ongeluk toegevoegd hebt. Zoals een groot logbestand, of een serie <code>.a</code> gecompileerde bestanden. Gebruik de <code>--cached</code> optie om dit te doen:</p>
+
+<pre><code>$ git rm --cached readme.txt</code></pre>
+
+<p>Je kunt bestanden, mappen en bestandspatronen aan het <code>git rm</code> commando meegeven. Dat betekend dat je zoiets als dit kunt doen</p>
+
+<pre><code>$ git rm log/\*.log</code></pre>
+
+<p>Let op de backslash (<code>\</code>) voor de <code>*</code>. Dit is nodig omdat Git zijn eigen bestandsnaam expansie doet, naast die van je shell. Dit commando verwijderd alle bestanden die de <code>.log</code> extensie hebben in de <code>log/</code> map. Of, je kunt zoiets als dit doen:</p>
+
+<pre><code>$ git rm \*~</code></pre>
+
+<p>Dit commando verwijderd alle bestanden die eindigen met <code>~</code>.</p>
+
+<h3 id='bestanden_verplaatsen'>Bestanden Verplaatsen</h3>
+
+<p>Anders dan vele andere VCS systemen, traceert Git niet expliciete verplaatsingen van bestanden. Als je een bestand een nieuwe naam geeft in Git, is er geen metadata opgeslagen in Git die verteld dat je het bestand hernoemt hebt. Maar, Git is slim genoeg om dit alsnog te zien – we zullen bestandsverplaatsing detectie wat later behandelen.</p>
+
+<p>Het is daarom een beetje verwarrend dat Git een <code>mv</code> commando heeft. Als je een bestand wilt hernoemen in Git, kun je zoiets als dit doen</p>
+
+<pre><code>$ git mv file_from file_to</code></pre>
+
+<p>en dat werkt prima. Sterker nog, als je zoiets als dit uitvoert en naar de status kijkt, zul je zien dat Git het als een hernoemd bestand beschouwd:</p>
+
+<pre><code>$ git mv README.txt README
+$ git status
+# On branch master
+# Your branch is ahead of &#39;origin/master&#39; by 1 commit.
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       renamed:    README.txt -&gt; README
+#</code></pre>
+
+<p>Maar, dat is gelijk aan het volgende uitvoeren:</p>
+
+<pre><code>$ mv README.txt README
+$ git rm README.txt
+$ git add README</code></pre>
+
+<p>Git komt er impliciet achter dat het om een hernoemd bestand gaat, dus het maakt niet uit of je een bestand op deze manier hernoemd of met het <code>mv</code> commando. Het enige echte verschil is dat het <code>mv</code> commando slechts één commando is in plaats van drie. En belangrijker nog is dat je iedere applicatie kunt gebruiken om een bestand te hernoemen, en de add/rm later kunt behandelen, voordat je commit.</p>
+
+<div id='nav'>
+<a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
+</div>

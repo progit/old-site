@@ -1,0 +1,109 @@
+---
+layout: translation
+title: Pro Git 4.1 Git op de Server De Protocollen
+---
+<h2 id='de_protocollen'>De Protocollen</h2>
+
+<p>Git kan vier veel voorkomende netwerk protocollen gebruiken om data te transporteren: Lokaal, Beveiligde Shell (SSH), Git en HTTP. Hier laten we zien wat het zijn, en in welke omstandigheden je ze wilt gebruiken (of juist niet).</p>
+
+<p>Het is belangrijk om te zien dat met uitzondering van de HTTP protocollen, ze allemaal een werkende Git versie op de server geinstalleerd moeten hebben.</p>
+
+<h3 id='lokaal_protocol'>Lokaal Protocol</h3>
+
+<p>Het meest basale is het <em>lokale protocol</em>, waarbij het remote repository in een andere map op de schijf is. Dit wordt vaak gebruikt als iedereen in je team toegang heeft op een gedeeld bestandssyteem zoals een NFS map, of in het weinig voorkomende geval dat iedereen in dezelfde computer werkt. Het laatste zou niet ideaal zijn, want dan zouden alle repositories zich op dezelfde computer bevinden, zodat de kans op een fataal verlies veel groter wordt.</p>
+
+<p>Als je een gedeeld bestandssyteem hebt, dan kun je clonen, pushen en pullen van een lokaal bestand gebaseerd repository. Om een dergelijk repository te clonen, of om er een als een remote aan een bestaand project toe te voegen, moet je het pad naar het repository als URL gebruiken. Bijvoorbeeld, om een lokaal repository te clonen, kun je zoiets als dit uitvoeren:</p>
+
+<pre><code>$ git clone /opt/git/project.git</code></pre>
+
+<p>Of je kunt dit doen:</p>
+
+<pre><code>$ git clone file:///opt/git/project.git</code></pre>
+
+<p>Git werkt iets anders als je explicite <code>file://</code> aan het begin van de URL zet. Als je alleen het pad specificeerd, probeert Git hardlinks te gebruiken, of het kopieerd te bestanden die het nodig heeft. Als je <code>file://</code> specificeerd, dan start Git de processen die het normaal gebruikt om data te transporteren over een netwerk, wat over het algemeen een stuk minder efficiente methode is om data te transporteren. De reden om <code>file://</code> wel te specificeren is als je een schone kopie van het repository wilt met de extra referenties of objecten eruit gelaten – over het algemeen na een import van een ander versie beheer systeem of iets dergelijks (zie Hoofdstuk 9 voor onderhoudstaken). We zullen het normale pad hier gebruiken, omdat het bijna altijd sneller is om het zo te doen.</p>
+
+<p>Om een lokaal repository aan een bestaand Git project toe te voegen, kun je zoiets als dit uitvoeren:</p>
+
+<pre><code>$ git remote add local_proj /opt/git/project.git</code></pre>
+
+<p>Daarna kun je pushen en pullen van dat remote alsof je over een netwerk werkt.</p>
+
+<h4 id='de_voordelen'>De Voordelen</h4>
+
+<p>De voordelen van bestands-gebaseerde repositories zijn dat ze eenvoudig zijn en ze maken gebruik van bestaande bestandspermissies en netwerk toegang. Als je al een gedeeld bestandssysteem hebt, waar je hele team al toegang tot heeft, dan is een repository opzetten heel gemakkelijk. Je stopt het bare repository ergens waar iedereen gedeelde toegang tot heeft, en stelt de lees- en schrijfrechten in zoals je dat bij iedere andere gedeelde map zou doen. In de volgende sectie &#8220;Git op een Server krijgen&#8221; bespreken we hoe je een kopie van een bare repository kunt exporteren voor dit doeleind.</p>
+
+<p>Dit is ook een fijne optie om snel werk van een repository van iemand anders te pakken. Als jij en een collega aan hetzelfde project aan het werk zijn, en hij wil dat je iets bekijkt, dan is het uitvoeren van een commando zoals <code>git pull /home/john/project</code> vaak makkelijker dan dat hij naar een remote server moet pushen, en jij er van moet pullen.</p>
+
+<h4 id='de_nadelen'>De Nadelen</h4>
+
+<p>De nadelen van deze methode zijn dat gedeelde toegang over het algemeen moeilijker op te zetten en te bereiken is vanaf meerdere lokaties dan basaal netwerk toegang. Als je wilt pushen van je laptop als je thuis bent, dan moet je de remote schijf aankoppelen, wat moeilijk en langzaam kan zijn in vergelijking tot netwerk gebaseerde toegang.</p>
+
+<p>Het is ook belangrijk om te melden dat het niet noodzakelijk de snelste optie is, als je een gedeeld koppelpunt of iets dergelijks gebruikt. Een lokaal repository is alleen snel als je snelle toegang tot de data hebt. Een repository op NFS is vaak langzamer dan het repository via SSH op dezelfde server, wat Git toelaat om vanaf lokale schijven te werken op ieder systeem.</p>
+
+<h3 id='het_ssh_protocol'>Het SSH Protocol</h3>
+
+<p>Waarschijnlijk het meest voorkomende protocol voor Git is SSH. Dit is omdat SSH toegang tot servers in veel plaatsen al geconfigureerd is – en als dat niet het geval is, dan is het makkelijk om dat te doen. SSH is ook het enige netwerk gebaseerde protocol waarvan je makkelijk kunt lezen en naartoe kunt schrijven. De andere twee netwerk protocollen (HTTP en Git) zijn over het algemeen alleen-lezen, dus zelfs als je ze al beschikbaar hebt voor de ongewassen massa, dan heb je nog steeds SSH nodig voor je eigen schrijftoegang. SSH is ook een geverifieerd protocol; en omdat het overal voorkomt, is het over het algemeen eenvoudig om in te stellen en te gebruiken.</p>
+
+<p>Om een Git repository via SSH te clonen, kun je een ssh:// URL opgeven zoals:</p>
+
+<pre><code>$ git clone ssh://user@server:project.git</code></pre>
+
+<p>Of je geeft geen protocol op – Git gaat uit van SSH als je niet expliciet bent:</p>
+
+<pre><code>$ git clone user@server:project.git</code></pre>
+
+<p>Je kunt ook de gebruiker niet opgeven, en Git neemt aan dat je de gebruiker bedoeld waarmee je op het moment bent ingelogged.</p>
+
+<h4 id='de_voordelen'>De Voordelen</h4>
+
+<p>Er zijn vele voordelen om SSH te gebruiken. De eerste is dat je het eigenlijk wel moet gebruiken als je geverifieerde schrijftoegang op je repository via een netwerk wilt. Het tweede is dat het relatief eenvoudig in te stellen is – SSH daemons komen veel voor, veel systeembeheerders hebben er ervaring mee, en veel operating systemen zijn er mee uitgerust of hebben applicaties om ze te beheren. Daarnaast is toegang via SSH veilig – alle data transporten zijn versleuteld en geverifieerd. En als laatste is SSH efficient, zoals het Git en lokale protocol, waarbij de data zo compact mogelijk wordt gemaakt voordat het getransporteerd wordt.</p>
+
+<h4 id='de_nadelen'>De Nadelen</h4>
+
+<p>Het negatieve aspect van SSH is dat je er geen anonieme toegang over kunt geven. Mensen moeten via SSH toegang hebben om er gebruik van te kunnen maken, zelfs als het alleen lezen is, zodat SSH toegang niet bevordelijk is voor open source projecten. Als je het alleen binnen je bedrijfsnetwerk gebruikt, dan kan SSH misschien het enige protocol zijn waar je mee in aanraking komt. Als je anonieme alleen-lezen toegang wilt toestaan tot je projecten, dan moet je SSH voor jezelf instellen om over te pushen, maar iets anders voor anderen om over te pullen.</p>
+
+<h3 id='het_git_protocol'>Het Git Protocol</h3>
+
+<p>Het volgende is het Git protocol. Dit is een aparte daemon, die samen met Git geleverd wordt; het luistert op een toegewezen poort (9418), dat een vergelijkbaare dienst verleend als het SSH protocol, maar dan zonder enige verificatie. Om een repository te serveren over het Git protocol, moet je het <code>git-export-daemon-ok</code> bestand aanmaken – de daemon zal een repository zonder dit bestand erin niet serveren – maar buiten dat is er geen beveiliging. Ofwel het Git repository is er om gecloned te kunnen worden door iedereen, of het is er helemaal niet. Dit betekend dat er over het algemeen geen pushing is via dit protocol. Je kunt push toegang aanzetten; maar gegeven het gebrek aan verificatie als je push toegang aan zet, kan iedereen die jouw project&#8217;s URL op het internet vind pushen naar jouw project. We volstaan met te zeggen dat dit zeldzaam is.</p>
+
+<h4 id='de_voordelen'>De Voordelen</h4>
+
+<p>Het Git protocol is het snelste dat beschikbaar is. Als je veel verkeer serveert voor een publiek project, of een zeer groot project dat geen gebruikersverificatie nodig heeft voor leestoegang, dan is het waarschijnlijk dat je een Git daemon wilt instellen om je project te serveren. Het maakt van hetzelfde data-transport mechanisme gebruik als het SSH protocol, maar dan zonder de extra belasting van versleuteling en verificatie.</p>
+
+<h4 id='de_nadelen'>De Nadelen</h4>
+
+<p>Het nadeel van het Git protocol is het gebrek van verificatie. Het is over het algemeen onwenselijk dat het Git protocol de enige toegang tot je project is. Over het algemeen zul je het samen met SSH toegang gebruiken voor de paar ontwikkelaars die push (schrijf-)toegang hebben en de rest laat je <code>git://</code> voor alleen leestoegang gebruiken. Het is waarschijnlijk ook het meest ingewikkelde protocol om in te stellen. Het moet een eigen daemon hebben, die speciaal ontworpen is – we zullen er een instellen in het &#8220;Gitosis&#8221; gedeelte van dit hoofdstuk – het gebruikt <code>xinetd</code> configuratie of iets dergelijks, wat niet altijd eenvoudig is. Het heeft ook firewall toegang tot poort 9418 nodig, wat geen standaard poort is dat bedrijfsfirewalls altijd toestaan. Achter grote bedrijfsfirewalls, is deze obscure poort meestal geblokkeerd.</p>
+
+<h3 id='het_https_protocol'>Het HTTP/S Protocol</h3>
+
+<p>Als laatste hebben we het HTTP protocol. Het mooie aan het HTTP of HTTPS protocol is dat het simpel in te stellen is. Eigenlijk is alles wat je moet doen het bare Git repository in je HTTP document root zetten, en een specifieke <code>post-update</code> hook (haak) instellen en je bent klaar (zie hoofdstuk 7 voor details over Git hooks). Op dat punt kan iedereen die toegang heeft tot de webserver waaronder je het repository gezet hebt ook je repository clonen. Om leestoegang tot je repository over HTTP toe te staan, doe je zoiets als het volgende:</p>
+
+<pre><code>$ cd /var/www/htdocs/
+$ git clone --bare /path/to/git_project gitproject.git
+$ cd gitproject.git
+$ mv hooks/post-update.sample hooks/post-update
+$ chmod a+x hooks/post-update</code></pre>
+
+<p>Dat is alles. De <code>post-update</code> hook, die standaard bij Git zit, voert het noodzakelijke commando uit (<code>git update-server-info</code>) om HTTP fetching en cloning goed werkend te krijgen. Dit commando wordt uitgevoerd als je naar dit repository via SSH pushed; en dan kunnen andere mensen clonen met behulp van zoiets als</p>
+
+<pre><code>$ git clone http://example.com/gitproject.git</code></pre>
+
+<p>In dit geval, gebruiken we het <code>/var/www/htdocs</code> pad wat gebruikelijk is voor Apache opstellingen., maar je kunt iedere statische webserver gebruiken – stop het bare repository in haar pad. De Git data wordt geserveerd als standaard statische bestanden (zie hoofdstuk 9 voor details over hoe het precies geserveerd wordt).</p>
+
+<p>Het ook is mogelijk om Git over HTTP te laten pushen, alhoewel dat geen veelgebruikte techniek is en vereist dat je complexe WebDAV vereisten insteld. Omdat het zelden gebruikt wordt, zullen we het niet in dit boek beschrijven. Als je geinteresseerd bent om de HTTP-push protocollen te gebruiken, dan kun je op <code>http://www.kernel.org/pub/software/scm/git/docs/howto/setup-git-server-over-http.txt</code> lezen hoe je een repository kunt maken. Een fijn ding aan Git laten pushen over HTTP is dat je iedere WebDAV server kunt gebruiken, zonder specifieke Git eigenschappen; dus je kunt deze functionaliteit gebruiken als je web-hosting provider WebDAV ondersteund voor schrijf vernieuwingen aan je webpagina.</p>
+
+<h4 id='de_voordelen'>De Voordelen</h4>
+
+<p>Het voordeel van het gebruik van het HTTP protocol is dat het eenvoudig in te stellen is. Een handvol benodigde commando&#8217;s uitvoeren zorgt voor een eenvoudige manier om de wereld leestoegang te geven aan je Git repository. Het kost slechts een paar minuten om te doen. Het HTTP protocol is niet erg belastend voor de systeembronnen van je server. Omdat het over het algemeen een statische webserver gebruikt om alle data te serveren, een normale Apache server kan gemiddeld duizenden bestanden serveren per seconde – is het moeilijk om zelfs een kleine server te overbelasten.</p>
+
+<p>Je kunt ook je repositories alleen-lezen serveren via HTTPS, wat betekend dat je het transport kunt versleutelen; of je kunt zelfs zover gaan dat je clients een specifiek gesigneerd SSL certificaat moeten gebruiken. Als je over het algemeen zo ver gaat, dan is het makkelijker om publieke SSH sleutels te gebruiken; maar het kan een betere oplossing in jouw specifieke geval om gesigneerde SSL certificaten of andere HTTP-gebaseerde verificatie methoden te gebruiken voor alleen-lezen toegang via HTTPS.</p>
+
+<p>Een ander fijn ding is dat HTTP zo&#8217;n veel voorkomend protocol is dat bedrijfsfirewalls vaak zo ingesteld zijn dat ze verkeerd via deze poort toelaten.</p>
+
+<h4 id='de_nadelen'>De Nadelen</h4>
+
+<p>Het nadeel van je repository serveren via HTTP is dat het relatief inefficient voor de client is. Over het algemeen duurt het een stuk langer om te clonen en te fetchen van het repository, en je hebt vaak een stuk meer netwerk belasting en transport volume via HTTP dan met ieder van de andere netwerk protocollen. Omdat het niet zo intelligent is om alleen de data te versturen die je nodig hebt – er wordt geen dynamisch werk door de server gedaan in deze transacties – wordt vaak naar het HTTP protocol gerefereerd als zijnde een <em>dom</em> protocol. Voor meer informatie over de verschillen in efficientie tussen het HTTP protocol en andere protocollen, zie Hoofdstuk 9.</p>
+
+<div id='nav'>
+<a href='ch4-0.html'>prev</a> | <a href='ch4-2.html'>next</a>
+</div>

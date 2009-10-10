@@ -1,0 +1,48 @@
+---
+layout: translation
+title: Pro Git 4.6 Git op de Server GitWeb
+---
+<h2 id='gitweb'>GitWeb</h2>
+
+<p>Now that you have basic read/write and read-only access to your project, you may want to set up a simple web-based visualizer. Git comes with a CGI script called GitWeb that is commonly used for this. You can see GitWeb in use at sites like <code>http://git.kernel.org</code> (see Figure 4-1). Nu dat je basis lees/schrijf en alleen-lezen toegang tot je project hebt, wil je misschien een eenvoudige web-gebaseerde visualiseerder instellen. Git levert een CGI script genaamd GitWeb mee, dat veelal voor hiervoor gebruikt wordt. Je kunt GitWeb in gebruik zien bij sites zoals <code>http://git.kernel.org</code> (zie Figuur 4-1).</p>
+
+<p><center><img src="/figures/ch4/18333fig0401-tn.png"></center><br/> Figuur 4-1. De GitWeb web-gebaseerde gebruikers interface.</p>
+
+<p>Als je wil zien hoe GitWeb er op jouw project uitziet, dan heeft Git een commando waarmee je een tijdelijke instantie op kunt starten als je een lichtgewicht server op je systeem hebt zoals <code>lighttpd</code> of <code>webrick</code>. Op Linux machines is <code>lighttpd</code> vaak geinstalleerd, dus je kunt het misschien draaiend krijgen door <code>git instaweb</code> in te typen in je project map. Als je op een Mac werkt: Leopard heeft Ruby voorgeinstalleerd, dus <code>webrick</code> zou je beste gok kunnen zijn. Om <code>instaweb</code> met een server anders dan lighttpd te starten, kun je het uitvoeren met de <code>--httpd</code> optie.</p>
+
+<pre><code>$ git instaweb --httpd=webrick
+[2009-02-21 10:02:21] INFO  WEBrick 1.3.1
+[2009-02-21 10:02:21] INFO  ruby 1.8.6 (2008-03-03) [universal-darwin9.0]</code></pre>
+
+<p>Dat start een HTTPD server op poort 1234 op en start automatisch een web browser op die met die pagina opent. Het is dus makkelijk voor jou. Als je klaar bent en de server wilt afsluiten, dan kun je hetzelfde commando uitvoeren met de <code>--stop</code> optie:</p>
+
+<pre><code>$ git instaweb --httpd=webrick --stop</code></pre>
+
+<p>Als je de web interface doorlopend op een server wilt draaien voor je team of voor een open source project dat je serveert, dan moet je het CGI script instellen zodat het door je normale web server geserveerd wordt. Sommige Linux distributies hebben een <code>gitweb</code> pakket dat je misschien kunt installeren via <code>apt</code> of <code>yum</code>, dus misschien wil je dat eerst proberen. We zullen zeer binnenkort door een handmatige GitWeb installatie heenlopen. Eerst moet je de Git broncode pakken, waar GitWeb bij zit, en het persoonlijke CGI script genereren:</p>
+
+<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
+$ cd git/
+$ make GITWEB_PROJECTROOT=&quot;/opt/git&quot; \
+        prefix=/usr gitweb/gitweb.cgi
+$ sudo cp -Rf gitweb /var/www/</code></pre>
+
+<p>Let op dat je het commando moet vertellen waar het je Git repositories kan vinden met de <code>GITWEB_PROJECTROOT</code> variabele. Nu moet je zorgen dat de Apache server CGI gebruikt voor dat script, waarvoor je een VirtualHost kunt toevoegen:</p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+    ServerName gitserver
+    DocumentRoot /var/www/gitweb
+    &lt;Directory /var/www/gitweb&gt;
+        Options ExecCGI +FollowSymLinks +SymLinksIfOwnerMatch
+        AllowOverride All
+        order allow,deny
+        Allow from all
+        AddHandler cgi-script cgi
+        DirectoryIndex gitweb.cgi
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre>
+
+<p>Nogmaals, GitWeb kan geserveerd worden met iedere CGI capabele web server; als je iets anders prefereerd dat zou het niet moeilijk in te stellen moeten zijn. Op dit punt zou je in staat moeten zijn om <code>http://gitserver/</code> te bezoeken en je repositories online te zien, en kun je <code>http://git.gitserver</code> gebruiken om je repositories over HTTP te clonen en te fetchen.</p>
+
+<div id='nav'>
+<a href='ch4-5.html'>prev</a> | <a href='ch4-7.html'>next</a>
+</div>

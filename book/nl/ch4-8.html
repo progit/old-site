@@ -1,0 +1,71 @@
+---
+layout: translation
+title: Pro Git 4.8 Git op de Server Git Daemon
+---
+<h2 id='git_daemon'>Git Daemon</h2>
+
+<p>Voor publieke ongeverifieerde leestoegang to je projecten zul je voorbij het HTTP protocol willen, en overstappen op het Git protocol. De hoofdreden is snelheid. Het Git protocol is veel efficienter en daarmee sneller dan het HTTP protocol, dus het zal je gebruikers tijd besparen.</p>
+
+<p>Nogmaals, dit is voor ongeverifieerde alleen-lezen toegang. Als je dit op een server buiten je firewall draait, zul je het alleen moeten gebruiken voor projecten die voor de hele wereld toegankelijk moeten zijn. Als de server waarop je het draait binnen je firewall staat, zou je het kunnen gebruiken voor projecten waarbij een groot aantal mensen of computers (continue integratie of bouwservers) alleen-lezen toegang moeten hebben, waarbij je niet voor iedereen een SSH sleutel wilt toevoegen.</p>
+
+<p>In ieder geval is het Git protocol relatief eenvoudig in te stellen. Eigenlijk is het enige dat je moet doen dit commando een daemon uitvoeren:</p>
+
+<pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
+
+<p><code>--reuseaddr</code> staat de server toe om te herstarten zonder te wachten tot oude connecties een time out krijgen, de <code>--base-path</code> optie staat mensen toe om projecten te clonen zonder het volledige pad te specificeren, en het pad aan het einde verteld de Git daemon waar hij moet kijken voor de te exporteren repositories. Als je een firewall draait, zul je er ook een gat in moeten maken in poort 9418 op de doos waar je dit op insteld.</p>
+
+<p>Je kunt dit proces op een aantal manieren daemonisern, afhankelijk van het besturingssystem waarop je draait. Op een Ubuntu machine, zul je een Upstart script gebruiken. Dus in het volgende bestand</p>
+
+<pre><code>/etc/event.d/local-git-daemon</code></pre>
+
+<p>stop je dit script:</p>
+
+<pre><code>start on startup
+stop on shutdown
+exec /usr/bin/git daemon \
+    --user=git --group=git \
+    --reuseaddr \
+    --base-path=/opt/git/ \
+    /opt/git/
+respawn</code></pre>
+
+<p>Omwille van veiligheidsredenen, wordt sterk aangeraden om deze daemon uit te voeren als gebruiker met alleen-lezen toegang op de repositories – je kunt dit makkelijk doen door een gebruiker &#8216;git-ro&#8217; aan te maken en de daemon als deze uit te voeren. Om het eenvoudig te houden voeren we het als dezelfde &#8216;git&#8217; gebruiker uit, als waarin Gitosis draait.</p>
+
+<p>Als je je machine herstart, zal je Git daemon automatisch opstarten en herstarten als hij onderuit gaat. Om het te laten draaien zonder te herstarten, kun je dit uitvoeren:</p>
+
+<pre><code>initctl start local-git-daemon</code></pre>
+
+<p>Op andere systemen zul je misschien <code>xinetd</code> willen gebruiken, een script in je <code>sysvinit</code> systeem, of iets anders – zolang je dat commando maar ge-daemoniseerd krijgt en op een of andere manier in de gaten gehouden wordt.</p>
+
+<p>Vervolgens zul je je Gitosis server moeten vertellen welke repositories je toe wilt staan om ongeverifieerde Gitserver gebaseerde toegang op wil geven. Als je een sectie toevoegt voor iedere repository, dan kun je diegenen specificeren waarop je je Git daemon wil laten lezen. Als je Git protocol toegang tot je iphone project wilt toestaan, dan voeg je dit toe aan het eind van het <code>gitosis.conf</code> bestand:</p>
+
+<pre><code>[repo iphone_project]
+daemon = yes</code></pre>
+
+<p>Als dat gecommit en gepushed is, dan zou je draaiende daemon verzoeken moeten serveren aan iedereen die toegang heeft op poort 9418 van je server.</p>
+
+<p>Als je besluit om Gitosis niet te gebruiken, maar je wilt toch een Git daemon instellen, dan moet je dit op ieder project uitvoeren waarvoor je de Git daemon wilt laten serveren:</p>
+
+<pre><code>$ cd /path/to/project.git
+$ touch git-daemon-export-ok</code></pre>
+
+<p>De aanwezigheid van dat bestand verteld Git dat het OK is om dit project zonder verificatie te serveren.</p>
+
+<p>Gitosis kan ook de projecten die GitWeb toont beheren. Eerst moet je zoiets als het volgende aan het <code>/etc/gitweb.conf</code> bestand toevoegen:</p>
+
+<pre><code>$projects_list = &quot;/home/git/gitosis/projects.list&quot;;
+$projectroot = &quot;/home/git/repositories&quot;;
+$export_ok = &quot;git-daemon-export-ok&quot;;
+@git_base_url_list = (&#39;git://gitserver&#39;);</code></pre>
+
+<p>Je kunt instellen welke projecten GitWeb gebruikers laat bladeren door een <code>gitweb</code> instelling in het Gitosis configuratie bestand toe te voegen, of te verwijderen. Bijvoorbeeld, als je het iphone project op GitWeb wilt tonen, zorg je dat de <code>repo</code> instelling er zo uitziet:</p>
+
+<pre><code>[repo iphone_project]
+daemon = yes
+gitweb = yes</code></pre>
+
+<p>Als je nu het project commmit en pushed, start GitWeb automatisch met het tonen van je iphone project.</p>
+
+<div id='nav'>
+<a href='ch4-7.html'>prev</a> | <a href='ch4-9.html'>next</a>
+</div>

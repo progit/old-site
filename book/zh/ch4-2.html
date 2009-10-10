@@ -1,59 +1,59 @@
 ---
 layout: translation
-title: Pro Git 4.2 服务器上的Git Getting Git on a Server
+title: Pro Git 4.2 服务器上的 Git 在服务器部署 Git
 ---
-<h2 id='getting_git_on_a_server'>Getting Git on a Server</h2>
+<h2 id='_git'>在服务器部署 Git</h2>
 
-<p>In order to initially set up any Git server, you have to export an existing repository into a new bare repository — a repository that doesn’t contain a working directory. This is generally straightforward to do. In order to clone your repository to create a new bare repository, you run the clone command with the <code>--bare</code> option. By convention, bare repository directories end in <code>.git</code>, like so:</p>
+<p>开始架设 Git 服务器的时候，需要把一个现存的仓库导出为新的纯仓库——不包含当前工作目录的仓库。方法非常直截了当。 把一个仓库克隆为纯仓库，可以使用 clone 命令的 <code>--bare</code> 选项。纯仓库的目录名以 <code>.git</code> 结尾， 如下：</p>
 
 <pre><code>$ git clone --bare my_project my_project.git
 Initialized empty Git repository in /opt/projects/my_project.git/</code></pre>
 
-<p>The output for this command is a little confusing. Since <code>clone</code> is basically a <code>git init</code> then a <code>git fetch</code>, we see some output from the <code>git init</code> part, which creates an empty directory. The actual object transfer gives no output, but it does happen. You should now have a copy of the Git directory data in your <code>my_project.git</code> directory.</p>
+<p>该命令的输出有点迷惑人。由于 <code>clone</code> 基本上等于 <code>git init</code> 加 <code>git fetch</code>，这里出现的就是 <code>git init</code> 的输出，它建立了一个空目录。实际的对象转换不会有任何输出，不过确实发生了。现在在 <code>my_project.git</code> 中已经有了一份 Git 目录数据的副本。</p>
 
-<p>This is roughly equivalent to something like</p>
+<p>大体上相当于</p>
 
 <pre><code>$ cp -Rf my_project/.git my_project.git</code></pre>
 
-<p>There are a couple of minor differences in the configuration file; but for your purpose, this is close to the same thing. It takes the Git repository by itself, without a working directory, and creates a directory specifically for it alone.</p>
+<p>在配置文件中有几个小改变；不过从效果角度讲，克隆的内容是一样的。它仅包含了 Git 目录，没有工作目录，并且专门为之（译注： Git 目录）建立了一个单独的目录。</p>
 
-<h3 id='putting_the_bare_repository_on_a_server'>Putting the Bare Repository on a Server</h3>
+<h3 id='id246'>将纯目录转移到服务器</h3>
 
-<p>Now that you have a bare copy of your repository, all you need to do is put it on a server and set up your protocols. Let’s say you’ve set up a server called <code>git.example.com</code> that you have SSH access to, and you want to store all your Git repositories under the <code>/opt/git</code> directory. You can set up your new repository by copying your bare repository over:</p>
+<p>有了仓库的纯副本以后，剩下的就是把它放在服务器上并设定相关的协议。假设一个域名为 <code>git.example.com</code> 的服务器已经架设好，并可以通过 SSH 访问，而你想把所有的 Git 仓库储存在 <code>/opt/git</code> 目录下。只要把纯仓库复制上去：</p>
 
 <pre><code>$ scp -r my_project.git user@git.example.com:/opt/git</code></pre>
 
-<p>At this point, other users who have SSH access to the same server which has read-access to the <code>/opt/git</code> directory can clone your repository by running</p>
+<p>现在，其他对该服务器具有 SSH 访问权限并可以读取 <code>/opt/git</code> 的用户可以用以下命令克隆：</p>
 
 <pre><code>$ git clone user@git.example.com:/opt/git/my_project.git</code></pre>
 
-<p>If a user SSHs into a server and has write access to the <code>/opt/git/my_project.git</code> directory, they will also automatically have push access. Git will automatically add group write permissions to a repository properly if you run the <code>git init</code> command with the <code>--shared</code> option.</p>
+<p>假如一个 SSH 用户对 <code>/opt/git/my_project.git</code> 目录有写权限，他会自动具有推送权限。这时如果运行 <code>git init</code> 命令的时候加上 <code>--shared</code> 选项，Git 会自动对该仓库加入可写的组。</p>
 
 <pre><code>$ ssh user@git.example.com
 $ cd /opt/git/my_project.git
 $ git init --bare --shared</code></pre>
 
-<p>You see how easy it is to take a Git repository, create a bare version, and place it on a server to which you and your collaborators have SSH access. Now you’re ready to collaborate on the same project.</p>
+<p>可见选择一个 Git 仓库，创建一个纯的版本，最后把它放在你和同事都有 SSH 访问权的服务器上是多么容易。现在已经可以开始在同一项目上密切合作了。</p>
 
-<p>It’s important to note that this is literally all you need to do to run a useful Git server to which several people have access — just add SSH-able accounts on a server, and stick a bare repository somewhere that all those users have read and write access to. You’re ready to go — nothing else needed.</p>
+<p>值得注意的是，这的的确确是架设一个少数人具有连接权的 Git 服务的全部——只要在服务器上加入可以用 SSH 接入的帐号，然后把纯仓库放在大家都有读写权限的地方。一切都做好了，无须更多。</p>
 
-<p>In the next few sections, you’ll see how to expand to more sophisticated setups. This discussion will include not having to create user accounts for each user, adding public read access to repositories, setting up web UIs, using the Gitosis tool, and more. However, keep in mind that to collaborate with a couple of people on a private project, all you <em>need</em> is an SSH server and a bare repository.</p>
+<p>下面的几节中，你会了解如何扩展到更复杂的设定。这些内容包含如何避免为每一个用户建立一个账户，给仓库添加公共读取权限，架设网页界面，使用 Gitosis 工具等等。然而，只是和几个人在一个不公开的项目上合作的话，仅仅是一个 SSH 服务器和纯仓库就足够了，请牢记这一点。</p>
 
-<h3 id='small_setups'>Small Setups</h3>
+<h3 id='id247'>小型安装</h3>
 
-<p>If you’re a small outfit or are just trying out Git in your organization and have only a few developers, things can be simple for you. One of the most complicated aspects of setting up a Git server is user management. If you want some repositories to be read-only to certain users and read/write to others, access and permissions can be a bit difficult to arrange.</p>
+<p>如果设备较少或者你只想在小型的开发团队里尝试 Git ，那么一切都很简单。架设 Git 服务最复杂的方面之一在于账户管理。如果需要仓库对特定的用户可读，而给另一部分用户读写权限，那么访问和许可的安排就比较困难。</p>
 
-<h4 id='ssh_access'>SSH Access</h4>
+<h4 id='ssh_'>SSH 连接</h4>
 
-<p>If you already have a server to which all your developers have SSH access, it’s generally easiest to set up your first repository there, because you have to do almost no work (as we covered in the last section). If you want more complex access control type permissions on your repositories, you can handle them with the normal filesystem permissions of the operating system your server runs.</p>
+<p>如果已经有了一个所有开发成员都可以用 SSH 访问的服务器，架设第一个服务器将变得异常简单，几乎什么都不用做（正如上节中介绍的那样）。如果需要对仓库进行更复杂的访问控制，只要使用服务器操作系统的本地文件访问许可机制就行了。</p>
 
-<p>If you want to place your repositories on a server that doesn’t have accounts for everyone on your team whom you want to have write access, then you must set up SSH access for them. We assume that if you have a server with which to do this, you already have an SSH server installed, and that’s how you’re accessing the server.</p>
+<p>如果需要团队里的每个人都对仓库有写权限，又不能给每个人在服务器上建立账户，那么提供 SSH 连接就是唯一的选择了。我们假设用来共享仓库的服务器已经安装了 SSH 服务，而且你通过它访问服务器。</p>
 
-<p>There are a few ways you can give access to everyone on your team. The first is to set up accounts for everybody, which is straightforward but can be cumbersome. You may not want to run <code>adduser</code> and set temporary passwords for every user.</p>
+<p>有好几个办法可以让团队的每个人都有访问权。第一个办法是给每个人建立一个账户，直截了当但过于繁琐。反复的运行 <code>adduser</code> 并且给所有人设定临时密码可不是好玩的。</p>
 
-<p>A second method is to create a single &#8216;git&#8217; user on the machine, ask every user who is to have write access to send you an SSH public key, and add that key to the <code>~/.ssh/authorized_keys</code> file of your new &#8216;git&#8217; user. At that point, everyone will be able to access that machine via the &#8216;git&#8217; user. This doesn’t affect the commit data in any way — the SSH user you connect as doesn’t affect the commits you’ve recorded.</p>
+<p>第二个办法是在主机上建立一个 <code>git</code> 账户，让每个需要写权限的人发送一个 SSH 公钥，然后将其加入 <code>git</code> 账户的 <code>~/.ssh/authorized_keys</code> 文件。这样一来，所有人都将通过 <code>git</code> 账户访问主机。这丝毫不会影响提交的数据——访问主机用的身份不会影响commit的记录。</p>
 
-<p>Another way to do it is to have your SSH server authenticate from an LDAP server or some other centralized authentication source that you may already have set up. As long as each user can get shell access on the machine, any SSH authentication mechanism you can think of should work.</p>
+<p>另一个办法是让 SSH 服务器通过某个 LDAP 服务，或者其他已经设定好的集中授权机制，来进行授权。只要每个人都能获得主机的 shell 访问权，任何可用的 SSH 授权机制都能达到相同效果。</p>
 
 <div id='nav'>
 <a href='ch4-1.html'>prev</a> | <a href='ch4-3.html'>next</a>

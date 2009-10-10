@@ -1,0 +1,66 @@
+---
+layout: translation
+title: Pro Git 1.5 Aan de Slag Git Klaarmaken Voor Eerste Gebruik
+---
+<h2 id='git_klaarmaken_voor_eerste_gebruik'>Git Klaarmaken Voor Eerste Gebruik</h2>
+
+<p>Nu je Git op je computer hebt staan, is het handig dat je een paar dingen doet om je Gitomgeving aan je voorkeuren aan te passen. Je hoeft dit normaliter maar één keer te doen; ze blijven hetzelfde als je een nieuwe versie van Git installeerd. Je kan ze op elk moment weer veranderen door de commando’s opnieuw in te voeren.</p>
+
+<p>Git komt standaard met een gereedschap genaamd git config, waarmee je configuratie-eigenschappen, die alle aspecten van het uiterlijk en gedrag van Git aanpassen, kan bekijken en veranderen. Deze eigenschappen kunnen op drie verschillende plaatsen worden bewaard:</p>
+
+<ul>
+<li>Het bestand <code>/etc/gitconfig</code>: Bevat eigenschappen voor elke account op de computer en al hun repositories. Als je de optie de optie <code>--system</code> meegeeft aan <code>git config</code>, zal het dit bestand gebruiken om opties te lezen en veranderen.</li>
+
+<li>Het bestand <code>~/.gitconfig</code>: Eigenschappen voor jouw account. Je kan Git dit bestand laten gebruiken door de optie <code>--global</code> mee te geven.</li>
+
+<li>Het configbestand in de Gitmap (dus <code>.git/config</code>) van het repository wat je op het moment gebruik: Specifiek voor dat ene repository. Elk niveau is belangrijker dan het voorgaande, dus waarden in <code>.git/config</code> worden gebruikt in plaats die in <code>/etc/gitconfig</code>.</li>
+</ul>
+
+<p>Op systemen met Windows zoekt Git in de <code>$HOME</code>-map voor het <code>.gitconfig</code>-bestand (<code>C:\Documents and Settings\$USER</code> voor de meesten). Het kijkt ook nog naar <code>/etc/gitconfig</code>, maar dan op de plek waar je MSys hebt staan, wat de plek is waar je Git op je Windowscomputer geïnstalleerd hebt.</p>
+
+<h3 id='jouw_identiteit'>Jouw Identiteit</h3>
+
+<p>Het eerste wat je zou moeten doen nadat je Git geïnstalleerd hebt, is je gebruikersnaam en e-mail address opgeven. Dat is belangrijk, omdat elke commit in Git deze informatie gebruikt, en het onveranderlijk in de commits die je ronddeeld verpakt zit:</p>
+
+<pre><code>$ git config --global user.name &quot;Jan Steen&quot;
+$ git config --global user.email jansteen@ergens.com</code></pre>
+
+<p>Nogmaals, dit hoef je maar één keer te doen als je de <code>--global</code> optie eraan plakt, omdat Git die informatie zal gebruiken voor alles wat je doet op dat systeem. Als je een andere naam of e-mail wilt gebruiken voor specifieke projecten, kan je het commando uitvoeren zonder de <code>--global</code> optie als je in de map van dat project zit.</p>
+
+<h3 id='je_tekstverwerker'>Je Tekstverwerker</h3>
+
+<p>Nu Git weet wie je bent, kan je de tekstverwerker instellen die gebruikt zal worden als Git je een bericht in wil laten typen. Standaard gebruikt Git de standaardtekstverwerker van je systeem, wat meestal Vi of Vim is. Als je een andere tekstverwerker wilt gebruiken, zoals Emacs, kan je het volgende doen:</p>
+
+<pre><code>$ git config --global core.editor emacs</code></pre>
+
+<h3 id='je_diffprogramma'>Je Diffprogramma</h3>
+
+<p>En andere bruikbare optie die je misschien wel wilt instellen is het standaard diffprogramma om samenvoegingsconflicten op te lossen. Stel dat je vimdiff wilt gebruiken:</p>
+
+<pre><code>$ git config --global merge.tool vimdiff</code></pre>
+
+<p>Git accepteert kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge en opendiff als geldige samenvoegingsgereedschap. Je kan ook een ander programma gebruiken; zie Hoofdstuk 7 voor meer informatie daarover.</p>
+
+<h3 id='je_instellingen_bekijken'>Je Instellingen Bekijken</h3>
+
+<p>Als je je instellingen wilt zien, kan je <code>git config --list</code> gebruiken om een lijstje met alle instellingen die Git vanaf de huidige map kan vinden:</p>
+
+<pre><code>$ git config --list
+user.name=Scott Chacon
+user.email=schacon@gmail.com
+color.status=auto
+color.branch=auto
+color.interactive=auto
+color.diff=auto
+...</code></pre>
+
+<p>Je zult waarden misschien meerdere keren langs zien komen, omdat Git dezelfde waarde van verschillende bestanden heeft gelezen (bijvoorbeeld <code>/etc/gitconfig</code> en <code>~/.gitconfig</code>). In dit geval gebruikt Git de laatste instelling van elke unieke waarde die het tegenkomt.</p>
+
+<p>Je kan ook bekijken wat Git als instelling heeft bij een specifieke waarde door <code>git config {waarde}</code> in te voeren:</p>
+
+<pre><code>$ git config user.name
+Scott Chacon</code></pre>
+
+<div id='nav'>
+<a href='ch1-4.html'>prev</a> | <a href='ch1-6.html'>next</a>
+</div>

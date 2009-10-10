@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 ---
-<h2 id='id142'>记录每次更新到仓库</h2>
+<h2 id='id182'>记录每次更新到仓库</h2>
 
 <p>现在我们手上已经有了一个真实项目的 Git 仓库，并从这个仓库中取出了所有文件的工作拷贝。接下来，对这些文件作些修改，在完成了一个阶段的目标之后，提交本次更新到仓库。</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 2.2 Git 基础 记录每次更新到仓库
 
 <p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> 图 2-1. 文件的状态变化周期</p>
 
-<h3 id='id143'>检查当前文件状态</h3>
+<h3 id='id183'>检查当前文件状态</h3>
 
 <p>要确定哪些文件当前处于什么状态，可以用 git status 命令。如果在克隆仓库之后立即执行此命令，会看到类似这样的输出：</p>
 
@@ -35,7 +35,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>就是在“Untracked files”这行下面。Git 不会自动将之纳入跟踪范围，除非你明明白白地告诉它这么做，因而不用担心把临时文件什么的也归入版本管理。不过现在我们确实想要跟踪管理 README 这个文件。</p>
 
-<h3 id='id144'>跟踪新文件</h3>
+<h3 id='id184'>跟踪新文件</h3>
 
 <p>使用命令 <code>git add</code> 开始跟踪一个新文件。所以，要跟踪 README 文件，运行：</p>
 
@@ -53,7 +53,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 
 <p>只要在 “Changes to be committed” 这行下面的，就说明是已暂存状态。如果此时提交，那么该文件此时此刻的版本将被留存在历史记录中。你可能会想起之前我们使用 <code>git init</code> 后就运行了 <code>git add</code> 命令，开始跟踪当前目录下的文件。git add 后可以接要跟踪的文件或目录的路径。如果是目录的话，就说明要递归跟踪所有该目录下的文件。</p>
 
-<h3 id='id145'>暂存已修改文件</h3>
+<h3 id='id185'>暂存已修改文件</h3>
 
 <p>现在我们修改下之前已跟踪过的文件 <code>benchmarks.rb</code>，然后再次运行 <code>status</code> 命令，会看到这样的状态报告：</p>
 
@@ -111,7 +111,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<h3 id='id146'>忽略某些文件</h3>
+<h3 id='id186'>忽略某些文件</h3>
 
 <p>一般我们总会有些文件无需纳入 Git 的管理，也不希望它们总出现在未跟踪文件列表。通常都是些自动生成的文件，像是日志或者编译过程中创建的等等。我们可以创建一个名为 .gitignore 的文件，列出要忽略的文件模式，来看一个简单的例子：</p>
 
@@ -140,7 +140,7 @@ $ git status
 build/    # 忽略 build/ 目录下的所有文件
 doc/*.txt # 会忽略 doc/notes.txt 但不包括 doc/server/arch.txt</code></pre>
 
-<h3 id='id147'>查看已暂存和未暂存的更新</h3>
+<h3 id='id187'>查看已暂存和未暂存的更新</h3>
 
 <p>实际上 <code>git status</code> 的显示比较简单，仅仅是列出了修改过的文件，如果要查看具体修改了什么地方，可以用 <code>git diff</code> 命令。稍后我们会详细介绍 <code>git diff</code>，不过现在，它已经能回答我们的两个问题了：当前作的哪些更新还没有暂存？有哪些更新已经暂存起来准备好了下次提交？ <code>git diff</code> 会使用文件补丁的格式显示具体添加和删除的行。</p>
 
@@ -243,7 +243,7 @@ index 3cb747f..e445e28 100644
           log = git.commits(&#39;master&#39;, 15)
           log.size</code></pre>
 
-<h3 id='id148'>提交更新</h3>
+<h3 id='id188'>提交更新</h3>
 
 <p>现在的暂存区域已经准备妥当可以提交了。在此之前，请一定要确认还有什么修改过的或新建的文件还没有 <code>git add</code> 过，否则提交的时候不会记录这些还没暂存起来的变化。所以，每次准备提交前，先用 <code>git status</code> 看下，是不是都已暂存起来了，然后再运行提交命令 <code>git commit</code>：</p>
 
@@ -279,7 +279,7 @@ index 3cb747f..e445e28 100644
 
 <p>记住，提交时记录的是放在暂存区域的快照，任何还未暂存的仍然保持已修改状态，可以在下次提交时纳入版本管理。每一次运行提交操作，都是对你项目作一次快照，以后可以回到这个状态，或者进行比较。</p>
 
-<h3 id='id149'>跳过使用暂存区域</h3>
+<h3 id='id189'>跳过使用暂存区域</h3>
 
 <p>尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。Git 提供了一个跳过使用暂存区域的方式，只要在提交的时候，给 <code>git commit</code> 加上 <code>-a</code> 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 <code>git add</code> 步骤：</p>
 
@@ -296,7 +296,7 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 
 <p>看到了吗？提交之前不再需要 <code>git add</code> 文件 benchmarks.rb 了。</p>
 
-<h3 id='id150'>移除文件</h3>
+<h3 id='id190'>移除文件</h3>
 
 <p>要从 Git 中移除某个文件，就必须要从已跟踪文件清单中移除（确切地说，是从暂存区域移除），然后提交。可以用 <code>git rm</code> 命令完成此项工作，并连带从工作目录中删除指定的文件，这样以后就不会出现在未跟踪文件清单中了。</p>
 
@@ -341,7 +341,7 @@ $ git status
 
 <p>会递归删除当前目录及其子目录中所有 <code>~</code> 结尾的文件。</p>
 
-<h3 id='id151'>移动文件</h3>
+<h3 id='id191'>移动文件</h3>
 
 <p>不像其他的 VCS 系统，Git 并不跟踪文件移动操作。如果在 Git 中重命名了某个文件，从仓库中存储的所有元数据来看，都无法指征这仅是一次改名操作。不过 Git 非常聪明，它会意识到究竟发生了什么，至于具体是如何做到的，我们稍后再谈。</p>
 

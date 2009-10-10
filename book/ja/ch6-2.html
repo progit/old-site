@@ -1,10 +1,10 @@
 ---
 layout: translation
-title: Pro Git 6.2 Git のさまざまなツール Interactive Staging
+title: Pro Git 6.2 Git のさまざまなツール 対話的なステージング
 ---
-<h2 id='interactive_staging'>Interactive Staging</h2>
+<h2 id='id123'>対話的なステージング</h2>
 
-<p>Git comes with a couple of scripts that make some command-line tasks easier. Here, you’ll look at a few interactive commands that can help you easily craft your commits to include only certain combinations and parts of files. These tools are very helpful if you modify a bunch of files and then decide that you want those changes to be in several focused commits rather than one big messy commit. This way, you can make sure your commits are logically separate changesets and can be easily reviewed by the developers working with you. If you run <code>git add</code> with the <code>-i</code> or <code>--interactive</code> option, Git goes into an interactive shell mode, displaying something like this:</p>
+<p>Git には、コマンドラインでの作業をしやすくするためのスクリプトがいくつか付属しています。ここでは、対話コマンドをいくつか紹介しましょう。これらを使うと、コミットの内容に細工をして特定のコミットだけとかファイルの中の一部だけとかを含めるようにすることが簡単にできるようになります。大量のファイルを変更した後に、それをひとつの馬鹿でかいコミットにしてしまうのではなくテーマごとの複数のコミットに分けて処理したい場合などに非常に便利です。このようにして各コミットを論理的に独立した状態にしておけば、同僚によるレビューも容易になります。<code>git add</code> に <code>-i</code> あるいは <code>--interactive</code> というオプションをつけて実行すると、Git は対話シェルモードに移行し、このように表示されます。</p>
 
 <pre><code>$ git add -i
            staged     unstaged path
@@ -17,13 +17,13 @@ title: Pro Git 6.2 Git のさまざまなツール Interactive Staging
   5: patch      6: diff        7: quit       8: help
 What now&gt; </code></pre>
 
-<p>You can see that this command shows you a much different view of your staging area — basically the same information you get with <code>git status</code> but a bit more succinct and informative. It lists the changes you’ve staged on the left and unstaged changes on the right.</p>
+<p>このコマンドは、ステージングエリアに関する情報を違った観点で表示します。<code>git status</code> で得られる情報と基本的には同じですが、より簡潔で有益なものとなっています。ステージした変更が左側、そしてステージしていない変更が右側に表示されます。</p>
 
-<p>After this comes a Commands section. Here you can do a number of things, including staging files, unstaging files, staging parts of files, adding untracked files, and seeing diffs of what has been staged.</p>
+<p>Commands セクションでは、さまざまなことができるようになっています。ファイルをステージしたりステージングエリアから戻したり、ファイルの一部だけをステージしたりまだ追跡されていないファイルを追加したり、あるいは何がステージされたのかを diff で見たりといったことが可能です。</p>
 
-<h3 id='staging_and_unstaging_files'>Staging and Unstaging Files</h3>
+<h3 id='id124'>ファイルのステージとその取り消し</h3>
 
-<p>If you type <code>2</code> or <code>u</code> at the <code>What now&gt;</code> prompt, the script prompts you for which files you want to stage:</p>
+<p><code>What now&gt;</code> プロンプトで <code>2</code> または <code>u</code> と入力すると、どのファイルをステージするかを聞いてきます。</p>
 
 <pre><code>What now&gt; 2
            staged     unstaged path
@@ -32,7 +32,7 @@ What now&gt; </code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>To stage the TODO and index.html files, you can type the numbers:</p>
+<p>TODO と index.html をステージするには、その番号を入力します。</p>
 
 <pre><code>Update&gt;&gt; 1,2
            staged     unstaged path
@@ -41,7 +41,7 @@ Update&gt;&gt;</code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>The <code>*</code> next to each file means the file is selected to be staged. If you press Enter after typing nothing at the <code>Update&gt;&gt;</code> prompt, Git takes anything selected and stages it for you:</p>
+<p>ファイル名の横に <code>*</code> がついていれば、そのファイルがステージ対象として選択されたことを意味します。<code>Update&gt;&gt;</code> プロンプトで何も入力せずに Enter を押すと、選択されたすべてのファイルを Git がステージします。</p>
 
 <pre><code>Update&gt;&gt; 
 updated 2 paths
@@ -55,7 +55,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>Now you can see that the TODO and index.html files are staged and the simplegit.rb file is still unstaged. If you want to unstage the TODO file at this point, you use the <code>3</code> or <code>r</code> (for revert) option:</p>
+<p>TODO と index.html がステージされ、simplegit.rb はまだステージされていないままです。ここで仮に TODO ファイルのステージを取り消したくなったとしたら、<code>3</code> あるいは <code>r</code> (revert の r) を選択します。</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -73,7 +73,7 @@ Revert&gt;&gt; 1
 Revert&gt;&gt; [enter]
 reverted one path</code></pre>
 
-<p>Looking at your Git status again, you can see that you’ve unstaged the TODO file:</p>
+<p>もう一度 Git のステータスを見ると、TODO ファイルのステージが取り消されていることがわかります。</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -84,7 +84,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>To see the diff of what you’ve staged, you can use the <code>6</code> or <code>d</code> (for diff) command. It shows you a list of your staged files, and you can select the ones for which you would like to see the staged diff. This is much like specifying <code>git diff --cached</code> on the command line:</p>
+<p>ステージした変更の diff を見るには、<code>6</code> あるいは <code>d</code> (diff の d) を使用します。このコマンドは、ステージしたファイルの一覧を表示します。その中から、ステージされた diff を見たいファイルを選択します。これは、コマンドラインで <code>git diff --cached</code> を使用するのと同じようなことです。</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -106,11 +106,11 @@ index 4d07108..4335f49 100644
 
  &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
 
-<p>With these basic commands, you can use the interactive add mode to deal with your staging area a little more easily.</p>
+<p>これらの基本的なコマンドを使えば、ステージングエリアでの対話的な追加モードを多少簡単に扱えるようになるでしょう。</p>
 
-<h3 id='staging_patches'>Staging Patches</h3>
+<h3 id='id125'>パッチのステージ</h3>
 
-<p>It’s also possible for Git to stage certain parts of files and not the rest. For example, if you make two changes to your simplegit.rb file and want to stage one of them and not the other, doing so is very easy in Git. From the interactive prompt, type <code>5</code> or <code>p</code> (for patch). Git will ask you which files you would like to partially stage; then, for each section of the selected files, it will display hunks of the file diff and ask if you would like to stage them, one by one:</p>
+<p>Git では、ファイルの特定の箇所だけをステージして他の部分はそのままにしておくということもできます。たとえば、simplegit.rb のふたつの部分を変更したけれど、そのうちの一方だけをステージしたいという場合があります。Git なら、そんなことも簡単です。対話モードのプロンプトで <code>5</code> あるいは <code>p</code> (patch の p) と入力しましょう。Git は、どのファイルを部分的にステージしたいのかを聞いてきます。その後、選択したファイルのそれぞれについて diff のハンクを順に表示し、ステージするかどうかをひとつひとつたずねます。</p>
 
 <pre><code>diff --git a/lib/simplegit.rb b/lib/simplegit.rb
 index dd5ecc4..57399e0 100644
@@ -127,7 +127,7 @@ index dd5ecc4..57399e0 100644
    def blame(path)
 Stage this hunk [y,n,a,d,/,j,J,g,e,?]? </code></pre>
 
-<p>You have a lot of options at this point. Typing <code>?</code> shows a list of what you can do:</p>
+<p>ここでは多くの選択肢があります。何ができるのかを見るには <code>?</code> を入力しましょう。</p>
 
 <pre><code>Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
 y - stage this hunk
@@ -144,7 +144,7 @@ s - split the current hunk into smaller hunks
 e - manually edit the current hunk
 ? - print help</code></pre>
 
-<p>Generally, you’ll type <code>y</code> or <code>n</code> if you want to stage each hunk, but staging all of them in certain files or skipping a hunk decision until later can be helpful too. If you stage one part of the file and leave another part unstaged, your status output will look like this:</p>
+<p>たいていは、<code>y</code> か <code>n</code> で各ハンクをステージするかどうかを指定していくでしょう。しかし、それ以外にも「このファイルの残りのハンクをすべてステージする」とか「このハンクをステージするかどうかの判断を先送りする」などというオプションも便利です。あるファイルのひとつの箇所だけをステージして残りはそのままにした場合、ステータスの出力はこのようになります。</p>
 
 <pre><code>What now&gt; 1
            staged     unstaged path
@@ -152,9 +152,9 @@ e - manually edit the current hunk
   2:        +1/-1      nothing index.html
   3:        +1/-1        +4/-0 lib/simplegit.rb</code></pre>
 
-<p>The status of the simplegit.rb file is interesting. It shows you that a couple of lines are staged and a couple are unstaged. You’ve partially staged this file. At this point, you can exit the interactive adding script and run <code>git commit</code> to commit the partially staged files.</p>
+<p>simplegit.rb のステータスがおもしろいことになっています。ステージされた行もあれば、ステージされていない行もあるという状態です。つまり、このファイルを部分的にステージしたというわけです。この時点で対話的追加モードを抜けて <code>git commit</code> を実行すると、ステージした部分だけをコミットすることができます。</p>
 
-<p>Finally, you don’t need to be in interactive add mode to do the partial-file staging — you can start the same script by using <code>git add -p</code> or <code>git add --patch</code> on the command line.</p>
+<p>最後に、この対話的追加モードを使わずに部分的なステージを行いたい場合は、コマンドラインから <code>git add -p</code> あるいは <code>git add --patch</code> を実行すれば同じことができます。</p>
 
 <div id='nav'>
 <a href='ch6-1.html'>prev</a> | <a href='ch6-3.html'>next</a>

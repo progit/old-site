@@ -1,38 +1,38 @@
 ---
 layout: translation
-title: Pro Git 3.5 Git 分支 远程(Remote)分支
+title: Pro Git 3.5 Git 分支 远程分支
 ---
-<h2 id='remote'>远程(Remote)分支</h2>
+<h2 id='id227'>远程分支</h2>
 
-<p>远程分支是对远程仓库状态的索引。它们是一些本地你无法移动的分支；只有在你进行Git的网络活动时才会移动。远程分支就像是一些书签,提醒着你上次连接远程仓库时上面各分支位置。</p>
+<p>远程分支（remote branch）是对远程仓库状态的索引。它们是一些无法移动的本地分支；只有在进行 Git 的网络活动时才会更新。远程分支就像是书签，提醒着你上次连接远程仓库时上面各分支的位置。</p>
 
-<p>它们形如<code>(远程仓库名)/(分支名)</code>。假使你想看看上次和<code>origin</code>仓库通讯的时候<code>master</code>是什么样的，你应该查看<code>origin/master</code>分支。如果你和同伴一起修复某个问题而他们推送了一个<code>iss53</code>分支，虽然你可能也有一个本地的<code>iss53</code>分支，服务器上的分支却应该以<code>origin/iss53</code>指向其commit。</p>
+<p>我们用 <code>(远程仓库名)/(分支名)</code> 这样的形式表示远程分支。比如我们想看看上次同 <code>origin</code> 仓库通讯时 <code>master</code> 的样子，就应该查看 <code>origin/master</code> 分支。如果你和同伴一起修复某个问题，但他们先推送了一个 <code>iss53</code> 分支到远程仓库，虽然你可能也有一个本地的 <code>iss53</code> 分支，但指向服务器上最新更新的却应该是 <code>origin/iss53</code> 分支。</p>
 
-<p>这可能有点混乱，我们不妨举例说明。假设你的团队有个地址为<code>git.ourcompany.com</code>的Git服务器。如果你从这里克隆，Git会自动为你将它（远程仓库）命名为<code>origin</code>，下载其中所有的数据，建立一个指向它<code>master</code>分支的指针，并在本地命名为<code>origin/master</code>，但你无法移动它。Git同时建立一个属于你的<code>master</code>分支，始于和origin上的master分支相同的位置，你可以就此开始工作（见图3-22）。</p>
+<p>可能有点乱，我们不妨举例说明。假设你们团队有个地址为 <code>git.ourcompany.com</code> 的 Git 服务器。如果你从这里克隆，Git 会自动为你将此远程仓库命名为 <code>origin</code>，并下载其中所有的数据，建立一个指向它的 <code>master</code> 分支的指针，在本地命名为 <code>origin/master</code>，但你无法在本地更改其数据。接着，Git 建立一个属于你自己的本地 <code>master</code> 分支，始于 <code>origin</code> 上 <code>master</code> 分支相同的位置，你可以就此开始工作（见图 3-22）：</p>
 
-<p><center><img src="/figures/ch3/18333fig0322-tn.png"></center><br/> 图 3-22. 一次Git克隆会建立一个你自己的master分支和一个origin/master并共同指向origin的master分支。</p>
+<p><center><img src="/figures/ch3/18333fig0322-tn.png"></center><br/> 图 3-22. 一次 Git 克隆会建立你自己的本地分支 master 和远程分支 origin/master，它们都指向 origin/master 分支的最后一次提交。</p>
 
-<p>要是你在本地的master分支做了一点工作，与此同时，其他人向<code>git.ourcompany.com</code>推送了内容，更新了它的master分支，你的提交历史会开始朝不同的方向发展。不过只要你不和服务器通讯，你的<code>origin/master</code>指针不会移动。</p>
+<p>要是你在本地 <code>master</code> 分支做了会儿事情，与此同时，其他人向 <code>git.ourcompany.com</code> 推送了内容，更新了上面的 <code>master</code> 分支，那么你的提交历史会开始朝不同的方向发展。不过只要你不和服务器通讯，你的 <code>origin/master</code> 指针不会移动（见图 3-23）。</p>
 
 <p><center><img src="/figures/ch3/18333fig0323-tn.png"></center><br/> 图 3-23. 在本地工作的同时有人向远程仓库推送内容会让提交历史发生分歧。</p>
 
-<p>你可以运行<code>git fetch origin</code>来进行同步。该命令首先找到origin是哪个服务器（本例中，结果是<code>git.ourcompany.com</code>），从上面获取你尚未拥有的数据，更新你本地的数据库，然后把<code>origin/master</code>移到它最新的位置（见图3-24）。</p>
+<p>可以运行 <code>git fetch origin</code> 来进行同步。该命令首先找到 <code>origin</code> 是哪个服务器（本例为 <code>git.ourcompany.com</code>），从上面获取你尚未拥有的数据，更新你本地的数据库，然后把 <code>origin/master</code> 的指针移到它最新的位置（见图 3-24）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0324-tn.png"></center><br/> 图 3-24. git fetch命令会更新你的remote索引。</p>
+<p><center><img src="/figures/ch3/18333fig0324-tn.png"></center><br/> 图 3-24. git fetch 命令会更新 remote 索引。</p>
 
-<p>为了演示拥有多个远程服务器的多个远程分支的项目是个什么样，我们假设你还有另一个仅供你的迅捷开发小组使用的内部服务器。该服务器处于<code>git.team1.ourcompany.com</code>。你可以用第二章中提到的<code>git remote add</code>命令把它加为当前项目的远程分支之一。我们把它命名为<code>teamone</code>，这就变成了那一整个URL的缩写（见图3-25）。</p>
+<p>为了演示拥有多个远程分支（不同的远程服务器）的项目是个什么样，我们假设你还有另一个仅供你的敏捷开发小组使用的内部服务器 <code>git.team1.ourcompany.com</code>。可以用第二章中提到的 <code>git remote add</code> 命令把它加为当前项目的远程分支之一。我们把它命名为 <code>teamone</code>，表示那一整串 Git 地址（见图 3-25）。</p>
 
 <p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> 图 3-25. 把另一个服务器加为远程仓库</p>
 
-<p>现在你可以用<code>git fetch teamone</code>来获取服务器上你还没有的数据了。因为这个服务器上的内容是你<code>origin</code>服务器上的子集，Git不会下载任何数据而是简单的创建一个叫<code>teamone/master</code>的分支来指向<code>teamone</code>在它的<code>master</code>里的commit（见图3-26）。</p>
+<p>现在你可以用 <code>git fetch teamone</code> 来获取小组服务器上你还没有的数据了。由于当前该服务器上的内容是你 <code>origin</code> 服务器上的子集，Git 不会下载任何数据，而只是简单地创建一个名为 <code>teamone/master</code> 的分支来指向 <code>teamone</code> 服务器上 <code>master</code> 所指向的更新 <code>31b8e</code>（见图 3-26）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> 图 3-26. 你在本地有了一个指向teamone的master分支的索引。</p>
+<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> 图 3-26. 你在本地有了一个指向 teamone 服务器上 master 分支的索引。</p>
 
-<h3 id='pushing'>推送(pushing)</h3>
+<h3 id='id228'>推送</h3>
 
-<p>在你想和全世界分享一个分支的时候，你需要把它推送到一个你拥有写权限的远程仓库。你的本地分支不会自动的被同步到你写入的远程分支里——除非你特意把想要分享的分支推送出去。这样一来，你可以为你不想分享的部分建立私人的分支，同时只分享那些想要与其他人合作的特性分支。</p>
+<p>要想和其他人分享某个分支，你需要把它推送到一个你拥有写权限的远程仓库。你的本地分支不会被自动同步到你引入的远程分支中，除非你明确执行推送操作。换句话说，对于无意分享的，你尽可以保留为私人分支，而只推送那些协同工作的特性分支。</p>
 
-<p>如果你有个叫<code>serverfix</code>的分支需要和其他人一起开发，你可以用推送第一个分支的相同方法推送之。运行<code>git branch (远程仓库名) (分支名)</code>：</p>
+<p>如果你有个叫 <code>serverfix</code> 的分支需要和他人一起开发，可以运行 <code>git push (远程仓库名) (分支名)</code>：</p>
 
 <pre><code>$ git push origin serverfix
 Counting objects: 20, done.
@@ -42,9 +42,9 @@ Total 15 (delta 5), reused 0 (delta 0)
 To git@github.com:schacon/simplegit.git
  * [new branch]      serverfix -&gt; serverfix</code></pre>
 
-<p>这其实有点像一条捷径。Git自动把<code>serverfix</code>分支名扩展为<code>refs/heads/serverfix:refs/heads/serverfix</code>，意为“取出我的serverfix本地分支，推送它来更新远程仓库的 serverfix分支。”我们将在第9章里进一步介绍<code>refs/heads/</code>部分的细节，不过通常你可以省略它。你也可以运行<code>git push origin serverfix:serferfix</code>来实现相同的效果——它的意思是“提取我的serverfix并把它设定为远程仓库的serverfix。”通过这个格式你可以把一个本地分支推送到一个命名不同的远程分支。如果不想它在远程被叫做<code>serverfix</code>，可以用<code>git push origin serverfix:awesomebranch</code>取而代之，它把你本地的<code>serverfix</code>分支推动到远程的<code>awesomebranch</code>分支。</p>
+<p>这其实有点像条捷径。Git 自动把 <code>serverfix</code> 分支名扩展为 <code>refs/heads/serverfix:refs/heads/serverfix</code>，意为“取出我的 serverfix 本地分支，推送它来更新远程仓库的 serverfix 分支”。我们将在第九章进一步介绍 <code>refs/heads/</code> 部分的细节，不过一般使用的时候都可以省略它。也可以运行 <code>git push origin serverfix:serferfix</code> 来实现相同的效果，它的意思是“提取我的 serverfix 并更新到远程仓库的 serverfix”。通过此语法，你可以把本地分支推送到某个命名不同的远程分支：若想把远程分支叫作 <code>awesomebranch</code>，可以用 <code>git push origin serverfix:awesomebranch</code> 来推送数据。</p>
 
-<p>当你的和作者们再次从服务器获取数据的时候，他们将得到一个指向<code>serverfix</code>在远程的<code>origin/serverfix</code>分支的索引：</p>
+<p>接下来，当你的协作者再次从服务器上获取数据时，他们将得到一个新的远程分支 <code>origin/serverfix</code>：</p>
 
 <pre><code>$ git fetch origin
 remote: Counting objects: 20, done.
@@ -54,149 +54,43 @@ Unpacking objects: 100% (15/15), done.
 From git@github.com:schacon/simplegit
  * [new branch]      serverfix    -&gt; origin/serverfix</code></pre>
 
-<p>值得强调的是，在一次fetch获得了新的远程分支以后，你不会自动获得本地的，可以编辑的副本。换句话说，在本例中，你不会有一个新的<code>serverfix</code>分支——只有一个你无法移动的<code>origin/serverfix</code>指针。</p>
+<p>值得注意的是，在 fetch 操作抓来新的远程分支之后，你仍然无法在本地编辑该远程仓库。换句话说，在本例中，你不会有一个新的 <code>serverfix</code> 分支，有的只是一个你无法移动的 <code>origin/serverfix</code> 指针。</p>
 
-<p>如果要把该内容合并到当前的分支，你可以运行<code>git merge origin/serverfix</code>。如果你想要一份自己的<code>serverfix</code>来进行开发，可以从远程分支上获得：</p>
+<p>如果要把该内容合并到当前分支，可以运行 <code>git merge origin/serverfix</code>。如果想要一份自己的 <code>serverfix</code> 来开发，可以在远程分支的基础上分化出一个新的分支来：</p>
 
 <pre><code>$ git checkout -b serverfix origin/serverfix
 Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
 Switched to a new branch &quot;serverfix&quot;</code></pre>
 
-<p>这将给你一个始于<code>origin/serverfix</code>位置的本地分支用来开发。</p>
+<p>这会切换到新建的 <code>serverfix</code> 本地分支，其内容同远程分支 <code>origin/serverfix</code> 一致，你可以在里面继续开发了。</p>
 
-<h3 id='tracking'>跟踪(tracking)分支</h3>
+<h3 id='id229'>跟踪分支</h3>
 
-<p>从一个远程分支签出一个本地分支的操作会自动建立一个所谓的 <em>跟踪分支(tracking branch)</em> 。跟踪分支是一种和远程分支有直接联系的本地分支。如果你在一个跟踪分支里输入git push，Git自动知道应该向那个服务器的哪个分支推送。同时，在这些分支里运行<code>git pull</code>会获取所有的远程索引并且把它们都合并到相应的本地分支。</p>
+<p>从远程分支签出的本地分支，称为<em>跟踪分支(tracking branch)</em>。跟踪分支是一种和远程分支有直接联系的本地分支。在跟踪分支里输入 <code>git push</code>，Git 会自行推断应该向哪个服务器的哪个分支推送数据。反过来，在这些分支里运行 <code>git pull</code> 会获取所有远程索引，并把它们的数据都合并到本地分支中来。</p>
 
-<p>在克隆一个仓库的时候，Git通常自动创建一个<code>master</code>分支来跟踪<code>origin/master</code>。这正是<code>git push</code>和<code>git pull</code>一开始就正常工作的原因。当然，你可以随心所有的设定其他的跟踪分支——那些不跟踪<code>origin</code>上的分支的，或者不跟踪<code>master</code>分支的。最简单的例子是你刚刚看到的，运行<code>git checkout -b [分支名] [远程名]/[分支名]</code>。如果你有1.6.2以上版本的Git，还可以用<code>--track</code><code>缩写：</code></p>
+<p>在克隆仓库时，Git 通常会自动创建一个 <code>master</code> 分支来跟踪 <code>origin/master</code>。这正是 <code>git push</code> 和 <code>git pull</code> 一开始就能正常工作的原因。当然，你可以随心所欲地设定为其它跟踪分支，比如 <code>origin</code> 上除了 <code>master</code> 之外的其它分支。刚才我们已经看到了这样的一个例子：<code>git checkout -b [分支名] [远程名]/[分支名]</code>。如果你有 1.6.2 以上版本的 Git，还可以用 <code>--track</code> 选项简化：</p>
 
 <pre><code>$ git checkout --track origin/serverfix
 Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
 Switched to a new branch &quot;serverfix&quot;</code></pre>
 
-<p>要为本地分支设定一个不同于远程分支的名字，只需要在第一个版本的命令里换个名字：</p>
+<p>要为本地分支设定不同于远程分支的名字，只需在前个版本的命令里换个名字：</p>
 
 <pre><code>$ git checkout -b sf origin/serverfix
 Branch sf set up to track remote branch refs/remotes/origin/serverfix.
 Switched to a new branch &quot;sf&quot;</code></pre>
 
-<p>现在你的本地分支sf会自动的向origin/serverfix推送和抓取了。</p>
+<p>现在你的本地分支 <code>sf</code> 会自动向 <code>origin/serverfix</code> 推送和抓取数据了。</p>
 
-<h3 id='id183'>删除远程分支</h3>
+<h3 id='id230'>删除远程分支</h3>
 
-<p>如果你不需要某个远程分支了——比如说，你和你的合作者搞定了某个特性并且把它合并进了远程的<code>master</code>分支（或者任何其他你们存放稳定代码的地方）。你可以用这个非常无厘头的语法来删除它：<code>git push [远程名] :[分支名]</code>。如果你想在服务器上删除<code>serverfix</code>分支，运行如下命令：</p>
+<p>如果不再需要某个远程分支了，比如搞定了某个特性并把它合并进了远程的 <code>master</code> 分支（或任何其他存放稳定代码的地方），可以用这个非常无厘头的语法来删除它：<code>git push [远程名] :[分支名]</code>。如果想在服务器上删除 <code>serverfix</code> 分支，运行下面的命令：</p>
 
 <pre><code>$ git push origin :serverfix
 To git@github.com:schacon/simplegit.git
  - [deleted]         serverfix</code></pre>
 
-<p>咚！服务器上的分支没了。你最好特别留心这一页，因为你一定会用到那个命令，而且你很可能会忘掉它的语法。一种方便记忆这条命令的方法是记住我们不久前见过的<code>git push [远程名] [本地分支]:[远程分支]</code>的语法。如果你省略<code>[本地分支]</code>的部分，那基本等于在说“在这里提取空白然后把它变成<code>[远程分支]</code>。”</p>
-
-<p>在Git里主要有两种把一个分支整合到另一个分支里的办法：<code>merge（合并）</code>和<code>rebase（衍合）</code>。在本章你将学习什么事衍合，怎样使用它，它为什么是个异常有用的工具，以及你应该在什么情况下使用它。</p>
-
-<h3 id='rebasing'>衍合(rebasing)基础</h3>
-
-<p>如果你回顾之前有关合并的一节（见图3-27），你会看到你的开发被分叉并在两个不同分支里进行了提交。</p>
-
-<p><center><img src="/figures/ch3/18333fig0327-tn.png"></center><br/> 图 3-27. 最初分叉的提交历史。</p>
-
-<p>之前介绍过，整合分支的最好方法是<code>merge</code>命令。它将使用两个分支最新的快照（C3和C4）以及二者最新的共同祖先（C2）来进行三方合并。如图3-28所示。</p>
-
-<p><center><img src="/figures/ch3/18333fig0328-tn.png"></center><br/> 图 3-28. 通过合并一个分支来整合分叉了的历史。</p>
-
-<p>其实，还有另外一个选择：你可以把在C3里产生的变化补丁重新在C4的基础上打一变。在Git里，这叫做 <em>衍合(rebasing)</em> 。有了<code>rebase</code>命令，你就可以把在一个分支里提交的改变在另一个分支里重放一遍。</p>
-
-<p>在这个例子里，你需要运行如下命令：</p>
-
-<pre><code>$ git checkout experiment
-$ git rebase master
-First, rewinding head to replay your work on top of it...
-Applying: added staged command</code></pre>
-
-<p>它的原理是回到两个分支（你所在的分支和你想要衍合进去的分支）的共同祖先，提取你所在分支每次提交时产生的差别(diff)，把这些差别保存到临时文件里，从当前分支转换到你需要衍合入的分支，最后依序施用每一个差别文件。图3-29演示了这一过程。</p>
-
-<p><center><img src="/figures/ch3/18333fig0329-tn.png"></center><br/> 图 3-29. 把C3里产生的改变衍合到C4中。</p>
-
-<p>现在，你可以回到master分支然后进行一次快进合并（见图3-30）。</p>
-
-<p><center><img src="/figures/ch3/18333fig0330-tn.png"></center><br/> 图 3-30. master分支的快进。</p>
-
-<p>现在，C3指向的镜像和合并例子里C5指向的内容一模一样了。最后整合的结果没有任何区别，不过衍合能产生一个更整洁的历史。如果你视察一个衍合过分支的记录(log)，它看起来更清楚：仿佛所有修改都是先后进行的，尽管它们原来是同时发生的。</p>
-
-<p>经常的，你可能通过它来保证你的提交在远程分支里更清晰——很可能是一个你想要帮忙但自己又不是维护者的项目。如果是这样，你需要在一个分支里进行开发，在你准备向主项目提交补丁的时候把它衍合到<code>origin/master</code>里面。那样，维护者不需要做任何整合工作——只需要快进或者简单的打补丁。</p>
-
-<p>注意结果里你最后一次提交指向的快照，无论是通过一次衍合还是一次合并形成的，是同样的快照——只有提交历史是不同的。衍合按照每行改变发生的次序重演发生的改变，而合并是把最终结果合在一起。</p>
-
-<h3 id='id184'>更多有趣的衍合</h3>
-
-<p>你还可以在衍合分支以外的地方衍合。以图3-31的历史为例。你创建了一个特性分支（<code>server</code>）来给服务器端添加一些功能，然后提交。然后你从那里再增加一个分支(<code>client</code>）来对客户端进行一些修改，进行几次提交。最后，你回到server分支又提交了几次。</p>
-
-<p><center><img src="/figures/ch3/18333fig0331-tn.png"></center><br/> 图 3-31. 从一个特性分支里再分出一个特性分支的历史。</p>
-
-<p>假设你决定为一次发布把客户端的变化合并到主线中，而在进一步测试之前暂缓服务端的变化。你可以仅提取对客户端的改变（C8和C9）然后通过使用<code>git rebase</code>的<code>--onto</code>选项来把它们在master分支上重演：</p>
-
-<pre><code>$ git rebase --onto master server client</code></pre>
-
-<p>这基本上等于在说“签出client分支，找出<code>client</code>分支和<code>server</code>分支共同祖先之后发生的变化，然后把它们在<code>master</code>上重演一遍。是不是有点复杂？不过它的结果，如图3-32所示，非常酷：</p>
-
-<p><center><img src="/figures/ch3/18333fig0332-tn.png"></center><br/> 图 3-32. 衍合一个特性分支上的另一个特性分支。</p>
-
-<p>现在可以快进master分支了（见图3-33）：</p>
-
-<pre><code>$ git checkout master
-$ git merge client</code></pre>
-
-<p><center><img src="/figures/ch3/18333fig0333-tn.png"></center><br/> 图 3-33. 快进master分支，使之包含client分支的变化。</p>
-
-<p>现在你决定把server分支的变化也包含进来。你可以直接把server分支衍合到master而不用事先通过<code>git rebase [主分支] [特性分支]</code>来签出它——后者签出特性分支（本例中指<code>server</code>）然后在主分支上（本例中指<code>master</code>）重演：</p>
-
-<pre><code>$ git rebase master server</code></pre>
-
-<p>这会把<code>server</code>的进度应用到<code>master</code>的基础上，如图3-34。</p>
-
-<p><center><img src="/figures/ch3/18333fig0334-tn.png"></center><br/> 图 3-34. 在master分支上衍合server分支。</p>
-
-<p>然后，你可以快进主分支（<code>master&#39;）：</code></p>
-
-<pre><code>$ git checkout master
-$ git merge server</code></pre>
-
-<p>现在<code>client</code>和<code>server</code>分支的变化都被整合了，不妨删掉它们，把你的提交历史变成图3-35的样子：</p>
-
-<pre><code>$ git branch -d client
-$ git branch -d server</code></pre>
-
-<p><center><img src="/figures/ch3/18333fig0335-tn.png"></center><br/> 图 3-35. 最终的提交历史</p>
-
-<h3 id='id185'>衍合的风险</h3>
-
-<p>呃，奇妙的衍合也不是完美无缺的，一句话可以总结这点：</p>
-
-<p><strong>永远不要衍合那些已经推送到公共仓库的commit。</strong></p>
-
-<p>如果你遵循这条金科玉律，就不会出差错。如果不遵循，人民会仇恨你，而且你将糟到朋友和家人的一致谴责（译注：^<em>^）。</em></p>
-
-<p>在你衍合的时候，实际上抛弃了一些现存的commit而创造了一些类似但不同的新commit。如果你把commit推送到某处然后其他人下载并在其基础上工作，然后你用<code>git rebase</code>重写了这些commit再推送一次，你的和作者们将不得不重新合并他们的工作，这样当你再次从他们那里获取内容的时候事情就会变得一团糟。</p>
-
-<p>我们用一个例子来说明为什么公开的衍合会带来问题。假设你从一个中央服务器克隆然后在它的基础上搞了一些开发。你的提交历史类似图3-36。</p>
-
-<p><center><img src="/figures/ch3/18333fig0336-tn.png"></center><br/> 图 3-36. 克隆一个仓库，在其基础上工作一番。</p>
-
-<p>现在，其他人进行了一些包含一次合并的工作，然后把它推送到了中央服务器。你获取了这些并把新的远程分支里的内容合并到你的开发进程里，让你的历史变成类似图3-37这样：</p>
-
-<p><center><img src="/figures/ch3/18333fig0337-tn.png"></center><br/> 图 3-37. 获取更多commit，并入你的开发进程。</p>
-
-<p>接下来，那个推送带有合并的工作的人决定用衍合取代那次合并；他们用<code>git push --force</code>覆盖了服务器上的历史。然后你再从服务器上获取它，得到新的变化。</p>
-
-<p><center><img src="/figures/ch3/18333fig0338-tn.png"></center><br/> 图 3-38. 有人推送了衍合过的commit，丢弃了你作为开发基础的commit。</p>
-
-<p>这时候，你需要再次合并这些内容，尽管之前已经做过一次了。衍合会改变这些commit的SHA-1校验值，这样Git会把它们当作新的commit，然而这时候在你的提交历史早就有了C4的内容（见图3-39）。</p>
-
-<p><center><img src="/figures/ch3/18333fig0339-tn.png"></center><br/> 图 3-39. 你把相同的内容又合并了一遍，生成一个新的commit。</p>
-
-<p>你或早或晚必须要并入那些内容，这样才能和其他开发者在将来保持同步。当你做完这些，你的提交历史里会同时包含C4和C4&#8217;，二者有着不同的SHA-1校验值却拥有一样的作者日期与附加信息，令人费解！更糟糕的是，当你把这样的历史推送到服务器，会再次把这些衍合的commit引入了中央服务器，进一步的迷惑其他人。</p>
-
-<p>如果把衍合当成一种在推送之前清理提交历史的手段，而且你仅衍合那些永远不会公开的commit，那不会有任何问题。如果你衍合那些已经公开的commit，而其他人已经用这些commit进行了一些工作，那么你会遇到令人沮丧的麻烦。</p>
+<p>咚！服务器上的分支没了。你最好特别留心这一页，因为你一定会用到那个命令，而且你很可能会忘掉它的语法。有种方便记忆这条命令的方法：记住我们不久前见过的 <code>git push [远程名] [本地分支]:[远程分支]</code> 语法，如果省略 <code>[本地分支]</code>，那就等于是在说“在这里提取空白然后把它变成<code>[远程分支]</code>”。</p>
 
 <div id='nav'>
 <a href='ch3-4.html'>prev</a> | <a href='ch3-6.html'>next</a>

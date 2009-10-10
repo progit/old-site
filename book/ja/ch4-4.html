@@ -1,17 +1,17 @@
 ---
 layout: translation
-title: Pro Git 4.4 Git サーバ サーバのセットアップ
+title: Pro Git 4.4 Git サーバー サーバーのセットアップ
 ---
-<h2 id='id81'>サーバのセットアップ</h2>
+<h2 id='id81'>サーバーのセットアップ</h2>
 
-<p>それでは、サーバ側での SSH アクセスの設定について順を追って見ていきましょう。この例では <code>authorized_keys</code> 方式でユーザの認証を行います。また、Ubuntu のような標準的な Linux ディストリビューションを動かしているものと仮定します。まずは &#8216;git&#8217; ユーザを作成し、そのユーザの <code>.ssh</code> ディレクトリを作りましょう。</p>
+<p>それでは、サーバー側での SSH アクセスの設定について順を追って見ていきましょう。この例では <code>authorized_keys</code> 方式でユーザーの認証を行います。また、Ubuntu のような標準的な Linux ディストリビューションを動かしているものと仮定します。まずは &#8216;git&#8217; ユーザーを作成し、そのユーザーの <code>.ssh</code> ディレクトリを作りましょう。</p>
 
 <pre><code>$ sudo adduser git
 $ su git
 $ cd
 $ mkdir .ssh</code></pre>
 
-<p>次に、開発者たちの SSH 公開鍵をそのユーザの <code>authorized_keys</code> に追加していきましょう。受け取った鍵が一時ファイルとして保存されているものとします。先ほどもごらんいただいたとおり、公開鍵の中身はこのような感じになっています。</p>
+<p>次に、開発者たちの SSH 公開鍵をそのユーザーの <code>authorized_keys</code> に追加していきましょう。受け取った鍵が一時ファイルとして保存されているものとします。先ほどもごらんいただいたとおり、公開鍵の中身はこのような感じになっています。</p>
 
 <pre><code>$ cat /tmp/id_rsa.john.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
@@ -34,9 +34,9 @@ $ mkdir project.git
 $ cd project.git
 $ git --bare init</code></pre>
 
-<p>これで、John と Josie そして Jessica はプロジェクトの最初のバージョンをプッシュできるようになりました。このリポジトリをリモートとして追加し、ブランチをプッシュすればいいのです。何か新しいプロジェクトを追加しようと思ったら、そのたびに誰かがサーバにログインし、ベアリポジトリを作らなければならないことに注意しましょう。&#8217;git&#8217; ユーザとリポジトリを作ったサーバのホスト名を <code>gitserver</code> としておきましょう。<code>gitserver</code> がそのサーバを指すように DNS を設定しておけば、このようなコマンドを使えます。</p>
+<p>これで、John と Josie そして Jessica はプロジェクトの最初のバージョンをプッシュできるようになりました。このリポジトリをリモートとして追加し、ブランチをプッシュすればいいのです。何か新しいプロジェクトを追加しようと思ったら、そのたびに誰かがサーバーにログインし、ベアリポジトリを作らなければならないことに注意しましょう。&#8217;git&#8217; ユーザーとリポジトリを作ったサーバーのホスト名を <code>gitserver</code> としておきましょう。<code>gitserver</code> がそのサーバーを指すように DNS を設定しておけば、このようなコマンドを使えます。</p>
 
-<pre><code># John のコンピュータで
+<pre><code># John のコンピューターで
 $ cd myproject
 $ git init
 $ git add .
@@ -51,9 +51,9 @@ $ vim README
 $ git commit -am &#39;fix for the README file&#39;
 $ git push origin master</code></pre>
 
-<p>この方法を使えば、小規模なチーム用の読み書き可能な Git サーバをすばやく立ち上げることができます。</p>
+<p>この方法を使えば、小規模なチーム用の読み書き可能な Git サーバーをすばやく立ち上げることができます。</p>
 
-<p>万一の場合に備えて &#8216;git&#8217; ユーザができることを制限するのも簡単で、Git に関する作業しかできない制限付きシェル <code>git-shell</code> が Git に付属しています。これを &#8216;git&#8217; ユーザのログインシェルにしておけば、&#8217;git&#8217; ユーザはサーバへの通常のシェルアクセスができなくなります。これを使用するには、ユーザのログインシェルとして bash や csh ではなく <code>git-shell</code> を指定します。そのためには <code>/etc/passwd</code> ファイルを編集しなければなりません。</p>
+<p>万一の場合に備えて &#8216;git&#8217; ユーザーができることを制限するのも簡単で、Git に関する作業しかできない制限付きシェル <code>git-shell</code> が Git に付属しています。これを &#8216;git&#8217; ユーザーのログインシェルにしておけば、&#8217;git&#8217; ユーザーはサーバーへの通常のシェルアクセスができなくなります。これを使用するには、ユーザーのログインシェルとして bash や csh ではなく <code>git-shell</code> を指定します。そのためには <code>/etc/passwd</code> ファイルを編集しなければなりません。</p>
 
 <pre><code>$ sudo vim /etc/passwd</code></pre>
 
@@ -65,7 +65,7 @@ $ git push origin master</code></pre>
 
 <pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
-<p>これで、&#8217;git&#8217; ユーザは Git リポジトリへのプッシュやプル以外のシェル操作ができなくなりました。それ以外の操作をしようとすると、このように拒否されます。</p>
+<p>これで、&#8217;git&#8217; ユーザーは Git リポジトリへのプッシュやプル以外のシェル操作ができなくなりました。それ以外の操作をしようとすると、このように拒否されます。</p>
 
 <pre><code>$ ssh git@gitserver
 fatal: What do you think I am? A shell?

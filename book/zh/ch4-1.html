@@ -1,18 +1,18 @@
 ---
 layout: translation
-title: Pro Git 4.1 服务器上的Git The Protocols
+title: Pro Git 4.1 服务器上的 Git 协议
 ---
-<h2 id='the_protocols'>The Protocols</h2>
+<h2 id='id236'>协议</h2>
 
-<p>Git允许使用四种主要的网络协议进行数据传输：本地传输，SSH协议，Git协议和HTTP协议。下面分别介绍一下他们以及应该（或不应该）在怎样的情形下使用他们。</p>
+<p>Git 可以使用四种主要的协议来传输数据：本地传输，SSH 协议，Git 协议和 HTTP 协议。下面分别介绍一下他们以及你应该（或不应该）在怎样的情形下使用他们。</p>
 
-<p>值得注意的是除了HTTP协议之外，所有协议都要求在服务器端安装并运行Git。</p>
+<p>值得注意的是除了 HTTP 协议之外，其他所有协议都要求在服务器端安装并运行 Git 。</p>
 
-<h3 id='id187'>本地协议</h3>
+<h3 id='id237'>本地协议</h3>
 
-<p>最基础的就是 <em>本地协议(Local protocol)</em> 了，远程仓库在该协议中就是硬盘上的另一个目录。这在每一个团队成员都对一个共享的文件系统(例如NFS)都有访问权的时候非常常见，抑或在比较少见的多人共用同一台电脑的情况。后者不是很理想，因为你所有的代码仓库实例都储存在同一台电脑里，增加了灾难性的数据损失的可能性。</p>
+<p>最基础的就是 <em>本地协议(Local protocol)</em> 了，远程仓库在该协议中就是硬盘上的另一个目录。这常见于团队每一个成员都对一个共享的文件系统(例如 NFS )拥有访问权，抑或比较少见的多人共用同一台电脑的时候。后者不是很理想，因为你所有的代码仓库实例都储存在同一台电脑里，增加了灾难性数据损失的可能性。</p>
 
-<p>如果你使用一个共享的文件系统，就可以在一个本地仓库里克隆，推送和获取。要从这样的仓库里克隆或者向一个显存工程里增加一个远程仓库，可以用指向该仓库的路径作为URL。比如，克隆一个本地仓库，可以用如下命令完成：</p>
+<p>如果你使用一个共享的文件系统，就可以在一个本地仓库里克隆，推送和获取。要从这样的仓库里克隆或者将其作为远程仓库添加现有工程里，可以用指向该仓库的路径作为URL。比如，克隆一个本地仓库，可以用如下命令完成：</p>
 
 <pre><code>$ git clone /opt/git/project.git</code></pre>
 
@@ -20,63 +20,63 @@ title: Pro Git 4.1 服务器上的Git The Protocols
 
 <pre><code>$ git clone file:///opt/git/project.git</code></pre>
 
-<p>如果你在URL的开头明确的使用 <code>file://</code>，那么Git会以一种略微不同的方式运行。如果你只给出路径，Git会尝试使用硬链接或者直接复制它需要的文件。如果使用了 <code>file://</code> ，Git会调用它平时通过网络来传输数据的过程，而它的效率相对很低。使用 <code>file://</code> 的主要原因是当你需要一个包含多余索引或对象的完整仓库副本的时候，一般是从其他版本控制系统的导入或类似的情形下（参见第9章的维护任务）。这里为了更快的速度我们使用普通路径。</p>
+<p>如果你在URL的开头明确的使用 <code>file://</code> ，那么 Git 会以一种略微不同的方式运行。如果你只给出路径，Git 会尝试使用硬链接或者直接复制它需要的文件。如果使用了 <code>file://</code> ，Git会调用它平时通过网络来传输数据的工序，而这种方式的效率相对很低。使用 <code>file://</code> 前缀的主要原因是当你需要一个不包含无关引用或对象的干净仓库副本的时候——一般是从其他版本控制系统的导入之后或者类似的情形（参见第9章的维护任务）。我们这里使用普通路径，因为通常这样总是更快。</p>
 
-<p>要向现存的Git工程添加一个本地仓库，运行如下命令：</p>
+<p>要添加一个本地仓库到现有 Git 工程，运行如下命令：</p>
 
 <pre><code>$ git remote add local_proj /opt/git/project.git</code></pre>
 
 <p>然后就可以像在网络上一样向这个远程仓库推送和获取数据了。</p>
 
-<h4 id='the_pros'>The Pros</h4>
+<h4 id='id238'>优点</h4>
 
-<p>The pros of file-based repositories are that they’re simple and they use existing file permissions and network access. If you already have a shared filesystem to which your whole team has access, setting up a repository is very easy. You stick the bare repository copy somewhere everyone has shared access to and set the read/write permissions as you would for any other shared directory. We’ll discuss how to export a bare repository copy for this purpose in the next section, “Getting Git on a Server.”</p>
+<p>基于文件仓库的优点在于它的简单，同时保留了现存文件的权限和网络访问权限。如果你的团队已经有一个全体共享的文件系统，建立仓库就十分容易了。你只需把一份纯仓库的副本放在大家能访问的地方，然后像对其他共享目录一样设置读写权限就可以了。我们将在下一节“在服务器上部署 Git ”中讨论如何为此导出一个纯仓库的副本。</p>
 
-<p>This is also a nice option for quickly grabbing work from someone else’s working repository. If you and a co-worker are working on the same project and they want you to check something out, running a command like <code>git pull /home/john/project</code> is often easier than them pushing to a remote server and you pulling down.</p>
+<p>这也是个从别人工作目录里获取他工作成果的快捷方法。假如你和你的同事在一个项目中合作，他们想让你签出一些东西的时候，运行类似 <code>git pull /home/john/project</code> 通常会比他们推送到服务器，而你又从服务器获取简单得多。</p>
 
-<h4 id='the_cons'>The Cons</h4>
+<h4 id='id239'>缺点</h4>
 
-<p>The cons of this method are that shared access is generally more difficult to set up and reach from multiple locations than basic network access. If you want to push from your laptop when you’re at home, you have to mount the remote disk, which can be difficult and slow compared to network-based access.</p>
+<p>这种方法的缺点是，与基本的网络连接访问相比，能从不同的位置访问的共享权限难以架设。如果你想从家里的笔记本电脑上推送，就要先挂载远程硬盘，这和基于网络连接的访问相比更加困难和缓慢。</p>
 
-<p>It’s also important to mention that this isn’t necessarily the fastest option if you’re using a shared mount of some kind. A local repository is fast only if you have fast access to the data. A repository on NFS is often slower than the repository over SSH on the same server, allowing Git to run off local disks on each system.</p>
+<p>另一个很重要的问题是该方法不一定就是最快的，尤其是对于共享挂载的文件系统。本地仓库只有在你对数据访问速度快的时候才快。在同一个服务器上，如果二者同时允许 Git 访问本地硬盘，通过 NFS 访问仓库通常会比 SSH 慢。</p>
 
-<h3 id='the_ssh_protocol'>The SSH Protocol</h3>
+<h3 id='ssh_'>SSH 协议</h3>
 
-<p>Probably the most common transport protocol for Git is SSH. This is because SSH access to servers is already set up in most places — and if it isn’t, it’s easy to do. SSH is also the only network-based protocol that you can easily read from and write to. The other two network protocols (HTTP and Git) are generally read-only, so even if you have them available for the unwashed masses, you still need SSH for your own write commands. SSH is also an authenticated network protocol; and because it’s ubiquitous, it’s generally easy to set up and use.</p>
+<p>Git 使用的传输协议中最常见的可能就是 SSH 了。这是因为大多数环境已经支持通过 SSH 对服务器的访问——即使还没有，也很容易架设。SSH 也是唯一一个同时便于读和写操作的网络协议。另外两个网络协议（HTTP 和 Git）通常都是只读的，所以虽然二者对大多数人都可用，但执行写操作时还是需要 SSH。SSH 同时也是一个验证授权的网络协议；而因为其普遍性，通常也很容易架设和使用。</p>
 
-<p>To clone a Git repository over SSH, you can specify ssh:// URL like this:</p>
+<p>通过 SSH 克隆一个 Git 仓库，你可以像下面这样给出 ssh:// 的 URL：</p>
 
 <pre><code>$ git clone ssh://user@server:project.git</code></pre>
 
-<p>Or you can not specify a protocol — Git assumes SSH if you aren’t explicit:</p>
+<p>或者不指明某个协议——这时 Git 会默认使用 SSH ：</p>
 
 <pre><code>$ git clone user@server:project.git</code></pre>
 
-<p>You can also not specify a user, and Git assumes the user you’re currently logged in as.</p>
+<p>也可以不指明用户，Git 会默认使用你当前登录的用户。</p>
 
-<h4 id='the_pros'>The Pros</h4>
+<h4 id='id240'>优点</h4>
 
-<p>The pros of using SSH are many. First, you basically have to use it if you want authenticated write access to your repository over a network. Second, SSH is relatively easy to set up — SSH daemons are commonplace, many network admins have experience with them, and many OS distributions are set up with them or have tools to manage them. Next, access over SSH is secure — all data transfer is encrypted and authenticated. Last, like the Git and Local protocols, SSH is efficient, making the data as compact as possible before transferring it.</p>
+<p>使用 SSH 的好处有很多。首先，如果你想拥有对网络仓库的写权限，基本上不可能不使用 SSH。其次，SSH 架设相对比较简单—— SSH 守护进程很常见，很多网络管理员都有一些使用经验，而且很多操作系统都自带了它或者相关的管理工具。再次，通过 SSH 进行访问是安全的——所有数据传输都是加密和授权的。最后，类似 Git 和 本地协议，SSH 很高效，会在传输之前尽可能的压缩数据。</p>
 
-<h4 id='the_cons'>The Cons</h4>
+<h4 id='id241'>缺点</h4>
 
-<p>The negative aspect of SSH is that you can’t serve anonymous access of your repository over it. People must have access to your machine over SSH to access it, even in a read-only capacity, which doesn’t make SSH access conducive to open source projects. If you’re using it only within your corporate network, SSH may be the only protocol you need to deal with. If you want to allow anonymous read-only access to your projects, you’ll have to set up SSH for you to push over but something else for others to pull over.</p>
+<p>SSH 的限制在于你不能通过它实现仓库的匿名访问。即使仅为读取数据，人们也必须在能通过 SSH 访问主机的前提下才能访问仓库，这使得 SSH 不利于开源的项目。如果你仅仅在公司网络里使用，SSH 可能是你唯一需要使用的协议。如果想允许对项目的匿名只读访问，那么除了为自己推送而架设 SSH 协议之外，还需要其他协议来让别人获取数据。</p>
 
-<h3 id='the_git_protocol'>The Git Protocol</h3>
+<h3 id='git_'>Git 协议</h3>
 
-<p>Next is the Git protocol. This is a special daemon that comes packaged with Git; it listens on a dedicated port (9418) that provides a service similar to the SSH protocol, but with absolutely no authentication. In order for a repository to be served over the Git protocol, you must create the <code>git-export-daemon-ok</code> file — the daemon won’t serve a repository without that file in it — but other than that there is no security. Either the Git repository is available for everyone to clone or it isn’t. This means that there is generally no pushing over this protocol. You can enable push access; but given the lack of authentication, if you turn on push access, anyone on the internet who finds your project’s URL could push to your project. Suffice it to say that this is rare.</p>
+<p>接下来是 Git 协议。这是一个包含在 Git 软件包中的特殊守护进程； 它会监听一个提供类似于 SSH 服务的特定端口（9418），而无需任何授权。用 Git 协议运营仓库，你需要创建 <code>git-export-daemon-ok</code> 文件——它是协议进程提供仓库服务的必要条件——但除此之外该服务没有什么安全措施。要么所有人都能克隆 Git 仓库，要么谁也不能。这也意味着该协议通常不能用来进行推送。你可以允许推送操作；然而由于没有授权机制，一旦允许该操作，网络上任何一个知道项目 URL 的人将都有推送权限。不用说，这是十分罕见的情况。</p>
 
-<h4 id='the_pros'>The Pros</h4>
+<h4 id='id242'>优点</h4>
 
-<p>The Git protocol is the fastest transfer protocol available. If you’re serving a lot of traffic for a public project or serving a very large project that doesn’t require user authentication for read access, it’s likely that you’ll want to set up a Git daemon to serve your project. It uses the same data-transfer mechanism as the SSH protocol but without the encryption and authentication overhead.</p>
+<p>Git 协议是现存最快的传输协议。如果你在提供一个有很大访问量的公共项目，或者一个不需要对读操作进行授权的庞大项目，架设一个 Git 守护进程来供应仓库是个不错的选择。它使用与 SSH 协议相同的数据传输机制，但省去了加密和授权的开销。</p>
 
-<h4 id='the_cons'>The Cons</h4>
+<h4 id='id243'>缺点</h4>
 
-<p>The downside of the Git protocol is the lack of authentication. It’s generally undesirable for the Git protocol to be the only access to your project. Generally, you’ll pair it with SSH access for the few developers who have push (write) access and have everyone else use <code>git://</code> for read-only access. It’s also probably the most difficult protocol to set up. It must run its own daemon, which is custom — we’ll look at setting one up in the “Gitosis” section of this chapter — it requires <code>xinetd</code> configuration or the like, which isn’t always a walk in the park. It also requires firewall access to port 9418, which isn’t a standard port that corporate firewalls always allow. Behind big corporate firewalls, this obscure port is commonly blocked.</p>
+<p>Git 协议消极的一面是缺少授权机制。用 Git 协议作为访问项目的唯一方法通常是不可取的。一般做法是，同时提供 SSH 接口，让几个开发者拥有推送（写）权限，其他人通过 <code>git://</code> 拥有只读权限。 Git 协议可能也是最难架设的协议。它要求有单独的守护进程，需要定制——我们将在本章的 “Gitosis” 一节详细介绍它的架设——需要设定 <code>xinetd</code> 或类似的程序，而这些就没那么平易近人了。该协议还要求防火墙开放 9418 端口，而企业级防火墙一般不允许对这个非标准端口的访问。大型企业级防火墙通常会封锁这个少见的端口。</p>
 
-<h3 id='the_https_protocol'>The HTTP/S Protocol</h3>
+<h3 id='https_'>HTTP/S 协议</h3>
 
-<p>Last we have the HTTP protocol. The beauty of the HTTP or HTTPS protocol is the simplicity of setting it up. Basically, all you have to do is put the bare Git repository under your HTTP document root and set up a specific <code>post-update</code> hook, and you’re done (See Chapter 7 for details on Git hooks). At that point, anyone who can access the web server under which you put the repository can also clone your repository. To allow read access to your repository over HTTP, do something like this:</p>
+<p>最后还有 HTTP 协议。HTTP 或 HTTPS 协议的优美之处在于架设的简便性。基本上， 只需要把 Git 的纯仓库文件放在 HTTP 的文件根目录下，配置一个特定的 <code>post-update</code> 挂钩（hook），就搞定了（Git 挂钩的细节见第七章）。从此，每个能访问 Git 仓库所在服务器上的 web 服务的人都可以进行克隆操作。下面的操作可以允许通过 HTTP 对仓库进行读取：</p>
 
 <pre><code>$ cd /var/www/htdocs/
 $ git clone --bare /path/to/git_project gitproject.git
@@ -84,25 +84,25 @@ $ cd gitproject.git
 $ mv hooks/post-update.sample hooks/post-update
 $ chmod a+x hooks/post-update</code></pre>
 
-<p>That’s all. The <code>post-update</code> hook that comes with Git by default runs the appropriate command (<code>git update-server-info</code>) to make HTTP fetching and cloning work properly. This command is run when you push to this repository over SSH; then, other people can clone via something like</p>
+<p>这样就可以了。Git 附带的 <code>post-update</code> 挂钩会默认运行合适的命令（<code>git update-server-info</code>）来确保通过 HTTP 的获取和克隆正常工作。这条命令在你用 SSH 向仓库推送内容时运行；之后，其他人就可以用下面的命令来克隆仓库：</p>
 
 <pre><code>$ git clone http://example.com/gitproject.git</code></pre>
 
-<p>In this particular case, we’re using the <code>/var/www/htdocs</code> path that is common for Apache setups, but you can use any static web server — just put the bare repository in its path. The Git data is served as basic static files (see Chapter 9 for details about exactly how it’s served).</p>
+<p>在本例中，我们使用了 Apache 设定中常用的 <code>/var/www/htdocs</code> 路径，不过你可以使用任何静态 web 服务——把纯仓库放在它的目录里就行了。 Git 的数据是以最基本的静态文件的形式提供的（关于如何提供文件的详情见第9章）。</p>
 
-<p>It’s possible to make Git push over HTTP as well, although that technique isn’t as widely used and requires you to set up complex WebDAV requirements. Because it’s rarely used, we won’t cover it in this book. If you’re interested in using the HTTP-push protocols, you can read about preparing a repository for this purpose at <code>http://www.kernel.org/pub/software/scm/git/docs/howto/setup-git-server-over-http.txt</code>. One nice thing about making Git push over HTTP is that you can use any WebDAV server, without specific Git features; so, you can use this functionality if your web-hosting provider supports WebDAV for writing updates to your web site.</p>
+<p>通过HTTP进行推送操作也是可能的，不过这种做法不太常见并且牵扯到复杂的 WebDAV 设定。由于很少用到，本书将略过对该内容的讨论。如果对 HTTP 推送协议感兴趣，不妨在这个地址看一下操作方法：<code>http://www.kernel.org/pub/software/scm/git/docs/howto/setup-git-server-over-http.txt</code> 。通过 HTTP 推送的好处之一是你可以使用任何 WebDAV 服务器，不需要为 Git 设定特殊环境；所以如果主机提供商支持通过 WebDAV 更新网站内容，你也可以使用这项功能。</p>
 
-<h4 id='the_pros'>The Pros</h4>
+<h4 id='id244'>优点</h4>
 
-<p>The upside of using the HTTP protocol is that it’s easy to set up. Running the handful of required commands gives you a simple way to give the world read access to your Git repository. It takes only a few minutes to do. The HTTP protocol also isn’t very resource intensive on your server. Because it generally uses a static HTTP server to serve all the data, a normal Apache server can serve thousands of files per second on average — it’s difficult to overload even a small server.</p>
+<p>使用 HTTP 协议的好处是易于架设。几条必要的命令就可以让全世界读取到仓库的内容。花费不过几分钟。HTTP 协议不会占用过多服务器资源。因为它一般只用到静态的 HTTP 服务提供所有的数据，普通的 Apache 服务器平均每秒能供应数千个文件——哪怕是让一个小型的服务器超载都很难。</p>
 
-<p>You can also serve your repositories read-only over HTTPS, which means you can encrypt the content transfer; or you can go so far as to make the clients use specific signed SSL certificates. Generally, if you’re going to these lengths, it’s easier to use SSH public keys; but it may be a better solution in your specific case to use signed SSL certificates or other HTTP-based authentication methods for read-only access over HTTPS.</p>
+<p>你也可以通过 HTTPS 提供只读的仓库，这意味着你可以加密传输内容；你甚至可以要求客户端使用特定签名的 SSL 证书。一般情况下，如果到了这一步，使用 SSH 公共密钥可能是更简单的方案；不过也存在一些特殊情况，这时通过 HTTPS 使用带签名的 SSL 证书或者其他基于 HTTP 的只读连接授权方式是更好的解决方案。</p>
 
-<p>Another nice thing is that HTTP is such a commonly used protocol that corporate firewalls are often set up to allow traffic through this port.</p>
+<p>HTTP 还有个额外的好处：HTTP 是一个如此常见的协议，以至于企业级防火墙通常都允许其端口的通信。</p>
 
-<h4 id='the_cons'>The Cons</h4>
+<h4 id='id245'>缺点</h4>
 
-<p>The downside of serving your repository over HTTP is that it’s relatively inefficient for the client. It generally takes a lot longer to clone or fetch from the repository, and you often have a lot more network overhead and transfer volume over HTTP than with any of the other network protocols. Because it’s not as intelligent about transferring only the data you need — there is no dynamic work on the part of the server in these transactions — the HTTP protocol is often referred to as a <em>dumb</em> protocol. For more information about the differences in efficiency between the HTTP protocol and the other protocols, see Chapter 9.</p>
+<p>HTTP 协议的消极面在于，相对来说客户端效率更低。克隆或者下载仓库内容可能会花费更多时间，而且 HTTP 传输的体积和网络开销比其他任何一个协议都大。因为它没有按需供应的能力——传输过程中没有服务端的动态计算——因而 HTTP 协议经常会被称为 <em>傻瓜(dumb)</em> 协议。更多 HTTP 协议和其他协议效率上的差异见第九章。</p>
 
 <div id='nav'>
 <a href='ch4-0.html'>prev</a> | <a href='ch4-2.html'>next</a>

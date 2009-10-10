@@ -1,217 +1,64 @@
 ---
-layout: master
-title: Pro Git 7.3 Git 基础 Viewing the Commit History
+layout: translation
+title: Pro Git 7.3 自定义Git Git Hooks
 ---
-<h2 id='viewing_the_commit_history'>Viewing the Commit History</h2>
+<h2 id='git_hooks'>Git Hooks</h2>
 
-<p>After you have created several commits, or if you have cloned a repository with an existing commit history, you’ll probably want to look back to see what has happened. The most basic and powerful tool to do this is the <code>git log</code> command.</p>
+<p>Like many other Version Control Systems, Git has a way to fire off custom scripts when certain important actions occur. There are two groups of these hooks: client side and server side. The client-side hooks are for client operations such as committing and merging. The server-side hooks are for Git server operations such as receiving pushed commits. You can use these hooks for all sorts of reasons, and you’ll learn about a few of them here.</p>
 
-<p>These examples use a very simple project called simplegit that I often use for demonstrations. To get the project, run</p>
+<h3 id='installing_a_hook'>Installing a Hook</h3>
 
-<pre><code>git clone git://github.com/schacon/simplegit-progit.git</code></pre>
+<p>The hooks are all stored in the <code>hooks</code> subdirectory of the Git directory. In most projects, that’s <code>.git/hooks</code>. By default, Git populates this directory with a bunch of example scripts, many of which are useful by themselves; but they also document the input values of each script. All the examples are written as shell scripts, with some Perl thrown in, but any properly named executable scripts will work fine — you can write them in Ruby or Python or what have you. For post-1.6 versions of Git, these example hook files end with .sample; you’ll need to rename them. For pre-1.6 versions of Git, the example files are named properly but are not executable.</p>
 
-<p>When you run <code>git log</code> in this project, you should get output that looks something like this:</p>
+<p>To enable a hook script, put a file in the <code>hooks</code> subdirectory of your Git directory that is named appropriately and is executable. From that point forward, it should be called. I’ll cover most of the major hook filenames here.</p>
 
-<pre><code>$ git log
-commit ca82a6dff817ec66f44342007202690a93763949
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Mon Mar 17 21:52:11 2008 -0700
+<h3 id='clientside_hooks'>Client-Side Hooks</h3>
 
-    changed the verison number
+<p>There are a lot of client-side hooks. This section splits them into committing-workflow hooks, e-mail–workflow scripts, and the rest of the client-side scripts.</p>
 
-commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Sat Mar 15 16:40:33 2008 -0700
+<h4 id='committingworkflow_hooks'>Committing-Workflow Hooks</h4>
 
-    removed unnecessary test code
+<p>The first four hooks have to do with the committing process. The <code>pre-commit</code> hook is run first, before you even type in a commit message. It’s used to inspect the snapshot that’s about to be committed, to see if you’ve forgotten something, to make sure tests run, or to examine whatever you need to inspect in the code. Exiting non-zero from this hook aborts the commit, although you can bypass it with <code>git commit --no-verify</code>. You can do things like check for code style (run lint or something equivalent), check for trailing whitespace (the default hook does exactly that), or check for appropriate documentation on new methods.</p>
 
-commit a11bef06a3f659402fe7563abf99ad00de2209e6
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Sat Mar 15 10:31:28 2008 -0700
+<p>The <code>prepare-commit-msg</code> hook is run before the commit message editor is fired up but after the default message is created. It lets you edit the default message before the commit author sees it. This hook takes a few options: the path to the file that holds the commit message so far, the type of commit, and the commit SHA-1 if this is an amended commit. This hook generally isn’t useful for normal commits; rather, it’s good for commits where the default message is auto-generated, such as templated commit messages, merge commits, squashed commits, and amended commits. You may use it in conjunction with a commit template to programmatically insert information.</p>
 
-    first commit</code></pre>
+<p>The <code>commit-msg</code> hook takes one parameter, which again is the path to a temporary file that contains the current commit message. If this script exits non-zero, Git aborts the commit process, so you can use it to validate your project state or commit message before allowing a commit to go through. In the last section of this chapter, I’ll demonstrate using this hook to check that your commit message is conformant to a required pattern.</p>
 
-<p>By default, with no arguments, <code>git log</code> lists the commits made in that repository in reverse chronological order. That is, the most recent commits show up first. As you can see, this command lists each commit with its SHA-1 checksum, the author’s name and e-mail, the date written, and the commit message.</p>
+<p>After the entire commit process is completed, the <code>post-commit</code> hook runs. It doesn’t take any parameters, but you can easily get the last commit by running <code>git log -1 HEAD</code>. Generally, this script is used for notification or something similar.</p>
 
-<p>A huge number and variety of options to the <code>git log</code> command are available to show you exactly what you’re looking for. Here, we’ll show you some of the most-used options.</p>
+<p>The committing-workflow client-side scripts can be used in just about any workflow. They’re often used to enforce certain policies, although it’s important to note that these scripts aren’t transferred during a clone. You can enforce policy on the server side to reject pushes of commits that don’t conform to some policy, but it’s entirely up to the developer to use these scripts on the client side. So, these are scripts to help developers, and they must be set up and maintained by them, although they can be overridden or modified by them at any time.</p>
 
-<p>One of the more helpful options is <code>-p</code>, which shows the diff introduced in each commit. You can also use <code>-2</code>, which limits the output to only the last two entries:</p>
+<h4 id='email_workflow_hooks'>E-mail Workflow Hooks</h4>
 
-<pre><code>$ git log –p -2
-commit ca82a6dff817ec66f44342007202690a93763949
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Mon Mar 17 21:52:11 2008 -0700
+<p>You can set up three client-side hooks for an e-mail–based workflow. They’re all invoked by the <code>git am</code> command, so if you aren’t using that command in your workflow, you can safely skip to the next section. If you’re taking patches over e-mail prepared by <code>git format-patch</code>, then some of these may be helpful to you.</p>
 
-    changed the verison number
+<p>The first hook that is run is <code>applypatch-msg</code>. It takes a single argument: the name of the temporary file that contains the proposed commit message. Git aborts the patch if this script exits non-zero. You can use this to make sure a commit message is properly formatted or to normalize the message by having the script edit it in place.</p>
 
-diff --git a/Rakefile b/Rakefile
-index a874b73..8f94139 100644
---- a/Rakefile
-+++ b/Rakefile
-@@ -5,7 +5,7 @@ require &#39;rake/gempackagetask&#39;
- spec = Gem::Specification.new do |s|
--    s.version   =   &quot;0.1.0&quot;
-+    s.version   =   &quot;0.1.1&quot;
-     s.author    =   &quot;Scott Chacon&quot;
+<p>The next hook to run when applying patches via <code>git am</code> is <code>pre-applypatch</code>. It takes no arguments and is run after the patch is applied, so you can use it to inspect the snapshot before making the commit. You can run tests or otherwise inspect the working tree with this script. If something is missing or the tests don’t pass, exiting non-zero also aborts the <code>git am</code> script without committing the patch.</p>
 
-commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Sat Mar 15 16:40:33 2008 -0700
+<p>The last hook to run during a <code>git am</code> operation is <code>post-applypatch</code>. You can use it to notify a group or the author of the patch you pulled in that you’ve done so. You can’t stop the patching process with this script.</p>
 
-    removed unnecessary test code
+<h4 id='other_client_hooks'>Other Client Hooks</h4>
 
-diff --git a/lib/simplegit.rb b/lib/simplegit.rb
-index a0a60ae..47c6340 100644
---- a/lib/simplegit.rb
-+++ b/lib/simplegit.rb
-@@ -18,8 +18,3 @@ class SimpleGit
-     end
+<p>The <code>pre-rebase</code> hook runs before you rebase anything and can halt the process by exiting non-zero. You can use this hook to disallow rebasing any commits that have already been pushed. The example <code>pre-rebase</code> hook that Git installs does this, although it assumes that next is the name of the branch you publish. You’ll likely need to change that to whatever your stable, published branch is.</p>
 
- end
--
--if $0 == __FILE__
--  git = SimpleGit.new
--  puts git.show
--end
-\ No newline at end of file</code></pre>
+<p>After you run a successful <code>git checkout</code>, the <code>post-checkout</code> hook runs; you can use it to set up your working directory properly for your project environment. This may mean moving in large binary files that you don’t want source controlled, auto-generating documentation, or something along those lines.</p>
 
-<p>This option displays the same information but with a diff directly following each entry. This is very helpful for code review or to quickly browse what happened during a series of commits that a collaborator has added. You can also use a series of summarizing options with <code>git log</code>. For example, if you want to see some abbreviated stats for each commit, you can use the <code>--stat</code> option:</p>
+<p>Finally, the <code>post-merge</code> hook runs after a successful <code>merge</code> command. You can use it to restore data in the working tree that Git can’t track, such as permissions data. This hook can likewise validate the presence of files external to Git control that you may want copied in when the working tree changes.</p>
 
-<pre><code>$ git log --stat 
-commit ca82a6dff817ec66f44342007202690a93763949
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Mon Mar 17 21:52:11 2008 -0700
+<h3 id='serverside_hooks'>Server-Side Hooks</h3>
 
-    changed the verison number
+<p>In addition to the client-side hooks, you can use a couple of important server-side hooks as a system administrator to enforce nearly any kind of policy for your project. These scripts run before and after pushes to the server. The pre hooks can exit non-zero at any time to reject the push as well as print an error message back to the client; you can set up a push policy that’s as complex as you wish.</p>
 
- Rakefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+<h4 id='prereceive_and_postreceive'>pre-receive and post-receive</h4>
 
-commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Sat Mar 15 16:40:33 2008 -0700
+<p>The first script to run when handling a push from a client is <code>pre-receive</code>. It takes a list of references that are being pushed from stdin; if it exits non-zero, none of them are accepted. You can use this hook to do things like make sure none of the updated references are non-fast-forwards; or to check that the user doing the pushing has create, delete, or push access or access to push updates to all the files they’re modifying with the push.</p>
 
-    removed unnecessary test code
+<p>The <code>post-receive</code> hook runs after the entire process is completed and can be used to update other services or notify users. It takes the same stdin data as the <code>pre-receive</code> hook. Examples include e-mailing a list, notifying a continuous integration server, or updating a ticket-tracking system — you can even parse the commit messages to see if any tickets need to be opened, modified, or closed. This script can’t stop the push process, but the client doesn’t disconnect until it has completed; so, be careful when you try to do anything that may take a long time.</p>
 
- lib/simplegit.rb |    5 -----
- 1 files changed, 0 insertions(+), 5 deletions(-)
+<h4 id='update'>update</h4>
 
-commit a11bef06a3f659402fe7563abf99ad00de2209e6
-Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
-Date:   Sat Mar 15 10:31:28 2008 -0700
-
-    first commit
-
- README           |    6 ++++++
- Rakefile         |   23 +++++++++++++++++++++++
- lib/simplegit.rb |   25 +++++++++++++++++++++++++
- 3 files changed, 54 insertions(+), 0 deletions(-)</code></pre>
-
-<p>As you can see, the <code>--stat</code> option prints below each commit entry a list of modified files, how many files were changed, and how many lines in those files were added and removed. It also puts a summary of the information at the end. Another really useful option is <code>--pretty</code>. This option changes the log output to formats other than the default. A few prebuilt options are available for you to use. The oneline option prints each commit on a single line, which is useful if you’re looking at a lot of commits. In addition, the <code>short</code>, <code>full</code>, and <code>fuller</code> options show the output in roughly the same format but with less or more information, respectively:</p>
-
-<pre><code>$ git log --pretty=oneline
-ca82a6dff817ec66f44342007202690a93763949 changed the verison number
-085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
-a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
-
-<p>The most interesting option is <code>format</code>, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:</p>
-
-<pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
-ca82a6d - Scott Chacon, 11 months ago : changed the verison number
-085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
-a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
-
-<p>Table 2-1 lists some of the more useful options that format takes.</p>
-
-<pre><code>Option	Description of Output
-%H	Commit hash
-%h	Abbreviated commit hash
-%T	Tree hash
-%t	Abbreviated tree hash
-%P	Parent hashes
-%p	Abbreviated parent hashes
-%an	Author name
-%ae	Author e-mail
-%ad	Author date (format respects the –date= option)
-%ar	Author date, relative
-%cn	Committer name
-%ce	Committer email
-%cd	Committer date
-%cr	Committer date, relative
-%s	Subject</code></pre>
-
-<p>You may be wondering what the difference is between <em>author</em> and <em>committer</em>. The author is the person who originally wrote the work, whereas the committer is the person who last applied the work. So, if you send in a patch to a project and one of the core members applies the patch, both of you get credit — you as the author and the core member as the committer. We’ll cover this distinction a bit more in Chapter 5.</p>
-
-<p>The oneline and format options are particularly useful with another <code>log</code> option called <code>--graph</code>. This option adds a nice little ASCII graph showing your branch and merge history, which we can see our copy of the Grit project repository:</p>
-
-<pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
-* 2d3acf9 ignore errors from SIGCHLD on trap
-*  5e3ee11 Merge branch &#39;master&#39; of git://github.com/dustin/grit
-|\  
-| * 420eac9 Added a method for getting the current branch.
-* | 30e367c timeout code and tests
-* | 5a09431 add timeout protection to grit
-* | e1193f8 support for heads with slashes in them
-|/  
-* d6016bc require time for xmlschema
-*  11d191e Merge branch &#39;defunkt&#39; into local</code></pre>
-
-<p>Those are only some simple output-formatting options to <code>git log</code> — there are many more. Table 2-2 lists the options we’ve covered so far and some other common formatting options that may be useful, along with how they change the output of the log command.</p>
-
-<pre><code>Option	Description
--p	Show the patch introduced with each commit.
---stat	Show statistics for files modified in each commit.
---shortstat	Display only the changed/insertions/deletions line from the --stat command.
---name-only	Show the list of files modified after the commit information.
---name-status	Show the list of files affected with added/modified/deleted information as well.
---abbrev-commit	Show only the first few characters of the SHA-1 checksum instead of all 40.
---relative-date	Display the date in a relative format (for example, “2 weeks ago”) instead of using the full date format.
---graph	Display an ASCII graph of the branch and merge history beside the log output.
---pretty	Show commits in an alternate format. Options include oneline, short, full, fuller, and format (where you specify your own format).</code></pre>
-
-<h3 id='limiting_log_output'>Limiting Log Output</h3>
-
-<p>In addition to output-formatting options, git log takes a number of useful limiting options — that is, options that let you show only a subset of commits. You’ve seen one such option already — the <code>-2</code> option, which show only the last two commits. In fact, you can do <code>-&lt;n&gt;</code>, where <code>n</code> is any integer to show the last <code>n</code> commits. In reality, you’re unlikely to use that often, because Git by default pipes all output through a pager so you see only one page of log output at a time.</p>
-
-<p>However, the time-limiting options such as <code>--since</code> and <code>--until</code> are very useful. For example, this command gets the list of commits made in the last two weeks:</p>
-
-<pre><code>$ git log --since=2.weeks</code></pre>
-
-<p>This command works with lots of formats — you can specify a specific date (“2008-01-15”) or a relative date such as “2 years 1 day 3 minutes ago”.</p>
-
-<p>You can also filter the list to commits that match some search criteria. The <code>--author</code> option allows you to filter on a specific author, and the <code>--grep</code> option lets you search for keywords in the commit messages. (Note that if you want to specify both author and grep options, you have to add <code>--all-match</code> or the command will match commits with either.)</p>
-
-<p>The last really useful option to pass to <code>git log</code> as a filter is a path. If you specify a directory or file name, you can limit the log output to commits that introduced a change to those files. This is always the last option and is generally preceded by double dashes (<code>--</code>) to separate the paths from the options.</p>
-
-<p>In Table 2-3 we’ll list these and a few other common options for your reference.</p>
-
-<pre><code>Option	Description
--(n)	Show only the last n commits
---since, --after	Limit the commits to those made after the specified date.
---until, --before	Limit the commits to those made before the specified date.
---author	Only show commits in which the author entry matches the specified string.
---committer	Only show commits in which the committer entry matches the specified string.</code></pre>
-
-<p>For example, if you want to see which commits modifying test files in the Git source code history were committed by Junio Hamano and were not merges in the month of October 2008, you can run something like this:</p>
-
-<pre><code>$ git log --pretty=&quot;%h:%s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
-   --before=&quot;2008-11-01&quot; --no-merges -- t/
-5610e3b - Fix testcase failure when extended attribute
-acd3b9e - Enhance hold_lock_file_for_{update,append}()
-f563754 - demonstrate breakage of detached checkout wi
-d1a43f2 - reset --hard/read-tree --reset -u: remove un
-51a94af - Fix &quot;checkout --track -b newbranch&quot; on detac
-b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
-
-<p>Of the nearly 20,000 commits in the Git source code history, this command shows the 6 that match those criteria.</p>
-
-<h3 id='using_a_gui_to_visualize_history'>Using a GUI to Visualize History</h3>
-
-<p>If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual <code>git log</code> tool, and it accepts nearly all the filtering options that <code>git log</code> does. If you type gitk on the command line in your project, you should see something like Figure 2-2.</p>
-
-<p><center><img src="/figures/ch7/18333fig0202-tn.png"></center><br/> Figure 2-2. The gitk history visualizer</p>
-
-<p>You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.</p>
+<p>The update script is very similar to the <code>pre-receive</code> script, except that it’s run once for each branch the pusher is trying to update. If the pusher is trying to push to multiple branches, <code>pre-receive</code> runs only once, whereas update runs once per branch they’re pushing to. Instead of reading from stdin, this script takes three arguments: the name of the reference (branch), the SHA-1 that reference pointed to before the push, and the SHA-1 the user is trying to push. If the update script exits non-zero, only that reference is rejected; other references can still be updated.</p>
 
 <div id='nav'>
 <a href='ch7-2.html'>prev</a> | <a href='ch7-4.html'>next</a>

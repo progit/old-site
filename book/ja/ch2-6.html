@@ -181,7 +181,7 @@ Date:   Sun Apr 27 20:43:35 2008 -0700
 
 <h3 id='id48'>タグの共有</h3>
 
-<p>デフォルトでは、<code>git push</code> コマンドはタグ情報をリモートに送りません。タグを作ったら、タグをリモートサーバにプッシュするよう明示する必要があります。その方法は、リモートブランチを共有するときと煮ています。<code>git push origin [tagname]</code> を実行するのです。</p>
+<p>デフォルトでは、<code>git push</code> コマンドはタグ情報をリモートに送りません。タグを作ったら、タグをリモートサーバーにプッシュするよう明示する必要があります。その方法は、リモートブランチを共有するときと煮ています。<code>git push origin [tagname]</code> を実行するのです。</p>
 
 <pre><code>$ git push origin v1.5
 Counting objects: 50, done.
@@ -191,7 +191,7 @@ Total 44 (delta 18), reused 8 (delta 1)
 To git@github.com:schacon/simplegit.git
 * [new tag]         v1.5 -&gt; v1.5</code></pre>
 
-<p>多くのタグを一度にプッシュしたい場合は、<code>git push</code> コマンドのオプション <code>--tags</code> を使用します。これは、手元にあるタグのうちまだリモートサーバに存在しないものをすべて転送します。</p>
+<p>多くのタグを一度にプッシュしたい場合は、<code>git push</code> コマンドのオプション <code>--tags</code> を使用します。これは、手元にあるタグのうちまだリモートサーバーに存在しないものをすべて転送します。</p>
 
 <pre><code>$ git push origin --tags
 Counting objects: 50, done.

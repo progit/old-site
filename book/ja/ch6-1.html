@@ -10,11 +10,11 @@ title: Pro Git 6.1 Git のさまざまなツール リビジョンの選択
 
 <p>SHA-1 ハッシュを指定すれば、コミットを明確に参照することができます。しかしそれ以外にも、より人間にやさしい方式でコミットを参照することもできます。このセクションでは単一のコミットを参照するためのさまざまな方法の概要を説明します。</p>
 
-<h3 id='short_sha'>Short SHA</h3>
+<h3 id='sha_'>SHA の短縮形</h3>
 
-<p>Git is smart enough to figure out what commit you meant to type if you provide the first few characters, as long as your partial SHA-1 is at least four characters long and unambiguous — that is, only one object in the current repository begins with that partial SHA-1.</p>
+<p>Git は、最初の数文字をタイプしただけであなたがどのコミットを指定したいのかを汲み取ってくれます。条件は、SHA-1 の最初の 4 文字以上を入力していることと、それでひとつのコミットが特定できる (現在のリポジトリに、入力した文字ではじまる SHA-1 のコミットがひとつしかない) ことです。</p>
 
-<p>For example, to see a specific commit, suppose you run a <code>git log</code> command and identify the commit where you added certain functionality:</p>
+<p>あるコミットを指定するために <code>git log</code> コマンドを実行し、とある機能を追加したコミットを見つけました。</p>
 
 <pre><code>$ git log
 commit 734713bc047d87bf7eac9674765ae793478c50d3
@@ -36,48 +36,48 @@ Date:   Thu Dec 11 14:58:32 2008 -0800
 
     added some blame and merge stuff</code></pre>
 
-<p>In this case, choose <code>1c002dd....</code> If you <code>git show</code> that commit, the following commands are equivalent (assuming the shorter versions are unambiguous):</p>
+<p>探していたのは、<code>1c002dd....</code> で始まるコミットです。<code>git show</code> でこのコミットを見るときは、次のどのコマンドでも同じ結果になります (短いバージョンで、重複するコミットはないものとします)。</p>
 
 <pre><code>$ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
 $ git show 1c002dd4b536e7479f
 $ git show 1c002d</code></pre>
 
-<p>Git can figure out a short, unique abbreviation for your SHA-1 values. If you pass <code>--abbrev-commit</code> to the <code>git log</code> command, the output will use shorter values but keep them unique; it defaults to using seven characters but makes them longer if necessary to keep the SHA-1 unambiguous:</p>
+<p>一意に特定できる範囲での SHA-1 の短縮形を Git に見つけさせることもできます。<code>git log</code> コマンドで <code>--abbrev-commit</code> を指定すると、コミットを一意に特定できる範囲の省略形で出力します。デフォルトでは 7 文字ぶん表示しますが、それだけで SHA-1 を特定できない場合はさらに長くなります。</p>
 
 <pre><code>$ git log --abbrev-commit --pretty=oneline
 ca82a6d changed the version number
 085bb3b removed unnecessary test code
 a11bef0 first commit</code></pre>
 
-<p>Generally, eight to ten characters are more than enough to be unique within a project. One of the largest Git projects, the Linux kernel, is beginning to need 12 characters out of the possible 40 to stay unique.</p>
+<p>ひとつのプロジェクト内での一意性を確保するには、普通は 8 文字から 10 文字もあれば十分すぎることでしょう。最も大規模な Git プロジェクトのひとつである Linux カーネルの場合は、40 文字のうち先頭の 12 文字を指定しないと一意性を確保できません。</p>
 
-<h3 id='a_short_note_about_sha1'>A SHORT NOTE ABOUT SHA-1</h3>
+<h3 id='sha1_'>SHA-1 に関するちょっとしたメモ</h3>
 
-<p>A lot of people become concerned at some point that they will, by random happenstance, have two objects in their repository that hash to the same SHA-1 value. What then?</p>
+<p>「リポジトリ内のふたつのオブジェクトがたまたま同じ SHA-1 ハッシュ値を持ってしまったらどうするの?」と心配する人も多いでしょう。実際、どうなるのでしょう?</p>
 
-<p>If you do happen to commit an object that hashes to the same SHA-1 value as a previous object in your repository, GIt will see the previous object already in your Git database and assume it was already written. If you try to check out that object again at some point, you’ll always get the data of the first object.</p>
+<p>すでにリポジトリに存在するオブジェクトと同じ SHA-1 値を持つオブジェクトをコミットしてした場合、Git はすでにそのオブジェクトがデータベースに格納されているものと判断します。そのオブジェクトを後からどこかで取得しようとすると、常に最初のオブジェクトのデータが手元にやってきます (訳注: つまり、後からコミットした内容は存在しないことになってしまう)。</p>
 
-<p>However, you should be aware of how ridiculously unlikely this scenario is. The SHA-1 digest is 20 bytes or 160 bits. The number of randomly hashed objects needed to ensure a 50% probability of a single collision is about 2^80 (the formula for determining collision probability is <code>p = (n(n-1)/2) * (1/2^160))</code>. 2^80 is 1.2 x 10^24 or 1 million billion billion. That’s 1,200 times the number of grains of sand on the earth.</p>
+<p>しかし、そんなことはまず起こりえないということを知っておくべきでしょう。SHA-1 ダイジェストの大きさは 20 バイト (160 ビット) です。ランダムなハッシュ値がつけられた中で、たった一つの衝突が 50% の確率で発生するために必要なオブジェクトの数は約 2^80 となります (衝突の可能性の計算式は <code>p = (n(n-1)/2) * (1/2^160)</code> です)。2^80 は、ほぼ 1.2 x 10^24 、つまり一兆二千億のそのまた一兆倍です。これは、地球上にあるすべての砂粒の数の千二百倍にあたります。</p>
 
-<p>Here’s an example to give you an idea of what it would take to get a SHA-1 collision. If all 6.5 billion humans on Earth were programming, and every second, each one was producing code that was the equivalent of the entire Linux kernel history (1 million Git objects) and pushing it into one enormous Git repository, it would take 5 years until that repository contained enough objects to have a 50% probability of a single SHA-1 object collision. A higher probability exists that every member of your programming team will be attacked and killed by wolves in unrelated incidents on the same night.</p>
+<p>SHA-1 の衝突を見るにはどうしたらいいのか、ひとつの例をごらんに入れましょう。地球上の人類 65 億人が全員プログラムを書いていたとします。そしてその全員が、Linux カーネルのこれまでの開発履歴 (100 万の Git オブジェクト) と同等のコードを一秒で書き上げ、馬鹿でかい単一の Git リポジトリにプッシュしていくとします。これを五年間続けたとして、SHA-1 オブジェクトの衝突がひとつでも発生する可能性がやっと 50% になります。それよりも「あなたの所属する開発チームの全メンバーが、同じ夜にそれぞれまったく無関係の事件で全員オオカミに殺されてしまう」可能性のほうがよっぽど高いことでしょう。</p>
 
-<h3 id='branch_references'>Branch References</h3>
+<h3 id='id116'>ブランチの参照</h3>
 
-<p>The most straightforward way to specify a commit requires that it have a branch reference pointed at it. Then, you can use a branch name in any Git command that expects a commit object or SHA-1 value. For instance, if you want to show the last commit object on a branch, the following commands are equivalent, assuming that the <code>topic1</code> branch points to <code>ca82a6d</code>:</p>
+<p>特定のコミットを参照するのに一番直感的なのは、そのコミットを指すブランチがある場合です。コミットオブジェクトや SHA-1 値を指定する場面ではどこでも、その代わりにブランチ名を指定することができます。たとえば、あるブランチ上の最新のコミットを表示したい場合は次のふたつのコマンドが同じ意味となります (<code>topic1</code> ブランチが <code>ca82a6d</code> を指しているものとします)。</p>
 
 <pre><code>$ git show ca82a6dff817ec66f44342007202690a93763949
 $ git show topic1</code></pre>
 
-<p>If you want to see which specific SHA a branch points to, or if you want to see what any of these examples boils down to in terms of SHAs, you can use a Git plumbing tool called <code>rev-parse</code>. You can see Chapter 9 for more information about plumbing tools; basically, <code>rev-parse</code> exists for lower-level operations and isn’t designed to be used in day-to-day operations. However, it can be helpful sometimes when you need to see what’s really going on. Here you can run <code>rev-parse</code> on your branch.</p>
+<p>あるブランチがいったいどの SHA を指しているのか、あるいはその他の例の内容が結局のところどの SHA に行き着くのかといったことを知るには、Git の調査用ツールである <code>rev-parse</code> を使います。こういった調査用ツールのより詳しい情報は第 9 章で説明します。<code>rev-parse</code> は低レベルでの操作用のコマンドであり、日々の操作で使うためのものではありません。しかし、今実際に何が起こっているのかを知る必要があるときなどには便利です。ブランチ上で <code>rev-parse</code> を実行すると、このようになります。</p>
 
 <pre><code>$ git rev-parse topic1
 ca82a6dff817ec66f44342007202690a93763949</code></pre>
 
-<h3 id='reflog_shortnames'>RefLog Shortnames</h3>
+<h3 id='id117'>参照ログの短縮形</h3>
 
-<p>One of the things Git does in the background while you’re working away is keep a reflog — a log of where your HEAD and branch references have been for the last few months.</p>
+<p>あなたがせっせと働いている間に Git が裏でこっそり行っていることのひとつが、参照ログ (reflog) の管理です。これは、HEAD とブランチの参照が過去数ヶ月間どのように動いてきたかをあらわすものです。</p>
 
-<p>You can see your reflog by using <code>git reflog</code>:</p>
+<p>参照ログを見るには <code>git reflog</code> を使います。</p>
 
 <pre><code>$ git reflog
 734713b... HEAD@{0}: commit: fixed refs handling, added gc auto, updated
@@ -88,17 +88,17 @@ d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
 1c36188... HEAD@{5}: rebase -i (squash): updating HEAD
 7e05da5... HEAD@{6}: rebase -i (pick): updating HEAD</code></pre>
 
-<p>Every time your branch tip is updated for any reason, Git stores that information for you in this temporary history. And you can specify older commits with this data, as well. If you want to see the fifth prior value of the HEAD of your repository, you can use the <code>@{n}</code> reference that you see in the reflog output:</p>
+<p>何らかの理由でブランチの先端が更新されるたびに、Git はその情報をこの一時履歴に格納します。そして、このデータを使って過去のコミットを指定することもできます。リポジトリの HEAD の五つ前の状態を知りたい場合は、先ほど見た reflog の出力のように <code>@{n}</code> 形式で参照することができます。</p>
 
 <pre><code>$ git show HEAD@{5}</code></pre>
 
-<p>You can also use this syntax to see where a branch was some specific amount of time ago. For instance, to see where your <code>master</code> branch was yesterday, you can type</p>
+<p>この構文を使うと、指定した期間だけさかのぼったときに特定のブランチがどこを指していたかを知ることもできます。たとえば <code>master</code> ブランチの昨日の状態を知るには、このようにします。</p>
 
 <pre><code>$ git show master@{yesterday}</code></pre>
 
-<p>That shows you where the branch tip was yesterday. This technique only works for data that’s still in your reflog, so you can’t use it to look for commits older than a few months.</p>
+<p>こうすると、そのブランチの先端が昨日どこを指していたかを表示します。この技が使えるのは参照ログにデータが残っている間だけなので、直近数ヶ月よりも前のコミットについては使うことができません。</p>
 
-<p>To see reflog information formatted like the <code>git log</code> output, you can run <code>git log -g</code>:</p>
+<p>参照ログの情報を <code>git log</code> の出力風の表記で見るには <code>git log -g</code> を実行します。</p>
 
 <pre><code>$ git log -g master
 commit 734713bc047d87bf7eac9674765ae793478c50d3
@@ -117,11 +117,11 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
     Merge commit &#39;phedders/rdocs&#39;</code></pre>
 
-<p>It’s important to note that the reflog information is strictly local — it’s a log of what you’ve done in your repository. The references won’t be the same on someone else’s copy of the repository; and right after you initially clone a repository, you&#8217;ll have an empty reflog, as no activity has occurred yet in your repository. Running <code>git show HEAD@{2.months.ago}</code> will work only if you cloned the project at least two months ago — if you cloned it five minutes ago, you’ll get no results.</p>
+<p>参照ログの情報は、完全にローカルなものであることに気をつけましょう。これは、あなた自身が自分のリポジトリで何をしたのかを示す記録です。つまり、同じリポジトリをコピーした別の人の参照ログとは異なる内容になります。また、最初にリポジトリをクローンした直後の参照ログは空となります。まだリポジトリ上であなたが何もしていないからです。<code>git show HEAD@{2.months.ago}</code> が動作するのは、少なくとも二ヶ月以上前にそのリポジトリをクローンした場合のみで、もしつい 5 分前にクローンしたばかりなら何も結果を返しません。</p>
 
-<h3 id='ancestry_references'>Ancestry References</h3>
+<h3 id='id118'>家系の参照</h3>
 
-<p>The other main way to specify a commit is via its ancestry. If you place a <code>^</code> at the end of a reference, Git resolves it to mean the parent of that commit. Suppose you look at the history of your project:</p>
+<p>コミットを特定する方法として他によく使われるのが、その家系をたどっていく方法です。参照の最後に <code>^</code> をつけると、Git はそれを「指定したコミットの親」と解釈します。あなたのプロジェクトの歴史がこのようになっていたとしましょう。</p>
 
 <pre><code>$ git log --pretty=format:&#39;%h %s&#39; --graph
 * 734713b fixed refs handling, added gc auto, updated tests
@@ -133,7 +133,7 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 * 1c36188 ignore *.gem
 * 9b29157 add open3_detach to gemspec file list</code></pre>
 
-<p>Then, you can see the previous commit by specifying <code>HEAD^</code>, which means &#8220;the parent of HEAD&#8221;:</p>
+<p>直前のコミットを見るには <code>HEAD^</code> を指定します。これは &#8220;HEAD の親&#8221; という意味になります。</p>
 
 <pre><code>$ git show HEAD^
 commit d921970aadf03b3cf0e71becdaab3147ba71cdef
@@ -143,7 +143,7 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
     Merge commit &#39;phedders/rdocs&#39;</code></pre>
 
-<p>You can also specify a number after the <code>^</code> — for example, <code>d921970^2</code> means &#8220;the second parent of d921970.&#8221; This syntax is only useful for merge commits, which have more than one parent. The first parent is the branch you were on when you merged, and the second is the commit on the branch that you merged in:</p>
+<p><code>^</code> の後に数字を指定することもできます。たとえば <code>d921970^2</code> は &#8220;d921970 の二番目のの親&#8221; という意味になります。これが役立つのはマージコミット (親が複数存在する) のときくらいでしょう。最初の親はマージを実行したときにいたブランチとなり、二番目の親は取り込んだブランチ上のコミットとなります。</p>
 
 <pre><code>$ git show d921970^
 commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
@@ -159,7 +159,7 @@ Date:   Wed Dec 10 22:22:03 2008 +0000
 
     Some rdoc changes</code></pre>
 
-<p>The other main ancestry specification is the <code>~</code>. This also refers to the first parent, so <code>HEAD~</code> and <code>HEAD^</code> are equivalent. The difference becomes apparent when you specify a number. <code>HEAD~2</code> means &#8220;the first parent of the first parent,&#8221; or &#8220;the grandparent&#8221; — it traverses the first parents the number of times you specify. For example, in the history listed earlier, <code>HEAD~3</code> would be</p>
+<p>家系の指定方法としてもうひとつよく使うのが <code>~</code> です。これも最初の親を指します。つまり <code>HEAD~</code> と <code>HEAD^</code> は同じ意味になります。違いが出るのは、数字を指定したときです。<code>HEAD~2</code> は &#8220;最初の親の最初の親&#8221; つまり &#8220;祖父母&#8221; という意味になります。指定した数だけ、順に最初の親をさかのぼっていくことになります。たとえば、先ほど示したような歴史上では <code>HEAD~3</code> は次のようになります。</p>
 
 <pre><code>$ git show HEAD~3
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
@@ -168,7 +168,7 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
     ignore *.gem</code></pre>
 
-<p>This can also be written <code>HEAD^^^</code>, which again is the first parent of the first parent of the first parent:</p>
+<p>これは <code>HEAD^^^</code> のようにあらわすこともできます。これは「最初の親の最初の親の最初の親」という意味になります。</p>
 
 <pre><code>$ git show HEAD^^^
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
@@ -177,54 +177,54 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
     ignore *.gem</code></pre>
 
-<p>You can also combine these syntaxes — you can get the second parent of the previous reference (assuming it was a merge commit) by using <code>HEAD~3^2</code>, and so on.</p>
+<p>これらふたつの構文を組み合わせることもできます。直近の参照 (マージコミットだったとします) の二番目の親を取得するには <code>HEAD~3^2</code> などとすればいいのです。</p>
 
-<h3 id='commit_ranges'>Commit Ranges</h3>
+<h3 id='id119'>コミットの範囲指定</h3>
 
-<p>Now that you can specify individual commits, let’s see how to specify ranges of commits. This is particularly useful for managing your branches — if you have a lot of branches, you can use range specifications to answer questions such as, &#8220;What work is on this branch that I haven’t yet merged into my main branch?&#8221;</p>
+<p>個々のコミットを指定できるようになったので、次はコミットの範囲を指定する方法を覚えていきましょう。これは、ブランチをマージするときに便利です。たくさんのブランチを持っている場合など「で、このブランチの作業のなかでまだメインブランチにマージしていないのはどれだったっけ?」といった疑問に答えるために範囲指定を使えます。</p>
 
-<h4 id='double_dot'>Double Dot</h4>
+<h4 id='id120'>ダブルドット</h4>
 
-<p>The most common range specification is the double-dot syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but aren’t reachable from another. For example, say you have a commit history that looks like Figure 6-1.</p>
+<p>範囲指定の方法としてもっとも一般的なのが、ダブルドット構文です。これは、ひとつのコミットからはたどれるけれどもうひとつのコミットからはたどれないというコミットの範囲を Git に調べさせるものです。図 6-1 のようなコミット履歴を例に考えましょう。</p>
 
-<p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> Figure 6-1. Example history for range selection.</p>
+<p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> 図 6-1. 範囲指定選択用の歴史の例</p>
 
-<p>You want to see what is in your experiment branch that hasn’t yet been merged into your master branch. You can ask Git to show you a log of just those commits with <code>master..experiment</code> — that means &#8220;all commits reachable by experiment that aren’t reachable by master.&#8221; For the sake of brevity and clarity in these examples, I’ll use the letters of the commit objects from the diagram in place of the actual log output in the order that they would display:</p>
+<p>experiment ブランチの内容のうち、まだ master ブランチにマージされていないものを調べることになりました。対象と鳴るコミットのログを見るには、Git に <code>master..experiment</code> と指示します。これは &#8220;experiment からはたどれるけれど、master からはたどれないすべてのコミット&#8221; という意味です。説明を短く簡潔にするため、実際のログの出力のかわりに上の図の中でコミットオブジェクトをあらわす文字を使うことにします。</p>
 
 <pre><code>$ git log master..experiment
 D
 C</code></pre>
 
-<p>If, on the other hand, you want to see the opposite — all commits in <code>master</code> that aren’t in <code>experiment</code> — you can reverse the branch names. <code>experiment..master</code> shows you everything in <code>master</code> not reachable from <code>experiment</code>:</p>
+<p>もし逆に、<code>master</code> には存在するけれども <code>experiment</code> には存在しないすべてのコミットが知りたいのなら、ブランチ名を逆にすればいいのです。<code>experiment..master</code> とすれば、<code>master</code> のすべてのコミットのうち <code>experiment</code> からたどれないものを取得できます。</p>
 
 <pre><code>$ git log experiment..master
 F
 E</code></pre>
 
-<p>This is useful if you want to keep the <code>experiment</code> branch up to date and preview what you’re about to merge in. Another very frequent use of this syntax is to see what you’re about to push to a remote:</p>
+<p>これは、<code>experiment</code> ブランチを最新の状態に保つために何をマージしなければならないのかを知るのに便利です。もうひとつ、この構文をよく使う例としてあげられるのが、これからリモートにプッシュしようとしている内容を知りたいときです。</p>
 
 <pre><code>$ git log origin/master..HEAD</code></pre>
 
-<p>This command shows you any commits in your current branch that aren’t in the <code>master</code> branch on your <code>origin</code> remote. If you run a <code>git push</code> and your current branch is tracking <code>origin/master</code>, the commits listed by <code>git log origin/master..HEAD</code> are the commits that will be transferred to the server. You can also leave off one side of the syntax to have Git assume HEAD. For example, you can get the same results as in the previous example by typing <code>git log origin/master..</code> — Git substitutes HEAD if one side is missing.</p>
+<p>このコマンドは、現在のブランチ上でのコミットのうち、リモート <code>origin</code> の <code>master</code> ブランチに存在しないものをすべて表示します。現在のブランチが <code>origin/master</code> を追跡しているときに <code>git push</code> を実行すると、<code>git log origin/master..HEAD</code> で表示されたコミットがサーバーに転送されます。この構文で、どちらか片方を省略することもできます。その場合、Git は省略したほうを HEAD とみなします。たとえば、<code>git log origin/master..</code> と入力すると先ほどの例と同じ結果が得られます。Git は、省略した側を HEAD に置き換えて処理を進めるのです。</p>
 
-<h4 id='multiple_points'>Multiple Points</h4>
+<h4 id='id121'>複数のポイント</h4>
 
-<p>The double-dot syntax is useful as a shorthand; but perhaps you want to specify more than two branches to indicate your revision, such as seeing what commits are in any of several branches that aren’t in the branch you’re currently on. Git allows you to do this by using either the <code>^</code> character or <code>--not</code> before any reference from which you don’t want to see reachable commits. Thus these three commands are equivalent:</p>
+<p>ダブルドット構文は、とりあえず使うぶんには便利です。しかし、二つよりもっと多くのブランチを指定してリビジョンを特定したいこともあるでしょう。複数のブランチの中から現在いるブランチには存在しないコミットを見つける場合などです。Git でこれを行うには <code>^</code> 文字を使うか、あるいはそこからたどりつけるコミットが不要な参照の前に <code>--not</code> をつけます。これら三つのコマンドは、同じ意味となります。</p>
 
 <pre><code>$ git log refA..refB
 $ git log ^refA refB
 $ git log refB --not refA</code></pre>
 
-<p>This is nice because with this syntax you can specify more than two references in your query, which you cannot do with the double-dot syntax. For instance, if you want to see all commits that are reachable from <code>refA</code> or <code>refB</code> but not from <code>refC</code>, you can type one of these:</p>
+<p>これらの構文が便利なのは、二つよりも多くの参照を使って指定できるというところです。ダブルドット構文では二つの参照しか指定できませんでした。たとえば、<code>refA</code> と <code>refB</code> のどちらかからはたどれるけれども <code>refC</code> からはたどれないコミットを取得したい場合は、次のいずれかを実行します。</p>
 
 <pre><code>$ git log refA refB ^refC
 $ git log refA refB --not refC</code></pre>
 
-<p>This makes for a very powerful revision query system that should help you figure out what is in your branches.</p>
+<p>この非常に強力なリビジョン問い合わせシステムを使えば、今あなたのブランチに何があるのかを知るのに非常に役立つことでしょう。</p>
 
-<h4 id='triple_dot'>Triple Dot</h4>
+<h4 id='id122'>トリプルドット</h4>
 
-<p>The last major range-selection syntax is the triple-dot syntax, which specifies all the commits that are reachable by either of two references but not by both of them. Look back at the example commit history in Figure 6-1. If you want to see what is in <code>master</code> or <code>experiment</code> but not any common references, you can run</p>
+<p>範囲指定選択の主な構文であとひとつ残っているのがトリプルドット構文です。これは、ふたつの参照のうちどちらか一方からのみたどれるコミット (つまり、両方からたどれるコミットは含まない) を指定します。図 6-1 で示したコミット履歴の例を振り返ってみましょう。<code>master</code> あるいは <code>experiment</code> に存在するコミットのうち、両方に存在するものを除いたコミットを知りたい場合は次のようにします。</p>
 
 <pre><code>$ git log master...experiment
 F
@@ -232,9 +232,9 @@ E
 D
 C</code></pre>
 
-<p>Again, this gives you normal <code>log</code> output but shows you only the commit information for those four commits, appearing in the traditional commit date ordering.</p>
+<p>これは通常の <code>log</code> の出力と同じですが、これら四つのコミットについての情報しか表示しません。表示順は、従来どおりコミット日時順となります。</p>
 
-<p>A common switch to use with the <code>log</code> command in this case is <code>--left-right</code>, which shows you which side of the range each commit is in. This helps make the data more useful:</p>
+<p>この場合に <code>log</code> コマンドでよく使用するスイッチが <code>--left-right</code> です。このスイッチは、それぞれのコミットがどちら側に存在するのかを表示します。これを使うとデータをより活用しやすくなるでしょう。</p>
 
 <pre><code>$ git log --left-right master...experiment
 &lt; F
@@ -242,7 +242,7 @@ C</code></pre>
 &gt; D
 &gt; C</code></pre>
 
-<p>With these tools, you can much more easily let Git know what commit or commits you want to inspect.</p>
+<p>これらのツールを使えば、より簡単に「どれを調べたいのか」を Git に伝えられるようになります。</p>
 
 <div id='nav'>
 <a href='ch6-0.html'>prev</a> | <a href='ch6-2.html'>next</a>
