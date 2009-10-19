@@ -1,0 +1,134 @@
+---
+layout: translation
+title: Pro Git 8.10 Git Internals Die Refspec
+---
+<h2 id='die_refspec'>Die Refspec</h2>
+
+<p>Throughout this book, you’ve used simple mappings from remote branches to local references; but they can be more complex. Suppose you add a remote like this:</p>
+
+<p>In diesem Buch haben wir bisher einfache Mappings von externen Branches auf lokale Referenzen verwendet. Sie können aber auch durchaus komplex sein. Nehmen wir an, du hast ein externes Repository wie folgt definiert:</p>
+
+<pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git</code></pre>
+
+<p>It adds a section to your <code>.git/config</code> file, specifying the name of the remote (<code>origin</code>), the URL of the remote repository, and the refspec for fetching:</p>
+
+<p>Das fügt eine Sektion in deine <code>.git/config</code> Datei hinzu, die deinen lokalen Namen des externen Repositories (<code>origin</code>), dessen URL und die Refspec spezifiziert, mit der neue Daten heruntergeladen werden.</p>
+
+<pre><code>[remote &quot;origin&quot;]
+       url = git@github.com:schacon/simplegit-progit.git
+       fetch = +refs/heads/*:refs/remotes/origin/*</code></pre>
+
+<p>The format of the refspec is an optional <code>+</code>, followed by <code>&lt;src&gt;:&lt;dst&gt;</code>, where <code>&lt;src&gt;</code> is the pattern for references on the remote side and <code>&lt;dst&gt;</code> is where those references will be written locally. The <code>+</code> tells Git to update the reference even if it isn’t a fast-forward.</p>
+
+<p>Das Format der Refspec besteht aus einem optionalen <code>+</code> gefolgt von <code>&lt;quelle&gt;:&lt;ziel&gt;</code>, wobei <code>&lt;quelle&gt;</code> ein Pattern für Referenzen auf der Remote Seite ist, und <code>&lt;ziel&gt;</code> angibt, wohin diese Referenzen lokal geschrieben werden. Das <code>+</code> weist Git an, die Referenz zu mergen, wenn sie nicht mit einem fast-forward aktualisiert werden kann.</p>
+
+<p>In the default case that is automatically written by a <code>git remote add</code> command, Git fetches all the references under <code>refs/heads/</code> on the server and writes them to <code>refs/remotes/origin/</code> locally. So, if there is a <code>master</code> branch on the server, you can access the log of that branch locally via</p>
+
+<p>Der Standard, der von <code>git remote add</code> automatisch eingerichtet wird, besteht darin, daß Git austomatisch alle Referenzen unter <code>refs/heads/</code> vom Server holt und sie lokal nach <code>refs/remotes/origin</code> speichert. D.h., wenn es auf dem Server einen <code>master</code> Branch gibt, kannst du auf das Log dieses Branches wie folgt zugreifen:</p>
+
+<pre><code>$ git log origin/master
+$ git log remotes/origin/master
+$ git log refs/remotes/origin/master</code></pre>
+
+<p>They’re all equivalent, because Git expands each of them to <code>refs/remotes/origin/master</code>.</p>
+
+<p>Diese Varianten sind allesamt äquivalent, weil Git sie jeweils zu <code>refs/remotes/origin/master</code> vervollständigt.</p>
+
+<p>If you want Git instead to pull down only the <code>master</code> branch each time, and not every other branch on the remote server, you can change the fetch line to</p>
+
+<p>Wenn du statt dessen willst, daß Git jeweils nur den <code>master</code> Branch herunterlädt und andere Branches auf dem Server ignoriert, kannst du die <code>fetch</code> Zeile wie folgt ändern:</p>
+
+<pre><code>fetch = +refs/heads/master:refs/remotes/origin/master</code></pre>
+
+<p>This is just the default refspec for <code>git fetch</code> for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the <code>master</code> branch on the remote down to <code>origin/mymaster</code> locally, you can run</p>
+
+<p>Dies ist allerdings lediglich der Default Refspec Wert und du kannst ihn auf der Kommandozeile jederzeit überschreiben. Z.B. um nur <code>master</code> branch vom Server lokal als <code>origin/mymaster</code> zu speichern, kannst du folgendes ausführen:</p>
+
+<pre><code>$ git fetch origin master:refs/remotes/origin/mymaster</code></pre>
+
+<p>You can also specify multiple refspecs. On the command line, you can pull down several branches like so:</p>
+
+<p>Du kannst auch mehrere Refspecs gleichzeitig spezifizieren. Z.B.:</p>
+
+<pre><code>$ git fetch origin master:refs/remotes/origin/mymaster \
+   topic:refs/remotes/origin/topic
+From git@github.com:schacon/simplegit
+ ! [rejected]        master     -&gt; origin/mymaster  (non fast forward)
+ * [new branch]      topic      -&gt; origin/topic</code></pre>
+
+<p>In this case, the master branch pull was rejected because it wasn’t a fast-forward reference. You can override that by specifying the <code>+</code> in front of the refspec.</p>
+
+<p>I diesem Fall wurde ein Pull zurückgewiesen (xxx ist das nicht nur ein fetch? xxx), weil der Branch nicht mit einem simplen fast-forward aktualisiert werden konnte. Du kannst einen Merge erzwingen, indem du der Refspec ein <code>+</code> voranstellst.</p>
+
+<p>You can also specify multiple refspecs for fetching in your configuration file. If you want to always fetch the master and experiment branches, add two lines:</p>
+
+<p>Du kannst außerdem natürlich auch mehrere Refspecs in deiner Konfiguration spezifizieren. Wenn du z.B. immer die <code>master</code> und <code>experiment</code> Branches holen willst, fügst du die folgenden Zeilen hinzu:</p>
+
+<pre><code>[remote &quot;origin&quot;]
+       url = git@github.com:schacon/simplegit-progit.git
+       fetch = +refs/heads/master:refs/remotes/origin/master
+       fetch = +refs/heads/experiment:refs/remotes/origin/experiment</code></pre>
+
+<p>You can’t use partial globs in the pattern, so this would be invalid:</p>
+
+<p>Du kannst keine partiellen Glob Patterns verwenden, d.h. folgendes wäre ungültig:</p>
+
+<pre><code>fetch = +refs/heads/qa*:refs/remotes/origin/qa*</code></pre>
+
+<p>However, you can use namespacing to accomplish something like that. If you have a QA team that pushes a series of branches, and you want to get the master branch and any of the QA team’s branches but nothing else, you can use a config section like this:</p>
+
+<p>Allerdings kannst du Namensräume verwenden, um etwas ähnliches zu erreichen. Nehmen wir an, du hast ein QA Team, das regelmäßig verschiedene Branches pusht, und du willst nun den master Branch und sämtliche Branches des QA Teams, aber keine anderen Branches haben. Dann kannst du eine Config Sektion wie die folgende verwenden:</p>
+
+<pre><code>[remote &quot;origin&quot;]
+       url = git@github.com:schacon/simplegit-progit.git
+       fetch = +refs/heads/master:refs/remotes/origin/master
+       fetch = +refs/heads/qa/*:refs/remotes/origin/qa/*</code></pre>
+
+<p>If you have a complex workflow process that has a QA team pushing branches, developers pushing branches, and integration teams pushing and collaborating on remote branches, you can namespace them easily this way.</p>
+
+<p>In einem großen Team mit einem komplexen Workflow, in dem ein QA Team, Entwickler und ein Integrations Team jeweils eigene Branches pushen, kann man auf diese Weise Branches einfach in Namensräume einteilen.</p>
+
+<h3 id='pushing_refspecs'>Pushing Refspecs</h3>
+
+<h3 id='refspecs_pushen'>Refspecs pushen</h3>
+
+<p>It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a <code>qa/</code> namespace in the first place? You accomplish that by using refspecs to push.</p>
+
+<p>Wie aber legt das QA Team die Branches im <code>qa/</code> Namensraum ab? Das geht, indem man mit einer Refspec pusht.</p>
+
+<p>If the QA team wants to push their <code>master</code> branch to <code>qa/master</code> on the remote server, they can run</p>
+
+<p>Wenn das QA Team seinen <code>master</code> Branch in einem externen Repository als <code>qa/master</code> speichern will, kann es das wie folgt tun:</p>
+
+<pre><code>$ git push origin master:refs/heads/qa/master</code></pre>
+
+<p>If they want Git to do that automatically each time they run <code>git push origin</code>, they can add a <code>push</code> value to their config file:</p>
+
+<p>Um Git so zu konfigurieren, daß diese Refspec jedes mal automatisch für <code>git push origin</code> verwendet wird, kann man den <code>push</code> Wert in der Config Datei setzen:</p>
+
+<pre><code>[remote &quot;origin&quot;]
+       url = git@github.com:schacon/simplegit-progit.git
+       fetch = +refs/heads/*:refs/remotes/origin/*
+       push = refs/heads/master:refs/heads/qa/master</code></pre>
+
+<p>Again, this will cause a <code>git push origin</code> to push the local <code>master</code> branch to the remote <code>qa/master</code> branch by default.</p>
+
+<p>Auf diese Weise wird <code>git push origin</code> den lokalen Branch <code>master</code> als <code>qa/master</code> auf dem <code>origin</code> Server speichern.</p>
+
+<h3 id='deleting_references'>Deleting References</h3>
+
+<h3 id='referenzen_lschen'>Referenzen löschen</h3>
+
+<p>You can also use the refspec to delete references from the remote server by running something like this:</p>
+
+<p>Man kann Refspecs außerdem verwenden, um Referenzen aus einem externen Repository zu löschen:</p>
+
+<pre><code>$ git push origin :topic</code></pre>
+
+<p>Because the refspec is <code>&lt;src&gt;:&lt;dst&gt;</code>, by leaving off the <code>&lt;src&gt;</code> part, this basically says to make the topic branch on the remote nothing, which deletes it.</p>
+
+<p>Das Refspec Format ist <code>&lt;quelle&gt;:&lt;ziel&gt;</code>. Wenn man den <code>&lt;ziel&gt;</code> Teil wegläßt, dann heißt das im obigen Beispiel, daß man den <code>topic</code> Branch auf dem <code>origin</code> Server auf &#8220;nichts&#8221; setzt, d.h. also löscht.</p>
+
+<div id='nav'>
+<a href='ch8-9.html'>prev</a> | <a href='ch8-11.html'>next</a>
+</div>

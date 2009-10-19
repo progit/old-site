@@ -1,19 +1,27 @@
 ---
 layout: translation
-title: Pro Git 4.2 Git на сервере Getting Git on a Server
+title: Pro Git 4.2 Git на сервере Установка Git на сервер
 ---
-<h2 id='getting_git_on_a_server'>Getting Git on a Server</h2>
+<h2 id='_git__'>Установка Git на сервер</h2>
+
+<p>Для того чтобы приступить к установке любого сервера Git, вы должны экспортировать существующий репозиторий в новый &#8220;голый&#8221; репозиторий, т.е. репозиторий без рабочего каталога. Обычно это не сложно сделать. Чтобы склонировать ваш репозиторий и создать новый &#8220;голый&#8221; репозиторий, запустите команду clone с параметром <code>--bare</code>. По существующему соглашению, каталоги с &#8220;голыми&#8221; репозиториями должны заканчиваться на <code>.git</code>, например:</p>
 
 <p>In order to initially set up any Git server, you have to export an existing repository into a new bare repository — a repository that doesn’t contain a working directory. This is generally straightforward to do. In order to clone your repository to create a new bare repository, you run the clone command with the <code>--bare</code> option. By convention, bare repository directories end in <code>.git</code>, like so:</p>
 
 <pre><code>$ git clone --bare my_project my_project.git
 Initialized empty Git repository in /opt/projects/my_project.git/</code></pre>
 
+<p>Вывод это команды слегка обескураживает. Поскольку <code>clone</code> по сути это <code>git init</code>, а затем <code>git fetch</code>, мы видим вывод от <code>git init</code>, который создает пустой каталог. Реальное перемещение объектов не имеет вывода, однако оно происходит. Теперь у вас должна быть копия данных из каталога Git в каталоге <code>my_project.git</code>.</p>
+
 <p>The output for this command is a little confusing. Since <code>clone</code> is basically a <code>git init</code> then a <code>git fetch</code>, we see some output from the <code>git init</code> part, which creates an empty directory. The actual object transfer gives no output, but it does happen. You should now have a copy of the Git directory data in your <code>my_project.git</code> directory.</p>
+
+<p>Грубо говоря, это что то наподобие этого:</p>
 
 <p>This is roughly equivalent to something like</p>
 
 <pre><code>$ cp -Rf my_project/.git my_project.git</code></pre>
+
+<p>Тут есть пара небольших различий в файле конфигурации, но в вашем случае эту разницу можно считать несущественной. Можно считать, что в этом случае берется собственно репозиторий Git без рабочего каталога, и создается каталог только для него.</p>
 
 <p>There are a couple of minor differences in the configuration file; but for your purpose, this is close to the same thing. It takes the Git repository by itself, without a working directory, and creates a directory specifically for it alone.</p>
 

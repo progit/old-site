@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 6.7 Git 工具 子树合并
 ---
-<h2 id='id269'>子树合并</h2>
+<h2 id='id270'>子树合并</h2>
 
 <p>Now that you’ve seen the difficulties of the submodule system, let’s look at an alternate way to solve the same problem. When Git merges, it looks at what it has to merge together and then chooses an appropriate merging strategy to use. If you’re merging two branches, Git uses a <em>recursive</em> strategy. If you’re merging more than two branches, Git picks the <em>octopus</em> strategy. These strategies are automatically chosen for you because the recursive strategy can handle complex three-way merge situations — for example, more than one common ancestor — but it can only handle merging two branches. The octopus merge can handle multiple branches but is more cautious to avoid difficult conflicts, so it’s chosen as the default strategy if you’re trying to merge more than two branches.</p>
 

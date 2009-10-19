@@ -5,5 +5,6 @@ git read-tree --prefix=translations/de -u gitbook/master:de
 git read-tree --prefix=translations/zh -u gitbook/master:zh
 git read-tree --prefix=translations/ja -u gitbook/master:ja
 git read-tree --prefix=translations/ru -u gitbook/master:ru
+git read-tree --prefix=translations/nl -u gitbook/master:nl
 git add book
 rake
