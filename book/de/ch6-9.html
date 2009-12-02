@@ -1,9 +1,70 @@
 ---
 layout: translation
-title: Pro Git 6.9 Git Tools Summary
+title: Pro Git 6.9 Git Tools Subtree Merging
 ---
-<h2 id='summary'>Summary</h2>
+<h2 id='subtree_merging'>Subtree Merging</h2>
 
-<p>You’ve seen a number of advanced tools that allow you to manipulate your commits and staging area more precisely. When you notice issues, you should be able to easily figure out what commit introduced them, when, and by whom. If you want to use subprojects in your project, you’ve learned a few ways to accommodate those needs. At this point, you should be able to do most of the things in Git that you’ll need on the command line day to day and feel comfortable doing so.</p><div id='nav'>
-<a href='ch6-8.html'>prev</a> | <a href='ch7-0.html'>next</a>
+<p>Now that you’ve seen the difficulties of the submodule system, let’s look at an alternate way to solve the same problem. When Git merges, it looks at what it has to merge together and then chooses an appropriate merging strategy to use. If you’re merging two branches, Git uses a <em>recursive</em> strategy. If you’re merging more than two branches, Git picks the <em>octopus</em> strategy. These strategies are automatically chosen for you because the recursive strategy can handle complex three-way merge situations — for example, more than one common ancestor — but it can only handle merging two branches. The octopus merge can handle multiple branches but is more cautious to avoid difficult conflicts, so it’s chosen as the default strategy if you’re trying to merge more than two branches.</p>
+
+<p>However, there are other strategies you can choose as well. One of them is the <em>subtree</em> merge, and you can use it to deal with the subproject issue. Here you’ll see how to do the same rack embedding as in the last section, but using subtree merges instead.</p>
+
+<p>The idea of the subtree merge is that you have two projects, and one of the projects maps to a subdirectory of the other one and vice versa. When you specify a subtree merge, Git is smart enough to figure out that one is a subtree of the other and merge appropriately — it’s pretty amazing.</p>
+
+<p>You first add the Rack application to your project. You add the Rack project as a remote reference in your own project and then check it out into its own branch:</p>
+
+<pre><code>$ git remote add rack_remote git@github.com:schacon/rack.git
+$ git fetch rack_remote
+warning: no common commits
+remote: Counting objects: 3184, done.
+remote: Compressing objects: 100% (1465/1465), done.
+remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
+Receiving objects: 100% (3184/3184), 677.42 KiB | 4 KiB/s, done.
+Resolving deltas: 100% (1952/1952), done.
+From git@github.com:schacon/rack
+ * [new branch]      build      -&gt; rack_remote/build
+ * [new branch]      master     -&gt; rack_remote/master
+ * [new branch]      rack-0.4   -&gt; rack_remote/rack-0.4
+ * [new branch]      rack-0.9   -&gt; rack_remote/rack-0.9
+$ git checkout -b rack_branch rack_remote/master
+Branch rack_branch set up to track remote branch refs/remotes/rack_remote/master.
+Switched to a new branch &quot;rack_branch&quot;</code></pre>
+
+<p>Now you have the root of the Rack project in your <code>rack_branch</code> branch and your own project in the <code>master</code> branch. If you check out one and then the other, you can see that they have different project roots:</p>
+
+<pre><code>$ ls
+AUTHORS	       KNOWN-ISSUES   Rakefile      contrib	       lib
+COPYING	       README         bin           example	       test
+$ git checkout master
+Switched to branch &quot;master&quot;
+$ ls
+README</code></pre>
+
+<p>You want to pull the Rack project into your <code>master</code> project as a subdirectory. You can do that in Git with <code>git read-tree</code>. You’ll learn more about <code>read-tree</code> and its friends in Chapter 9, but for now know that it reads the root tree of one branch into your current staging area and working directory. You just switched back to your <code>master</code> branch, and you pull the <code>rack</code> branch into the <code>rack</code> subdirectory of your <code>master</code> branch of your main project:</p>
+
+<pre><code>$ git read-tree --prefix=rack/ -u rack_branch</code></pre>
+
+<p>When you commit, it looks like you have all the Rack files under that subdirectory — as though you copied them in from a tarball. What gets interesting is that you can fairly easily merge changes from one of the branches to the other. So, if the Rack project updates, you can pull in upstream changes by switching to that branch and pulling:</p>
+
+<pre><code>$ git checkout rack_branch
+$ git pull</code></pre>
+
+<p>Then, you can merge those changes back into your master branch. You can use <code>git merge -s subtree</code> and it will work fine; but Git will also merge the histories together, which you probably don’t want. To pull in the changes and prepopulate the commit message, use the <code>--squash</code> and <code>--no-commit</code> options as well as the <code>-s subtree</code> strategy option:</p>
+
+<pre><code>$ git checkout master
+$ git merge --squash -s subtree --no-commit rack_branch
+Squash commit -- not updating HEAD
+Automatic merge went well; stopped before committing as requested</code></pre>
+
+<p>All the changes from your Rack project are merged in and ready to be committed locally. You can also do the opposite — make changes in the <code>rack</code> subdirectory of your master branch and then merge them into your <code>rack_branch</code> branch later to submit them to the maintainers or push them upstream.</p>
+
+<p>To get a diff between what you have in your <code>rack</code> subdirectory and the code in your <code>rack_branch</code> branch — to see if you need to merge them — you can’t use the normal <code>diff</code> command. Instead, you must run <code>git diff-tree</code> with the branch you want to compare to:</p>
+
+<pre><code>$ git diff-tree -p rack_branch</code></pre>
+
+<p>Or, to compare what is in your <code>rack</code> subdirectory with what the <code>master</code> branch on the server was the last time you fetched, you can run</p>
+
+<pre><code>$ git diff-tree -p rack_remote/master</code></pre>
+
+<div id='nav'>
+<a href='ch6-8.html'>prev</a> | <a href='ch6-10.html'>next</a>
 </div>

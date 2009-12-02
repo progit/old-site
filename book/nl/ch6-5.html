@@ -1,14 +1,14 @@
 ---
 layout: translation
-title: Pro Git 6.5 Git Tools Debugging with Git
+title: Pro Git 6.5 Git Tools Debuggen Met Git
 ---
-<h2 id='debugging_with_git'>Debugging with Git</h2>
+<h2 id='debuggen_met_git'>Debuggen Met Git</h2>
 
-<p>Git also provides a couple of tools to help you debug issues in your projects. Because Git is designed to work with nearly any type of project, these tools are pretty generic, but they can often help you hunt for a bug or culprit when things go wrong.</p>
+<p>Git levert ook een paar tools om je problemen te helpen debuggen in je projecten. Omdat Git is ontworpen te werken met bijna ieder type project, zijn deze tools erg generiek, maar ze kunnen je vaak helpen op een bug of veroorzaker te jagen als de dingen verkeerd gaan.</p>
 
-<h3 id='file_annotation'>File Annotation</h3>
+<h3 id='bestandsannotatie'>Bestandsannotatie</h3>
 
-<p>If you track down a bug in your code and want to know when it was introduced and why, file annotation is often your best tool. It shows you what commit was the last to modify each line of any file. So, if you see that a method in your code is buggy, you can annotate the file with <code>git blame</code> to see when each line of the method was last edited and by whom. This example uses the <code>-L</code> option to limit the output to lines 12 through 22:</p>
+<p>Als je een bug in je code traceert en wilt weten wanneer het was geintroduceerd en waarom, dan is bestandsannotatie vaak je beste tool. Het toont je welke commit de laatste was die iedere regel in een bestand wijzigde. Dus, als je ziet dat een functie in je code bugs bevat, dan kun je het bestand annoteren met <code>git blame</code> om te zien wanneer iedere regel van de functie voor het laatst aangepast was, en door wie. Dit voorbeeld gebruikt de <code>-L</code> optie om de output te limiteren van regel 12 tot 22:</p>
 
 <pre><code>$ git blame -L 12,22 simplegit.rb 
 ^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 12)  def show(tree = &#39;master&#39;)
@@ -23,9 +23,9 @@ title: Pro Git 6.5 Git Tools Debugging with Git
 42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 21)   command(&quot;git blame #{path}&quot;)
 42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 22)  end</code></pre>
 
-<p>Notice that the first field is the partial SHA-1 of the commit that last modified that line. The next two fields are values extracted from that commit—the author name and the authored date of that commit — so you can easily see who modified that line and when. After that come the line number and the content of the file. Also note the <code>^4832fe2</code> commit lines, which designate that those lines were in this file’s original commit. That commit is when this file was first added to this project, and those lines have been unchanged since. This is a tad confusing, because now you’ve seen at least three different ways that Git uses the <code>^</code> to modify a commit SHA, but that is what it means here.</p>
+<p>Zie dat het eerste veld de gedeeltelijke SHA-1 van de commit is, die als laatste die regel aangepast heeft. De volgende twee velden zijn waarden, die gehaald zijn uit die commit – de naam van de auteur en de datum van die commit – zodat je makkelijk kunt zien wie wanneer die regel aangepast heeft. Daarna komt het regelnummer en de inhoud van dat bestand. Let op de <code>^4832fe2</code> commit regels, die aangeven dat die regels in de eerste commit van dat bestand zaten. Die commit is gedaan toen dit bestand als eerste is toegevoegd aan dit project, en die regels zijn sindsdien ongewijzigd gebleven. Dat is een beetje verwarrend, want nu heb je minstens drie manieren gezien waarop Git het <code>^</code> symbool gebruikt om een SHA van een commit aan te passen, maar dat is wat het hier betekend.</p>
 
-<p>Another cool thing about Git is that it doesn’t track file renames explicitly. It records the snapshots and then tries to figure out what was renamed implicitly, after the fact. One of the interesting features of this is that you can ask it to figure out all sorts of code movement as well. If you pass <code>-C</code> to <code>git blame</code>, Git analyzes the file you’re annotating and tries to figure out where snippets of code within it originally came from if they were copied from elsewhere. Recently, I was refactoring a file named <code>GITServerHandler.m</code> into multiple files, one of which was <code>GITPackUpload.m</code>. By blaming <code>GITPackUpload.m</code> with the <code>-C</code> option, I could see where sections of the code originally came from:</p>
+<p>Een ander stoer ding van Git is dat het geen naamswijzigingen van bestanden expliciet bijhoudt. Het neemt de snapshots op en probeert impliciet uit te vogelen wat er hernoemd was, nadat het gebeurd is. Een van de interessantste eigenschappen hiervan is dat je ook het kunt vragen om allerlei soorten code verplaatsingen uit te vogelen. Als je <code>-C</code> aan <code>git blame</code> meegeeft, zal Git het bestand dat je annoteerd analyseren en proberen uit te vinden waar stukjes code erin oorspronkelijk vandaan kwamen als ze ergens vandaan gekopieerd zijn. Recentelijk was ik een bestand genaamd <code>GITServerHandler.m</code> aan het refactoren naar meerdere bestanden, waarvan er een <code>GITPackUpload.m</code> heette. Door <code>GITPackUpload.m</code> te blamen met de <code>-C</code> optie, kon ik zien waar delen van de code oorspronkelijk vandaan kwamen:</p>
 
 <pre><code>$ git blame -C -L 141,153 GITPackUpload.m 
 f344f58d GITServerHandler.m (Scott 2009-01-04 141) 
@@ -42,13 +42,13 @@ ad11ac80 GITPackUpload.m    (Scott 2009-03-24 150)
 56ef2caf GITServerHandler.m (Scott 2009-01-05 152)                 [refDict setOb
 56ef2caf GITServerHandler.m (Scott 2009-01-05 153)</code></pre>
 
-<p>This is really useful. Normally, you get as the original commit the commit where you copied the code over, because that is the first time you touched those lines in this file. Git tells you the original commit where you wrote those lines, even if it was in another file.</p>
+<p>Dit is heel handig. Normaal krijg je als de originele commit de commit waar je de code overheen gekopieerd hebt, omdat dat de eerste keer is dat je die regels aangeraakt hebt in dit bestand. Git verteld je de originele commit waarin je deze regels geschreven hebt, zelfs als dat in een ander bestand is.</p>
 
-<h3 id='binary_search'>Binary Search</h3>
+<h3 id='binair_zoeken'>Binair Zoeken</h3>
 
-<p>Annotating a file helps if you know where the issue is to begin with. If you don’t know what is breaking, and there have been dozens or hundreds of commits since the last state where you know the code worked, you’ll likely turn to <code>git bisect</code> for help. The <code>bisect</code> command does a binary search through your commit history to help you identify as quickly as possible which commit introduced an issue.</p>
+<p>Een bestand annoteren helpt als je eenmaal weet waar het probleem zit. Als je niet weet wat er kapot is, en er zijn vele dozijnen of honderden commits geweest sinds de laatste staat waarvan je weet dat de code werkte, dan zul je waarschijnlijk bij <code>git bisect</code> aankloppen voor hulp. Het <code>bisect</code> commando zoekt binair door je commitgeschiedenis om je zo snel als mogelijk te helpen identificeren welke commit het issue introduceerde.</p>
 
-<p>Let’s say you just pushed out a release of your code to a production environment, you’re getting bug reports about something that wasn’t happening in your development environment, and you can’t imagine why the code is doing that. You go back to your code, and it turns out you can reproduce the issue, but you can’t figure out what is going wrong. You can bisect the code to find out. First you run <code>git bisect start</code> to get things going, and then you use <code>git bisect bad</code> to tell the system that the current commit you’re on is broken. Then, you must tell bisect when the last known good state was, using <code>git bisect good [good_commit]</code>:</p>
+<p>Stel dat je zojuist een release van je code naar een productie omgeving gepushed hebt, en je krijgt bug rapporten terug dat er iets gebeurd dat niet in je development omgeving gebeurde en je kunt je niet voorstellen waarom de code dat aan het doen is. Je gaat terug naar je code, en het blijkt dat je het probleem kunt reproduceren, maar je kunt niet zien wat er verkeerd gaat. Je kunt de code bisecten om het uit te vinden. Als eerste voer je <code>git bisect start</code> uit om aan de gang te gaan, en dan gebruik je <code>git bisect bad</code> om het systeem te vertellen dat de huidige commit kapot is. Dan moet je bisect vertellen wanneer de laatste goede status was, door <code>git bisect good [goede_commit]</code> te gebruiken:</p>
 
 <pre><code>$ git bisect start
 $ git bisect bad
@@ -56,19 +56,19 @@ $ git bisect good v1.0
 Bisecting: 6 revisions left to test after this
 [ecb6e1bc347ccecc5f9350d878ce677feb13d3b2] error handling on repo</code></pre>
 
-<p>Git figured out that about 12 commits came between the commit you marked as the last good commit (v1.0) and the current bad version, and it checked out the middle one for you. At this point, you can run your test to see if the issue exists as of this commit. If it does, then it was introduced sometime before this middle commit; if it doesn’t, then the problem was introduced sometime after the middle commit. It turns out there is no issue here, and you tell Git that by typing <code>git bisect good</code> and continue your journey:</p>
+<p>Git heeft gezien dat er ongeveer 12 commits gekomen zijn tussen de commit die je als laatste goede commit gemarkeerd hebt (v1.0) en de huidige slechte versie, en het heeft de middelste uitgechecked voor je. Op dit punt kun je je test uitvoeren om te zien of het probleem op deze commit ook aanwezig is. Als dat zo is, dan was het probleem ergens voor deze middelste commit geintroduceerd; zo niet, dan is het probleem na deze commit geintroduceerd. Het blijkt dat hier geen probleem is, dus je kunt Git dat vertellen door <code>git bisect good</code> te typen en je reis te vervolgen:</p>
 
 <pre><code>$ git bisect good
 Bisecting: 3 revisions left to test after this
 [b047b02ea83310a70fd603dc8cd7a6cd13d15c04] secure this thing</code></pre>
 
-<p>Now you’re on another commit, halfway between the one you just tested and your bad commit. You run your test again and find that this commit is broken, so you tell Git that with <code>git bisect bad</code>:</p>
+<p>Nu zit je op een andere commit, halverwege degene die je zojuist getest hebt en je slechte commit. Je voert je test opnieuw uit, en stelt vast dat deze commit kapot is, dus vertel je dat Git met <code>git bisect bad</code>:</p>
 
 <pre><code>$ git bisect bad
 Bisecting: 1 revisions left to test after this
 [f71ce38690acf49c1f3c9bea38e09d82a5ce6014] drop exceptions table</code></pre>
 
-<p>This commit is fine, and now Git has all the information it needs to determine where the issue was introduced. It tells you the SHA-1 of the first bad commit and show some of the commit information and which files were modified in that commit so you can figure out what happened that may have introduced this bug:</p>
+<p>Deze commit is in orde, en nu heeft Git alle informatie die het nodig heeft om vast te stellen wanneer het probleem was geintroduceerd. Het verteld je de SHA-1 van de eerste slechte commit en toont een stukje commit informatie en welke bestanden aangepast waren in die commit, zodat je er achter kunt komen wat deze bug geintroduceerd kan hebben:</p>
 
 <pre><code>$ git bisect good
 b047b02ea83310a70fd603dc8cd7a6cd13d15c04 is first bad commit
@@ -81,16 +81,16 @@ Date:   Tue Jan 27 14:48:32 2009 -0800
 :040000 040000 40ee3e7821b895e52c1695092db9bdc4c61d1730
 f24d3c6ebcfc639b1a3814550e62d60b8e68a8e4 M  config</code></pre>
 
-<p>When you’re finished, you should run <code>git bisect reset</code> to reset your HEAD to where you were before you started, or you’ll end up in a weird state:</p>
+<p>Als je klaar bent, zou je <code>git bisect reset</code> moeten uitvoeren om je HEAD terug te zetten naar het punt waar je was toen je startte, of anders eindig je in een vreemde status:</p>
 
 <pre><code>$ git bisect reset</code></pre>
 
-<p>This is a powerful tool that can help you check hundreds of commits for an introduced bug in minutes. In fact, if you have a script that will exit 0 if the project is good or non-0 if the project is bad, you can fully automate <code>git bisect</code>. First, you again tell it the scope of the bisect by providing the known bad and good commits. You can do this by listing them with the <code>bisect start</code> command if you want, listing the known bad commit first and the known good commit second:</p>
+<p>Dit is een krachtige tool, die je kan helpen om honderden commits te doorzoeken naar een fout in enkele minuten. In feite kun je <code>git bisect</code> volledig automatiseren als je een script hebt dat met 0 eindigt als het project in orde is, en niet-0 als het project slecht is. Eerst vertel je het de scope van de bisect door het de goede en slechte commits te geven, die je weet. Je kunt dit doen door ze te tonen met het <code>bisect start</code> commando als je dat wil, waarbij je de slechte commit eerst en de laatst bekende goede commit als tweede geeft:</p>
 
 <pre><code>$ git bisect start HEAD v1.0
 $ git bisect run test-error.sh</code></pre>
 
-<p>Doing so automatically runs <code>test-error.sh</code> on each checked-out commit until Git finds the first broken commit. You can also run something like <code>make</code> or <code>make tests</code> or whatever you have that runs automated tests for you.</p>
+<p>Door het zo te doen wordt <code>test-error.sh</code> uitgevoerd bij iedere commit die uitgechecked wordt, totdat Git de eerste kapotte commit vindt. Je kunt ook zoiets als <code>make</code> of <code>make tests</code> uitvoeren, of wat je ook hebt dat automatische tests voor je uitvoerd.</p>
 
 <div id='nav'>
 <a href='ch6-4.html'>prev</a> | <a href='ch6-6.html'>next</a>

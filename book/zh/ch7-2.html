@@ -1,51 +1,51 @@
 ---
 layout: translation
-title: Pro Git 7.2 自定义Git Git Attributes
+title: Pro Git 7.2 自定义Git Git属性
 ---
-<h2 id='git_attributes'>Git Attributes</h2>
+<h2 id='git'>Git属性</h2>
 
-<p>Some of these settings can also be specified for a path, so that Git applies those settings only for a subdirectory or subset of files. These path-specific settings are called Git attributes and are set either in a <code>.gitattributes</code> file in one of your directories (normally the root of your project) or in the <code>.git/info/attributes</code> file if you don’t want the attributes file committed with your project.</p>
+<p>一些设置项也能被运用于特定的路径中，这样，Git可以对一个特定的子目录或子文件集运用那些设置项。这些设置项被称为Git属性，可以在你目录中的<code>.gitattributes</code>文件内进行设置 （通常是你项目的根目录），也可以当你不想让这些属性文件和项目文件一同提交时，在<code>.git/info/attributes</code>进行设置。</p>
 
-<p>Using attributes, you can do things like specify separate merge strategies for individual files or directories in your project, tell Git how to diff non-text files, or have Git filter content before you check it into or out of Git. In this section, you’ll learn about some of the attributes you can set on your paths in your Git project and see a few examples of using this feature in practice.</p>
+<p>使用属性，你可以对个别文件或目录定义不同的合并策略，让Git知道怎样比较非文本文件，在你提交或签出前让Git过滤内容。你将在这部分了解到能在自己的项目中使用的属性，以及一些实例。</p>
 
-<h3 id='binary_files'>Binary Files</h3>
+<h3 id='id307'>二进制文件</h3>
 
-<p>One cool trick for which you can use Git attributes is telling Git which files are binary (in cases it otherwise may not be able to figure out) and giving Git special instructions about how to handle those files. For instance, some text files may be machine generated and not diffable, whereas some binary files can be diffed — you’ll see how to tell Git which is which.</p>
+<p>你可以用Git属性让其知道哪些是二进制文件（以防Git没有识别出来），以及指示怎样处理这些文件，这点很酷。例如，一些文本文件是由机器产生的，而且无法比较，而一些二进制文件可以比较 — 你将会了解到怎样让Git识别这些文件。</p>
 
-<h4 id='identifying_binary_files'>Identifying Binary Files</h4>
+<h4 id='id308'>识别二进制文件</h4>
 
-<p>Some files look like text files but for all intents and purposes are to be treated as binary data. For instance, Xcode projects on the Mac contain a file that ends in <code>.pbxproj</code>, which is basically a JSON (plain text javascript data format) dataset written out to disk by the IDE that records your build settings and so on. Although it’s technically a text file, because it’s all ASCII, you don’t want to treat it as such because it’s really a lightweight database — you can’t merge the contents if two people changed it, and diffs generally aren’t helpful. The file is meant to be consumed by a machine. In essence, you want to treat it like a binary file.</p>
+<p>一些文件看起来像是文本文件，但其实是作为二进制数据被对待。例如，在Mac上的Xcode项目含有一个以<code>.pbxproj</code>结尾的文件，它是由记录设置项的IDE写到磁盘的JSON数据集（纯文本javascript数据类型）。虽然技术上看它是由ASCII字符组成的文本文件，但你并不认为如此，因为它确实是一个轻量级数据库 — 如果有2人改变了它，你通常无法合并和比较内容，只有机器才能进行识别和操作，于是，你想把它当成二进制文件。</p>
 
-<p>To tell Git to treat all <code>pbxproj</code> files as binary data, add the following line to your <code>.gitattributes</code> file:</p>
+<p>让Git把所有<code>pbxproj</code>文件当成二进制文件，在<code>.gitattributes</code>文件中设置如下：</p>
 
 <pre><code>*.pbxproj -crlf -diff</code></pre>
 
-<p>Now, Git won’t try to convert or fix CRLF issues; nor will it try to compute or print a diff for changes in this file when you run git show or git diff on your project. In the 1.6 series of Git, you can also use a macro that is provided that means <code>-crlf -diff</code>:</p>
+<p>现在，Git不会尝试转换和修正CRLF（回车换行）问题，也不会当你在项目中运行git show或git diff时，比较不同的内容。在Git 1.6及之后的版本中，可以用一个宏代替<code>-crlf -diff</code>：</p>
 
 <pre><code>*.pbxproj binary</code></pre>
 
-<h4 id='diffing_binary_files'>Diffing Binary Files</h4>
+<h4 id='id309'>比较二进制文件</h4>
 
-<p>In the 1.6 series of Git, you can use the Git attributes functionality to effectively diff binary files. You do this by telling Git how to convert your binary data to a text format that can be compared via the normal diff.</p>
+<p>在Git 1.6及以上版本中，你能利用Git属性来有效地比较二进制文件。可以设置Git把二进制数据转换成文本格式，用通常的diff来比较。</p>
 
-<p>Because this is a pretty cool and not widely known feature, I’ll go over a few examples. First, you’ll use this technique to solve one of the most annoying problems known to humanity: version-controlling Word documents. Everyone knows that Word is the most horrific editor around; but, oddly, everyone uses it. If you want to version-control Word documents, you can stick them in a Git repository and commit every once in a while; but what good does that do? If you run <code>git diff</code> normally, you only see something like this:</p>
+<p>这个特性很酷，而且鲜为人知，因此我会结合实例来讲解。首先，要解决的是最令人头疼的问题：对Word文档进行版本控制。很多人对Word文档又恨又爱，如果想对其进行版本控制，你可以把文件加入到Git库中，每次修改后提交即可。但这样做没有一点实际意义，因为运行<code>git diff</code>命令后，你只能得到如下的结果：</p>
 
-<pre><code>$ git diff 
+<pre><code>$ git diff
 diff --git a/chapter1.doc b/chapter1.doc
 index 88839c4..4afcb7c 100644
 Binary files a/chapter1.doc and b/chapter1.doc differ</code></pre>
 
-<p>You can’t directly compare two versions unless you check them out and scan them manually, right? It turns out you can do this fairly well using Git attributes. Put the following line in your <code>.gitattributes</code> file:</p>
+<p>你不能直接比较两个不同版本的Word文件，除非进行手动扫描，不是吗？Git属性能很好地解决此问题，把下面的行加到<code>.gitattributes</code>文件：</p>
 
 <pre><code>*.doc diff=word</code></pre>
 
-<p>This tells Git that any file that matches this pattern (.doc) should use the &#8220;word&#8221; filter when you try to view a diff that contains changes. What is the &#8220;word&#8221; filter? You have to set it up. Here you’ll configure Git to use the <code>strings</code> program to convert Word documents into readable text files, which it will then diff properly:</p>
+<p>当你要看比较结果时，如果文件扩展名是&#8221;doc&#8221;，Git会调用&#8221;word&#8221;过滤器。什么是&#8221;word&#8221;过滤器呢？其实就是Git使用<code>strings</code> 程序，把Word文档转换成可读的文本文件，之后再进行比较：</p>
 
 <pre><code>$ git config diff.word.textconv strings</code></pre>
 
-<p>Now Git knows that if it tries to do a diff between two snapshots, and any of the files end in <code>.doc</code>, it should run those files through the &#8220;word&#8221; filter, which is defined as the <code>strings</code> program. This effectively makes nice text-based versions of your Word files before attempting to diff them.</p>
+<p>现在如果在两个快照之间比较以<code>.doc</code>结尾的文件，Git会对这些文件运用&#8221;word&#8221;过滤器，在比较前把Word文件转换成文本文件。</p>
 
-<p>Here’s an example. I put Chapter 1 of this book into Git, added some text to a paragraph, and saved the document. Then, I ran <code>git diff</code> to see what changed:</p>
+<p>下面展示了一个实例，我把此书的第一章纳入Git管理，在一个段落中加入了一些文本后保存，之后运行<code>git diff</code>命令，得到结果如下：</p>
 
 <pre><code>$ git diff
 diff --git a/chapter1.doc b/chapter1.doc
@@ -55,19 +55,19 @@ index c1c8a0a..b93c9e4 100644
 @@ -8,7 +8,8 @@ re going to cover Version Control Systems (VCS) and Git basics
  re going to cover how to get it and set it up for the first time if you don
  t already have it on your system.
- In Chapter Two we will go over basic Git usage - how to use Git for the 80% 
--s going on, modify stuff and contribute changes. If the book spontaneously 
-+s going on, modify stuff and contribute changes. If the book spontaneously 
+ In Chapter Two we will go over basic Git usage - how to use Git for the 80%
+-s going on, modify stuff and contribute changes. If the book spontaneously
++s going on, modify stuff and contribute changes. If the book spontaneously
 +Let&#39;s see if this works.</code></pre>
 
-<p>Git successfully and succinctly tells me that I added the string &#8220;Let’s see if this works&#8221;, which is correct. It’s not perfect — it adds a bunch of random stuff at the end — but it certainly works. If you can find or write a Word-to-plain-text converter that works well enough, that solution will likely be incredibly effective. However, <code>strings</code> is available on most Mac and Linux systems, so it may be a good first try to do this with many binary formats.</p>
+<p>Git 成功且简洁地显示出我增加的文本&#8221;Let’s see if this works&#8221;。虽然有些瑕疵，在末尾显示了一些随机的内容，但确实可以比较了。如果你能找到或自己写个Word到纯文本的转换器的话，效果可能会更好。 <code>strings</code>可以在大部分Mac和Linux系统上运行，所以它是处理二进制格式的第一选择。</p>
 
-<p>Another interesting problem you can solve this way involves diffing image files. One way to do this is to run JPEG files through a filter that extracts their EXIF information — metadata that is recorded with most image formats. If you download and install the <code>exiftool</code> program, you can use it to convert your images into text about the metadata, so at least the diff will show you a textual representation of any changes that happened:</p>
+<p>你还能用这个方法比较图像文件。当比较时，对JPEG文件运用一个过滤器，它能提炼出EXIF信息 — 大部分图像格式使用的元数据。如果你下载并安装了<code>exiftool</code>程序，可以用它参照元数据把图像转换成文本。比较的不同结果将会用文本向你展示：</p>
 
 <pre><code>$ echo &#39;*.png diff=exif&#39; &gt;&gt; .gitattributes
 $ git config diff.exif.textconv exiftool</code></pre>
 
-<p>If you replace an image in your project and run <code>git diff</code>, you see something like this:</p>
+<p>如果在项目中替换了一个图像文件，运行<code>git diff</code>命令的结果如下：</p>
 
 <pre><code>diff --git a/image.png b/image.png
 index 88839c4..4afcb7c 100644
@@ -88,61 +88,61 @@ index 88839c4..4afcb7c 100644
  Bit Depth                       : 8
  Color Type                      : RGB with Alpha</code></pre>
 
-<p>You can easily see that the file size and image dimensions have both changed.</p>
+<p>你会发现文件的尺寸大小发生了改变。</p>
 
-<h3 id='keyword_expansion'>Keyword Expansion</h3>
+<h3 id='id310'>关键字扩展</h3>
 
-<p>SVN- or CVS-style keyword expansion is often requested by developers used to those systems. The main problem with this in Git is that you can’t modify a file with information about the commit after you’ve committed, because Git checksums the file first. However, you can inject text into a file when it’s checked out and remove it again before it’s added to a commit. Git attributes offers you two ways to do this.</p>
+<p>使用SVN或CVS的开发人员经常要求关键字扩展。在Git中，你无法在一个文件被提交后修改它，因为Git会先对该文件计算校验和。然而，你可以在签出时注入文本，在提交前删除它。Git属性提供了2种方式这么做。</p>
 
-<p>First, you can inject the SHA-1 checksum of a blob into an <code>$Id$</code> field in the file automatically. If you set this attribute on a file or set of files, then the next time you check out that branch, Git will replace that field with the SHA-1 of the blob. It’s important to notice that it isn’t the SHA of the commit, but of the blob itself:</p>
+<p>首先，你能够把blob的SHA-1校验和自动注入文件的<code>$Id$</code>字段。如果在一个或多个文件上设置了此字段，当下次你签出分支的时候，Git会用blob的SHA-1值替换那个字段。注意，这不是提交对象的SHA校验和，而是blob本身的校验和：</p>
 
 <pre><code>$ echo &#39;*.txt ident&#39; &gt;&gt; .gitattributes
 $ echo &#39;$Id$&#39; &gt; test.txt</code></pre>
 
-<p>The next time you check out this file, Git injects the SHA of the blob:</p>
+<p>下次签出文件时，Git注入了blob的SHA值：</p>
 
 <pre><code>$ rm text.txt
 $ git checkout -- text.txt
-$ cat test.txt 
+$ cat test.txt
 $Id: 42812b7653c7b88933f8a9d6cad0ca16714b9bb3 $</code></pre>
 
-<p>However, that result is of limited use. If you’ve used keyword substitution in CVS or Subversion, you can include a datestamp — the SHA isn’t all that helpful, because it’s fairly random and you can’t tell if one SHA is older or newer than another.</p>
+<p>然而，这样的显示结果没有多大的实际意义。这个SHA的值相当地随机，无法区分日期的前后，所以，如果你在CVS或Subversion中用过关键字替换，一定会包含一个日期值。</p>
 
-<p>It turns out that you can write your own filters for doing substitutions in files on commit/checkout. These are the &#8220;clean&#8221; and &#8220;smudge&#8221; filters. In the <code>.gitattributes</code> file, you can set a filter for particular paths and then set up scripts that will process files just before they’re committed (&#8220;clean&#8221;, see Figure 7-2) and just before they’re checked out (&#8220;smudge&#8221;, see Figure 7-3). These filters can be set to do all sorts of fun things.</p>
+<p>因此，你能写自己的过滤器，在提交文件到暂存区或签出文件时替换关键字。有2种过滤器，&#8221;clean&#8221;和&#8221;smudge&#8221;。在 <code>.gitattributes</code>文件中，你能对特定的路径设置一个过滤器，然后设置处理文件的脚本，这些脚本会在文件签出前（&#8221;smudge&#8221;，见图 7-2）和提交到暂存区前（&#8221;clean&#8221;，见图7-3）被调用。这些过滤器能够做各种有趣的事。</p>
 
-<p><center><img src="/figures/ch7/18333fig0702-tn.png"></center><br/> Figure 7-2. The “smudge” filter is run on checkout.</p>
+<p><center><img src="/figures/ch7/18333fig0702-tn.png"></center><br/> 图7-2. 签出时，“smudge”过滤器被触发。</p>
 
-<p><center><img src="/figures/ch7/18333fig0703-tn.png"></center><br/> Figure 7-3. The “clean” filter is run when files are staged.</p>
+<p><center><img src="/figures/ch7/18333fig0703-tn.png"></center><br/> 图7-3. 提交到暂存区时，“clean”过滤器被触发。</p>
 
-<p>The original commit message for this functionality gives a simple example of running all your C source code through the <code>indent</code> program before committing. You can set it up by setting the filter attribute in your <code>.gitattributes</code> file to filter <code>*.c</code> files with the &#8220;indent&#8221; filter:</p>
+<p>这里举一个简单的例子：在暂存前，用<code>indent</code>（缩进）程序过滤所有C源代码。在<code>.gitattributes</code>文件中设置&#8221;indent&#8221;过滤器过滤<code>*.c</code>文件：</p>
 
 <pre><code>*.c     filter=indent</code></pre>
 
-<p>Then, tell Git what the &#8220;indent&#8221;&#8221; filter does on smudge and clean:</p>
+<p>然后，通过以下配置，让Git知道&#8221;indent&#8221;过滤器在遇到&#8221;smudge&#8221;和&#8221;clean&#8221;时分别该做什么：</p>
 
 <pre><code>$ git config --global filter.indent.clean indent
 $ git config --global filter.indent.smudge cat</code></pre>
 
-<p>In this case, when you commit files that match <code>*.c</code>, Git will run them through the indent program before it commits them and then run them through the <code>cat</code> program before it checks them back out onto disk. The <code>cat</code> program is basically a no-op: it spits out the same data that it gets in. This combination effectively filters all C source code files through <code>indent</code> before committing.</p>
+<p>于是，当你暂存<code>*.c</code>文件时，<code>indent</code>程序会被触发，在把它们签出之前，<code>cat</code>程序会被触发。但<code>cat</code>程序在这里没什么实际作用。这样的组合，使C源代码在暂存前被<code>indent</code>程序过滤，非常有效。</p>
 
-<p>Another interesting example gets <code>$Date$</code> keyword expansion, RCS style. To do this properly, you need a small script that takes a filename, figures out the last commit date for this project, and inserts the date into the file. Here is a small Ruby script that does that:</p>
+<p>另一个例子是类似RCS的<code>$Date$</code>关键字扩展。为了演示，需要一个小脚本，接受文件名参数，得到项目的最新提交日期，最后把日期写入该文件。下面用Ruby脚本来实现：</p>
 
 <pre><code>#! /usr/bin/env ruby
 data = STDIN.read
 last_date = `git log --pretty=format:&quot;%ad&quot; -1`
 puts data.gsub(&#39;$Date$&#39;, &#39;$Date: &#39; + last_date.to_s + &#39;$&#39;)</code></pre>
 
-<p>All the script does is get the latest commit date from the <code>git log</code> command, stick that into any <code>$Date$</code> strings it sees in stdin, and print the results — it should be simple to do in whatever language you’re most comfortable in. You can name this file <code>expand_date</code> and put it in your path. Now, you need to set up a filter in Git (call it <code>dater</code>) and tell it to use your <code>expand_date</code> filter to smudge the files on checkout. You’ll use a Perl expression to clean that up on commit:</p>
+<p>该脚本从<code>git log</code>命令中得到最新提交日期，找到文件中的所有<code>$Date$</code>字符串，最后把该日期填充到<code>$Date$</code>字符串中 — 此脚本很简单，你可以选择你喜欢的编程语言来实现。把该脚本命名为<code>expand_date</code>，放到正确的路径中，之后需要在Git中设置一个过滤器（<code>dater</code>），让它在签出文件时调用<code>expand_date</code>，在暂存文件时用Perl清除之：</p>
 
 <pre><code>$ git config filter.dater.smudge expand_date
 $ git config filter.dater.clean &#39;perl -pe &quot;s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/&quot;&#39;</code></pre>
 
-<p>This Perl snippet strips out anything it sees in a <code>$Date$</code> string, to get back to where you started. Now that your filter is ready, you can test it by setting up a file with your <code>$Date$</code> keyword and then setting up a Git attribute for that file that engages the new filter:</p>
+<p>这个Perl小程序会删除<code>$Date$</code>字符串里多余的字符，恢复<code>$Date$</code>原貌。到目前为止，你的过滤器已经设置完毕，可以开始测试了。打开一个文件，在文件中输入<code>$Date$</code>关键字，然后设置Git属性：</p>
 
 <pre><code>$ echo &#39;# $Date$&#39; &gt; date_test.txt
 $ echo &#39;date*.txt filter=dater&#39; &gt;&gt; .gitattributes</code></pre>
 
-<p>If you commit those changes and check out the file again, you see the keyword properly substituted:</p>
+<p>如果暂存该文件，之后再签出，你会发现关键字被替换了：</p>
 
 <pre><code>$ git add date_test.txt .gitattributes
 $ git commit -m &quot;Testing date expansion in Git&quot;
@@ -151,51 +151,51 @@ $ git checkout date_test.txt
 $ cat date_test.txt
 # $Date: Tue Apr 21 07:26:52 2009 -0700$</code></pre>
 
-<p>You can see how powerful this technique can be for customized applications. You have to be careful, though, because the <code>.gitattributes</code> file is committed and passed around with the project but the driver (in this case, <code>dater</code>) isn’t; so, it won’t work everywhere. When you design these filters, they should be able to fail gracefully and have the project still work properly.</p>
+<p>虽说这项技术对自定义应用来说很有用，但还是要小心，因为<code>.gitattributes</code>文件会随着项目一起提交，而过滤器（例如：<code>dater</code>）不会，所以，过滤器不会在所有地方都生效。当你在设计这些过滤器时要注意，即使它们无法正常工作，也要让整个项目运作下去。</p>
 
-<h3 id='exporting_your_repository'>Exporting Your Repository</h3>
+<h3 id='id311'>导出仓库</h3>
 
-<p>Git attribute data also allows you to do some interesting things when exporting an archive of your project.</p>
+<p>Git属性在导出项目归档时也能发挥作用。</p>
 
 <h4 id='exportignore'>export-ignore</h4>
 
-<p>You can tell Git not to export certain files or directories when generating an archive. If there is a subdirectory or file that you don’t want to include in your archive file but that you do want checked into your project, you can determine those files via the <code>export-ignore</code> attribute.</p>
+<p>当产生一个归档时，可以设置Git不导出某些文件和目录。如果你不想在归档中包含一个子目录或文件，但想他们纳入项目的版本管理中，你能对应地设置<code>export-ignore</code>属性。</p>
 
-<p>For example, say you have some test files in a <code>test/</code> subdirectory, and it doesn’t make sense to include them in the tarball export of your project. You can add the following line to your Git attributes file:</p>
+<p>例如，在<code>test/</code>子目录中有一些测试文件，在项目的压缩包中包含他们是没有意义的。因此，可以增加下面这行到Git属性文件中：</p>
 
 <pre><code>test/ export-ignore</code></pre>
 
-<p>Now, when you run git archive to create a tarball of your project, that directory won’t be included in the archive.</p>
+<p>现在，当运行git archive来创建项目的压缩包时，那个目录不会在归档中出现。</p>
 
 <h4 id='exportsubst'>export-subst</h4>
 
-<p>Another thing you can do for your archives is some simple keyword substitution. Git lets you put the string <code>$Format:$</code> in any file with any of the <code>--pretty=format</code> formatting shortcodes, many of which you saw in Chapter 2. For instance, if you want to include a file named <code>LAST_COMMIT</code> in your project, and the last commit date was automatically injected into it when <code>git archive</code> ran, you can set up the file like this:</p>
+<p>还能对归档做一些简单的关键字替换。在第2章中已经可以看到，可以以<code>--pretty=format</code>形式的简码在任何文件中放入<code>$Format:$</code> 字符串。例如，如果想在项目中包含一个叫作<code>LAST_COMMIT</code>的文件，当运行<code>git archive</code>时，最后提交日期自动地注入进该文件，可以这样设置：</p>
 
 <pre><code>$ echo &#39;Last commit date: $Format:%cd$&#39; &gt; LAST_COMMIT
 $ echo &quot;LAST_COMMIT export-subst&quot; &gt;&gt; .gitattributes
 $ git add LAST_COMMIT .gitattributes
 $ git commit -am &#39;adding LAST_COMMIT file for archives&#39;</code></pre>
 
-<p>When you run <code>git archive</code>, the contents of that file when people open the archive file will look like this:</p>
+<p>运行<code>git archive</code>后，打开该文件，会发现其内容如下：</p>
 
 <pre><code>$ cat LAST_COMMIT
 Last commit date: $Format:Tue Apr 21 08:38:48 2009 -0700$</code></pre>
 
-<h3 id='merge_strategies'>Merge Strategies</h3>
+<h3 id='id312'>合并策略</h3>
 
-<p>You can also use Git attributes to tell Git to use different merge strategies for specific files in your project. One very useful option is to tell Git to not try to merge specific files when they have conflicts, but rather to use your side of the merge over someone else’s.</p>
+<p>通过Git属性，还能对项目中的特定文件使用不同的合并策略。一个非常有用的选项就是，当一些特定文件发生冲突，Git不会尝试合并他们，而使用你这边的合并。</p>
 
-<p>This is helpful if a branch in your project has diverged or is specialized, but you want to be able to merge changes back in from it, and you want to ignore certain files. Say you have a database settings file called database.xml that is different in two branches, and you want to merge in your other branch without messing up the database file. You can set up an attribute like this:</p>
+<p>如果项目的一个分支有歧义或比较特别，但你想从该分支合并，而且需要忽略其中某些文件，这样的合并策略是有用的。例如，你有一个数据库设置文件database.xml，在2个分支中他们是不同的，你想合并一个分支到另一个，而不弄乱该数据库文件，可以设置属性如下：</p>
 
 <pre><code>database.xml merge=ours</code></pre>
 
-<p>If you merge in the other branch, instead of having merge conflicts with the database.xml file, you see something like this:</p>
+<p>如果合并到另一个分支，database.xml文件不会有合并冲突，显示如下：</p>
 
 <pre><code>$ git merge topic
 Auto-merging database.xml
 Merge made by recursive.</code></pre>
 
-<p>In this case, database.xml stays at whatever version you originally had.</p>
+<p>这样，database.xml会保持原样。</p>
 
 <div id='nav'>
 <a href='ch7-1.html'>prev</a> | <a href='ch7-3.html'>next</a>

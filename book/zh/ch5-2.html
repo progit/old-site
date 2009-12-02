@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 5.2 分布式 Git 为项目作贡献
 ---
-<h2 id='id260'>为项目作贡献</h2>
+<h2 id='id263'>为项目作贡献</h2>
 
 <p>接下来，我们来学习一下作为项目贡献者，会有哪些常见的工作模式。</p>
 
@@ -16,7 +16,7 @@ title: Pro Git 5.2 分布式 Git 为项目作贡献
 
 <p>所有以上这些问题都会或多或少影响到最终采用的工作流。接下来，我会在一系列由简入繁的具体用例中，逐一阐述。此后在实践时，应该可以借鉴这里的例子，略作调整，以满足实际需要构建自己的工作流。</p>
 
-<h3 id='id261'>提交指南</h3>
+<h3 id='id264'>提交指南</h3>
 
 <p>开始分析特定用例之前，先来了解下如何撰写提交说明。一份好的提交指南可以帮助协作者更轻松更有效地配合。Git 项目本身就提供了一份文档（Git 项目源代码目录中 <code>Documentation/SubmittingPatches</code>），列数了大量提示，从如何编撰提交说明到提交补丁，不一而足。</p>
 
@@ -54,7 +54,7 @@ lib/simplegit.rb:26: trailing whitespace.
 
 <p>为简单起见，在接下来的例子（及本书随后的所有演示）中，我都不会用这种格式，而使用 <code>-m</code> 选项提交 <code>git commit</code>。不过请还是按照我之前讲的做，别学我这里偷懒的方式。</p>
 
-<h3 id='id262'>私有的小型团队</h3>
+<h3 id='id265'>私有的小型团队</h3>
 
 <p>我们从最简单的情况开始，一个私有项目，与你一起协作的还有另外一到两位开发者。这里说私有，是指源代码不公开，其他人无法访问项目仓库。而你和其他开发者则都具有推送数据到仓库的权限。</p>
 
@@ -198,7 +198,7 @@ To jessica@githost:simplegit.git
 
 <p><center><img src="/figures/ch5/18333fig0511-tn.png"></center><br/> 图 5-11. 多用户共享仓库协作方式的一般工作流程时序</p>
 
-<h3 id='id263'>私有团队间协作</h3>
+<h3 id='id266'>私有团队间协作</h3>
 
 <p>现在我们来看更大一点规模的私有团队协作。如果有几个小组分头负责若干特性的开发和集成，那他们之间的协作过程是怎样的。</p>
 
@@ -315,11 +315,11 @@ To jessica@githost:simplegit.git
 
 <p><center><img src="/figures/ch5/18333fig0515-tn.png"></center><br/> 图 5-15. 团队间协作工作流程基本时序</p>
 
-<h3 id='public_small_project'>Public Small Project</h3>
+<h3 id='id267'>公开的小型项目</h3>
 
-<p>Contributing to public projects is a bit different. Because you don’t have the permissions to directly update branches on the project, you have to get the work to the maintainers some other way. This first example describes contributing via forking on Git hosts that support easy forking. The repo.or.cz and GitHub hosting sites both support this, and many project maintainers expect this style of contribution. The next section deals with projects that prefer to accept contributed patches via e-mail.</p>
+<p>上面说的是私有项目协作，但要给公开项目作贡献，情况就有些不同了。因为你没有直接更新主仓库分支的权限，得寻求其它方式把工作成果交给项目维护人。下面会介绍两种方法，第一种使用 git 托管服务商提供的仓库复制功能，一般称作 fork，比如 repo.or.cz 和 GitHub 都支持这样的操作，而且许多项目管理员都希望大家使用这样的方式。另一种方法是通过电子邮件寄送文件补丁。</p>
 
-<p>First, you’ll probably want to clone the main repository, create a topic branch for the patch or patch series you’re planning to contribute, and do your work there. The sequence looks basically like this:</p>
+<p>但不管哪种方式，起先我们总需要克隆原始仓库，而后创建特性分支开展工作。基本工作流程如下：</p>
 
 <pre><code>$ git clone (url)
 $ cd project
@@ -329,19 +329,19 @@ $ git commit
 $ (work)
 $ git commit</code></pre>
 
-<p>You may want to use <code>rebase -i</code> to squash your work down to a single commit, or rearrange the work in the commits to make the patch easier for the maintainer to review — see Chapter 6 for more information about interactive rebasing.</p>
+<p>你可能想到用 <code>rebase -i</code> 将所有更新先变作单个提交，又或者想重新安排提交之间的差异补丁，以方便项目维护者审阅 &#8211; 有关交互式衍合操作的细节见第六章。</p>
 
-<p>When your branch work is finished and you’re ready to contribute it back to the maintainers, go to the original project page and click the &#8220;Fork&#8221; button, creating your own writable fork of the project. You then need to add in this new repository URL as a second remote, in this case named <code>myfork</code>:</p>
+<p>在完成了特性分支开发，提交给项目维护者之前，先到原始项目的页面上点击“Fork”按钮，创建一个自己可写的公共仓库（译注：即下面的 url 部分，参照后续的例子，应该是 <code>git://githost/simplegit.git</code>）。然后将此仓库添加为本地的第二个远端仓库，姑且称为 <code>myfork</code>：</p>
 
 <pre><code>$ git remote add myfork (url)</code></pre>
 
-<p>You need to push your work up to it. It’s easiest to push the remote branch you’re working on up to your repository, rather than merging into your master branch and pushing that up. The reason is that if the work isn’t accepted or is cherry picked, you don’t have to rewind your master branch. If the maintainers merge, rebase, or cherry-pick your work, you’ll eventually get it back via pulling from their repository anyhow:</p>
+<p>你需要将本地更新推送到这个仓库。要是将远端 master 合并到本地再推回去，还不如把整个特性分支推上去来得干脆直接。而且，假若项目维护者未采纳你的贡献的话（不管是直接合并还是 cherry pick），都不用回退（rewind）自己的 master 分支。但若维护者合并或 cherry-pick 了你的工作，最后总还可以从他们的更新中同步这些代码。好吧，现在先把 featureA 分支整个推上去：</p>
 
 <pre><code>$ git push myfork featureA</code></pre>
 
-<p>When your work has been pushed up to your fork, you need to notify the maintainer. This is often called a pull request, and you can either generate it via the website — GitHub has a &#8220;pull request&#8221; button that automatically messages the maintainer — or run the <code>git request-pull</code> command and e-mail the output to the project maintainer manually.</p>
+<p>然后通知项目管理员，让他来抓取你的代码。通常我们把这件事叫做 pull request。可以直接用 GitHub 等网站提供的 “pull request” 按钮自动发送请求通知；或手工把 <code>git request-pull</code> 命令输出结果电邮给项目管理员。</p>
 
-<p>The <code>request-pull</code> command takes the base branch into which you want your topic branch pulled and the Git repository URL you want them to pull from, and outputs a summary of all the changes you’re asking to be pulled in. For instance, if Jessica wants to send John a pull request, and she’s done two commits on the topic branch she just pushed up, she can run this:</p>
+<p><code>request-pull</code> 命令接受两个参数，第一个是本地特性分支开始前的原始分支，第二个是请求对方来抓取的 Git 仓库 URL（译注：即下面 <code>myfork</code> 所指的，自己可写的公共仓库）。比如现在Jessica 准备要给 John 发一个 pull requst，她之前在自己的特性分支上提交了两次更新，并把分支整个推到了服务器上，所以运行该命令会看到：</p>
 
 <pre><code>$ git request-pull origin/master myfork
 The following changes since commit 1edee6b1d61823a2de3b09c160d7080b8d1b3a40:
@@ -359,9 +359,9 @@ Jessica Smith (2):
  lib/simplegit.rb |   10 +++++++++-
  1 files changed, 9 insertions(+), 1 deletions(-)</code></pre>
 
-<p>The output can be sent to the maintainer—it tells them where the work was branched from, summarizes the commits, and tells where to pull this work from.</p>
+<p>输出的内容可以直接发邮件给管理者，他们就会明白这是从哪次提交开始旁支出去的，该到哪里去抓取新的代码，以及新的代码增加了哪些功能等等。</p>
 
-<p>On a project for which you’re not the maintainer, it’s generally easier to have a branch like <code>master</code> always track <code>origin/master</code> and to do your work in topic branches that you can easily discard if they’re rejected. Having work themes isolated into topic branches also makes it easier for you to rebase your work if the tip of the main repository has moved in the meantime and your commits no longer apply cleanly. For example, if you want to submit a second topic of work to the project, don’t continue working on the topic branch you just pushed up — start over from the main repository’s <code>master</code> branch:</p>
+<p>像这样随时保持自己的 <code>master</code> 分支和官方 <code>origin/master</code> 同步，并将自己的工作限制在特性分支上的做法，既方便又灵活，采纳和丢弃都轻而易举。就算原始主干发生变化，我们也能重新衍合提供新的补丁。比如现在要开始第二项特性的开发，不要在原来已推送的特性分支上继续，还是按原始 <code>master</code> 开始：</p>
 
 <pre><code>$ git checkout -b featureB origin/master
 $ (work)
@@ -370,23 +370,23 @@ $ git push myfork featureB
 $ (email maintainer)
 $ git fetch origin</code></pre>
 
-<p>Now, each of your topics is contained within a silo — similar to a patch queue — that you can rewrite, rebase, and modify without the topics interfering or interdepending on each other as in Figure 5-16.</p>
+<p>现在，A、B 两个特性分支各不相扰，如同竹筒里的两颗豆子，队列中的两个补丁，你随时都可以分别从头写过，或者衍合，或者修改，而不用担心特性代码的交叉混杂。如图 5-16 所示：</p>
 
-<p><center><img src="/figures/ch5/18333fig0516-tn.png"></center><br/> Figure 5-16. Initial commit history with featureB work</p>
+<p><center><img src="/figures/ch5/18333fig0516-tn.png"></center><br/> 图 5-16. featureB 以后的提交历史</p>
 
-<p>Let’s say the project maintainer has pulled in a bunch of other patches and tried your first branch, but it no longer cleanly merges. In this case, you can try to rebase that branch on top of <code>origin/master</code>, resolve the conflicts for the maintainer, and then resubmit your changes:</p>
+<p>假设项目管理员接纳了许多别人提交的补丁后，准备要采纳你提交的第一个分支，却发现因为代码基准不一致，合并工作无法正确干净地完成。这就需要你再次衍合到最新的 <code>origin/master</code>，解决相关冲突，然后重新提交你的修改：</p>
 
 <pre><code>$ git checkout featureA
 $ git rebase origin/master
-$ git push –f myfork featureA</code></pre>
+$ git push -f myfork featureA</code></pre>
 
-<p>This rewrites your history to now look like Figure 5-17.</p>
+<p>自然，这会重写提交历史，如图 5-17 所示：</p>
 
-<p><center><img src="/figures/ch5/18333fig0517-tn.png"></center><br/> Figure 5-17. Commit history after featureA work</p>
+<p><center><img src="/figures/ch5/18333fig0517-tn.png"></center><br/> 图 5-17. featureA 重新衍合后的提交历史</p>
 
-<p>Because you rebased the branch, you have to specify the <code>–f</code> to your push command in order to be able to replace the <code>featureA</code> branch on the server with a commit that isn’t a descendant of it. An alternative would be to push this new work to a different branch on the server (perhaps called <code>featureAv2</code>).</p>
+<p>注意，此时推送分支必须使用 <code>-f</code> 选项（译注：表示 force，不作检查强制重写）替换远程已有的 <code>featureA</code> 分支，因为新的 commit 并非原来的后续更新。当然你也可以直接推送到另一个新的分支上去，比如称作 <code>featureAv2</code>。</p>
 
-<p>Let’s look at one more possible scenario: the maintainer has looked at work in your second branch and likes the concept but would like you to change an implementation detail. You’ll also take this opportunity to move the work to be based off the project’s current <code>master</code> branch. You start a new branch based off the current <code>origin/master</code> branch, squash the <code>featureB</code> changes there, resolve any conflicts, make the implementation change, and then push that up as a new branch:</p>
+<p>再考虑另一种情形：管理员看过第二个分支后觉得思路新颖，但想请你改下具体实现。我们只需以当前 <code>origin/master</code> 分支为基准，开始一个新的特性分支 <code>featureBv2</code>，然后把原来的 <code>featureB</code> 的更新拿过来，解决冲突，按要求重新实现部分代码，然后将此特性分支推送上去：</p>
 
 <pre><code>$ git checkout -b featureBv2 origin/master
 $ git merge --no-commit --squash featureB
@@ -394,17 +394,17 @@ $ (change implementation)
 $ git commit
 $ git push myfork featureBv2</code></pre>
 
-<p>The <code>--squash</code> option takes all the work on the merged branch and squashes it into one non-merge commit on top of the branch you’re on. The <code>--no-commit</code> option tells Git not to automatically record a commit. This allows you to introduce all the changes from another branch and then make more changes before recording the new commit.</p>
+<p>这里的 <code>--squash</code> 选项将目标分支上的所有更改全拿来应用到当前分支上，而 <code>--no-commit</code> 选项告诉 Git 此时无需自动生成和记录（合并）提交。这样，你就可以在原来代码基础上，继续工作，直到最后一起提交。</p>
 
-<p>Now you can send the maintainer a message that you’ve made the requested changes and they can find those changes in your <code>featureBv2</code> branch (see Figure 5-18).</p>
+<p>好了，现在可以请管理员抓取 <code>featureBv2</code> 上的最新代码了，如图 5-18 所示：</p>
 
-<p><center><img src="/figures/ch5/18333fig0518-tn.png"></center><br/> Figure 5-18. Commit history after featureBv2 work</p>
+<p><center><img src="/figures/ch5/18333fig0518-tn.png"></center><br/> 图 5-18. featureBv2 之后的提交历史</p>
 
-<h3 id='public_large_project'>Public Large Project</h3>
+<h3 id='id268'>公开的大型项目</h3>
 
-<p>Many larger projects have established procedures for accepting patches — you’ll need to check the specific rules for each project, because they will differ. However, many larger public projects accept patches via a developer mailing list, so I’ll go over an example of that now.</p>
+<p>许多大型项目都会立有一套自己的接受补丁流程，你应该注意下其中细节。但多数项目都允许通过开发者邮件列表接受补丁，现在我们来看具体例子。</p>
 
-<p>The workflow is similar to the previous use case — you create topic branches for each patch series you work on. The difference is how you submit them to the project. Instead of forking the project and pushing to your own writable version, you generate e-mail versions of each commit series and e-mail them to the developer mailing list:</p>
+<p>整个工作流程类似上面的情形：为每个补丁创建独立的特性分支，而不同之处在于如何提交这些补丁。不需要创建自己可写的公共仓库，也不用将自己的更新推送到自己的服务器，你只需将每次提交的差异内容以电子邮件的方式依次发送到邮件列表中即可。</p>
 
 <pre><code>$ git checkout -b topicA
 $ (work)
@@ -412,13 +412,13 @@ $ git commit
 $ (work)
 $ git commit</code></pre>
 
-<p>Now you have two commits that you want to send to the mailing list. You use <code>git format-patch</code> to generate the mbox-formatted files that you can e-mail to the list — it turns each commit into an e-mail message with the first line of the commit message as the subject and the rest of the message plus the patch that the commit introduces as the body. The nice thing about this is that applying a patch from an e-mail generated with <code>format-patch</code> preserves all the commit information properly, as you’ll see more of in the next section when you apply these commits:</p>
+<p>如此一番后，有了两个提交要发到邮件列表。我们可以用 <code>git format-patch</code> 命令来生成 mbox 格式的文件然后作为附件发送。每个提交都会封装为一个 <code>.patch</code> 后缀的 mbox 文件，但其中只包含一封邮件，邮件标题就是提交消息（译注：额外有前缀，看例子），邮件内容包含补丁正文和 Git 版本号。这种方式的妙处在于接受补丁时仍可保留原来的提交消息，请看接下来的例子：</p>
 
 <pre><code>$ git format-patch -M origin/master
 0001-add-limit-to-log-function.patch
 0002-changed-log-output-to-30-from-25.patch</code></pre>
 
-<p>The <code>format-patch</code> command prints out the names of the patch files it creates. The <code>-M</code> switch tells Git to look for renames. The files end up looking like this:</p>
+<p><code>format-patch</code> 命令依次创建补丁文件，并输出文件名。上面的 <code>-M</code> 选项允许 Git 检查是否有对文件重命名的提交。我们来看看补丁文件的内容：</p>
 
 <pre><code>$ cat 0001-add-limit-to-log-function.patch 
 From 330090432754092d704da8e76ca5c05c198e71a8 Mon Sep 17 00:00:00 2001
@@ -448,11 +448,11 @@ index 76f47bc..f9815f1 100644
 -- 
 1.6.2.rc1.20.g8c5b.dirty</code></pre>
 
-<p>You can also edit these patch files to add more information for the e-mail list that you don’t want to show up in the commit message. If you add text between the <code>--</code> line and the beginning of the patch (the <code>lib/simplegit.rb</code> line), then developers can read it; but applying the patch excludes it.</p>
+<p>如果有额外信息需要补充，但又不想放在提交消息中说明，可以编辑这些补丁文件，在第一个 <code>---</code> 行之前添加说明，但不要修改下面的补丁正文，比如例子中的 <code>Limit log functionality to the first 20</code> 部分。这样，其它开发者能阅读，但在采纳补丁时不会将此合并进来。</p>
 
-<p>To e-mail this to a mailing list, you can either paste the file into your e-mail program or send it via a command-line program. Pasting the text often causes formatting issues, especially with &#8220;smarter&#8221; clients that don’t preserve newlines and other whitespace appropriately. Luckily, Git provides a tool to help you send properly formatted patches via IMAP, which may be easier for you. I’ll demonstrate how to send a patch via Gmail, which happens to be the e-mail agent I use; you can read detailed instructions for a number of mail programs at the end of the aforementioned <code>Documentation/SubmittingPatches</code> file in the Git source code.</p>
+<p>你可以用邮件客户端软件发送这些补丁文件，也可以直接在命令行发送。有些所谓智能的邮件客户端软件会自作主张帮你调整格式，所以粘贴补丁到邮件正文时，有可能会丢失换行符和若干空格。Git 提供了一个通过 IMAP 发送补丁文件的工具。接下来我会演示如何通过 Gmail 的 IMAP 服务器发送。另外，在 Git 源代码中有个 <code>Documentation/SubmittingPatches</code> 文件，可以仔细读读，看看其它邮件程序的相关导引。</p>
 
-<p>First, you need to set up the imap section in your <code>~/.gitconfig</code> file. You can set each value separately with a series of <code>git config</code> commands, or you can add them manually; but in the end, your config file should look something like this:</p>
+<p>首先在 <code>~/.gitconfig</code> 文件中配置 imap 项。每个选项都可用 <code>git config</code> 命令分别设置，当然直接编辑文件添加以下内容更便捷：</p>
 
 <pre><code>[imap]
   folder = &quot;[Gmail]/Drafts&quot;
@@ -462,7 +462,7 @@ index 76f47bc..f9815f1 100644
   port = 993
   sslverify = false</code></pre>
 
-<p>If your IMAP server doesn’t use SSL, the last two lines probably aren’t necessary, and the host value will be <code>imap://</code> instead of <code>imaps://</code>. When that is set up, you can use <code>git send-email</code> to place the patch series in the Drafts folder of the specified IMAP server:</p>
+<p>如果你的 IMAP 服务器没有启用 SSL，就无需配置最后那两行，并且 host 应该以 <code>imap://</code> 开头而不再是有 <code>s</code> 的 <code>imaps://</code>。保存配置文件后，就能用 <code>git send-email</code> 命令把补丁作为邮件依次发送到指定的 IMAP 服务器上的文件夹中（译注：这里就是 Gmail 的 <code>[Gmail]/Drafts</code> 文件夹。但如果你的语言设置不是英文，此处的文件夹 Drafts 字样会变为对应的语言。）：</p>
 
 <pre><code>$ git send-email *.patch
 0001-added-limit-to-log-function.patch
@@ -472,7 +472,7 @@ Emails will be sent from: Jessica Smith &lt;jessica@example.com&gt;
 Who should the emails be sent to? jessica@example.com
 Message-ID to be used as In-Reply-To for the first email? y</code></pre>
 
-<p>Then, Git spits out a bunch of log information looking something like this for each patch you’re sending:</p>
+<p>接下来，Git 会根据每个补丁依次输出类似下面的日志：</p>
 
 <pre><code>(mbox) Adding cc: Jessica Smith &lt;jessica@example.com&gt; from 
   \line &#39;From: Jessica Smith &lt;jessica@example.com&gt;&#39;
@@ -489,11 +489,11 @@ References: &lt;y&gt;
 
 Result: OK</code></pre>
 
-<p>At this point, you should be able to go to your Drafts folder, change the To field to the mailing list you’re sending the patch to, possibly CC the maintainer or person responsible for that section, and send it off.</p>
+<p>最后，到 Gmail 上打开 Drafts 文件夹，编辑这些邮件，修改收件人地址为邮件列表地址，另外给要抄送的人也加到 Cc 列表中，最后发送。</p>
 
-<h3 id='summary'>Summary</h3>
+<h3 id='id269'>小结</h3>
 
-<p>This section has covered a number of common workflows for dealing with several very different types of Git projects you’re likely to encounter and introduced a couple of new tools to help you manage this process. Next, you’ll see how to work the other side of the coin: maintaining a Git project. You’ll learn how to be a benevolent dictator or integration manager.</p>
+<p>本节主要介绍了常见 Git 项目协作的工作流程，还有一些帮助处理这些工作的命令和工具。接下来我们要看看如何维护 Git 项目，并成为一个合格的项目管理员，或是集成经理。</p>
 
 <div id='nav'>
 <a href='ch5-1.html'>prev</a> | <a href='ch5-3.html'>next</a>

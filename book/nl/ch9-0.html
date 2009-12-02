@@ -1,14 +1,14 @@
 ---
 layout: translation
-title: Pro Git 9.0 Git Internals
+title: Pro Git 9.0 Het Binnenwerk van Git
 ---
-<h1>Chapter 9</h1><h1 id='git_internals'>Git Internals</h1>
+<h1>Chapter 9</h1><h1 id='het_binnenwerk_van_git'>Het Binnenwerk van Git</h1>
 
-<p>You may have skipped to this chapter from a previous chapter, or you may have gotten here after reading the rest of the book — in either case, this is where you’ll go over the inner workings and implementation of Git. I found that learning this information was fundamentally important to understanding how useful and powerful Git is, but others have argued to me that it can be confusing and unnecessarily complex for beginners. Thus, I’ve made this discussion the last chapter in the book so you could read it early or later in your learning process. I leave it up to you to decide.</p>
+<p>Je zult misschien naar dit hoofdstuk gesprongen zijn vanuit een vorig hoofdstuk, of je zult hier gekomen zijn nadat je de rest van het boek gelezen hebt – in ieder geval, zal hier het binnenwerk en implementatie van Git behandeld worden. Ik heb gemerkt dat het leren van deze informatie van fundamenteel belang is om te begrijpen hoe bruikbaar en krachtig Git is, maar anderen hebben daar tegenin gebracht dat het erg verwarrend en onnodig complex kan zijn voor beginners. Daarom heb ik deze beschrijving het laatste hoofdstuk gemaakt in het boek, zodat je het vroeg of later kunt lezen in je leerproces. Ik laat het aan jou over om te beslissen.</p>
 
-<p>Now that you’re here, let’s get started. First, if it isn’t yet clear, Git is fundamentally a content-addressable filesystem with a VCS user interface written on top of it. You’ll learn more about what this means in a bit.</p>
+<p>Laten we beginnen, nu je hier bent. Als eerste, mocht het nog niet duidelijk zijn, is Git in basis een inhouds-toegankelijk bestandssyteem met een VCS gebruikersinterface er bovenop geschreven. Je zult over een poosje meer leren over wat dit betekend.</p>
 
-<p>In the early days of Git (mostly pre 1.5), the user interface was much more complex because it emphasized this filesystem rather than a polished VCS. In the last few years, the UI has been refined until it’s as clean and easy to use as any system out there; but often, the stereotype lingers about the early Git UI that was complex and difficult to learn.</p>
+<p>In de eerste dagen van Git (het meerendeel pre 1.5), wat de gebruikersinterface veel complexer, omdat het de nadruk legde op dit bestandssysteem in plaats van op een gepolijst VCS. De laatste paar jaren is de interface verfijnd totdat het zo netjes en eenvoudig te gebruikten is als ieder systeem dat er bestaat; maar vaak blijft het stereotype hangen over de vroegere Git interface, die complex was en moeilijk te leren.</p>
 
 <p>The content-addressable filesystem layer is amazingly cool, so I’ll cover that first in this chapter; then, you’ll learn about the transport mechanisms and the repository maintenance tasks that you may eventually have to deal with.</p>
 

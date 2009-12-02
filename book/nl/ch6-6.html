@@ -4,15 +4,15 @@ title: Pro Git 6.6 Git Tools Submodules
 ---
 <h2 id='submodules'>Submodules</h2>
 
-<p>It often happens that while working on one project, you need to use another project from within it. Perhaps it’s a library that a third party developed or that you’re developing separately and using in multiple parent projects. A common issue arises in these scenarios: you want to be able to treat the two projects as separate yet still be able to use one from within the other.</p>
+<p>Het gebeurd vaak dat terwijl je zit te werken aan het ene project, je een ander project er binnenin nodig hebt. Misschien is het een library die een derde partij ontwikkeld heeft, of die je apart aan het ontwikkelen bent en gebruikt in meerdere ouder projecten. Een veel voorkomend probleem komt in deze scenario&#8217;s naar boven: je wilt de twee projecten apart behandelen, maar de ene binnen de andere kunnen gebruiken.</p>
 
-<p>Here’s an example. Suppose you’re developing a web site and creating Atom feeds. Instead of writing your own Atom-generating code, you decide to use a library. You’re likely to have to either include this code from a shared library like a CPAN install or Ruby gem, or copy the source code into your own project tree. The issue with including the library is that it’s difficult to customize the library in any way and often more difficult to deploy it, because you need to make sure every client has that library available. The issue with vendoring the code into your own project is that any custom changes you make are difficult to merge when upstream changes become available.</p>
+<p>Hier is een voorbeeld. Stel dat je een website aan het ontwikkelen bent en Atom feeds aan het maken bent. In plaats van je eigen Atom feedcode te schrijven, besluit je een library te gebruiken. Je zult deze code waarschijnlijk moeten includen van een gedeelde library zoals een CPAN installatie of een Ruby gem, of de brondcode kopieeren naar je eigen projectboom. Het probleem met de library includen is dat het lastig is om de library op enige manier aan te passen, en vaak is het lastiger om het uit te rollen, omdat je zeker moet zijn dat iedere klant die library beschikbaar heeft. Het probleem van de broncode in je project stoppen is dat alle aanpassingen die je maakt lastig te mergen zijn op het moment dat stroomopwaarts veranderingen beschikbaar komen.</p>
 
-<p>Git addresses this issue using submodules. Submodules allow you to keep a Git repository as a subdirectory of another Git repository. This lets you clone another repository into your project and keep your commits separate.</p>
+<p>Git pakt dit probleem aan door submodules te gebruiken. Submodules geven je de mogelijkheid om een Git repository als een subdirectory van een ander Git repository te gebruiken. Dit staat je toe een ander repository in je project te clonen en je commits gescheiden te houden.</p>
 
-<h3 id='starting_with_submodules'>Starting with Submodules</h3>
+<h3 id='beginnen_met_submodules'>Beginnen Met Submodules</h3>
 
-<p>Suppose you want to add the Rack library (a Ruby web server gateway interface) to your project, possibly maintain your own changes to it, but continue to merge in upstream changes. The first thing you should do is clone the external repository into your subdirectory. You add external projects as submodules with the <code>git submodule add</code> command:</p>
+<p>Stel dat je de Rack library (een Ruby web server gateway interface) wilt toevoegen aan je project, misschien je eigen veranderingen eraan wilt onderhouden, maar ook veranderingen van stroomopwaarts wilt mergen. Het eerste dat je zou moeten doen is het exteren repository clonen in jouw submap. Je voegt externe projecten als submodules toe door middel van het <code>git submodule add</code> commando:</p>
 
 <pre><code>$ git submodule add git://github.com/chneukirchen/rack.git rack
 Initialized empty Git repository in /opt/subtest/rack/.git/
@@ -22,7 +22,7 @@ remote: Total 3181 (delta 1951), reused 2623 (delta 1603)
 Receiving objects: 100% (3181/3181), 675.42 KiB | 422 KiB/s, done.
 Resolving deltas: 100% (1951/1951), done.</code></pre>
 
-<p>Now you have the Rack project under a subdirectory named <code>rack</code> within your project. You can go into that subdirectory, make changes, add your own writable remote repository to push your changes into, fetch and merge from the original repository, and more. If you run <code>git status</code> right after you add the submodule, you see two things:</p>
+<p>Nu heb je het Rack project onder een submap genaamd <code>rack</code> binnen je project. Je kunt in die submap gaan, wijzigingen maken, je eigen schrijfbare remote repository waar je veranderingen in kunt pushen toevoegen, vanuit het originele repository fetchen en mergen, en meer. Als je <code>git status</code> uitvoerd vlak nadat je de submodule toevoegd, zou je twee dingen moeten zien:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -33,16 +33,16 @@ Resolving deltas: 100% (1951/1951), done.</code></pre>
 #      new file:   rack
 #</code></pre>
 
-<p>First you notice the <code>.gitmodules</code> file. This is a configuration file that stores the mapping between the project’s URL and the local subdirectory you’ve pulled it into:</p>
+<p>Eerst zie je het <code>.gitmodules</code> bestand. Dit is een configuratie bestand dat de mapping opslaat tussen de URL van het project en de locale submap waarin je het binnen gepulled hebt:</p>
 
 <pre><code>$ cat .gitmodules 
 [submodule &quot;rack&quot;]
       path = rack
       url = git://github.com/chneukirchen/rack.git</code></pre>
 
-<p>If you have multiple submodules, you’ll have multiple entries in this file. It’s important to note that this file is version-controlled with your other files, like your <code>.gitignore</code> file. It’s pushed and pulled with the rest of your project. This is how other people who clone this project know where to get the submodule projects from.</p>
+<p>Als je meerdere submodules hebt, zul je meerdere vermeldingen hebben in dit bestand. Het is belangrijk om te zien dat dit bestand net als je andere bestanden ook onder versiebeheer staat, zoals je <code>.gitignore</code> bestand. Het wordt gepushed en gepulled samen met de rest van je project. Op deze manier weten andere mensen die je project clonen waar ze de submodule projecten vandaan moeten halen.</p>
 
-<p>The other listing in the <code>git status</code> output is the rack entry. If you run <code>git diff</code> on that, you see something interesting:</p>
+<p>De andere vermelding in de <code>git status</code> output is de rack regel. Als je <code>git diff</code> daarop uitvoert zul je iets interessants zien:</p>
 
 <pre><code>$ git diff --cached rack
 diff --git a/rack b/rack
@@ -53,11 +53,11 @@ index 0000000..08d709f
 @@ -0,0 +1 @@
 +Subproject commit 08d709f78b8c5b0fbeb7821e37fa53e69afcf433</code></pre>
 
-<p>Although <code>rack</code> is a subdirectory in your working directory, Git sees it as a submodule and doesn’t track its contents when you’re not in that directory. Instead, Git records it as a particular commit from that repository. When you make changes and commit in that subdirectory, the superproject notices that the HEAD there has changed and records the exact commit you’re currently working off of; that way, when others clone this project, they can re-create the environment exactly.</p>
+<p>Alhoewel <code>rack</code> een submap in je werkmap is, ziet Git het als een submodule en zal de inhoud niet volgen als je niet in die map staat. In plaats daarvan slaat Git het als een aparte commit op van dat repository. Als je wijzigingen maakt en in die submap een commit doet, zal het superproject zien dat de HEAD daarin is veranderd en de exacte commit opslaan waarvan je op dat moment zit te werken; op die manier zullen anderen die dit project clonen de omgeving exact kunnen reproduceren.</p>
 
-<p>This is an important point with submodules: you record them as the exact commit they’re at. You can’t record a submodule at <code>master</code> or some other symbolic reference.</p>
+<p>Dit is een belangrijk punt met submodules: je slaat ze op als de exacte commit waar ze op staan. Je kunt een submodule niet opslaan als <code>master</code> of een andere symbolische referentie.</p>
 
-<p>When you commit, you see something like this:</p>
+<p>Als je commit, zou je zoiets als dit moeten zien:</p>
 
 <pre><code>$ git commit -m &#39;first commit with submodule rack&#39;
 [master 0550271] first commit with submodule rack
@@ -65,9 +65,9 @@ index 0000000..08d709f
  create mode 100644 .gitmodules
  create mode 160000 rack</code></pre>
 
-<p>Notice the 160000 mode for the rack entry. That is a special mode in Git that basically means you’re recording a commit as a directory entry rather than a subdirectory or a file.</p>
+<p>Zie de 160000 modus voor de rack vermelding. Dat is een speciale modus binnen Git, die in feite betekend dat je een commit als een map vermelding opslaat in plaats van als een submap of een bestand.</p>
 
-<p>You can treat the <code>rack</code> directory as a separate project and then update your superproject from time to time with a pointer to the latest commit in that subproject. All the Git commands work independently in the two directories:</p>
+<p>Je kunt de <code>rack</code> map als een apart project behandelen en je superproject van tijd tot tijd vernieuwen met een pointer naar de laatste commit in dat subproject. Alle Git commando&#8217;s werken onafhankelijk in de twee mappen:</p>
 
 <pre><code>$ git log -1
 commit 0550271328a0038865aad6331e620cd7238601bb
@@ -83,9 +83,9 @@ Date:   Wed Mar 25 14:49:04 2009 +0100
 
     Document version change</code></pre>
 
-<h3 id='cloning_a_project_with_submodules'>Cloning a Project with Submodules</h3>
+<h3 id='een_project_met_submodules_clonen'>Een Project Met Submodules Clonen</h3>
 
-<p>Here you’ll clone a project with a submodule in it. When you receive such a project, you get the directories that contain submodules, but none of the files yet:</p>
+<p>Hier zul je een project met een submodule erin clonen. Als je zo&#8217;n project ontvangt, krijg je de mappen die submodules bevatten, maar nog niet meteen de bestanden:</p>
 
 <pre><code>$ git clone git://github.com/schacon/myproject.git
 Initialized empty Git repository in /opt/myproject/.git/
@@ -101,7 +101,7 @@ drwxr-xr-x  2 schacon  admin  68 Apr  9 09:11 rack
 $ ls rack/
 $</code></pre>
 
-<p>The <code>rack</code> directory is there, but empty. You must run two commands: <code>git submodule init</code> to initialize your local configuration file, and <code>git submodule update</code> to fetch all the data from that project and check out the appropriate commit listed in your superproject:</p>
+<p>De <code>rack</code> map is er, maar hij is leeg. Je moet twee commando&#8217;s uitvoeren: <code>git submodule init</code> om je locale configuratie bestand te initialiseren, en <code>git submodule update</code> om alle data van dat project te fetchen en de juiste commit die in je superproject staat uit te checken:</p>
 
 <pre><code>$ git submodule init
 Submodule &#39;rack&#39; (git://github.com/chneukirchen/rack.git) registered for path &#39;rack&#39;
@@ -114,7 +114,7 @@ Receiving objects: 100% (3181/3181), 675.42 KiB | 173 KiB/s, done.
 Resolving deltas: 100% (1951/1951), done.
 Submodule path &#39;rack&#39;: checked out &#39;08d709f78b8c5b0fbeb7821e37fa53e69afcf433&#39;</code></pre>
 
-<p>Now your <code>rack</code> subdirectory is at the exact state it was in when you committed earlier. If another developer makes changes to the rack code and commits, and you pull that reference down and merge it in, you get something a bit odd:</p>
+<p>Nu is je <code>rack</code> submap in exact dezelfde status is als het was toen je het eerder gecommit had. Als een andere developer wijzigingen doet op de rack code en commit, en je pulled die referentie en merged de code, dan krijg je iets dat een beetje vreemd is:</p>
 
 <pre><code>$ git merge origin/master
 Updating 0550271..85a3eee
@@ -130,7 +130,7 @@ Fast forward
 #      modified:   rack
 #</code></pre>
 
-<p>You merged in what is basically a change to the pointer for your submodule; but it doesn’t update the code in the submodule directory, so it looks like you have a dirty state in your working directory:</p>
+<p>Je hebt iets ingemerged dat eigenlijk een wijziging is op de pointer naar je submodule; maar de code in de submodule map niet vernieuwd, dus het lijkt erop dat je een vieze status hebt in je werkmap:</p>
 
 <pre><code>$ git diff
 diff --git a/rack b/rack
@@ -141,7 +141,7 @@ index 6c5e70b..08d709f 160000
 -Subproject commit 6c5e70b984a60b3cecd395edd5b48a7575bf58e0
 +Subproject commit 08d709f78b8c5b0fbeb7821e37fa53e69afcf433</code></pre>
 
-<p>This is the case because the pointer you have for the submodule isn’t what is actually in the submodule directory. To fix this, you must run <code>git submodule update</code> again:</p>
+<p>Dit is het geval omdat de pointer die je hebt voor de submodule niet is wat eigenlijk in de submodule map zit. Om dit te reparen moet je <code>git submodule update</code> opnieuw uitvoeren:</p>
 
 <pre><code>$ git submodule update
 remote: Counting objects: 5, done.
@@ -152,15 +152,15 @@ From git@github.com:schacon/rack
    08d709f..6c5e70b  master     -&gt; origin/master
 Submodule path &#39;rack&#39;: checked out &#39;6c5e70b984a60b3cecd395edd5b48a7575bf58e0&#39;</code></pre>
 
-<p>You have to do this every time you pull down a submodule change in the main project. It’s strange, but it works.</p>
+<p>Je moet dit iedere keer dat je een submodule wijziging pulled in het hoofdproject. Het is vreemd, maar het werkt.</p>
 
-<p>One common problem happens when a developer makes a change locally in a submodule but doesn’t push it to a public server. Then, they commit a pointer to that non-public state and push up the superproject. When other developers try to run <code>git submodule update</code>, the submodule system can’t find the commit that is referenced, because it exists only on the first developer’s system. If that happens, you see an error like this:</p>
+<p>Er probleem doet zich voor als een developer een locale wijziging in en submodule doet en die niet naar een publieke server pushed. Dan, zullen ze een pointer naar de niet-publieke status committen en naar het superproject pushen. Als andere developers dan <code>git submodule update</code> proberen uit te voeren, dan zal het submodule systeem de commit die gerefereerd wordt niet kunnen vinden, omdat het alleen op het systeem van de eerste developer bestaat. Als dat gebeurd, zul je een foutmelding als deze zien:</p>
 
 <pre><code>$ git submodule update
 fatal: reference isn’t a tree: 6c5e70b984a60b3cecd395edd5b48a7575bf58e0
 Unable to checkout &#39;6c5e70b984a60b3cecd395edd5ba7575bf58e0&#39; in submodule path &#39;rack&#39;</code></pre>
 
-<p>You have to see who last changed the submodule:</p>
+<p>Je moet dan zien wie als laatste de submodule veranderd heeft:</p>
 
 <pre><code>$ git log -1 rack
 commit 85a3eee996800fcfa91e2119372dd4172bf76678
@@ -169,21 +169,21 @@ Date:   Thu Apr 9 09:19:14 2009 -0700
 
     added a submodule reference I will never make public. hahahahaha!</code></pre>
 
-<p>Then, you e-mail that guy and yell at him.</p>
+<p>Dan stuur je een e-mail naar die man en schreeuwt tegen hem.</p>
 
-<h3 id='superprojects'>Superprojects</h3>
+<h3 id='superprojecten'>Superprojecten</h3>
 
-<p>Sometimes, developers want to get a combination of a large project’s subdirectories, depending on what team they’re on. This is common if you’re coming from CVS or Subversion, where you’ve defined a module or collection of subdirectories, and you want to keep this type of workflow.</p>
+<p>Soms willen developers een combinatie van de submappen van een groot project hebben, afhankelijk van het team waarin ze zitten. Dit komt vaak voor als je van CVS of Subversion af komt, waar je een module of verzameling submappen gedefinieerd hebt, en je wilt deze manier van werken behouden.</p>
 
-<p>A good way to do this in Git is to make each of the subfolders a separate Git repository and then create superproject Git repositories that contain multiple submodules. A benefit of this approach is that you can more specifically define the relationships between the projects with tags and branches in the superprojects.</p>
+<p>Een goeie manier om dit in Git te doen is om ieder van de submappen een aparte Git repository te maken en dan superproject Git repositories te maken die meerdere submodules kunnen bevatten. Een voordeel van deze aanpak is dat je meer specifiek kunt definieeren wat de relaties tussen de projecten zijn met behulp van tags en branches in de superprojects.</p>
 
-<h3 id='issues_with_submodules'>Issues with Submodules</h3>
+<h3 id='problemen_met_submodules'>Problemen Met Submodules</h3>
 
-<p>Using submodules isn’t without hiccups, however. First, you must be relatively careful when working in the submodule directory. When you run <code>git submodule update</code>, it checks out the specific version of the project, but not within a branch. This is called having a detached head — it means the HEAD file points directly to a commit, not to a symbolic reference. The issue is that you generally don’t want to work in a detached head environment, because it’s easy to lose changes. If you do an initial <code>submodule update</code>, commit in that submodule directory without creating a branch to work in, and then run <code>git submodule update</code> again from the superproject without committing in the meantime, Git will overwrite your changes without telling you. Technically you won’t lose the work, but you won’t have a branch pointing to it, so it will be somewhat difficult to retrieive.</p>
+<p>Submodules gebruiken is echter niet zonder gevaar. Ten eerste moet je relatief voorzichtig zijn met het werken in een submap. Als je <code>git submodule update</code> uitvoerd, zal het de specifieke versie van het project uitchecken, maar niet binnen een branch. Dit wordt een afgekoppelde HEAD genoemd – het betekend dat het HEAD bestand direct naar een commit wijst, en niet naar een symbolische referentie. Het probleem is dat je over het algemeen niet wilt werken in een afgekoppelde head omgeving, omdat het makkelijk is om veranderingen te verliezen. Als je een initiele <code>submodule update</code> doet, in die submodule map commit zonder een branch te maken om in te werken, an dan nogmaals <code>git submodule update</code> uitvoert in het superproject zonder in de tussentijd te committen, dan zal Git je veranderingen overschrijven zonder het je te vertellen. Technisch gezien ben je het werk niet kwijt, maar je zult geen branch hebben die er naar wijst, dus het zal lastig zijn om het terug te halen.</p>
 
-<p>To avoid this issue, create a branch when you work in a submodule directory with <code>git checkout -b work</code> or something equivalent. When you do the submodule update a second time, it will still revert your work, but at least you have a pointer to get back to.</p>
+<p>Om dit probleem te vermijden, creeer je een branch zodra je in een submodule map werkt met behulp van <code>git checkout -b work</code> of iets gelijkwaardigs. Als je de tweede keer de submodule update doet, zal het nog steeds je werk terugdraaien, maar je heb er tenminste een pointer van om naar terug te keren.</p>
 
-<p>Switching branches with submodules in them can also be tricky. If you create a new branch, add a submodule there, and then switch back to a branch without that submodule, you still have the submodule directory as an untracked directory:</p>
+<p>Van branches wisselen die submodules bevatten kan ook lastig zijn. Als je een nieuwe branch aanmaakt, daar een submodule toevoegt, en dat terug wisselt naar een branch zonder die submodule, zul je nog steeds de submodule map als een ongevolgde submap hebben:</p>
 
 <pre><code>$ git checkout -b rack
 Switched to a new branch &quot;rack&quot;
@@ -206,15 +206,15 @@ $ git status
 #
 #      rack/</code></pre>
 
-<p>You have to either move it out of the way or remove it, in which case you have to clone it again when you switch back—and you may lose local changes or branches that you didn’t push up.</p>
+<p>Je moet hem verplaatsen of verwijderen, waarna je hem opnieuw moet clonen als je terug wisselt – en je loopt kans om locale wijzigingen of branches te verliezen die je niet omhoog gepushed hebt.</p>
 
-<p>The last main caveat that many people run into involves switching from subdirectories to submodules. If you’ve been tracking files in your project and you want to move them out into a submodule, you must be careful or Git will get angry at you. Assume that you have the rack files in a subdirectory of your project, and you want to switch it to a submodule. If you delete the subdirectory and then run <code>submodule add</code>, Git yells at you:</p>
+<p>De laatste grote valkuil waar veel mensen in lopen heeft te maken met het wisselen van submappen naar submodules. Als je bestanden in je project aan het volgen bent, en je wilt ze in een submodule verplaatsen, dan moet je voorzichtig zijn of anders zal Git boos op je worden. Stel dat je de rack bestanden in een submap van je project hebt, en je wilt die naar een submodule wijzigen. Als je de submap weggooit en dan <code>submodule add</code> uitvoerd, begint Git naar je te schreeuwen:</p>
 
 <pre><code>$ rm -Rf rack/
 $ git submodule add git@github.com:schacon/rack.git rack
 &#39;rack&#39; already exists in the index</code></pre>
 
-<p>You have to unstage the <code>rack</code> directory first. Then you can add the submodule:</p>
+<p>Je moet de <code>rack</code> submap eerst unstagen. Dan kun je de submodule toevoegen:</p>
 
 <pre><code>$ git rm -r rack
 $ git submodule add git@github.com:schacon/rack.git rack
@@ -225,12 +225,12 @@ remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
 Receiving objects: 100% (3184/3184), 677.42 KiB | 88 KiB/s, done.
 Resolving deltas: 100% (1952/1952), done.</code></pre>
 
-<p>Now suppose you did that in a branch. If you try to switch back to a branch where those files are still in the actual tree rather than a submodule — you get this error:</p>
+<p>Stel dat je dat in een branch gedaan had. Als je probeert terug te wisselen naar een branch waar die bestanden nog in de echte boom zitten in plaats van in een submodule – dan krijg je deze foutmelding:</p>
 
 <pre><code>$ git checkout master
 error: Untracked working tree file &#39;rack/AUTHORS&#39; would be overwritten by merge.</code></pre>
 
-<p>You have to move the <code>rack</code> submodule directory out of the way before you can switch to a branch that doesn’t have it:</p>
+<p>Je moet de <code>rack</code> submodule map verplaatsen voordat je naar een branch kunt wisselen die hem nog niet heeft:</p>
 
 <pre><code>$ mv rack /tmp/
 $ git checkout master
@@ -238,7 +238,7 @@ Switched to branch &quot;master&quot;
 $ ls
 README	rack</code></pre>
 
-<p>Then, when you switch back, you get an empty <code>rack</code> directory. You can either run <code>git submodule update</code> to reclone, or you can move your <code>/tmp/rack</code> directory back into the empty directory.</p>
+<p>Als je dan terug wisselt krijg je een lege <code>rack</code> map. Je kunt dan nogmaals <code>git submodule update</code> uitvoeren om nog eens te clonen, of je kunt je <code>/tmp/rack</code> map terug zetten in de lege map.</p>
 
 <div id='nav'>
 <a href='ch6-5.html'>prev</a> | <a href='ch6-7.html'>next</a>

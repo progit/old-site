@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 6.3 Git Tools Stashing
+title: Pro Git 6.3 Git Tools Stashen
 ---
-<h2 id='stashing'>Stashing</h2>
+<h2 id='stashen'>Stashen</h2>
 
-<p>Often, when you’ve been working on part of your project, things are in a messy state and you want to switch branches for a bit to work on something else. The problem is, you don’t want to do a commit of half-done work just so you can get back to this point later. The answer to this issue is the <code>git stash</code> command.</p>
+<p>Vaak, als je aan een deel van je project hebt zitten werken, zijn de dingen in een rommelige staat en wil je van branch veranderen om aan wat anders te werken. Het probleem is dat je geen halfklaar werk wilt committen, alleen maar om later verder te kunnen gaan op dit punt. Het antwoord op dit probleem is het <code>git stash</code> commando.</p>
 
-<p>Stashing takes the dirty state of your working directory — that is, your modified tracked files and staged changes — and saves it on a stack of unfinished changes that you can reapply at any time.</p>
+<p>Stashen pakt de vervuilde status van je werkmap – dat wil zeggen, je gewijzigde gevolgde bestanden en gestagede wijzingen – en bewaard het op een stapel onafgemaakte wijzigingen, die je op ieder tijdstip opnieuw kunt toepassen.</p>
 
-<h3 id='stashing_your_work'>Stashing Your Work</h3>
+<h3 id='je_werk_stashen'>Je Werk Stashen</h3>
 
-<p>To demonstrate, you’ll go into your project and start working on a couple of files and possibly stage one of the changes. If you run <code>git status</code>, you can see your dirty state:</p>
+<p>Ter demonstratie, ga je in je project en begint met werken aan een paar bestanden en misschien stage je een van de wijzigingen. Als je <code>git status</code> uitvoerd, kun je je vervuilde status zien:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -25,7 +25,7 @@ title: Pro Git 6.3 Git Tools Stashing
 #      modified:   lib/simplegit.rb
 #</code></pre>
 
-<p>Now you want to switch branches, but you don’t want to commit what you’ve been working on yet; so you’ll stash the changes. To push a new stash onto your stack, run <code>git stash</code>:</p>
+<p>Nu wil je van branch veranderen, maar je wilt hetgeen je aan hebt zitten werken nog niet committen; dus ga je de wijzigingen stashen. Om een nieuwe stash op je stapel te duwen, voer dan <code>git stash</code> uit:</p>
 
 <pre><code>$ git stash
 Saved working directory and index state \
@@ -33,20 +33,20 @@ Saved working directory and index state \
 HEAD is now at 049d078 added the index file
 (To restore them type &quot;git stash apply&quot;)</code></pre>
 
-<p>Your working directory is clean:</p>
+<p>Je werkmap is schoon:</p>
 
 <pre><code>$ git status
 # On branch master
 nothing to commit (working directory clean)</code></pre>
 
-<p>At this point, you can easily switch branches and do work elsewhere; your changes are stored on your stack. To see which stashes you’ve stored, you can use <code>git stash list</code>:</p>
+<p>Op dit punt kun je makkelijk van branch wisselen en ergens anders werken; je wijzigingen worden opgeslagen op je stapel. Om te zien welke stashes je opgeslagen hebt, kun je <code>git stash list</code> gebruiken:</p>
 
 <pre><code>$ git stash list
 stash@{0}: WIP on master: 049d078 added the index file
 stash@{1}: WIP on master: c264051... Revert &quot;added file_size&quot;
 stash@{2}: WIP on master: 21d80a5... added number to log</code></pre>
 
-<p>In this case, two stashes were done previously, so you have access to three different stashed works. You can reapply the one you just stashed by using the command shown in the help output of the original stash command: <code>git stash apply</code>. If you want to apply one of the older stashes, you can specify it by naming it, like this: <code>git stash apply stash@{2}</code>. If you don’t specify a stash, Git assumes the most recent stash and tries to apply it:</p>
+<p>In dit geval waren er twee stashes al eerder opgeslagen, dus heb je toegang tot drie verschillende gestashete werken. Je kunt degene die je zojuist gestashed hebt opnieuw toepassen, door het commando uit te voeren dat in de help output van het originele stash commando stond: <code>git stash apply</code>. Als je een van de oudere stashes wilt toepassen, dan kun je die specificeren door hem te noemen, zoals hier: <code>git apply stash stash@{2}</code>. Als je geen stash specificeerd, gaat Git uit van de meest recente stash en probeert die toe te passen:</p>
 
 <pre><code>$ git stash apply
 # On branch master
@@ -57,9 +57,9 @@ stash@{2}: WIP on master: 21d80a5... added number to log</code></pre>
 #      modified:   lib/simplegit.rb
 #</code></pre>
 
-<p>You can see that Git re-modifies the files you uncommitted when you saved the stash. In this case, you had a clean working directory when you tried to apply the stash, and you tried to apply it on the same branch you saved it from; but having a clean working directory and applying it on the same branch aren’t necessary to successfully apply a stash. You can save a stash on one branch, switch to another branch later, and try to reapply the changes. You can also have modified and uncommitted files in your working directory when you apply a stash — Git gives you merge conflicts if anything no longer applies cleanly.</p>
+<p>Je kunt zien dat Git opnieuw de bestanden wijzigt, die je uncommitte toen je de stash opsloeg. In dit geval had je een schone werkmap toen je de stash probeerde toe te passen, en probeerde je hem op dezelfde branch toe te passen als waar je hem van opgeslagen hebt; maar het hebben van een schone werkmap en toepassen op dezelfde branch zijn niet noodzakelijk om een stash succesvol toe te kunnen passen. Je kunt een stash op één branch opslaan, later naar een andere branch wisselen, en daar opnieuw de wijzigingen toe proberen te passen. Je kunt ook gewijzigde en uncommitted bestanden in je werkmap hebben wanneer je een stash probeert toe te passen – Git geeft je merge conflicten als iets niet meer netjes toe te passen is.</p>
 
-<p>The changes to your files were reapplied, but the file you staged before wasn’t restaged. To do that, you must run the <code>git stash apply</code> command with a <code>--index</code> option to tell the command to try to reapply the staged changes. If you had run that instead, you’d have gotten back to your original position:</p>
+<p>De wijzigingen aan je bestanden zijn opnieuw toegepast, maar het bestand dat je eerder gestaged had, is niet opnieuw gestaged. Om dat te doen moet je het <code>git stash apply</code> commando met de <code>--index</code> optie uitvoeren om het commando te vertellen de gestagede wijzigingen opnieuw toe te passen. Als je dat had uitgevoerd, dan zou je weer op je originele vertrekpunt zijn uitgekomen:</p>
 
 <pre><code>$ git stash apply --index
 # On branch master
@@ -74,7 +74,7 @@ stash@{2}: WIP on master: 21d80a5... added number to log</code></pre>
 #      modified:   lib/simplegit.rb
 #</code></pre>
 
-<p>The apply option only tries to apply the stashed work — you continue to have it on your stack. To remove it, you can run <code>git stash drop</code> with the name of the stash to remove:</p>
+<p>De apply optie probeert alleen het gestashete werk toe te passen – je blijft het op je stapel behouden. Om het te verwijderen, kun je <code>git stash drop</code> uitvoeren, met de naam van de stash die je wilt verwijderen:</p>
 
 <pre><code>$ git stash list
 stash@{0}: WIP on master: 049d078 added the index file
@@ -83,11 +83,11 @@ stash@{2}: WIP on master: 21d80a5... added number to log
 $ git stash drop stash@{0}
 Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)</code></pre>
 
-<p>You can also run <code>git stash pop</code> to apply the stash and then immediately drop it from your stack.</p>
+<p>Je kunt ook <code>git stash pop</code> uitvoeren om de stash toe te passen en hem onmiddelijk van je stapel te verwijderen.</p>
 
-<h3 id='creating_a_branch_from_a_stash'>Creating a Branch from a Stash</h3>
+<h3 id='een_branch_van_een_stash_maken'>Een Branch Van Een Stash Maken</h3>
 
-<p>If you stash some work, leave it there for a while, and continue on the branch from which you stashed the work, you may have a problem reapplying the work. If the apply tries to modify a file that you’ve since modified, you’ll get a merge conflict and will have to try to resolve it. If you want an easier way to test the stashed changes again, you can run <code>git stash branch</code>, which creates a new branch for you, checks out the commit you were on when you stashed your work, reapplies your work there, and then drops the stash if it applies successfully:</p>
+<p>Als je wat werk stashet, het een poosje laat rusten, en dan doorwerkt op de branch waarvan je het werk gestashet hebt, dan kun je een probleem krijgen met het werk weer toe te passen. Als het toepassen een bestand probeert te wijzigen dat je sindsdien gewijzigd hebt, krijg je een merge conflict en zul je het moeten oplossen. Als je een eenvoudiger manier wilt hebben om je gestashete wijzigingen opnieuw te testen, kun je <code>git stash branch</code> uitvoeren, wat een nieuwe branch voor je zal aanmaken, de commit waar je op zat toen je het werk stashte weer uitchecken, je werk opnieuw toepassen en dan de stash droppen als het succesvol is toegepast:</p>
 
 <pre><code>$ git stash branch testchanges
 Switched to a new branch &quot;testchanges&quot;
@@ -104,7 +104,7 @@ Switched to a new branch &quot;testchanges&quot;
 #
 Dropped refs/stash@{0} (f0dfc4d5dc332d1cee34a634182e168c4efc3359)</code></pre>
 
-<p>This is a nice shortcut to recover stashed work easily and work on it in a new branch.</p>
+<p>Dit is een fijne korte route om gestashed werk eenvoudig terug te halen en aan te werken in een nieuwe branch.</p>
 
 <div id='nav'>
 <a href='ch6-2.html'>prev</a> | <a href='ch6-4.html'>next</a>

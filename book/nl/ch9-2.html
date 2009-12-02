@@ -1,10 +1,10 @@
 ---
 layout: translation
-title: Pro Git 9.2 Git Internals Git Objects
+title: Pro Git 9.2 Het Binnenwerk van Git Git Objecten
 ---
-<h2 id='git_objects'>Git Objects</h2>
+<h2 id='git_objecten'>Git Objecten</h2>
 
-<p>Git is a content-addressable filesystem. Great. What does that mean? It means that at the core of Git is a simple key-value data store. You can insert any kind of content into it, and it will give you back a key that you can use to retrieve the content again at any time. To demonstrate, you can use the plumbing command <code>hash-object</code>, which takes some data, stores it in your <code>.git</code> directory, and gives you back the key the data is stored as. First, you initialize a new Git repository and verify that there is nothing in the <code>objects</code> directory:</p>
+<p>Git is een inhouds-adresseerbaar bestandssysteem. Mooi. Wat betekend dat? Het betekend dat in de kern van Git een eenvoudige sleutel-waarde gegevens opslag zit. Je kunt er ieder soort inhoud in stoppen, en het zal je een sleutel geven dije kunt gebruiken om de inhoud op ieder moment terug te krijgen. Om te demonstreren, kun je het sanitaire voorzieningen commando <code>hash-object</code> gebruiken, die wat gegevens aanneemt, het in je <code>.git</code> map opslaat, en je de sleutel teruggeeft waarmee de gegevens zijn opgelsagen. Als eerste initialiseer je een nieuw Git repository en verifieer je dat er niets in de <code>objects</code> map staat:</p>
 
 <pre><code>$ mkdir test
 $ cd test
@@ -17,103 +17,103 @@ $ find .git/objects
 $ find .git/objects -type f
 $</code></pre>
 
-<p>Git has initialized the <code>objects</code> directory and created <code>pack</code> and <code>info</code> subdirectories in it, but there are no regular files. Now, store some text in your Git database:</p>
+<p>Git heeft de <code>objects</code> map geinitialiseerd en de <code>pack</code> en <code>info</code> submappen erin aangemaakt, maar er zijn geen reguliere bestanden. Nu sla je wat tekst in je Git databank op:</p>
 
 <pre><code>$ echo &#39;test content&#39; | git hash-object -w --stdin
 d670460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
 
-<p>The <code>-w</code> tells <code>hash-object</code> to store the object; otherwise, the command simply tells you what the key would be. <code>--stdin</code> tells the command to read the content from stdin; if you don’t specify this, <code>hash-object</code> expects the path to a file. The output from the command is a 40-character checksum hash. This is the SHA-1 hash — a checksum of the content you’re storing plus a header, which you’ll learn about in a bit. Now you can see how Git has stored your data:</p>
+<p>De <code>-w</code> verteld <code>hash-object</code> dat het object opgeslagen moet worden; anders zal het commando je alleen vertellen wat de sleutel zou zijn. <code>--stdin</code> verteld het commando dat het moet lezen van stdin; als je dit niet specificeerd verwatch <code>hash-object</code> een pad naar een bestand. De uitvoer van het commando is een hash checksum van 40 karakters. Dit is de SHA-1 hash – een checksum van de inhoud die je opslaat plus een kop, waarover je zometeen meer zult leren. Nu kun je zien hoe Git je gegevens opgeslagen heeft:</p>
 
 <pre><code>$ find .git/objects -type f 
 .git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
 
-<p>You can see a file in the <code>objects</code> directory. This is how Git stores the content initially — as a single file per piece of content, named with the SHA-1 checksum of the content and its header. The subdirectory is named with the first 2 characters of the SHA, and the filename is the remaining 38 characters.</p>
+<p>Je kunt een bestand in de <code>objects</code> map zien. Dit is hoe Git de inhoud initieel opslaat – as een enkel bestand per stuk inhoud, vernoemd naar de SHA-1 checksum van de inhoud en z&#8217;n kop. De submap is vernoemd naar de eerste 2 karakters van de SHA, het het bestandsnaam zijn de overige 38 karakters.</p>
 
-<p>You can pull the content back out of Git with the <code>cat-file</code> command. This command is sort of a Swiss army knife for inspecting Git objects. Passing <code>-p</code> to it instructs the <code>cat-file</code> command to figure out the type of content and display it nicely for you:</p>
+<p>Je kunt de inhoud terug uit Git halen met het <code>cat-file</code> commando. Dit commando is een soort Zwitsers zakmes om Git objecten mee te inspecteren. Door de <code>-p</code> optie mee te geven, instrueer je het <code>cat-file</code> commando om uit te zoeken van het type van de inhoud is en om het netjes aan je te tonen:</p>
 
 <pre><code>$ git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
 test content</code></pre>
 
-<p>Now, you can add content to Git and pull it back out again. You can also do this with content in files. For example, you can do some simple version control on a file. First, create a new file and save its contents in your database:</p>
+<p>Nu kun je inhoud aan Git toevoegen, en het er weer uit halen. Je kunt dit ook doen met inhoud in bestanden. Bijvoorbeeld, je kunt wat eenvoudig versie beheer op een bestand doen. Als eerste maak je een nieuw bestand en slaat de inhoud op in je databank:</p>
 
 <pre><code>$ echo &#39;version 1&#39; &gt; test.txt
 $ git hash-object -w test.txt 
 83baae61804e65cc73a7201a7252750c76066a30</code></pre>
 
-<p>Then, write some new content to the file, and save it again:</p>
+<p>Daarna schrijf je wat nieuwe inhoud in het bestand en slaat het opnieuw op:</p>
 
 <pre><code>$ echo &#39;version 2&#39; &gt; test.txt
 $ git hash-object -w test.txt 
 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a</code></pre>
 
-<p>Your database contains the two new versions of the file as well as the first content you stored there:</p>
+<p>Je databank bevat de twee nieuwe versies van het bestand, samen met de eerste inhoud die je daar opgeslagen hebt:</p>
 
 <pre><code>$ find .git/objects -type f 
 .git/objects/1f/7a7a472abf3dd9643fd615f6da379c4acb3e3a
 .git/objects/83/baae61804e65cc73a7201a7252750c76066a30
 .git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4</code></pre>
 
-<p>Now you can revert the file back to the first version</p>
+<p>Nu kun je het bestand terugbrengen naar de eerste versie</p>
 
 <pre><code>$ git cat-file -p 83baae61804e65cc73a7201a7252750c76066a30 &gt; test.txt 
 $ cat test.txt 
 version 1</code></pre>
 
-<p>or the second version:</p>
+<p>of de tweede versie:</p>
 
 <pre><code>$ git cat-file -p 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a &gt; test.txt 
 $ cat test.txt 
 version 2</code></pre>
 
-<p>But remembering the SHA-1 key for each version of your file isn’t practical; plus, you aren’t storing the filename in your system — just the content. This object type is called a blob. You can have Git tell you the object type of any object in Git, given its SHA-1 key, with <code>cat-file -t</code>:</p>
+<p>Maar de SHA-1 sleutel voor iedere versie van je bestand onthouden is niet erg praktisch; plus, je bewaard de bestandsnaam niet in je systeem – alleen de inhoud. Dit objecttype heet een blob. Je kunt Git jou het objecttype van ieder object in Git laten vertellen, gegeven de SHA-1 sleutel, met <code>cat-file -t</code>:</p>
 
 <pre><code>$ git cat-file -t 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
 blob</code></pre>
 
-<h3 id='tree_objects'>Tree Objects</h3>
+<h3 id='boom_objecten'>Boom Objecten</h3>
 
-<p>The next type you’ll look at is the tree object, which solves the problem of storing the filename and also allows you to store a group of files together. Git stores content in a manner similar to a UNIX filesystem, but a bit simplified. All the content is stored as tree and blob objects, with trees corresponding to UNIX directory entries and blobs corresponding more or less to inodes or file contents. A single tree object contains one or more tree entries, each of which contains a SHA-1 pointer to a blob or subtree with its associated mode, type, and filename. For example, the most recent tree in the simplegit project may look something like this:</p>
+<p>Het volgende type waar je naar gaat kijken is het boom object, wat het probleem van het opslaan van de bestandsnaam oplost en het je ook mogelijk maakt om een groep bestanden samen op te slaan. Git slaat inhoud op in dezelfde wijze als een UNIX bestandssysteem, maar dan wat vereenvoudigd. Alle inhoud wordt opgeslagen als boom- en blob-objecten, waarbij bomen corresponderen met UNIX map vermeldingen en blobs min of meer corresponderen aan inodes of bestandsinhoud. Een enkel boomobject bevat één of meer boom vermeldingen, waarvan ieder een SHA-1 point naar een blob of subboom bevat met zijn geassocieerde mode, type en bestandsnaam. Bijvoorbeeld, de meest recente boom in het simplegit project zou er zo uit kunnen zien:</p>
 
 <pre><code>$ git cat-file -p master^{tree}
 100644 blob a906cb2a4a904a152e80877d4088654daad0c859      README
 100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
 040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib</code></pre>
 
-<p>The <code>master^{tree}</code> syntax specifies the tree object that is pointed to by the last commit on your <code>master</code> branch. Notice that the <code>lib</code> subdirectory isn’t a blob but a pointer to another tree:</p>
+<p>De <code>master^{tree}</code> syntax specificeerd het boom object waarnaar gewezen wordt door de laatste commit op je <code>master</code> branch. Zie dat de <code>lib</code> submap geen blob is, maar een pointer naar een andere boom:</p>
 
 <pre><code>$ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
 100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b      simplegit.rb</code></pre>
 
-<p>Conceptually, the data that Git is storing is something like Figure 9-1.</p>
+<p>Conceptueel zijn de gegevens die Git opslaat zoiets als in Figuur 9-1.</p>
 
-<p><center><img src="/figures/ch9/18333fig0901-tn.png"></center><br/> Figure 9-1. Simple version of the Git data model.</p>
+<p><center><img src="/figures/ch9/18333fig0901-tn.png"></center><br/> Figuur 9-1. Eenvoudige versie van het Git data model.</p>
 
-<p>You can create your own tree. Git normally creates a tree by taking the state of your staging area or index and writing a tree object from it. So, to create a tree object, you first have to set up an index by staging some files. To create an index with a single entry — the first version of your text.txt file — you can use the plumbing command <code>update-index</code>. You use this command to artificially add the earlier version of the test.txt file to a new staging area. You must pass it the <code>--add</code> option because the file doesn’t yet exist in your staging area (you don’t even have a staging area set up yet) and <code>--cacheinfo</code> because the file you’re adding isn’t in your directory but is in your database. Then, you specify the mode, SHA-1, and filename:</p>
+<p>Je kunt je eigen boom maken. Normaal gesproken maakt Git een boom door de status van je staging gebied of index te pakken en daar een boom object mee te schrijven. Dus, om een boomobject te maken moet je eerst een index instellen door een paar bestanden te stagen. Om een index te maken met een enkele vermelding – de eerste versie van je test.txt bestand – kun je het sanitaire voorzieningen commando <code>update-index</code> gebruiken. Je gebruikt dit commando om kunstmatig de eerdere versie van het test.txt bestand toe te voegen aan een nieuw staging gebied. Je moet het de <code>--add</code> optie meegeven, omdat het bestand nog niet bestaat in je staging gebied (je hebt zelfs nog geen staging gebied ingesteld) en <code>--cacheinfo</code> omdat het bestand dat je toevoegd niet in je map staat, maar wel in je databank. Daarna specificeer je de mode, SHA-1 en bestandsnaam:</p>
 
 <pre><code>$ git update-index --add --cacheinfo 100644 \
   83baae61804e65cc73a7201a7252750c76066a30 test.txt</code></pre>
 
-<p>In this case, you’re specifying a mode of <code>100644</code>, which means it’s a normal file. Other options are <code>100755</code>, which means it’s an executable file; and <code>120000</code>, which specifies a symbolic link. The mode is taken from normal UNIX modes but is much less flexible — these three modes are the only ones that are valid for files (blobs) in Git (although other modes are used for directories and submodules).</p>
+<p>In dit geval specificeer je een mode van <code>100644</code>, wat betekend dat het een normaal bestand is. Andere opties zijn <code>100755</code>, wat betekend dat het een uitvoerbaar bestand is; en <code>120000</code>, wat een symbolische link specificeerd. De mode is genomen van normale UNIX modes, maar is veel minder flexibel – deze drie modi zijn de enigen die geldig zijn voor bestanden (blobs) in Git (alhoewel andere modi worden gebruikt voor mappen en submodules).</p>
 
-<p>Now, you can use the <code>write-tree</code> command to write the staging area out to a tree object. No <code>-w</code> option is needed — calling <code>write-tree</code> automatically creates a tree object from the state of the index if that tree doesn’t yet exist:</p>
+<p>Nu kun je het <code>write-tree</code> commando gebruiken om het staging gebied naar een boomobject te schrijven. Er is geen <code>-w</code> optie nodig – <code>write-tree</code> aanroepen zorgt er automatisch voor dat een boomobject gecreëeerd wordt van de status van de index als die boom nog niet bestaat:</p>
 
 <pre><code>$ git write-tree
 d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 $ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 100644 blob 83baae61804e65cc73a7201a7252750c76066a30      test.txt</code></pre>
 
-<p>You can also verify that this is a tree object:</p>
+<p>Je kunt ook verifieren dat dit een boomobject is:</p>
 
 <pre><code>$ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 tree</code></pre>
 
-<p>You’ll now create a new tree with the second version of test.txt and a new file as well:</p>
+<p>Je zult nu een nieuwe boom aanmaken met de tweede versie van het test.txt bestand en ook een nieuw bestand:</p>
 
 <pre><code>$ echo &#39;new file&#39; &gt; new.txt
 $ git update-index test.txt 
 $ git update-index --add new.txt </code></pre>
 
-<p>Your staging area now has the new version of test.txt as well as the new file new.txt. Write out that tree (recording the state of the staging area or index to a tree object) and see what it looks like:</p>
+<p>Je staging gebied heeft nu een nieuwe versie van test.txt, als ook het nieuwe new.txt bestand. Schrijf de boom (sla de status van het staging gebied of index op als boom object) en kijk hoe het er uit ziet:</p>
 
 <pre><code>$ git write-tree
 0155eb4229851634a0f03eb265b69f5a2d56f341
@@ -121,7 +121,7 @@ $ git cat-file -p 0155eb4229851634a0f03eb265b69f5a2d56f341
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
 
-<p>Notice that this tree has both file entries and also that the test.txt SHA is the &#8220;version 2&#8221; SHA from earlier (<code>1f7a7a</code>). Just for fun, you’ll add the first tree as a subdirectory into this one. You can read trees into your staging area by calling <code>read-tree</code>. In this case, you can read an existing tree into your staging area as a subtree by using the <code>--prefix</code> option to <code>read-tree</code>:</p>
+<p>Zie dat deze boom beide bestandsvermeldingen bevat en ook dat de SHA van test.txt dezelfde &#8220;versie 2&#8221; SHA is als eerder (<code>1f7a7a</code>). Je zult nu voor de lol de eerste boom als een subboom toevoegen aan deze. Je kunt bomen in je staging gebied lezen door <code>read-tree</code> aan te roepen. In dit geval kun je een bestaande boom in je staging gebied lezen als een subboom met de <code>--prefix</code> optie aan <code>read-tree</code>:</p>
 
 <pre><code>$ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 $ git write-tree
@@ -131,20 +131,20 @@ $ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt</code></pre>
 
-<p>If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named <code>bak</code> that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2.</p>
+<p>If you created a working directory from the new tree you just wrote, you would get the two files in the top level of the working directory and a subdirectory named <code>bak</code> that contained the first version of the test.txt file. You can think of the data that Git contains for these structures as being like Figure 9-2. Als je een werkmap zou maken van de nieuwe boom die je zojuist geschreven hebt, zou je de twee bestanden in het bovenste nivo van de werkmap krijgen en een submap genaamd <code>bak</code> die de eerste versie van het test.txt bestand bevatte. Je kunt over de gegevens die Git bevat voor deze structuren denken zoals getoond in Figuur 9-2.</p>
 
-<p><center><img src="/figures/ch9/18333fig0902-tn.png"></center><br/> Figure 9-2. The content structure of your current Git data.</p>
+<p><center><img src="/figures/ch9/18333fig0902-tn.png"></center><br/> Figuur 9-2. De inhoud structuur van je huidige Git gegevens.</p>
 
-<h3 id='commit_objects'>Commit Objects</h3>
+<h3 id='commit_objecten'>Commit Objecten</h3>
 
-<p>You have three trees that specify the different snapshots of your project that you want to track, but the earlier problem remains: you must remember all three SHA-1 values in order to recall the snapshots. You also don’t have any information about who saved the snapshots, when they were saved, or why they were saved. This is the basic information that the commit object stores for you.</p>
+<p>Je hebt drie bomen die de verschillende snapshots specificeren die je wilt volgen, maar het eerdere probleem blijft: je moet alledrie de SHA-1 waarden onthouden om de snapshots weer op te halen. Je hebt ook geen informatie over wie de snapshots opgeslagen heeft, wanneer ze opgeslagen zijn, of waarom ze opgeslagen zijn. Dit is de basale informatie die het commit object voor je opslaat.</p>
 
-<p>To create a commit object, you call <code>commit-tree</code> and specify a single tree SHA-1 and which commit objects, if any, directly preceded it. Start with the first tree you wrote:</p>
+<p>Om een commit object te creëeren moet je <code>commit-tree</code> aanroepen en één boom SHA-1 specificeren en welke commit objecten, als er die zijn, er direct aan vooraf gingen. Start met de eerste boom, die je geschreven hebt:</p>
 
 <pre><code>$ echo &#39;first commit&#39; | git commit-tree d8329f
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d</code></pre>
 
-<p>Now you can look at your new commit object with <code>cat-file</code>:</p>
+<p>Nu kun je je nieuwe commit object bekijken met <code>cat-file</code>:</p>
 
 <pre><code>$ git cat-file -p fdf4fc3
 tree d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -153,16 +153,16 @@ committer Scott Chacon &lt;schacon@gmail.com&gt; 1243040974 -0700
 
 first commit</code></pre>
 
-<p>The format for a commit object is simple: it specifies the top-level tree for the snapshot of the project at that point; the author/committer information pulled from your <code>user.name</code> and <code>user.email</code> configuration settings, with the current timestamp; a blank line, and then the commit message.</p>
+<p>Het formaat van een commit object is simpel: het specificeert de bovenste boom voor het snapshot van het project op dat punt; de auteur/committer informatie die uit je <code>user.name</code> en <code>user.email</code> configuratie instellingen gehaald is, met de huidige tijd; een lege regel, en dan de commit boodschap.</p>
 
-<p>Next, you’ll write the other two commit objects, each referencing the commit that came directly before it:</p>
+<p>Nu zul je de twee andere commit objecten schrijven, waarbij ze elk het commit object dat er direct voor komt refereren:</p>
 
 <pre><code>$ echo &#39;second commit&#39; | git commit-tree 0155eb -p fdf4fc3
 cac0cab538b970a37ea1e769cbbde608743bc96d
 $ echo &#39;third commit&#39;  | git commit-tree 3c4e9c -p cac0cab
 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
 
-<p>Each of the three commit objects points to one of the three snapshot trees you created. Oddly enough, you have a real Git history now that you can view with the <code>git log</code> command, if you run it on the last commit SHA-1:</p>
+<p>Ieder van de drie commit objecten wijst naar één van de drie snapshots die je gemaakt hebt. Vreemd genoeg heb je nu een echte Git historie, die je kunt bekijken met het <code>git log</code> commando, als je dat op de SHA-1 van de laatste commit uitvoert:</p>
 
 <pre><code>$ git log --stat 1a410e
 commit 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -193,7 +193,7 @@ Date:   Fri May 22 18:09:34 2009 -0700
  test.txt |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Amazing. You’ve just done the low-level operations to build up a Git history without using any of the front ends. This is essentially what Git does when you run the <code>git add</code> and <code>git commit</code> commands — it stores blobs for the files that have changed, updates the index, writes out trees, and writes commit objects that reference the top-level trees and the commits that came immediately before them. These three main Git objects — the blob, the tree, and the commit — are initially stored as separate files in your <code>.git/objects</code> directory. Here are all the objects in the example directory now, commented with what they store:</p>
+<p>Verbazingwekkend. Je hebt zojuist de lagere operaties uitgevoerd om een Git history op te bouwen, zonder één van de front ends te gebruiken. Dit is in essentie van Git doet als je de <code>git add</code> en <code>git commit</code> commando&#8217;s uitvoerd – het slaat de blobs voor de gewijzigde bestanden op, ververst de index, schrijft de bomen weg, en schrijft commit objecten die de bovenste bomen en commits refereren die vlak voor ze kwamen. Deze drie hoofd Git-objecten – de blob, de boom en de commit – worden in eerste instantie als aparte bestanden opgeslagen in je <code>.git/objects</code> map. Hier zijn alle objecten die nu in de voorbeeld map staan, voorzien van commentaar met wat ze bevatten:</p>
 
 <pre><code>$ find .git/objects -type f
 .git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
@@ -207,19 +207,19 @@ Date:   Fri May 22 18:09:34 2009 -0700
 .git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1</code></pre>
 
-<p>If you follow all the internal pointers, you get an object graph something like Figure 9-3.</p>
+<p>Als je alle interne verwijzingen volgt, krijg je een object-graaf die er uitzien zoals Figuur 9-3.</p>
 
-<p><center><img src="/figures/ch9/18333fig0903-tn.png"></center><br/> Figure 9-3. All the objects in your Git directory.</p>
+<p><center><img src="/figures/ch9/18333fig0903-tn.png"></center><br/> Figuur 9-3. Alle objecten in je Git map.</p>
 
-<h3 id='object_storage'>Object Storage</h3>
+<h3 id='object_opslag'>Object Opslag</h3>
 
-<p>I mentioned earlier that a header is stored with the content. Let’s take a minute to look at how Git stores its objects. You’ll see how to store a blob object — in this case, the string &#8220;what is up, doc?&#8221; — interactively in the Ruby scripting language. You can start up interactive Ruby mode with the <code>irb</code> command:</p>
+<p>Ik vertelde eerder dat er een kop wordt opgeslagen bij de inhoud. Laten we eens een minuutje kijken naar hoe Git zijn objecten opslaat. Je zult zien hoe je interactief een blob object opslaat – in dit geval de tekst &#8220;what is up, doc?&#8221; – in de Ruby scripttaal. Je kunt de interactieve Ruby modus starten met het <code>irb</code> commando:</p>
 
 <pre><code>$ irb
 &gt;&gt; content = &quot;what is up, doc?&quot;
 =&gt; &quot;what is up, doc?&quot;</code></pre>
 
-<p>Git constructs a header that starts with the type of the object, in this case a blob. Then, it adds a space followed by the size of the content and finally a null byte:</p>
+<p>Git construeert een kop, die begint met het type van het object, in dit geval een blob. Daarna voegt het een spatie toe, gevolgd door de grootte van de inhoud en als laatste een null byte:</p>
 
 <pre><code>&gt;&gt; header = &quot;blob #{content.length}\0&quot;
 =&gt; &quot;blob 16\000&quot;</code></pre>

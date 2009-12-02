@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 3.2 Git 分支 基本的分支与合并
 ---
-<h2 id='id220'>基本的分支与合并</h2>
+<h2 id='id223'>基本的分支与合并</h2>
 
 <p>现在让我们来看一个简单的分支与合并的例子，实际工作中大体也会用到这样的工作流程：</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 3.2 Git 分支 基本的分支与合并
 
 <p>1. 返回到原先已经发布到生产服务器上的分支。 2. 为这次紧急修补建立一个新分支。 3. 测试通过后，将此修补分支合并，再推送到生产服务器上。 4. 切换到之前实现新需求的分支，继续工作。</p>
 
-<h3 id='id221'>基本分支</h3>
+<h3 id='id224'>基本分支</h3>
 
 <p>首先，我们假设你正在项目中愉快地工作，并且已经提交了几次更新（见图 3-10）。</p>
 
@@ -32,7 +32,7 @@ $ git checkout iss53</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> 图 3-11. 创建了一个新的分支指针</p>
 
-<p>接下来，你在网站项目上继续工作并作了一次提交。这会使 <code>iss53</code> 分支的指针随着提交向前推进，因为它处于签出状态（或者说，你的 HEAD 指针目前正指向它，见图3-12）：</p>
+<p>接下来，你在网站项目上继续工作并作了一次提交。这会使 <code>iss53</code> 分支的指针随着提交向前推进，因为它处于检出状态（或者说，你的 HEAD 指针目前正指向它，见图3-12）：</p>
 
 <pre><code>$ vim index.html
 $ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
@@ -41,12 +41,12 @@ $ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
 
 <p>现在你就接到了那个网站问题的紧急电话，需要马上修补。有了 Git ，我们就不需要同时发布这个补丁和 <code>iss53</code> 里作出的修改，也不需要在创建和发布该补丁到服务器之前花费很多努力来复原这些修改。唯一需要的仅仅是切换回 master 分支。</p>
 
-<p>不过在此之前，留心你的暂存区或者工作目录里，那些还没有提交的修改，它会和你即将签出的分支产生冲突从而阻止 Git 为你转换分支。转换分支的时候最好保持一个清洁的工作区域。稍后会介绍几个绕过这种问题的办法（分别叫做 stashing 和 amending）。目前已经提交了所有的修改，所以接下来可以正常转换到 master 分支：</p>
+<p>不过在此之前，留心你的暂存区或者工作目录里，那些还没有提交的修改，它会和你即将检出的分支产生冲突从而阻止 Git 为你转换分支。转换分支的时候最好保持一个清洁的工作区域。稍后会介绍几个绕过这种问题的办法（分别叫做 stashing 和 amending）。目前已经提交了所有的修改，所以接下来可以正常转换到 master 分支：</p>
 
 <pre><code>$ git checkout master
 Switched to branch &quot;master&quot;</code></pre>
 
-<p>此时工作目录中的内容和你在解决问题 #53 之前一模一样，你可以集中精力进行紧急修补。这一点值得牢记：Git 会把工作目录的内容恢复为签出某分支时它所指向的那个 commit 的快照。它会自动添加、删除和修改文件以确保目录的内容和你上次提交时完全一样。</p>
+<p>此时工作目录中的内容和你在解决问题 #53 之前一模一样，你可以集中精力进行紧急修补。这一点值得牢记：Git 会把工作目录的内容恢复为检出某分支时它所指向的那个 commit 的快照。它会自动添加、删除和修改文件以确保目录的内容和你上次提交时完全一样。</p>
 
 <p>接下来，你得进行紧急修补。我们创建一个紧急修补分支（hotfix）来开展工作，直到搞定（见图 3-13）：</p>
 
@@ -92,9 +92,9 @@ $ git commit -a -m &#39;finished the new footer [issue 53]&#39;
 
 <p>不用担心 <code>hotfix</code> 分支的内容还没包含在 <code>iss53</code> 中。如果确实需要纳入此次修补，可以用 <code>git merge master</code> 把 master 分支合并到 <code>iss53</code>，或者等完成后，再将 <code>iss53</code> 分支中的更新并入 <code>master</code>。</p>
 
-<h3 id='id222'>基本合并</h3>
+<h3 id='id225'>基本合并</h3>
 
-<p>在问题 #53 相关的工作完成之后，可以合并回 <code>master</code> 分支，实际操作同前面合并 <code>hotfix</code> 分支差不多，只需签出想要更新的分支（master），并运行 <code>git merge</code> 命令指定来源：</p>
+<p>在问题 #53 相关的工作完成之后，可以合并回 <code>master</code> 分支，实际操作同前面合并 <code>hotfix</code> 分支差不多，只需检出想要更新的分支（master），并运行 <code>git merge</code> 命令指定来源：</p>
 
 <pre><code>$ git checkout master
 $ git merge iss53
@@ -116,7 +116,7 @@ Merge made by recursive.
 
 <pre><code>$ git branch -d iss53</code></pre>
 
-<h3 id='id223'>冲突的合并</h3>
+<h3 id='id226'>冲突的合并</h3>
 
 <p>有时候合并操作并不会如此顺利。如果你修改了两个待合并分支里同一个文件的同一部分，Git 就无法干净地把两者合到一起（译注：逻辑上说，这种问题只能由人来解决）。如果你在解决问题 #53 的过程中修改了 <code>hotfix</code> 中修改的部分，将得到类似下面的结果：</p>
 
@@ -147,7 +147,7 @@ index.html: needs merge
 &lt;/div&gt;
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
 
-<p>可以看到 <code>=======</code> 隔开的上半部分，是 HEAD（即 master 分支，在运行 merge 命令时签出的分支）中的内容，下半部分是在 <code>iss53</code> 分支中的内容。解决冲突的办法无非是二者选其一或者由你亲自整合到一起。比如你可以通过把这段内容替换为下面这样来解决：</p>
+<p>可以看到 <code>=======</code> 隔开的上半部分，是 HEAD（即 master 分支，在运行 merge 命令时检出的分支）中的内容，下半部分是在 <code>iss53</code> 分支中的内容。解决冲突的办法无非是二者选其一或者由你亲自整合到一起。比如你可以通过把这段内容替换为下面这样来解决：</p>
 
 <pre><code>&lt;div id=&quot;footer&quot;&gt;
 please contact us at email.support@github.com

@@ -6,7 +6,7 @@ title: Pro Git 6.2 Git Tools Revision Auswahl
 
 <p>Git allows you to specify specific commits or a range of commits in several ways. They aren’t necessarily obvious but are helpful to know.</p>
 
-<p>Git erlaubt dir spezifische oder eine reihe von commits auf verschiedenste Art und Weise auszuwählen. Diese sind nicht immer offensichtlich aber es ist hilfreich diese zu kennen.</p>
+<p>Git erlaubt dir, Commits auf verschiedenste Art und Weise auszuwählen. Diese sind nicht immer offensichtlich, aber es ist hilfreich diese zu kennen.</p>
 
 <h3 id='single_revisions'>Single Revisions</h3>
 
@@ -69,25 +69,7 @@ a11bef0 first commit</code></pre>
 
 <p>Generell kann man sagen das acht bis zehn Zeichen mehr als ausreichend in einem Projekt sind, um eindeutig zu bleiben. Eines der größten Git Projekte, der Linux kernel, fängt langsam an 12 von maximal 40 Zeichen zu nutzen um eindeutig zu bleiben.</p>
 
-<h1 id='head'>&#171;&#171;&lt;&#171;&#160;HEAD</h1>
-
 <h3 id='a_short_note_about_sha1'>A SHORT NOTE ABOUT SHA-1</h3>
-
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>svenfuchs/master</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
 
 <h3 id='eine_kurve_notiz_ber_sha1'>EINE KURVE NOTIZ ÜBER SHA-1</h3>
 
@@ -109,21 +91,33 @@ a11bef0 first commit</code></pre>
 
 <h3 id='branch_references'>Branch References</h3>
 
+<h3 id='branch_referenzen'>Branch Referenzen</h3>
+
 <p>The most straightforward way to specify a commit requires that it have a branch reference pointed at it. Then, you can use a branch name in any Git command that expects a commit object or SHA-1 value. For instance, if you want to show the last commit object on a branch, the following commands are equivalent, assuming that the <code>topic1</code> branch points to <code>ca82a6d</code>:</p>
+
+<p>Am direktesten kannst du einen Commit spezifizieren, wenn eine Branch Referenz direkt auf ihn zeigt. In dem Fall kannst du in allen Git Befehlen, die ein Commit Objekt oder einen SHA-1 Wert erwarten, statt dessen den Branch Namen verwenden. Wenn du z.B. den letzten Commit in einem Branch sehen willst, sind die folgenden Befehle äquivalent (vorausgesetzt der <code>topic1</code> Branch zeigt auf den Commit <code>ca82a6d</code>):</p>
 
 <pre><code>$ git show ca82a6dff817ec66f44342007202690a93763949
 $ git show topic1</code></pre>
 
 <p>If you want to see which specific SHA a branch points to, or if you want to see what any of these examples boils down to in terms of SHAs, you can use a Git plumbing tool called <code>rev-parse</code>. You can see Chapter 9 for more information about plumbing tools; basically, <code>rev-parse</code> exists for lower-level operations and isn’t designed to be used in day-to-day operations. However, it can be helpful sometimes when you need to see what’s really going on. Here you can run <code>rev-parse</code> on your branch.</p>
 
+<p>Wenn du sehen willst, auf welchen SHA-1 Wert ein Branch zeigt, oder wie unsere Beispiele intern in SHA-1 Werte übersetzt aussähen, kannst du den Git Plumbing Befehl <code>rev-parse</code> verwenden. In Kapitel 9 werden wir genauer auf Plumbing Befehle eingehen. Kurz gesagt ist <code>rev-parse</code> als eine Low-Level Operation gedacht und nicht dafür, im tagtäglichen Gebrauch eingesetzt zu werden. Aber es kann manchmal hilfreich sein, wenn man wissen muß, was unter der Haube vor sich geht:</p>
+
 <pre><code>$ git rev-parse topic1
 ca82a6dff817ec66f44342007202690a93763949</code></pre>
 
 <h3 id='reflog_shortnames'>RefLog Shortnames</h3>
 
+<h3 id='reflog_kurznamen'>RefLog Kurznamen</h3>
+
 <p>One of the things Git does in the background while you’re working away is keep a reflog — a log of where your HEAD and branch references have been for the last few months.</p>
 
+<p>Eine andere Sache, die während deiner täglichen Arbeit im Hintergrund passiert ist, daß Git ein sogenanntes Reflog führt, d.h. ein Log darüber, wohin deine HEAD und Branch Referenzen in den letzten Monaten jeweils gezeigt haben.</p>
+
 <p>You can see your reflog by using <code>git reflog</code>:</p>
+
+<p>Du kannst das Reflog mit <code>git reflog</code> anzeigen:</p>
 
 <pre><code>$ git reflog
 734713b... HEAD@{0}: commit: fixed refs handling, added gc auto, updated
@@ -136,15 +130,23 @@ d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
 
 <p>Every time your branch tip is updated for any reason, Git stores that information for you in this temporary history. And you can specify older commits with this data, as well. If you want to see the fifth prior value of the HEAD of your repository, you can use the <code>@{n}</code> reference that you see in the reflog output:</p>
 
+<p>Immer dann, wenn ein Branch in irgendeiner Weise aktualisiert wird oder du den aktuellen Branch wechselst, speichert Git diese Information ebenso im Reflog wie Commits und anderen Informationen. Wenn du wissen willst, welches der fünfte Wert vor dem HEAD war, kannst du die <code>@{n}</code> Referenz angeben, die du in Reflog Ausgabe sehen kannst:</p>
+
 <pre><code>$ git show HEAD@{5}</code></pre>
 
 <p>You can also use this syntax to see where a branch was some specific amount of time ago. For instance, to see where your <code>master</code> branch was yesterday, you can type</p>
+
+<p>Außerdem kannst du dieselbe Syntax verwenden, um eine Zeitspanne anzugeben. Um z.B. zu sehen, wo dein <code>master</code> Branch gestern war, kannst du eingeben:</p>
 
 <pre><code>$ git show master@{yesterday}</code></pre>
 
 <p>That shows you where the branch tip was yesterday. This technique only works for data that’s still in your reflog, so you can’t use it to look for commits older than a few months.</p>
 
+<p>Das zeigt dir, wo der <code>master</code> Branch gestern war. Diese Technik funktioniert nur mit Daten, die noch im Reflog sind, d.h. man kann sie nicht für Commits verwenden, die ein älter sind als ein paar Monate.</p>
+
 <p>To see reflog information formatted like the <code>git log</code> output, you can run <code>git log -g</code>:</p>
+
+<p>Um Reflog Informationen in einem Format wie in <code>git log</code> anzeigen, kannst du <code>git log -g</code> verwenden:</p>
 
 <pre><code>$ git log -g master
 commit 734713bc047d87bf7eac9674765ae793478c50d3
@@ -165,9 +167,15 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
 <p>It’s important to note that the reflog information is strictly local — it’s a log of what you’ve done in your repository. The references won’t be the same on someone else’s copy of the repository; and right after you initially clone a repository, you&#8217;ll have an empty reflog, as no activity has occurred yet in your repository. Running <code>git show HEAD@{2.months.ago}</code> will work only if you cloned the project at least two months ago — if you cloned it five minutes ago, you’ll get no results.</p>
 
+<p>Es ist wichtig zu verstehen, daß das Reflog ausschließlich lokale Daten enthält. Es ist ein Log darüber, was du in deinem Repository getan hast, und es ist nie dasselbe wie in einem anderen Clone des selben Repositories. Direkt nachdem du ein Repository geklont hast, ist das Reflog leer, weil noch keine weitere Aktivität stattgefunden hat. <code>git show HEAD@{2.months.ago}</code> funktioniert nur dann, wenn das Projekt mindestens zwei Monate alt ist - wenn du es vor fünf Minuten erst geklont hast, erhältst du keine Ergebnisse.</p>
+
 <h3 id='ancestry_references'>Ancestry References</h3>
 
+<h3 id='vorfahren_referenzen'>Vorfahren Referenzen</h3>
+
 <p>The other main way to specify a commit is via its ancestry. If you place a <code>^</code> at the end of a reference, Git resolves it to mean the parent of that commit. Suppose you look at the history of your project:</p>
+
+<p>Außerdem kann man Commits über ihre Vorfahren spezifizieren. Wenn du ein <code>^</code> ans Ende einer Referenz setzt, schlägt Git den direkten Vorfahren dieses Commits nach. Nehmen wir an, deine Historie sieht so aus:</p>
 
 <pre><code>$ git log --pretty=format:&#39;%h %s&#39; --graph
 * 734713b fixed refs handling, added gc auto, updated tests
@@ -181,6 +189,8 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
 
 <p>Then, you can see the previous commit by specifying <code>HEAD^</code>, which means &#8220;the parent of HEAD&#8221;:</p>
 
+<p>Du kannst jetzt den vorletzten Commit mit <code>HEAD^</code> referenzieren, d.h. &#8220;den direkten Vorfahren von HEAD&#8221;.</p>
+
 <pre><code>$ git show HEAD^
 commit d921970aadf03b3cf0e71becdaab3147ba71cdef
 Merge: 1c002dd... 35cfb2b...
@@ -190,6 +200,8 @@ Date:   Thu Dec 11 15:08:43 2008 -0800
     Merge commit &#39;phedders/rdocs&#39;</code></pre>
 
 <p>You can also specify a number after the <code>^</code> — for example, <code>d921970^2</code> means &#8220;the second parent of d921970.&#8221; This syntax is only useful for merge commits, which have more than one parent. The first parent is the branch you were on when you merged, and the second is the commit on the branch that you merged in:</p>
+
+<p>Außerdem kannst du nach dem <code>^</code> eine Zahl angeben. Beispielsweise heißt <code>d921970^2</code>: &#8220;der zweite Vorfahr von d921970&#8221;. Diese Syntax ist allerdings nur für Merge Commits nützlich, die mehr als einen Vorfahren haben. Der erste Vorfahr ist der Branch auf dem du dich beim Merge befandest, der zweite ist der Commit auf dem Branch den du gemergt hast.</p>
 
 <pre><code>$ git show d921970^
 commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
@@ -207,6 +219,8 @@ Date:   Wed Dec 10 22:22:03 2008 +0000
 
 <p>The other main ancestry specification is the <code>~</code>. This also refers to the first parent, so <code>HEAD~</code> and <code>HEAD^</code> are equivalent. The difference becomes apparent when you specify a number. <code>HEAD~2</code> means &#8220;the first parent of the first parent,&#8221; or &#8220;the grandparent&#8221; — it traverses the first parents the number of times you specify. For example, in the history listed earlier, <code>HEAD~3</code> would be</p>
 
+<p>Eine andere Vorfahren Spezifikation ist <code>~</code>. Dies bezieht sich ebenfalls auf den ersten Vorfahren, d.h. <code>HEAD~</code> und <code>HEAD^</code> sind äquivalent. Einen Unterschied macht es allerdings, wenn du außerdem eine Zahl angibst. <code>HEAD~2</code> bedeutet z.B. &#8220;der Vorfahr des Vorfahren von HEAD&#8221; oder &#8220;der n-te Vorfahr von HEAD&#8221;. Beispielsweise würde <code>HEAD~3</code> in der obigen Historie auf den folgenden Commit zeigen:</p>
+
 <pre><code>$ git show HEAD~3
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
 Author: Tom Preston-Werner &lt;tom@mojombo.com&gt;
@@ -215,6 +229,8 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
     ignore *.gem</code></pre>
 
 <p>This can also be written <code>HEAD^^^</code>, which again is the first parent of the first parent of the first parent:</p>
+
+<p>Dasselbe kannst du mit <code>HEAD^^^</code> angeben, was wiederum den &#8220;Vorfahren des Vorfahren des Vorfahren&#8221; referenziert:</p>
 
 <pre><code>$ git show HEAD^^^
 commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
@@ -225,17 +241,29 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
 <p>You can also combine these syntaxes — you can get the second parent of the previous reference (assuming it was a merge commit) by using <code>HEAD~3^2</code>, and so on.</p>
 
+<p>Du kannst diese Schreibweisen auch kombinieren und z.B. auf den zweiten Vorfahren der obigen Referenz mit <code>HEAD~3^2</code> zugreifen.</p>
+
 <h3 id='commit_ranges'>Commit Ranges</h3>
+
+<h3 id='commit_reihen'>Commit Reihen</h3>
 
 <p>Now that you can specify individual commits, let’s see how to specify ranges of commits. This is particularly useful for managing your branches — if you have a lot of branches, you can use range specifications to answer questions such as, &#8220;What work is on this branch that I haven’t yet merged into my main branch?&#8221;</p>
 
+<p>Nachdem du jetzt einzelne Commits spezifizieren kannst, schauen wir uns an, wie man auf Commit Reihen zugreift. Dies ist vor allem nützlich, um Branches zu verwalten, z.B. wenn man viele Branches hat und solche Fragen beantworten will wie &#8220;Welche Änderungen befinden sich in diesem Branch, die ich noch nicht in meinen Hauptbranch gemergt habe&#8221;.</p>
+
 <h4 id='double_dot'>Double Dot</h4>
 
+<h4 id='zweipunkte_syntax'>Zwei-Punkte Syntax</h4>
+
 <p>The most common range specification is the double-dot syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but aren’t reachable from another. For example, say you have a commit history that looks like Figure 6-1.</p>
+
+<p>Die gängigste Weise, Commit Reihen anzugeben, ist die Zwei-Punkte Notation. Allgemein gesagt evaluiert Git eine Reihe von Commits, die von einem Commit aus erreichbar sind, nicht aber von einem anderen (xxx ??? xxx). Nehmen wir z.B. an, du hättest eine Commit Historie wie die folgende (Bild 6-1).</p>
 
 <p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> Figure 6-1. Example history for range selection.</p>
 
 <p>You want to see what is in your experiment branch that hasn’t yet been merged into your master branch. You can ask Git to show you a log of just those commits with <code>master..experiment</code> — that means &#8220;all commits reachable by experiment that aren’t reachable by master.&#8221; For the sake of brevity and clarity in these examples, I’ll use the letters of the commit objects from the diagram in place of the actual log output in the order that they would display:</p>
+
+<p>Du willst jetzt herausfinden, welche Änderungen in deinem <code>experiment</code> Branch sind, die noch nicht in den <code>master</code> Branch gemergt wurden. Dann kannst du ein Log dieser Commits mit <code>master..experiment</code> anzeigen, d.h. &#8220;alle Commits, die von <code>experiment</code> aus erreichbar sind, aber nicht von <code>master</code>&#8221;. Um die folgenden Beispiele ein bißchen abzukürzen und deutlicher zu machen, verwende ich für die Commit Objekte die Buchstaben aus dem Diagramm an stelle der tatsächlichen Log Ausgabe:</p>
 
 <pre><code>$ git log master..experiment
 D
@@ -243,19 +271,29 @@ C</code></pre>
 
 <p>If, on the other hand, you want to see the opposite — all commits in <code>master</code> that aren’t in <code>experiment</code> — you can reverse the branch names. <code>experiment..master</code> shows you everything in <code>master</code> not reachable from <code>experiment</code>:</p>
 
+<p>Wenn Du allerdings - anders herum - diejenigen Commits anzeigen willst, die in <code>master</code>, aber noch nicht in <code>experiment</code> sind, kannst du die Branch Namen umdrehen: <code>experiment..master</code> zeigt &#8220;alles in <code>master</code>, das nicht in <code>experiment</code> enthalten ist&#8221;.</p>
+
 <pre><code>$ git log experiment..master
 F
 E</code></pre>
 
 <p>This is useful if you want to keep the <code>experiment</code> branch up to date and preview what you’re about to merge in. Another very frequent use of this syntax is to see what you’re about to push to a remote:</p>
 
+<p>Dies ist nützlich, wenn du vorhast, den <code>experiment</code> Branch zu aktualisieren, und anzeigen willst, was du dazu mergen wirst. Oder wenn du vorhast, in ein Remote Repository zu pushen und sehen willst, welche Commits betroffen sind:</p>
+
 <pre><code>$ git log origin/master..HEAD</code></pre>
 
 <p>This command shows you any commits in your current branch that aren’t in the <code>master</code> branch on your <code>origin</code> remote. If you run a <code>git push</code> and your current branch is tracking <code>origin/master</code>, the commits listed by <code>git log origin/master..HEAD</code> are the commits that will be transferred to the server. You can also leave off one side of the syntax to have Git assume HEAD. For example, you can get the same results as in the previous example by typing <code>git log origin/master..</code> — Git substitutes HEAD if one side is missing.</p>
 
+<p>Dieser Befehl zeigt dir alle Commits im gegenwärtigen, lokalen Branch, die noch nicht im <code>master</code> Branch des <code>origin</code> Repositories sind. D.h., der Befehl listet diejenigen Commits auf, die auf den Server transferiert würden, wenn du <code>git push</code> benutzt und der aktuelle Branch <code>origin/master</code> trackt. Du kannst mit dieser Syntax außerdem eine Seite der beiden Punkte leer lassen. Git nimmt dann an, du meinst an dieser Stelle HEAD. Z.B. kannst du dieselben Commits wie im vorherigen Beispiel auch mit <code>git log origin/master..</code> anzeigen lassen. Git fügt dann HEAD auf der rechten Seite ein.</p>
+
 <h4 id='multiple_points'>Multiple Points</h4>
 
+<h4 id='mehrfache_punkte_xxx'>Mehrfache Punkte (xxx)</h4>
+
 <p>The double-dot syntax is useful as a shorthand; but perhaps you want to specify more than two branches to indicate your revision, such as seeing what commits are in any of several branches that aren’t in the branch you’re currently on. Git allows you to do this by using either the <code>^</code> character or <code>--not</code> before any reference from which you don’t want to see reachable commits. Thus these three commands are equivalent:</p>
+
+<p>Die Zwei-Punkte Syntax ist eine nützliche Abkürzung, aber möglicherweise willst du mehr als nur zwei Branches angeben, um z.B. herauszufinden, welche Commits in einem beliebigen anderen Branch enthalten sind, ausgenommen in demjenigen, auf dem du dich gerade befindest. Dazu kannst du in Git das <code>^</code> Zeichen oder <code>--not</code> verwenden, um Commits auszuschließen, die von den angegebenen Referenzen aus erreichbar sind. D.h., die folgenden drei Befehle sind äquivalent:</p>
 
 <pre><code>$ git log refA..refB
 $ git log ^refA refB
@@ -263,14 +301,22 @@ $ git log refB --not refA</code></pre>
 
 <p>This is nice because with this syntax you can specify more than two references in your query, which you cannot do with the double-dot syntax. For instance, if you want to see all commits that are reachable from <code>refA</code> or <code>refB</code> but not from <code>refC</code>, you can type one of these:</p>
 
+<p>Das ist praktisch, weil du auf diese Weise mehr als nur zwei Referenzen angeben kannst, was mit der Zwei-Punkte Notation nicht geht. Wenn du beispielsweise alle Commits sehen willst, die von <code>refA</code> oder <code>refB</code> erreichbar sind, nicht aber von <code>refC</code>, dann kannst du folgende (äquivalente) Befehle benutzen:</p>
+
 <pre><code>$ git log refA refB ^refC
 $ git log refA refB --not refC</code></pre>
 
 <p>This makes for a very powerful revision query system that should help you figure out what is in your branches.</p>
 
+<p>Damit hast du ein sehr mächtiges System von Abfragen zur Verfügung, mit denen du herausfinden kannst, was in welchen deiner Branches enthalten ist.</p>
+
 <h4 id='triple_dot'>Triple Dot</h4>
 
+<h4 id='dreipunkte_syntax'>Drei-Punkte Syntax</h4>
+
 <p>The last major range-selection syntax is the triple-dot syntax, which specifies all the commits that are reachable by either of two references but not by both of them. Look back at the example commit history in Figure 6-1. If you want to see what is in <code>master</code> or <code>experiment</code> but not any common references, you can run</p>
+
+<p>Die letzte wichtige Syntax, mit der man Commit Reihen spezifizieren kann, ist die Drei-Punkte Syntax, die alle Commits anzeigt, die in einer der beiden Referenzen enthalten sind, aber nicht in beiden. Schau dir noch mal die Commit Historie in Bild 6-1- an. Wenn du diejenigen Commits anzeigen willst, die in den <code>master</code> und <code>experiment</code> Branches, nicht aber in beiden Branches gleichzeitig enthalten sind, dann kannst du folgendes tun:</p>
 
 <pre><code>$ git log master...experiment
 F
@@ -280,7 +326,11 @@ C</code></pre>
 
 <p>Again, this gives you normal <code>log</code> output but shows you only the commit information for those four commits, appearing in the traditional commit date ordering.</p>
 
+<p>Dies gibt dir wiederum ein normale <code>log</code> Ausgabe, aber zeigt nur die Informationen dieser vier Commits - wie üblich sortiert nach dem Commit Datum.</p>
+
 <p>A common switch to use with the <code>log</code> command in this case is <code>--left-right</code>, which shows you which side of the range each commit is in. This helps make the data more useful:</p>
+
+<p>Eine nützliche Option für den <code>log</code> Befehl ist in diesem Fall <code>--left-right</code>. Sie zeigt dir an, in welchem der beiden Branches der jeweilige Commit enthalten ist, so daß die Ausgabe noch nützlicher ist:</p>
 
 <pre><code>$ git log --left-right master...experiment
 &lt; F
@@ -289,6 +339,8 @@ C</code></pre>
 &gt; C</code></pre>
 
 <p>With these tools, you can much more easily let Git know what commit or commits you want to inspect.</p>
+
+<p>Mit diesen Hilfsmitteln kannst du noch einfacher und genauer angeben, welche Commits du nachschlagen willst.</p>
 
 <div id='nav'>
 <a href='ch6-1.html'>prev</a> | <a href='ch6-3.html'>next</a>

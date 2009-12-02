@@ -1,36 +1,36 @@
 ---
 layout: translation
-title: Pro Git 8.2 Git 与其他系统 Migrating to Git
+title: Pro Git 8.2 Git 与其他系统 迁移到 Git
 ---
-<h2 id='migrating_to_git'>Migrating to Git</h2>
+<h2 id='_git'>迁移到 Git</h2>
 
-<p>If you have an existing codebase in another VCS but you’ve decided to start using Git, you must migrate your project one way or another. This section goes over some importers that are included with Git for common systems and then demonstrates how to develop your own custom importer.</p>
+<p>如果在其他版本控制系统中保存了某项目的代码而后决定转而使用 Git，那么该项目必须经历某种形式的迁移。本节将介绍 Git 中包含的一些针对常见系统的导入脚本，并将展示编写自定义的导入脚本的方法。</p>
 
-<h3 id='importing'>Importing</h3>
+<h3 id='id322'>导入</h3>
 
-<p>You’ll learn how to import data from two of the bigger professionally used SCM systems — Subversion and Perforce — both because they make up the majority of users I hear of who are currently switching, and because high-quality tools for both systems are distributed with Git.</p>
+<p>你将学习到如何从专业重量级的版本控制系统中导入数据—— Subversion 和 Perforce —— 因为据我所知这二者的用户是（向 Git）转换的主要群体，而且 Git 为此二者附带了高质量的转换工具。</p>
 
 <h3 id='subversion'>Subversion</h3>
 
-<p>If you read the previous section about using <code>git svn</code>, you can easily use those instructions to <code>git svn clone</code> a repository; then, stop using the Subversion server, push to a new Git server, and start using that. If you want the history, you can accomplish that as quickly as you can pull the data out of the Subversion server (which may take a while).</p>
+<p>读过前一节有关 <code>git svn</code> 的内容以后，你应该能轻而易举的根据其中的指导来 <code>git svn clone</code> 一个仓库了；然后，停止 Subversion 的使用，向一个新 Git server 推送，并开始使用它。想保留历史记录，所画的时间应该不过就是从 Subversion 服务器拉取数据的时间（可能要等上好一会就是了）。</p>
 
-<p>However, the import isn’t perfect; and because it will take so long, you may as well do it right. The first problem is the author information. In Subversion, each person committing has a user on the system who is recorded in the commit information. The examples in the previous section show <code>schacon</code> in some places, such as the <code>blame</code> output and the <code>git svn log</code>. If you want to map this to better Git author data, you need a mapping from the Subversion users to the Git authors. Create a file called <code>users.txt</code> that has this mapping in a format like this:</p>
+<p>然而，这样的导入并不完美；而且还要花那么多时间，不如干脆一次把它做对！首当其冲的任务是作者信息。在 Subversion，每个提交者在都在主机上有一个用户名，记录在提交信息中。上节例子中多处显示了 <code>schacon</code> ，比如 <code>blame</code> 的输出以及 <code>git svn log</code>。如果想让这条信息更好的映射到 Git 作者数据里，则需要 从 Subversion 用户名到 Git 作者的一个映射关系。建立一个叫做 <code>user.txt</code> 的文件，用如下格式表示映射关系：</p>
 
 <pre><code>schacon = Scott Chacon &lt;schacon@geemail.com&gt;
 selse = Someo Nelse &lt;selse@geemail.com&gt;</code></pre>
 
-<p>To get a list of the author names that SVN uses, you can run this:</p>
+<p>通过该命令可以获得 SVN 作者的列表：</p>
 
 <pre><code>$ svn log --xml | grep author | sort -u | perl -pe &#39;s/.&gt;(.?)&lt;./$1 = /&#39;</code></pre>
 
-<p>That gives you the log output in XML format — you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with <code>grep</code>, <code>sort</code>, and <code>perl</code> installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.</p>
+<p>它将输出 XML 格式的日志——你可以找到作者，建立一个单独的列表，然后从 XML 中抽取出需要的信息。（显而易见，本方法要求主机上安装了<code>grep</code>，<code>sort</code> 和 <code>perl</code>.）然后把输出重定向到 user.txt 文件，然后就可以在每一项的后面添加相应的 Git 用户数据。</p>
 
-<p>You can provide this file to <code>git svn</code> to help it map the author data more accurately. You can also tell <code>git svn</code> not to include the metadata that Subversion normally imports, by passing <code>--no-metadata</code> to the <code>clone</code> or <code>init</code> command. This makes your <code>import</code> command look like this:</p>
+<p>为 <code>git svn</code> 提供该文件可以然它更精确的映射作者数据。你还可以在 <code>clone</code> 或者 <code>init</code>后面添加 <code>--no-metadata</code> 来阻止 <code>git svn</code> 包含那些 Subversion 的附加信息。这样 <code>import</code> 命令就变成了：</p>
 
 <pre><code>$ git-svn clone http://my-project.googlecode.com/svn/ \
       --authors-file=users.txt --no-metadata -s my_project</code></pre>
 
-<p>Now you should have a nicer Subversion import in your <code>my_project</code> directory. Instead of commits that look like this</p>
+<p>现在 <code>my_project</code> 目录下导入的 Subversion 应该比原来整洁多了。原来的 commit 看上去是这样：</p>
 
 <pre><code>commit 37efa680e8473b615de980fa935944215428a35a
 Author: schacon &lt;schacon@4c93b258-373f-11de-be05-5f7a86268029&gt;
@@ -41,7 +41,7 @@ Date:   Sun May 3 00:12:22 2009 +0000
     git-svn-id: https://my-project.googlecode.com/svn/trunk@94 4c93b258-373f-11de-
     be05-5f7a86268029</code></pre>
 
-<p>they look like this:</p>
+<p>现在是这样：</p>
 
 <pre><code>commit 03a8785f44c8ea5cdb0e8834b7c8e6c469be2ff2
 Author: Scott Chacon &lt;schacon@geemail.com&gt;
@@ -49,40 +49,40 @@ Date:   Sun May 3 00:12:22 2009 +0000
 
     fixed install - go to trunk</code></pre>
 
-<p>Not only does the Author field look a lot better, but the <code>git-svn-id</code> is no longer there, either.</p>
+<p>不仅作者一项干净了不少，<code>git-svn-id</code> 也就此消失了。</p>
 
-<p>You need to do a bit of <code>post-import</code> cleanup. For one thing, you should clean up the weird references that <code>git svn</code> set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.</p>
+<p>你还需要一点 <code>post-import（导入后）</code> 清理工作。最起码的，应该清理一下 <code>git svn</code> 创建的那些怪异的索引结构。首先要移动标签，把它们从奇怪的远程分支变成实际的标签，然后把剩下的分支移动到本地。</p>
 
-<p>To move the tags to be proper Git tags, run</p>
+<p>要把标签变成合适的 Git 标签，运行</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/tags/* .git/refs/tags/
 $ rm -Rf .git/refs/remotes/tags</code></pre>
 
-<p>This takes the references that were remote branches that started with <code>tag/</code> and makes them real (lightweight) tags.</p>
+<p>该命令将原本以 <code>tag/</code> 开头的远程分支的索引变成真正的（轻巧的）标签。</p>
 
-<p>Next, move the rest of the references under <code>refs/remotes</code> to be local branches:</p>
+<p>接下来，把 <code>refs/remotes</code> 下面剩下的索引变成本地分支：</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
 
-<p>Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Because you want all your branches and tags to go up, you can run this:</p>
+<p>现在所有的旧分支都变成真正的 Git 分支，所有的旧标签也变成真正的 Git 标签。最后一项工作就是把新建的 Git 服务器添加为远程服务器并且向它推送。为了让所有的分支和标签都得到上传，我们使用这条命令：</p>
 
 <pre><code>$ git push origin --all</code></pre>
 
-<p>All your branches and tags should be on your new Git server in a nice, clean import.</p>
+<p>所有的分支和标签现在都应该整齐干净的躺在新的 Git 服务器里了。</p>
 
 <h3 id='perforce'>Perforce</h3>
 
-<p>The next system you’ll look at importing from is Perforce. A Perforce importer is also distributed with Git, but only in the <code>contrib</code> section of the source code — it isn’t available by default like <code>git svn</code>. To run it, you must get the Git source code, which you can download from git.kernel.org:</p>
+<p>你将了解到的下一个被导入的系统是 Perforce. Git 发行的时候同时也附带了一个 Perforce 导入脚本，不过它是包含在源码的 <code>contrib</code> 部分——而不像 <code>git svn</code> 那样默认可用。运行它之前必须获取 Git 的源码，可以在 git.kernel.org 下载：</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
 $ cd git/contrib/fast-import</code></pre>
 
-<p>In this <code>fast-import</code> directory, you should find an executable Python script named <code>git-p4</code>. You must have Python and the <code>p4</code> tool installed on your machine for this import to work. For example, you’ll import the Jam project from the Perforce Public Depot. To set up your client, you must export the P4PORT environment variable to point to the Perforce depot:</p>
+<p>在这个 <code>fast-import</code> 目录下，应该有一个叫做 <code>git-p4</code> 的 Python 可执行脚本。主机上必须装有 Python 和 <code>p4</code> 工具该导入才能正常进行。例如，你要从 Perforce 公共代码仓库（译注： Perforce Public Depot，Perforce 官方提供的代码寄存服务）导入 Jam 工程。为了设定客户端，我们要把 P4PORT 环境变量 export 到 Perforce 仓库：</p>
 
 <pre><code>$ export P4PORT=public.perforce.com:1666</code></pre>
 
-<p>Run the <code>git-p4 clone</code> command to import the Jam project from the Perforce server, supplying the depot and project path and the path into which you want to import the project:</p>
+<p>运行 <code>git-p4 clone</code> 命令将从 Perforce 服务器导入 Jam 项目，我们需要给出仓库和项目的路径以及导入的目标路径：</p>
 
 <pre><code>$ git-p4 clone //public/jam/src@all /opt/p4import
 Importing from //public/jam/src@all into /opt/p4import
@@ -90,7 +90,7 @@ Reinitialized existing Git repository in /opt/p4import/.git/
 Import destination: refs/remotes/p4/master
 Importing revision 4409 (100%)</code></pre>
 
-<p>If you go to the <code>/opt/p4import</code> directory and run <code>git log</code>, you can see your imported work:</p>
+<p>现在去 <code>/opt/p4import</code> 目录运行一下 <code>git log</code> ，就能看到导入的成果：</p>
 
 <pre><code>$ git log -2
 commit 1fd4ec126171790efd2db83548b85b1bbbc07dc2
@@ -112,7 +112,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
     [git-p4: depot-paths = &quot;//public/jam/src/&quot;: change = 3108]</code></pre>
 
-<p>You can see the <code>git-p4</code> identifier in each commit. It’s fine to keep that identifier there, in case you need to reference the Perforce change number later. However, if you’d like to remove the identifier, now is the time to do so — before you start doing work on the new repository. You can use <code>git filter-branch</code> to remove the identifier strings en masse:</p>
+<p>每一个 commit 里都有一个 <code>git-p4</code> 标识符。这个标识符可以保留，以防以后需要引用 Perforce 的修改版本号。然而，如果想删除这些标识符，现在正是时候——在开启新仓库之前。可以通过 <code>git filter-branch</code> 来批量删除这些标识符：</p>
 
 <pre><code>$ git filter-branch --msg-filter &#39;
         sed -e &quot;/^\[git-p4:/d&quot;
@@ -120,7 +120,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 Rewrite 1fd4ec126171790efd2db83548b85b1bbbc07dc2 (123/123)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>If you run <code>git log</code>, you can see that all the SHA-1 checksums for the commits have changed, but the <code>git-p4</code> strings are no longer in the commit messages:</p>
+<p>现在运行一下 <code>git log</code>，你会发现这些 commit 的 SHA-1 校验值都发生了改变，而那些 <code>git-p4</code> 字串则从提交信息里消失了：</p>
 
 <pre><code>$ git log -2
 commit 10a16d60cffca14d454a15c6164378f4082bc5b0
@@ -138,13 +138,13 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
     Update derived jamgram.c</code></pre>
 
-<p>Your import is ready to push up to your new Git server.</p>
+<p>至此导入已经完成，可以开始向新的 Git 服务器推送了。</p>
 
-<h3 id='a_custom_importer'>A Custom Importer</h3>
+<h3 id='id323'>自定导入脚本</h3>
 
-<p>If your system isn’t Subversion or Perforce, you should look for an importer online — quality importers are available for CVS, Clear Case, Visual Source Safe, even a directory of archives. If none of these tools works for you, you have a rarer tool, or you otherwise need a more custom importing process, you should use <code>git fast-import</code>. This command reads simple instructions from stdin to write specific Git data. It’s much easier to create Git objects this way than to run the raw Git commands or try to write the raw objects (see Chapter 9 for more information). This way, you can write an import script that reads the necessary information out of the system you’re importing from and prints straightforward instructions to stdout. You can then run this program and pipe its output through <code>git fast-import</code>.</p>
+<p>如果先前的系统不是 Subversion 或 Perforce 之一，先上网找一下有没有与之对应的导入脚本——导入 CVS，Clear Case，Visual Source Safe，甚至存档目录的导入脚本已经存在。假如这些工具都不适用，或者使用的工具很少见，抑或你需要导入过程具有更多可制定性，则应该使用 <code>git fast-import</code>。该命令从标准输入读取简单的指令来写入具体的 Git 数据。这样创建 Git 对象比运行纯 Git 命令或者手动写对象要简单的多（更多相关内容见第九章）。通过它，你可以编写一个导入脚本来从导入源读取必要的信息，同时在标准输出直接输出相关指示。你可以运行该脚本并把它的输出管道连接到 <code>git fast-import</code>。</p>
 
-<p>To quickly demonstrate, you’ll write a simple importer. Suppose you work in current, you back up your project by occasionally copying the directory into a time-stamped <code>back_YYYY_MM_DD</code> backup directory, and you want to import this into Git. Your directory structure looks like this:</p>
+<p>下面演示一下如何编写一个简单的导入脚本。假设你在进行一项工作，并且按时通过把工作目录复制为以时间戳 <code>back_YY_MM_DD</code> 命名的目录来进行备份，现在你需要把它们导入 Git 。目录结构如下：</p>
 
 <pre><code>$ ls /opt/import_from
 back_2009_01_02
@@ -153,31 +153,31 @@ back_2009_01_14
 back_2009_02_03
 current</code></pre>
 
-<p>In order to import a Git directory, you need to review how Git stores its data. As you may remember, Git is fundamentally a linked list of commit objects that point to a snapshot of content. All you have to do is tell <code>fast-import</code> what the content snapshots are, what commit data points to them, and the order they go in. Your strategy will be to go through the snapshots one at a time and create commits with the contents of each directory, linking each commit back to the previous one.</p>
+<p>为了导入到一个 Git 目录，我们首先回顾一下 Git 储存数据的方式。你可能还记得，Git 本质上是一个 commit 对象的链表，每一个对象指向一个内容的快照。而这里需要做的工作就是告诉 <code>fast-import</code> 内容快照的位置，什么样的 commit 数据指向它们，以及它们的顺序。我们采取一次处理一个快照的策略，为每一个内容目录建立对应的 commit ，每一个 commit 与之前的建立链接。</p>
 
-<p>As you did in the &#8220;An Example Git Enforced Policy&#8221; section of Chapter 7, we’ll write this in Ruby, because it’s what I generally work with and it tends to be easy to read. You can write this example pretty easily in anything you’re familiar with — it just needs to print the appropriate information to stdout. And, if you are running on Windows, this means you&#8217;ll need to take special care to not introduce carriage returns at the end your lines — git fast-import is very particular about just wanting line feeds (LF) not the carriage return line feeds (CRLF) that Windows uses.</p>
+<p>正如在第七章 &#8220;Git 执行策略一例&#8221; 一节中一样，我们将使用 Ruby 来编写这个脚本，因为它是我日常使用的语言而且阅读起来简单一些。你可以用任何其他熟悉的语言来重写这个例子——它仅需要把必要的信息打印到标准输出而已。同时，如果你在使用 Windows，这意味着你要特别留意不要在换行的时候引入回车符（译注：carriage returns，Windows换行时加入的符号，通常说的\r ）—— Git 的 fast-import 对仅使用换行符（LF）而非 Windows 的回车符（CRLF）要求非常严格。</p>
 
-<p>To begin, you’ll change into the target directory and identify every subdirectory, each of which is a snapshot that you want to import as a commit. You’ll change into each subdirectory and print the commands necessary to export it. Your basic main loop looks like this:</p>
+<p>首先，进入目标目录并且找到所有子目录，每一个子目录将作为一个快照被导入为一个 commit。我们将依次进入每一个子目录并打印所需的命令来导出它们。脚本的主循环大致是这样：</p>
 
 <pre><code>last_mark = nil
 
-# loop through the directories
+# 循环遍历所有目录
 Dir.chdir(ARGV[0]) do
   Dir.glob(&quot;*&quot;).each do |dir|
     next if File.file?(dir)
 
-    # move into the target directory
+    # 进入目标目录
     Dir.chdir(dir) do 
       last_mark = print_export(dir, last_mark)
     end
   end
 end</code></pre>
 
-<p>You run <code>print_export</code> inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. &#8220;Mark&#8221; is the <code>fast-import</code> term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your <code>print_export</code> method is generate a mark from the directory name:</p>
+<p>我们在每一个目录里运行 <code>print_export</code> ，它会取出上一个快照的索引和标记并返回本次快照的索引和标记；由此我们就可以正确的把二者连接起来。&#8221;标记（mark）&#8221; 是 <code>fast-import</code> 中对 commit 标识符的叫法；在创建 commit 的同时，我们逐一赋予一个标记以便以后在把它连接到其他 commit 时使用。因此，在 <code>print_export</code> 方法中要做的第一件事就是根据目录名生成一个标记：</p>
 
 <pre><code>mark = convert_dir_to_mark(dir)</code></pre>
 
-<p>You’ll do this by creating an array of directories and using the index value as the mark, because a mark must be an integer. Your method looks like this:</p>
+<p>实现该函数的方法是建立一个目录的数组序列并使用数组的索引值作为标记，因为标记必须是一个整数。这个方法大致是这样的：</p>
 
 <pre><code>$marks = []
 def convert_dir_to_mark(dir)
@@ -187,11 +187,11 @@ def convert_dir_to_mark(dir)
   ($marks.index(dir) + 1).to_s
 end</code></pre>
 
-<p>Now that you have an integer representation of your commit, you need a date for the commit metadata. Because the date is expressed in the name of the directory, you’ll parse it out. The next line in your <code>print_export</code> file is</p>
+<p>有了整数来代表每个 commit，我们现在需要提交附加信息中的日期。由于日期是用目录名表示的，我们就从中解析出来。<code>print_export</code> 文件的下一行将是：</p>
 
 <pre><code>date = convert_dir_to_date(dir)</code></pre>
 
-<p>where <code>convert_dir_to_date</code> is defined as</p>
+<p>而 <code>convert_dir_to_date</code> 则定义为</p>
 
 <pre><code>def convert_dir_to_date(dir)
   if dir == &#39;current&#39;
@@ -203,46 +203,45 @@ end</code></pre>
   end
 end</code></pre>
 
-<p>That returns an integer value for the date of each directory. The last piece of meta-information you need for each commit is the committer data, which you hardcode in a global variable:</p>
+<p>它为每个目录返回一个整型值。提交附加信息里最后一项所需的是提交者数据，我们在一个全局变量中直接定义之：</p>
 
 <pre><code>$author = &#39;Scott Chacon &lt;schacon@example.com&gt;&#39;</code></pre>
 
-<p>Now you’re ready to begin printing out the commit data for your importer. The initial information states that you’re defining a commit object and what branch it’s on, followed by the mark you’ve generated, the committer information and commit message, and then the previous commit, if any. The code looks like this:</p>
+<p>我们差不多可以开始为导入脚本输出提交数据了。第一项信息指明我们定义的是一个 commit 对象以及它所在的分支，随后是我们生成的标记，提交者信息以及提交备注，然后是前一个 commit 的索引，如果有的话。代码大致这样：</p>
 
-<pre><code># print the import information
+<pre><code># 打印导入所需的信息
 puts &#39;commit refs/heads/master&#39;
 puts &#39;mark :&#39; + mark
 puts &quot;committer #{$author} #{date} -0700&quot;
 export_data(&#39;imported from &#39; + dir)
 puts &#39;from :&#39; + last_mark if last_mark</code></pre>
 
-<p>You hardcode the time zone (-0700) because doing so is easy. If you’re importing from another system, you must specify the time zone as an offset. The commit message must be expressed in a special format:</p>
+<p>时区（-0700）处于简化目的使用硬编码。如果是从其他版本控制系统导入，则必须以变量的形式指明时区。 提交备注必须以特定格式给出：</p>
 
 <pre><code>data (size)\n(contents)</code></pre>
 
-<p>The format consists of the word data, the size of the data to be read, a newline, and finally the data. Because you need to use the same format to specify the file contents later, you create a helper method, <code>export_data</code>:</p>
+<p>该格式包含了单词 data，所读取数据的大小，一个换行符，最后是数据本身。由于随后指明文件内容的时候要用到相同的格式，我们写一个辅助方法，<code>export_data</code>：</p>
 
 <pre><code>def export_data(string)
   print &quot;data #{string.size}\n#{string}&quot;
 end</code></pre>
 
-<p>All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory — you can print out the <code>deleteall</code> command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:</p>
+<p>唯一剩下的就是每一个快照的内容了。这简单的很，因为它们分别处于一个目录——你可以输出 <code>deleeall</code> 命令，随后是目录中每个文件的内容。Git 会正确的记录每一个快照：</p>
 
 <pre><code>puts &#39;deleteall&#39;
-Dir.glob(&quot;**/*&quot;).each do |file|
-  next if !File.file?(file)
+Dir.glob(&quot;**/*&quot;).each do |file| next if !File.file?(file)
   inline_data(file)
 end</code></pre>
 
-<p>Note: Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex — you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the <code>fast-import</code> man page for details about how to provide your data in this manner.</p>
+<p>注意：由于很多系统把每次修订看作一个 commit 到另一个 commit 的变化量，fast-import 也可以依据每次提交获取一个命令来指出哪些文件被添加，删除或者修改过，以及修改的内容。我们将需要计算快照之间的差别并且仅仅给出这项数据，不过该做法要复杂很多——还如不直接把所有数据丢给 Git 然它自己搞清楚。假如前面这个方法更适用于你的数据，参考 <code>fast-import</code> 的 man 帮助页面来了解如何以这种方式提供数据。</p>
 
-<p>The format for listing the new file contents or specifying a modified file with the new contents is as follows:</p>
+<p>列举新文件内容或者指明带有新内容的已修改文件的格式如下：</p>
 
 <pre><code>M 644 inline path/to/file
 data (size)
 (file contents)</code></pre>
 
-<p>Here, 644 is the mode (if you have executable files, you need to detect and specify 755 instead), and inline says you’ll list the contents immediately after this line. Your <code>inline_data</code> method looks like this:</p>
+<p>这里，644 是权限模式（加入有可执行文件，则需要探测之并设定为 755），而 inline 说明我们在本行结束之后立即列出文件的内容。我们的 <code>inline_data</code> 方法大致是：</p>
 
 <pre><code>def inline_data(file, code = &#39;M&#39;, mode = &#39;644&#39;)
   content = File.read(file)
@@ -250,17 +249,17 @@ data (size)
   export_data(content)
 end</code></pre>
 
-<p>You reuse the <code>export_data</code> method you defined earlier, because it’s the same as the way you specified your commit message data.</p>
+<p>我们重用了前面定义过的 <code>export_data</code>，因为这里和指明提交注释的格式如出一辙。</p>
 
-<p>The last thing you need to do is to return the current mark so it can be passed to the next iteration:</p>
+<p>最后一项工作是返回当前的标记以便下次循环的使用。</p>
 
 <pre><code>return mark</code></pre>
 
-<p>NOTE: If you are running on Windows you&#8217;ll need to make sure that you add one extra step. As metioned before, Windows uses CRLF for new line characters while git fast-import expects only LF. To get around this problem and make git fast-import happy, you need to tell ruby to use LF instead of CRLF:</p>
+<p>注意：如果你在用 Windows，一定记得添加一项额外的步骤。前面提过，Windows 使用 CRLF 作为换行字符而 Git fast-import 只接受 LF。为了绕开这个问题来满足 git fast-import，你需要让 ruby 用 LF 取代 CRLF：</p>
 
 <pre><code>$stdout.binmode</code></pre>
 
-<p>That’s it. If you run this script, you’ll get content that looks something like this:</p>
+<p>搞定了。现在运行该脚本，你将得到如下内容：</p>
 
 <pre><code>$ ruby import.rb /opt/import_from 
 commit refs/heads/master
@@ -285,7 +284,7 @@ data 16
 new version one
 (...)</code></pre>
 
-<p>To run the importer, pipe this output through <code>git fast-import</code> while in the Git directory you want to import into. You can create a new directory and then run <code>git init</code> in it for a starting point, and then run your script:</p>
+<p>要运行导入脚本，在需要导入的目录把该内容用管道定向到 <code>git fast-import</code>。你可以建立一个空目录然后运行 <code>git init</code> 作为开头，然后运行该脚本：</p>
 
 <pre><code>$ git init
 Initialized empty Git repository in /opt/import_to/.git/
@@ -314,7 +313,7 @@ pack_report: pack_open_windows        =          1 /          1
 pack_report: pack_mapped              =       1356 /       1356
 ---------------------------------------------------------------------</code></pre>
 
-<p>As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run <code>git log</code> to see your new history:</p>
+<p>你会发现，在它成功执行完毕以后，会给出一堆有关已完成工作的数据。上例在一个分支导入了5次提交数据，包含了18个对象。现在可以运行 <code>git log</code> 来检视新的历史：</p>
 
 <pre><code>$ git log -2
 commit 10bfe7d22ce15ee25b60a824c8982157ca593d41
@@ -329,7 +328,7 @@ Date:   Tue Feb 3 01:00:00 2009 -0700
 
     imported from back_2009_02_03</code></pre>
 
-<p>There you go — a nice, clean Git repository. It’s important to note that nothing is checked out — you don’t have any files in your working directory at first. To get them, you must reset your branch to where <code>master</code> is now:</p>
+<p>就它了——一个干净整洁的 Git 仓库。需要注意的是此时没有任何内容被检出——刚开始当前目录里没有任何文件。要获取它们，你得转到 <code>master</code> 分支的所在：</p>
 
 <pre><code>$ ls
 $ git reset --hard master
@@ -337,7 +336,7 @@ HEAD is now at 10bfe7d imported from current
 $ ls
 file.rb  lib</code></pre>
 
-<p>You can do a lot more with the <code>fast-import</code> tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the <code>contrib/fast-import</code> directory of the Git source code; one of the better ones is the <code>git-p4</code> script I just covered.</p>
+<p><code>fast-import</code> 还可以做更多——处理不同的文件模式，二进制文件，多重分支与合并，标签，进展标识等等。一些更加复杂的实例可以在 Git 源码的 <code>contib/fast-import</code> 目录里找到；其中较为出众的是前面提过的 <code>git-p4</code> 脚本。</p>
 
 <div id='nav'>
 <a href='ch8-1.html'>prev</a> | <a href='ch8-3.html'>next</a>
