@@ -300,7 +300,7 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 
 <p>要从 Git 中移除某个文件，就必须要从已跟踪文件清单中移除（确切地说，是从暂存区域移除），然后提交。可以用 <code>git rm</code> 命令完成此项工作，并连带从工作目录中删除指定的文件，这样以后就不会出现在未跟踪文件清单中了。</p>
 
-<p>如果只是简单地从工作目录中手工删除文件，运行 <code>git status</code> 时就会在 “Changed but not updated” 部分（也就是<em>未暂存</em>清单）看到：</p>
+<p>如果只是简单地从工作目录中手工删除文件，运行 <code>git status</code> 时就会在 “Changed but not updated” 部分（也就是_未暂存_清单）看到：</p>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -312,7 +312,7 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>然后再运行 <code>git rm</code> 记录下此次移除文件的操作：</p>
+<p>然后再运行 <code>git rm</code> 记录此次移除文件的操作：</p>
 
 <pre><code>$ git rm grit.gemspec
 rm &#39;grit.gemspec&#39;
@@ -343,7 +343,7 @@ $ git status
 
 <h3 id='id195'>移动文件</h3>
 
-<p>不像其他的 VCS 系统，Git 并不跟踪文件移动操作。如果在 Git 中重命名了某个文件，从仓库中存储的所有元数据来看，都无法指征这仅是一次改名操作。不过 Git 非常聪明，它会意识到究竟发生了什么，至于具体是如何做到的，我们稍后再谈。</p>
+<p>不像其他的 VCS 系统，Git 并不跟踪文件移动操作。如果在 Git 中重命名了某个文件，仓库中存储的元数据并不会体现出这是一次改名操作。不过 Git 非常聪明，它会推断出究竟发生了什么，至于具体是如何做到的，我们稍后再谈。</p>
 
 <p>既然如此，当你看到 Git 的 <code>mv</code> 命令时一定会困惑不已。要在 Git 中对文件改名，可以这么做：</p>
 

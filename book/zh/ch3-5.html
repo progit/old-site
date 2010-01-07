@@ -66,7 +66,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <h3 id='id233'>跟踪分支</h3>
 
-<p>从远程分支检出的本地分支，称为<em>跟踪分支(tracking branch)</em>。跟踪分支是一种和远程分支有直接联系的本地分支。在跟踪分支里输入 <code>git push</code>，Git 会自行推断应该向哪个服务器的哪个分支推送数据。反过来，在这些分支里运行 <code>git pull</code> 会获取所有远程索引，并把它们的数据都合并到本地分支中来。</p>
+<p>从远程分支检出的本地分支，称为_跟踪分支(tracking branch)_。跟踪分支是一种和远程分支有直接联系的本地分支。在跟踪分支里输入 <code>git push</code>，Git 会自行推断应该向哪个服务器的哪个分支推送数据。反过来，在这些分支里运行 <code>git pull</code> 会获取所有远程索引，并把它们的数据都合并到本地分支中来。</p>
 
 <p>在克隆仓库时，Git 通常会自动创建一个 <code>master</code> 分支来跟踪 <code>origin/master</code>。这正是 <code>git push</code> 和 <code>git pull</code> 一开始就能正常工作的原因。当然，你可以随心所欲地设定为其它跟踪分支，比如 <code>origin</code> 上除了 <code>master</code> 之外的其它分支。刚才我们已经看到了这样的一个例子：<code>git checkout -b [分支名] [远程名]/[分支名]</code>。如果你有 1.6.2 以上版本的 Git，还可以用 <code>--track</code> 选项简化：</p>
 

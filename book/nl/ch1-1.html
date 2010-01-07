@@ -10,9 +10,9 @@ title: Pro Git 1.1 Aan de Slag Het Wat en Waarom van Versiebeheer
 
 <h3 id='lokale_versiebeheersystemen'>Lokale Versiebeheersystemen</h3>
 
-<p>Veel mensen hebben hun eigen versiebeheer methode: ze kopiëren bestanden naar een andere map (en als ze slim zijn, geven ze die map ook een datum). Deze methode wordt veel gebruikt omdat het zo simpel is, maar het is ook ongelovelijk foutgevoelig. Het is makkelijk te vergeten in welke map je zit, en naar het verkeerde bestand te schrijven, of over bestanden heen te kopiëren waar je dat niet wou.</p>
+<p>Veel mensen hebben hun eigen versiebeheer methode: ze kopiëren bestanden naar een andere map (en als ze slim zijn, geven ze die map ook een datum). Deze methode wordt veel gebruikt omdat het zo simpel is, maar het is ook ongelofelijk foutgevoelig. Het is makkelijk te vergeten in welke map je zit en naar het verkeerde bestand te schrijven, of over bestanden heen te kopiëren waar je dat niet wou.</p>
 
-<p>Om met dit probleem om te gaan, hebben programmeurs lang geleden lokale VCSen ontwikkeld die een simpele database hadden die alle veranderingen aan bestandend beheerden (zie Figuur 1-1).</p>
+<p>Om met dit probleem om te gaan, hebben programmeurs lang geleden lokale VCSen ontwikkeld die een simpele database hadden die alle veranderingen aan bestanden beheerden (zie Figuur 1-1).</p>
 
 <p><center><img src="/figures/ch1/18333fig0101-tn.png"></center><br/> Figuur 1-1. Een diagram van een lokaal versiebeheersysteem.</p>
 
@@ -20,17 +20,17 @@ title: Pro Git 1.1 Aan de Slag Het Wat en Waarom van Versiebeheer
 
 <h3 id='gecentraliseerde_versiebeheersystemen'>Gecentraliseerde Versiebeheersystemen</h3>
 
-<p>Het volgende grote probleem waar mensen tegenaan lopen is dat ze samen moeten werken met ontwikkelaars op andere computers. Om dit probleem op te lossen ontwikkelden ze Gecentraliseerde Versiebeheersystemen (CVCSen). Deze systemen, zoals CVS, Subversion en Perforce, hebben één centrale server waarop alle versies van de bestanden staan, en een aantal clients die de bestanden daarvandaan halen (‘check out’, in het Engels). Vele jaren was dit de standaard voor versiebeheer (zie Figuur 1-2).</p>
+<p>Het volgende grote probleem waar mensen tegenaan lopen is dat ze samen moeten werken met ontwikkelaars op andere computers. Om dit probleem op te lossen ontwikkelden ze geCentraliseerde Versiebeheersystemen (CVCSen). Deze systemen, zoals CVS, Subversion en Perforce, hebben één centrale server waarop alle versies van de bestanden staan, en een aantal clients die de bestanden daarvandaan halen (‘check out’, in het Engels). Vele jaren was dit de standaard voor versiebeheer (zie Figuur 1-2).</p>
 
 <p><center><img src="/figures/ch1/18333fig0102-tn.png"></center><br/> Figuur 1-2. Een diagram van een gecentraliseerd versiebeheersysteem.</p>
 
-<p>Deze manier van versiebeheer bied veel voordelen, vooral als je het vergelijkt met lokale VCSen. Bijvoorbeeld, iedereen weet tot op een bepaalde hoogte wat de rest die aan het project werken aan het doen zijn. Beheerders hebben precieze controle over wie wat kan doen; en het is veel eenvoudiger om een CVCS te beheren dan te moeten werken met lokale databases voor elke client.</p>
+<p>Deze manier van versiebeheer biedt veel voordelen, vooral als je het vergelijkt met lokale VCSen. Bijvoorbeeld, iedereen weet tot op een bepaalde hoogte wat de rest die aan het project werken aan het doen is. Beheerders hebben precieze controle over wie wat kan doen; en het is veel eenvoudiger om een CVCS te beheren dan te moeten werken met lokale databases voor elke client.</p>
 
 <p>Maar helaas, deze methode heeft ook behoorlijke nadelen. De duidelijkste is het ‘single point of failure’: als de centrale server neergaat en een uur later weer terug komt, kan niemand in dat uur samenwerken, of versies bewaren van de dingen waar ze aan werken. Als de harde schrijf waar de centrale database op staat corrupt raakt, en er geen backups van zijn, verlies je echt alles — de hele geschiedenis van het project, behalve het momentopname mensen op hun eigen computers hebben staan. Lokale VCSen hebben hetzelfde probleem — als je de hele geschiedenis van het project op één enkele plaats bewaard, loop je ook kans alles te verliezen.</p>
 
 <h3 id='gedistribueerde_versiebeheersystemen'>Gedistribueerde Versiebeheersystemen</h3>
 
-<p>En hier verschijnen Gedistribueerde Versiebeheersystemen (DVCSen) ten tonele. In een DVCS (zoals Git, Mercurial, Bazaar of Darcs), downloaden clients niet alleen de laatste momentopnames van de bestanden: de hele geschiedenis (het ‘repository’) wordt gekopiërd. Dus als een server neergaat, en deze systemen werkten via die server samen, kan de kopie van elke willekeurige kopie client terug worden gekopiëerd naar de server om het te herstellen. Elke checkout is dus eigenlijk een complete backup van alle data (zie Figuur 1-3).</p>
+<p>En hier verschijnen Gedistribueerde Versiebeheersystemen (DVCSen) ten tonele. In een DVCS (zoals Git, Mercurial, Bazaar en Darcs), downloaden clients niet alleen de laatste momentopnames van de bestanden: de hele geschiedenis (het ‘repository’) wordt gekopiërd. Dus als een server neergaat, en deze systemen werkten via die server samen, kan de kopie van elke willekeurige kopie client terug worden gekopiëerd naar de server om het te herstellen. Elke checkout is dus eigenlijk een complete backup van alle data (zie Figuur 1-3).</p>
 
 <p><center><img src="/figures/ch1/18333fig0103-tn.png"></center><br/> Figuur 1-3. Diagram van een gedistribueerd versiebeheersysteem</p>
 

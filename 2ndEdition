@@ -2,3 +2,6 @@
 * bundles
 * GIT_DIR, GIT_WORK_TREE, GIT_INDEX
 * HTTP push / WebDAV
+* smart http
+* checkout -m 
+* notes

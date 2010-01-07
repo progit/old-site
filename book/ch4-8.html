@@ -37,7 +37,7 @@ $ ./gl-easy-install -q gitolite gitserver sitaram</code></pre>
 
 <h3 id='customising_the_install'>Customising the Install</h3>
 
-<p>While the default, quick, install works for most people, there are some ways to customise the install if you need to. Firstly, there are two other branches that you may be interested in installing, instead of &#8220;master&#8221;. The &#8220;rebel&#8221; branch allows you to specify &#8220;deny&#8221; rules in the configuration file, and is explained in a little more detail below. And if your server side git is older than 1.5.6 or so, you should use the &#8220;oldgits&#8221; branch.</p>
+<p>While the default, quick, install works for most people, there are some ways to customise the install if you need to. Firstly, there are two other branches that you may be interested in installing, instead of &#8220;master&#8221;. The &#8220;wildrepos&#8221; branch allows you to specify repositories by wildcards (regular expressions) in the configuration file; an extremely powerful feature that we will not be covering in this article. And if your server side git is older than 1.5.6 or so, you should use the &#8220;oldgits&#8221; branch.</p>
 
 <p>Finally, if you omit the <code>-q</code> argument, you get a &#8220;verbose&#8221; mode install &#8211; detailed information on what the install is doing at each step. The verbose mode also allows you to change certain server-side parameters, such as the location of the actual repositories, by editing an &#8220;rc&#8221; file that the server uses. This &#8220;rc&#8221; file is liberally commented so you should be able to make any changes you need quite easily, save it, and continue.</p>
 
@@ -100,19 +100,19 @@ repo testing
 
 <p>The second level, applicable only to &#8220;write&#8221; access, is by branch or tag within a repository. The username, the access being attempted (<code>W</code> or <code>+</code>), and the refname being updated are known. The access rules are checked in order of appearance in the config file, looking for a match for this combination (but remember that the refname is regex-matched, not merely string-matched). If a match is found, the push succeeds. A fallthrough results in access being denied.</p>
 
-<h3 id='advanced_access_control_and_the_rebel_branch'>Advanced Access Control and the &#8220;rebel&#8221; branch</h3>
+<h3 id='advanced_access_control__deny_rules'>Advanced Access Control &#8211; &#8220;deny&#8221; rules</h3>
 
-<p>As you can see, permissions have to be one or <code>R</code>, <code>RW</code>, or <code>RW+</code>. The &#8220;rebel&#8221; branch, mentioned briefly above, adds another permission: <code>-</code>, standing for &#8220;deny&#8221;. This gives you a lot more power, at the expense of some complexity, because now fallthrough is not the <em>only</em> way for access to be denied, so the <em>order of the rules now matters</em>!</p>
+<p>As you can see, permissions can be one of <code>R</code>, <code>RW</code>, or <code>RW+</code>. There is another permission available: <code>-</code>, standing for &#8220;deny&#8221;. This gives you a lot more power, at the expense of some complexity, because now fallthrough is not the <em>only</em> way for access to be denied, and so the <em>order of the rules now matters</em>!</p>
 
-<p>Let us say, in the situation above, we want engineers to be able to rewind any branch <em>except</em> master and integ. You cannot do this easily in the normal syntax, but here&#8217;s how the &#8220;rebel&#8221; branch can do it:</p>
+<p>Let us say, in the situation above, we want engineers to be able to rewind any branch <em>except</em> master and integ. Here&#8217;s how:</p>
 
 <pre><code>    RW  master integ    = @engineers
     -   master integ    = @engineers
     RW+                 = @engineers</code></pre>
 
-<p>Again, you simply follow the rules top down until you hit a match for your access mode, or a deny. Non-rewind push to master or integ is allowed by the first rule. A rewind push to those refs does not match the first rule, drops down to the second, and is therefore denied. Any push (rewind or non-rewind) to refs other than master or integ won&#8217;t match the first two rules anyway, and the third rule allows it.</p>
+<p>Again, you simply follow the rules top down until you hit a match for your access mode, <em>or</em> a deny. Non-rewind push to master or integ is allowed by the first rule. A rewind push to those refs does not match the first rule, drops down to the second, and is therefore denied. Any push (rewind or non-rewind) to refs other than master or integ won&#8217;t match the first two rules anyway, and the third rule allows it.</p>
 
-<p>If that sounds complicated, you know why the &#8220;deny&#8221; rules are in a separate branch that you have to explicitly choose :-)</p>
+<p>If that sounds complicated, you may want to play with it to increase your understanding. Also, most of the time you don&#8217;t need &#8220;deny&#8221; rules anyway, so you can choose to just avoid them if you prefer.</p>
 
 <h3 id='other_features'>Other Features</h3>
 
