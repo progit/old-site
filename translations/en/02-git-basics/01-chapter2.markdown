@@ -1,98 +1,65 @@
-# Základy Gitu #
+# Git Basics #
 
-Pokud máte čas si přečíst jen jednu kapitolu, přečtěte si tuto. Pokrývá všechny základní příkazy,
-které potřebujete k naprosté většině činností, které kdy budete s Gitem dělat. Naučíte se konfigurovat a inicializovat repozitář,
-přidávat a odebírat sledované soubory a ukládat změny. Také donutíme Git ignorovat některé soubory; zjistíme, jak rychle a jednoduše opravovat chyby,
-prohlížet historii a změny mezi jednotlivými commity a synchronizovat se vzdálenými repozitáři.
+If you can read only one chapter to get going with Git, this is it. This chapter covers every basic command you need to do the vast majority of the things you’ll eventually spend your time doing with Git. By the end of the chapter, you should be able to configure and initialize a repository, begin and stop tracking files, and stage and commit changes. We’ll also show you how to set up Git to ignore certain files and file patterns, how to undo mistakes quickly and easily, how to browse the history of your project and view changes between commits, and how to push and pull from remote repositories.
 
-## Jak získat repozitář Gitu ##
+## Getting a Git Repository ##
 
-Jsou dva základní způsoby, jak získat projekt v Gitu. První vezme existující projekt nebo adresář a importuje ho do Gitu.
-Druhý naklonuje existující repozitář z jiného serveru.
+You can get a Git project using two main approaches. The first takes an existing project or directory and imports it into Git. The second clones an existing Git repository from another server.
 
-### Inicializace repozitáře z existujícího adresáře ###
+### Initializing a Repository in an Existing Directory ###
 
-Pokud chcete začít spravovat projekt Gitem, vstoupíte do jeho adresáře a spustíte
+If you’re starting to track an existing project in Git, you need to go to the project’s directory and type
 
 	$ git init
 
-To vytvoří podadresář .git, který obsahuje všechno, co Git potřebuje pro tento projekt, jakousi kostru. Ovšem zatím je prázdný, nic nesleduje.
-(V kapitole 9 si podrobněji rozebereme, co tento příkaz vlastně vytvořil.)
+This creates a new subdirectory named .git that contains all of your necessary repository files — a Git repository skeleton. At this point, nothing in your project is tracked yet. (See Chapter 9 for more information about exactly what files are contained in the `.git` directory you just created.)
 
-Pokud chcete spravovat již existující soubory (pokud zrovna nezačínáte od píky a nemáte úplně prázdný adresář), asi je budete chtít začít sledovat
-a provést první commit. To zařídíte spuštěním několika příkazů, kterými určíte, co sledovat, načež to shrnete do commitu:
+If you want to start version-controlling existing files (as opposed to an empty directory), you should probably begin tracking those files and do an initial commit. You can accomplish that with a few git add commands that specify the files you want to track, followed by a commit:
 
 	$ git add *.c
 	$ git add README
 	$ git commit –m 'initial project version'
 
-Pozn. překl.: Bývá zvykem, že popisky commitů (initial project version aj.) jsou psány v angličtině, není-li explicitně řečeno jinak;
-české popisky mívají opodstatnění jen u ryze českých, resp. československých projektů, kde se nepočítá s tím, že by se na nich podílel
-někdo, pro koho je čeština nesrozumitelným jazykem.
+We’ll go over what these commands do in just a minute. At this point, you have a Git repository with tracked files and an initial commit.
 
-Za chvilku si projdeme, co tyto příkazy vlastně dělají. V tuto chvíli máte repozitář se sledovanými soubory a prvním commitem.
+### Cloning an Existing Repository ###
 
-### Klonování stávajícího repozitáře ###
+If you want to get a copy of an existing Git repository — for example, a project you’d like to contribute to — the command you need is git clone. If you’re familiar with other VCS systems such as Subversion, you’ll notice that the command is clone and not checkout. This is an important distinction — Git receives a copy of nearly all data that the server has. Every version of every file for the history of the project is pulled down when you run `git clone`. In fact, if your server disk gets corrupted, you can use any of the clones on any client to set the server back to the state it was in when it was cloned (you may lose some server-side hooks and such, but all the versioned data would be there—see Chapter 4 for more details).
 
-Pokud chcete mít kopii již existujícího repozitáře -- např. projektu, na kterém se chcete podílet -- příkaz, který potřebujete, je `git clone`.
-Když máte zkušenosti s jinými SSV jako Subversion, povšimnete si, že použitý příkaz je `clone` a nikoli `checkout`. To je důležitý rozdíl.
-Git totiž dostane téměř kompletní kopii toho, co server zrovna má. Každou verzi každého souboru z minulosti.
-Tedy, pokud se vám na serveru porouchá disk, stačí zpět naklonovat repozitář jakéhokoli klienta a máte přesně takový stav, jaký byl na serveru
-v době, kdy ho on naposledy aktualizoval. Možná ztratíte nějaká specifická serverová nastavení, ale každopádně to cenné -- spravovaná data -- máte
-v bezpečí.
-
-Repozitář naklonujete příkazem `git clone [url]`. Např. pro naklonování knihovny Gitu pro Ruby (Grit) provedete tento příkaz:
+You clone a repository with `git clone [url]`. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:
 
 	$ git clone git://github.com/schacon/grit.git
 
-Ten vytvoří adresář "grit", v něm adresář `.git`, stáhne všechna data repozitáře a rozbalí aktuální verzi. Pokud vstoupíte do tohoto nového
-adresáře, najdete v něm všechny soubory projektu připravené k práci nebo použití.
-Když chcete naklonovat repozitář někam jinam než do složky "grit", můžete mu to říct takto:
+That creates a directory named "grit", initializes a `.git` directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version. If you go into the new `grit` directory, you’ll see the project files in there, ready to be worked on or used. If you want to clone the repository into a directory named something other than grit, you can specify that as the next command-line option:
 
 	$ git clone git://github.com/schacon/grit.git mygrit
 
-Tak provedete všechno, co udělal minulý příkaz, ale do adresáře `mygrit`.
+That command does the same thing as the previous one, but the target directory is called mygrit.
 
-Git podporuje více různých přenosových protokolů. Předchozí příklad používá protokol `git://`, ale také můžete použít `http(s)://`
-nebo `uživatel@server:/cesta.git`, což použije SSH. Všechny možnosti včetně jejich pro a proti si ukážeme v kapitole 4.
+Git has a number of different transfer protocols you can use. The previous example uses the `git://` protocol, but you may also see `http(s)://` or `user@server:/path.git`, which uses the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can set up to access your Git repository and the pros and cons of each.
 
-## Zaznamenávání změn do repozitáře ##
+## Recording Changes to the Repository ##
 
-Nyní máte připravený repozitář Gitu a checkout neboli pracovní kopii souborů projektu.
-Potřebujete udělat nějaké změny a ukládat commity těchto změn do repozitáře pokaždé, když
-projekt dospěje do stavu, který chcete zaznamenat.
+You have a bona fide Git repository and a checkout or working copy of the files for that project. You need to make some changes and commit snapshots of those changes into your repository each time the project reaches a state you want to record.
 
-Pamatujte, že každý soubor ve vašem pracovním adresáři může být v jednom ze dvou stavů:
-tracked nebo untracked. První z nich jsou ty, které byly v posledním snímku. Mohou být
-nezměněny, změněny, nebo staged. Untracked je všechno ostatní. V posledním snímku nebyly,
-nejsou ve staging area a Git se o ně nestará. Když poprvé naklonujete repozitář, všechny
-vaše souboru budou tracked a unmodified, protože jste je právě zkopírovali z repozitáře
-a nic ještě neupravili.
+Remember that each file in your working directory can be in one of two states: tracked or untracked. Tracked files are files that were in the last snapshot; they can be unmodified, modified, or staged. Untracked files are everything else - any files in your working directory that were not in your last snapshot and are not in your staging area.  When you first clone a repository, all of your files will be tracked and unmodified because you just checked them out and haven’t edited anything. 
 
-Když upravujete soubory, Git je prohlásí za změněné, protože se změnily vzhledem k poslednímu
-commitu. Vy je vložíte do staging area, vyrobíte commit ze všech těchto změn a cyklus se opakuje
-jako na obrázku 2-1.
+As you edit files, Git sees them as modified, because you’ve changed them since your last commit. You stage these modified files and then commit all your staged changes, and the cycle repeats. This lifecycle is illustrated in Figure 2-1.
 
 Insert 18333fig0201.png 
-Obrázek 2-1. Cyklus stavů vašich souborů
+Figure 2-1. The lifecycle of the status of your files.
 
-### Kontrola stavu vašich souborů ###
+### Checking the Status of Your Files ###
 
-Základní nástroj, který se používá na určování, který soubor je v jakém stavu, je
-příkaz `git status`. Pokud ho pustíte hned po `git clone`, měli byste vidět něco jako:
+The main tool you use to determine which files are in which state is the git status command. If you run this command directly after a clone, you should see something like this:
 
 	$ git status
 	# On branch master
 	nothing to commit (working directory clean)
 
-To znamená, že máte čistý pracovní adresář -- jinými slovy, nejsou v něm žádné soubory
-změněné (modified) a žádné nejsou v indexu (staged).
-Git také nevidí žádný přebývající (untracked) soubor, jinak by ho vypsal. A konečně vám
-příkaz sdělí, v jaké jste větvi. Protentokrát to bude vždy master, ten je výchozí; teď
-a tady se o to starat nemusíte. Větvení a reference probereme detailně v další kapitole.
+This means you have a clean working directory—in other words, there are no tracked and modified files. Git also doesn’t see any untracked files, or they would be listed here. Finally, the command tells you which branch you’re on. For now, that is always master, which is the default; you won’t worry about it here. The next chapter will go over branches and references in detail.
 
-Řekněme, že přidáte nový soubor do vašeho projektu, třeba jednoduché README. Pokud ten soubor
-dosud neexistoval a vy pustíte `git status`, uvidíte soubor ve stavu untracked:
+Let’s say you add a new file to your project, a simple README file. If the file didn’t exist before, and you run `git status`, you see your untracked file like so:
 
 	$ vim README
 	$ git status
@@ -103,22 +70,15 @@ dosud neexistoval a vy pustíte `git status`, uvidíte soubor ve stavu untracked
 	#	README
 	nothing added to commit but untracked files present (use "git add" to track)
 
-Je vidět, že vaše README je untracked, protože je pod nadpisem "Untracked files"
-ve výpisu stavu. To jednoduše znamená, že tento soubor Git dosud nespravoval, a také ho
-spravovat nebude, dokud mu to explicitně neřeknete. Dělá to proto, aby nezačal náhodou
-zběsile spravovat vygenerované binární soubory nebo jiné, třeba dočasné soubory, které
-určitě do projektu zahrnout nechcete. Toto README však chcete spravovat, nuže pojďme si
-ukázat, jak na to.
+You can see that your new README file is untracked, because it’s under the “Untracked files” heading in your status output. Untracked basically means that Git sees a file you didn’t have in the previous snapshot (commit); Git won’t start including it in your commit snapshots until you explicitly tell it to do so. It does this so you don’t accidentally begin including generated binary files or other files that you did not mean to include. You do want to start including README, so let’s start tracking the file.
 
-### Spravování nových souborů ###
+### Tracking New Files ###
 
-K započetí spravování nových souborů použijeme příkaz `git add`. Konkrétně v tomto případě,
-abychom přidali soubor README, spustíme toto:
+In order to begin tracking a new file, you use the command `git add`. To begin tracking the README file, you can run this:
 
 	$ git add README
 
-Pokud si nyní znovu zkontrolujeme stav příkazem `git status`, můžeme vidět,
-že naše README je nyní tracked a staged:
+If you run your status command again, you can see that your README file is now tracked and staged:
 
 	$ git status
 	# On branch master
@@ -128,18 +88,11 @@ Pokud si nyní znovu zkontrolujeme stav příkazem `git status`, můžeme vidět
 	#	new file:   README
 	#
 
-Staged je proto, že je pod nadpisem "Changes to be committed". Pokud uděláte commit v tuto
-chvíli, bude verze souboru ve chvíli, kdy jste udělali `git add`, vložena do snímku a uložena.
-Můžete si také vzpomenout, že když jste dříve pouštěli `git init`, museli jste pak pustit
-i `git add` -- to byl počátek správy souborů ve vašem adresáři. Příkaz `git add` přebírá cestu
-buďto k souboru nebo k adresáři; pokud je to adresář, uloží příkaz všechny soubory v onom adresáři.
-Rekurzivně.
+You can tell that it’s staged because it’s under the “Changes to be committed” heading. If you commit at this point, the version of the file at the time you ran git add is what will be in the historical snapshot. You may recall that when you ran git init earlier, you then ran git add (files) — that was to begin tracking files in your directory. The git add command takes a path name for either a file or a directory; if it’s a directory, the command adds all the files in that directory recursively.
 
-### Vkládání upravených souborů do indexu ###
+### Staging Modified Files ###
 
-Nyní změníme soubor, který už spravujeme. Když změníte spravovaný soubor, pro příklad nechť
-se jmenuje `benchmarks.rb`, a pak pustíte `git status` znovu, dostanete něco, co bude vypadat
-zhruba takto:
+Let’s change a file that was already tracked. If you change a previously tracked file called `benchmarks.rb` and then run your `status` command again, you get something that looks like this:
 
 	$ git status
 	# On branch master
@@ -154,12 +107,7 @@ zhruba takto:
 	#	modified:   benchmarks.rb
 	#
 
-Soubor `benchmarks.rb` se objevil v sekci nazvané "Changed but not updated" -- to znamená, že
-soubor, který je spravován, byl upraven v pracovním adresáři, ale ještě nebyl vložen do indexu.
-K vložení do indexu použijeme příkaz `git add` (má mnoho funkcí -- je používán k započetí správy
-nových souborů, ke vkládání do indexu a i k jiným operacím, např. k označování souborů postižených
-merge-conflictem jako vyřešených). Vložme tedy `benchmarks.rb` do indexu a pak si znovu zobrazme
-status:
+The benchmarks.rb file appears under a section named “Changed but not updated” — which means that a file that is tracked has been modified in the working directory but not yet staged. To stage it, you run the `git add` command (it’s a multipurpose command — you use it to begin tracking new files, to stage files, and to do other things like marking merge-conflicted files as resolved). Let’s run `git add` now to stage the benchmarks.rb file, and then run `git status` again:
 
 	$ git add benchmarks.rb
 	$ git status
@@ -171,10 +119,7 @@ status:
 	#	modified:   benchmarks.rb
 	#
 
-Oba soubory jsou v indexu a půjdou do nejbližšího commitu. V tuto chvíli jste si ale uvědomili,
-že v souboru `benchmarks.rb` je potřeba udělat ještě jednu malou změnu, než ho uložíte do commitu.
-Otevřete ho tedy znovu, uložíte a jste připraveni vytvořit commit. Tak se ještě jednou podíváme
-na status:
+Both files are staged and will go into your next commit. At this point, suppose you remember one little change that you want to make in benchmarks.rb before you commit it. You open it again and make that change, and you’re ready to commit. However, let’s run `git status` one more time:
 
 	$ vim benchmarks.rb 
 	$ git status
@@ -191,12 +136,7 @@ na status:
 	#	modified:   benchmarks.rb
 	#
 
-Co to má znamenat? Teď je soubor `benchmarks.rb` označen jako staged i jako unstaged.
-Jak je to možné? Git vloží soubor do indexu právě takový, jaký byl, když jste na něj
-naposled použil `git add`. Pokud vytvoříte commit teď, bude do něj uložena ta verze,
-která je v indexu, tedy ta, která byla v adresáři ve chvíli, kdy byl naposled použit
-příkaz `git add`. Takže pokud chcete uložit i následující změny, musíte pustit `git add`
-znovu:
+What the heck? Now benchmarks.rb is listed as both staged and unstaged. How is that possible? It turns out that Git stages a file exactly as it is when you run the git add command. If you commit now, the version of benchmarks.rb as it was when you last ran the git add command is how it will go into the commit, not the version of the file as it looks in your working directory when you run git commit. If you modify a file after you run `git add`, you have to run `git add` again to stage the latest version of the file:
 
 	$ git add benchmarks.rb
 	$ git status
@@ -679,7 +619,7 @@ Of the nearly 20,000 commits in the Git source code history, this command shows 
 If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual `git log` tool, and it accepts nearly all the filtering options that `git log` does. If you type gitk on the command line in your project, you should see something like Figure 2-2.
 
 Insert 18333fig0202.png 
-Figure 2-2. The gitk history visualizer
+Figure 2-2. The gitk history visualizer.
 
 You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.
 
@@ -703,7 +643,7 @@ As an example, if you commit and then realize you forgot to stage the changes in
 	$ git add forgotten_file
 	$ git commit --amend 
 
-All three of these commands end up with a single commit — the second command replaces the results of the first.
+All three of these commands end up with a single commit — the second commit replaces the results of the first.
 
 ### Unstaging a Staged File ###
 
@@ -828,13 +768,13 @@ Paul’s master branch is accessible locally as `pb/master` — you can merge it
 
 ### Fetching and Pulling from Your Remotes ###
 
-As you just saw, to get data from your remote projects, you can run
+As you just saw, to get data from your remote projects, you can run:
 
 	$ git fetch [remote-name]
 
 The command goes out to that remote project and pulls down all the data from that remote project that you don’t have yet. After you do this, you should have references to all the branches from that remote, which you can merge in or inspect at any time. (We’ll go over what branches are and how to use them in much more detail in Chapter 3.)
 
-If you cloned a repository, the command automatically adds that remote repository under the name origin. So, `git fetch origin` fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.
+If you clone a repository, the command automatically adds that remote repository under the name origin. So, `git fetch origin` fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.
 
 If you have a branch set up to track a remote branch (see the next section and Chapter 3 for more information), you can use the `git pull` command to automatically fetch and then merge a remote branch into your current branch. This may be an easier or more comfortable workflow for you; and by default, the `git clone` command automatically sets up your local master branch to track the remote master branch on the server you cloned from (assuming the remote has a master branch). Running `git pull` generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on.
 

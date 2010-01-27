@@ -1,16 +1,16 @@
 ---
 layout: master
-title: Pro Git 1.4 Úvod Instalujeme Git
+title: Pro Git 1.4 Getting Started Installing Git
 ---
-<h2 id='instalujeme_git'>Instalujeme Git</h2>
+<h2 id='installing_git'>Installing Git</h2>
 
-<p>Ponořme se nyní do používání Gitu. Ale od začátku &#8211; nejprve ho musíte nainstalovat; dá se získat mnoha způsoby &#8211; dva hlavní jsou instalace ze zdrojových souborů a instalace už existujícího balíčku pro váš systém.</p>
+<p>Let’s get into using some Git. First things first—you have to install it. You can get it a number of ways; the two major ones are to install it from source or to install an existing package for your platform.</p>
 
-<h3 id='instalujeme_ze_zdroje'>Instalujeme ze zdroje</h3>
+<h3 id='installing_from_source'>Installing from Source</h3>
 
-<p>Pokud to umíte, je obecně možné instalovat Git ze zdrojových kódů, protože získáte nejnovější verzi. Vývojáři se stále snaží vylepšovat uživatelské rozhraní, takže stažení poslední verze je obvykle nejlepší cesta k cíli, pokud se tedy cítíte na překládání zdrojových souborů. To je také řešení případu, kdy je ve mnoha dostribucích Linuxu dostupný jen nějaký starý balík; takže pokud zrovna nemáte nějakou aktuální distribuci nebo nepoužíváte &#8220;backports&#8221;, bude instalace ze zdroje asi nejlepší možností.</p>
+<p>If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.</p>
 
-<p>Git závisí na několika knihovnách, bez kterých ho nenainstalujete: curl, zlib, openssl, expat a libiconv. Např. pokud máte distribuci užívající balíčkovací systém Yum (Fedora) nebo Apt (Debian a distribuce na něm založené), můžete použít jeden z těchto příkazů k instalaci těchto závislostí.</p>
+<p>To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:</p>
 
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
@@ -18,52 +18,52 @@ title: Pro Git 1.4 Úvod Instalujeme Git
 $ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
   libz-dev</code></pre>
 
-<p>Když jste už všechno nainstalovali, můžete pokročit dále a stáhnout si poslední verzi z webových stránek Gitu:</p>
+<p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
 
 <pre><code>http://git-scm.com/download</code></pre>
 
-<p>Rozbalíme, přeložíme a nainstalujeme:</p>
+<p>Then, compile and install:</p>
 
 <pre><code>$ tar -zxf git-1.6.0.5.tar.gz
 $ cd git-1.6.0.5
 $ make prefix=/usr/local all
 $ sudo make prefix=/usr/local install</code></pre>
 
-<p>Když jsme hotovi, můžeme také získat Git prostřednictvím jeho samotného (možnost další aktualizace):</p>
+<p>After this is done, you can also get Git via Git itself for updates:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
 
-<h3 id='instalujeme_na_linuxu'>Instalujeme na Linuxu</h3>
+<h3 id='installing_on_linux'>Installing on Linux</h3>
 
-<p>Pokud chcete instalovat Git na Linuxu z binárního balíčku, měli byste použít váš balíčkovací program podle vaší distribuce, který udělá vše za vás. Pokud máte Fedoru, můžete použít Yum:</p>
+<p>If you want to install Git on Linux via a binary installer, you can generally do so through the basic package-management tool that comes with your distribution. If you’re on Fedora, you can use yum:</p>
 
 <pre><code>$ yum install git-core</code></pre>
 
-<p>Nebo pokud jste na distribuci založené na Debianu (např. Ubuntu), použijte Apt:</p>
+<p>Or if you’re on a Debian-based distribution like Ubuntu, try apt-get:</p>
 
 <pre><code>$ apt-get install git-core</code></pre>
 
-<h3 id='instalujeme_na_macu'>Instalujeme na Macu</h3>
+<h3 id='installing_on_mac'>Installing on Mac</h3>
 
-<p>Existují dva jednoduché způsoby, jak nainstalovat Git na Mac. Nejjednodušší je použít grafický instalátor, který si můžete stáhnout ze stránek Google Code (viz obr. 1-7):</p>
+<p>There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Figure 1-7):</p>
 
 <pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
-<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Obrázek 1-7. Git OS X installer</p>
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Git OS X installer.</p>
 
-<p>Druhá základní možnost je přes MacPorts (<code>http://www.macports.org</code>). Když už je máte, instalujete Git pomocí</p>
+<p>The other major way is to install Git via MacPorts (<code>http://www.macports.org</code>). If you have MacPorts installed, install Git via</p>
 
 <pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
 
-<p>Nemusíte samozřejmě přidávat všechny extra balíčky, ale určitě si vyberete naapř. +svn, pokud musíte ještě používat Git s repoozitáři Subversion (více v kapitole 8).</p>
+<p>You don’t have to add all the extras, but you’ll probably want to include +svn in case you ever have to use Git with Subversion repositories (see Chapter 8).</p>
 
-<h3 id='instalujeme_na_windows'>Instalujeme na Windows</h3>
+<h3 id='installing_on_windows'>Installing on Windows</h3>
 
-<p>Nainstalovat Git na Windows je velmi jednoduché. Stáhněte si exe instalátor ze stránek Google Code a spusťte ho:</p>
+<p>Installing Git on Windows is very easy. The msysGit project has one of the easier installation procedures. Simply download the installer exe file from the Google Code page, and run it:</p>
 
 <pre><code>http://code.google.com/p/msysgit</code></pre>
 
-<p>Po dokončení instalace máte jak verzi pro příkazový řádek (včetně SSH klienta, který se bude hodit později), tak standardní grafické rozhraní.</p>
+<p>After it’s installed, you have both a command-line version (including an SSH client that will come in handy later) and the standard GUI.</p>
 
 <div id='nav'>
 <a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>

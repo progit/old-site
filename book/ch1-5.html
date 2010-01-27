@@ -1,51 +1,49 @@
 ---
 layout: master
-title: Pro Git 1.5 Úvod Počáteční nastavení
+title: Pro Git 1.5 Getting Started First-Time Git Setup
 ---
-<h2 id='poten_nastaven'>Počáteční nastavení</h2>
+<h2 id='firsttime_git_setup'>First-Time Git Setup</h2>
 
-<p>Teď, když máte na svém systému Git, si v něm možná budete chtít nastavit pár věcí, přizpůsobit svým požadavkům. Budete to muset udělat pouze jednou &#8211; uchovávají se při upgradech. Samozřejmě je kdykoli můžete změnit provedením obdobných příkazů jako teď.</p>
+<p>Now that you have Git on your system, you’ll want to do a few things to customize your Git environment. You should have to do these things only once; they’ll stick around between upgrades. You can also change them at any time by running through the commands again.</p>
 
-<p>Git obsahuje nástroj zvaný git config, který umožňuje nastavovat konfigurační hodnoty, které ovládají, jak Git vypadá a jak se chová. Mohou být uloženy na třech různých místech:</p>
+<p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
 
 <ul>
-<li>soubor <code>/etc/gitconfig</code>: Obsahuje hodnoty pro všechny uživatele a všechny repozitáře na tomto systému dohromady. Pokud připojíte volbu <code> --system</code> za <code>git config</code>, bude pracovat výhradně s tímto souborem.</li>
+<li><code>/etc/gitconfig</code> file: Contains values for every user on the system and all their repositories. If you pass the option<code> --system</code> to <code>git config</code>, it reads and writes from this file specifically.</li>
 
-<li>soubot <code>~/.gitconfig</code>: Specifický pro uživatele. Tento soubor můžete upravovat také přidáním volby <code>--global</code>.</li>
+<li><code>~/.gitconfig</code> file: Specific to your user. You can make Git read and write to this file specifically by passing the <code>--global</code> option.</li>
 
-<li>konfigurační soubor v Git directory (tj. <code>.git/config</code>) každého repozitáře: specifický pro každý jednotlivý repozitář.</li>
+<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/gitconfig</code>.</li>
 </ul>
 
-<p>Každá další vrstva překrývá tu předchozí, takže hodnoty v <code>.git/config</code> přebijí hodnoty z <code>/etc/gitconfig</code>.</p>
+<p>On Windows systems, Git looks for the <code>.gitconfig</code> file in the <code>$HOME</code> directory (<code>C:\Documents and Settings\$USER</code> for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
 
-<p>Na Windows hledá Git soubor <code>.gitconfig</code> v <code>$HOME</code> (obvykle <code>C:\Documents and Settings\$USER</code>). Samozřejmě pořád uvažuje /etc/gitconfig, přestože tato cesta je relativní ke kořenu MSys, což je místo, kam jste se rozhodli instalovat Git ve vašem systému Windows.</p>
+<h3 id='your_identity'>Your Identity</h3>
 
-<h3 id='vae_identita'>Vaše identita</h3>
-
-<p>První věc, kterou máte udělat po instalaci Gitu, je nastavení vašeho uživatelského jména a e-mailu. To je důležité, jelikož každý commit tyto informace obsahuje, a jsou nevratně &#8220;zataveny&#8221; do všech vašich commitů.</p>
+<p>The first thing you should do when you install Git is to set your user name and e-mail address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you pass around:</p>
 
 <pre><code>$ git config --global user.name &quot;John Doe&quot;
 $ git config --global user.email johndoe@example.com</code></pre>
 
-<p>Znovu &#8211; toto musíte udělat jen jednou, pokud připojíte volbu <code> --global</code>, protože pak tyto informace použije Git pro cokoli, co na vašem systému děláte. Pokud je chcete přepsat jiným jménem nebo e-mailem pro nějaký projekt, stačí spustit příslušný příkaz bez volby <code> --global</code> v adresáři onoho projektu.</p>
+<p>Again, you need to do this only once if you pass the <code>--global</code> option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the <code>--global</code> option when you’re in that project.</p>
 
-<h3 id='v_editor'>Váš editor</h3>
+<h3 id='your_editor'>Your Editor</h3>
 
-<p>Teď, když máte nastaveno, kdo jste, si můžete nastavit výchozí textový editor, který Git použije, když bude chtít, abyste napsali zprávu. Jinak Git použije výchozí editor podle nastavení systému, což je obvykle Vi nebo Vim. Pokud chcete použít jiný textový editor, třeba Emacs, nastavte si to:</p>
+<p>Now that your identity is set up, you can configure the default text editor that will be used when Git needs you to type in a message. By default, Git uses your system’s default editor, which is generally Vi or Vim. If you want to use a different text editor, such as Emacs, you can do the following:</p>
 
 <pre><code>$ git config --global core.editor emacs</code></pre>
 
-<h3 id='v_nstroj_pro_een_koliznch_situac'>Váš nástroj pro řešení kolizních situací</h3>
+<h3 id='your_diff_tool'>Your Diff Tool</h3>
 
-<p>Další užitečnou volbou je nastavení výchozího nástroje pro řešení kolizí. Takto nastavíte, že chcete používat vimdiff:</p>
+<p>Another useful option you may want to configure is the default diff tool to use to resolve merge conflicts. Say you want to use vimdiff:</p>
 
 <pre><code>$ git config --global merge.tool vimdiff</code></pre>
 
-<p>Git umí pracovat s nástroji kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff. Můžete také nastavit i jiný nástroj; více v kapitole 7.</p>
+<p>Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff as valid merge tools. You can also set up a custom tool; see Chapter 7 for more information about doing that.</p>
 
-<h3 id='kontrola_vaeho_nastaven'> Kontrola vašeho nastavení</h3>
+<h3 id='checking_your_settings'>Checking Your Settings</h3>
 
-<p>Pokud chcete zkontrolovat vaše nastavení, použijte <code>git config --list</code> k zobrazení všech nastavení, která dokáže na tomto místě Git najít:</p>
+<p>If you want to check your settings, you can use the <code>git config --list</code> command to list all the settings Git can find at that point:</p>
 
 <pre><code>$ git config --list
 user.name=Scott Chacon
@@ -56,9 +54,9 @@ color.interactive=auto
 color.diff=auto
 ...</code></pre>
 
-<p>Některé hodnoty můžete vidět vícekrát, protože je Git přečte z více různých souborů (např. <code>/etc/gitconfig</code> a <code>~/.gitconfig</code>). V takovém případě se Git řídí poslední načtenou hodnotou.</p>
+<p>You may see keys more than once, because Git reads the same key from different files (<code>/etc/gitconfig</code> and <code>~/.gitconfig</code>, for example). In this case, Git uses the last value for each unique key it sees.</p>
 
-<p>Také můžete zobrazit jednu konkrétní hodnotu napsáním <code>git config {key}</code>:</p>
+<p>You can also check what Git thinks a specific key’s value is by typing <code>git config {key}</code>:</p>
 
 <pre><code>$ git config user.name
 Scott Chacon</code></pre>

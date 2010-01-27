@@ -1,0 +1,68 @@
+---
+layout: translation
+title: Pro Git 1.5 Úvod Počáteční nastavení
+---
+<h2 id='poten_nastaven'>Počáteční nastavení</h2>
+
+<p>Teď, když máte na svém systému Git, si v něm možná budete chtít nastavit pár věcí, přizpůsobit svým požadavkům. Budete to muset udělat pouze jednou &#8211; uchovávají se při upgradech. Samozřejmě je kdykoli můžete změnit provedením obdobných příkazů jako teď.</p>
+
+<p>Git obsahuje nástroj zvaný git config, který umožňuje nastavovat konfigurační hodnoty, které ovládají, jak Git vypadá a jak se chová. Mohou být uloženy na třech různých místech:</p>
+
+<ul>
+<li>soubor <code>/etc/gitconfig</code>: Obsahuje hodnoty pro všechny uživatele a všechny repozitáře na tomto systému dohromady. Pokud připojíte volbu <code> --system</code> za <code>git config</code>, bude pracovat výhradně s tímto souborem.</li>
+
+<li>soubot <code>~/.gitconfig</code>: Specifický pro uživatele. Tento soubor můžete upravovat také přidáním volby <code>--global</code>.</li>
+
+<li>konfigurační soubor v Git directory (tj. <code>.git/config</code>) každého repozitáře: specifický pro každý jednotlivý repozitář.</li>
+</ul>
+
+<p>Každá další vrstva překrývá tu předchozí, takže hodnoty v <code>.git/config</code> přebijí hodnoty z <code>/etc/gitconfig</code>.</p>
+
+<p>Na Windows hledá Git soubor <code>.gitconfig</code> v <code>$HOME</code> (obvykle <code>C:\Documents and Settings\$USER</code>). Samozřejmě pořád uvažuje /etc/gitconfig, přestože tato cesta je relativní ke kořenu MSys, což je místo, kam jste se rozhodli instalovat Git ve vašem systému Windows.</p>
+
+<h3 id='vae_identita'>Vaše identita</h3>
+
+<p>První věc, kterou máte udělat po instalaci Gitu, je nastavení vašeho uživatelského jména a e-mailu. To je důležité, jelikož každý commit tyto informace obsahuje, a jsou nevratně &#8220;zataveny&#8221; do všech vašich commitů.</p>
+
+<pre><code>$ git config --global user.name &quot;John Doe&quot;
+$ git config --global user.email johndoe@example.com</code></pre>
+
+<p>Znovu &#8211; toto musíte udělat jen jednou, pokud připojíte volbu <code> --global</code>, protože pak tyto informace použije Git pro cokoli, co na vašem systému děláte. Pokud je chcete přepsat jiným jménem nebo e-mailem pro nějaký projekt, stačí spustit příslušný příkaz bez volby <code> --global</code> v adresáři onoho projektu.</p>
+
+<h3 id='v_editor'>Váš editor</h3>
+
+<p>Teď, když máte nastaveno, kdo jste, si můžete nastavit výchozí textový editor, který Git použije, když bude chtít, abyste napsali zprávu. Jinak Git použije výchozí editor podle nastavení systému, což je obvykle Vi nebo Vim. Pokud chcete použít jiný textový editor, třeba Emacs, nastavte si to:</p>
+
+<pre><code>$ git config --global core.editor emacs</code></pre>
+
+<h3 id='v_nstroj_pro_een_koliznch_situac'>Váš nástroj pro řešení kolizních situací</h3>
+
+<p>Další užitečnou volbou je nastavení výchozího nástroje pro řešení kolizí. Takto nastavíte, že chcete používat vimdiff:</p>
+
+<pre><code>$ git config --global merge.tool vimdiff</code></pre>
+
+<p>Git umí pracovat s nástroji kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff. Můžete také nastavit i jiný nástroj; více v kapitole 7.</p>
+
+<h3 id='kontrola_vaeho_nastaven'> Kontrola vašeho nastavení</h3>
+
+<p>Pokud chcete zkontrolovat vaše nastavení, použijte <code>git config --list</code> k zobrazení všech nastavení, která dokáže na tomto místě Git najít:</p>
+
+<pre><code>$ git config --list
+user.name=Scott Chacon
+user.email=schacon@gmail.com
+color.status=auto
+color.branch=auto
+color.interactive=auto
+color.diff=auto
+...</code></pre>
+
+<p>Některé hodnoty můžete vidět vícekrát, protože je Git přečte z více různých souborů (např. <code>/etc/gitconfig</code> a <code>~/.gitconfig</code>). V takovém případě se Git řídí poslední načtenou hodnotou.</p>
+
+<p>Také můžete zobrazit jednu konkrétní hodnotu napsáním <code>git config {key}</code>:</p>
+
+<pre><code>$ git config user.name
+Scott Chacon</code></pre>
+
+<div id='nav'>
+<a href='ch1-4.html'>prev</a> | <a href='ch1-6.html'>next</a>
+</div>

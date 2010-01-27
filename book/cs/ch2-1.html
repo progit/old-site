@@ -1,0 +1,45 @@
+---
+layout: translation
+title: Pro Git 2.1 Základy Gitu Jak získat repozitář Gitu
+---
+<h2 id='jak_zskat_repozit_gitu'>Jak získat repozitář Gitu</h2>
+
+<p>Jsou dva základní způsoby, jak získat projekt v Gitu. První vezme existující projekt nebo adresář a importuje ho do Gitu. Druhý naklonuje existující repozitář z jiného serveru.</p>
+
+<h3 id='inicializace_repozite_z_existujcho_adrese'>Inicializace repozitáře z existujícího adresáře</h3>
+
+<p>Pokud chcete začít spravovat projekt Gitem, vstoupíte do jeho adresáře a spustíte</p>
+
+<pre><code>$ git init</code></pre>
+
+<p>To vytvoří podadresář .git, který obsahuje všechno, co Git potřebuje pro tento projekt, jakousi kostru. Ovšem zatím je prázdný, nic nesleduje. (V kapitole 9 si podrobněji rozebereme, co tento příkaz vlastně vytvořil.)</p>
+
+<p>Pokud chcete spravovat již existující soubory (pokud zrovna nezačínáte od píky a nemáte úplně prázdný adresář), asi je budete chtít začít sledovat a provést první commit. To zařídíte spuštěním několika příkazů, kterými určíte, co sledovat, načež to shrnete do commitu:</p>
+
+<pre><code>$ git add *.c
+$ git add README
+$ git commit –m &#39;initial project version&#39;</code></pre>
+
+<p>Pozn. překl.: Bývá zvykem, že popisky commitů (initial project version aj.) jsou psány v angličtině, není-li explicitně řečeno jinak; české popisky mívají opodstatnění jen u ryze českých, resp. československých projektů, kde se nepočítá s tím, že by se na nich podílel někdo, pro koho je čeština nesrozumitelným jazykem.</p>
+
+<p>Za chvilku si projdeme, co tyto příkazy vlastně dělají. V tuto chvíli máte repozitář se sledovanými soubory a prvním commitem.</p>
+
+<h3 id='klonovn_stvajcho_repozite'>Klonování stávajícího repozitáře</h3>
+
+<p>Pokud chcete mít kopii již existujícího repozitáře &#8211; např. projektu, na kterém se chcete podílet &#8211; příkaz, který potřebujete, je <code>git clone</code>. Když máte zkušenosti s jinými SSV jako Subversion, povšimnete si, že použitý příkaz je <code>clone</code> a nikoli <code>checkout</code>. To je důležitý rozdíl. Git totiž dostane téměř kompletní kopii toho, co server zrovna má. Každou verzi každého souboru z minulosti. Tedy, pokud se vám na serveru porouchá disk, stačí zpět naklonovat repozitář jakéhokoli klienta a máte přesně takový stav, jaký byl na serveru v době, kdy ho on naposledy aktualizoval. Možná ztratíte nějaká specifická serverová nastavení, ale každopádně to cenné &#8211; spravovaná data &#8211; máte v bezpečí.</p>
+
+<p>Repozitář naklonujete příkazem <code>git clone [url]</code>. Např. pro naklonování knihovny Gitu pro Ruby (Grit) provedete tento příkaz:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
+
+<p>Ten vytvoří adresář &#8220;grit&#8221;, v něm adresář <code>.git</code>, stáhne všechna data repozitáře a rozbalí aktuální verzi. Pokud vstoupíte do tohoto nového adresáře, najdete v něm všechny soubory projektu připravené k práci nebo použití. Když chcete naklonovat repozitář někam jinam než do složky &#8220;grit&#8221;, můžete mu to říct takto:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
+
+<p>Tak provedete všechno, co udělal minulý příkaz, ale do adresáře <code>mygrit</code>.</p>
+
+<p>Git podporuje více různých přenosových protokolů. Předchozí příklad používá protokol <code>git://</code>, ale také můžete použít <code>http(s)://</code> nebo <code>uživatel@server:/cesta.git</code>, což použije SSH. Všechny možnosti včetně jejich pro a proti si ukážeme v kapitole 4.</p>
+
+<div id='nav'>
+<a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>
+</div>

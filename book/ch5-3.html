@@ -28,7 +28,7 @@ title: Pro Git 5.3 Distributed Git Maintaining a Project
 
 <pre><code>$ git apply /tmp/patch-ruby-client.patch</code></pre>
 
-<p>This modifies the files in your working directory. It’s almost identical to running a <code>patch -p1</code> command to apply the patch, although it’s more paranoid and accepts fewer fuzzy matches then patch. It also handles file adds, deletes, and renames if they’re described in the <code>git diff</code> format, which <code>patch</code> won’t do. Finally, <code>git apply</code> is an &#8220;apply all or abort all&#8221; model where either everything is applied or nothing is, whereas <code>patch</code> can partially apply patchfiles, leaving your working directory in a weird state. <code>git apply</code> is overall much more paranoid than <code>patch</code>. It won’t create a commit for you — after running it, you must stage and commit the changes introduced manually.</p>
+<p>This modifies the files in your working directory. It’s almost identical to running a <code>patch -p1</code> command to apply the patch, although it’s more paranoid and accepts fewer fuzzy matches than patch. It also handles file adds, deletes, and renames if they’re described in the <code>git diff</code> format, which <code>patch</code> won’t do. Finally, <code>git apply</code> is an &#8220;apply all or abort all&#8221; model where either everything is applied or nothing is, whereas <code>patch</code> can partially apply patchfiles, leaving your working directory in a weird state. <code>git apply</code> is overall much more paranoid than <code>patch</code>. It won’t create a commit for you — after running it, you must stage and commit the changes introduced manually.</p>
 
 <p>You can also use git apply to see if a patch applies cleanly before you try actually applying it — you can run <code>git apply --check</code> with the patch:</p>
 
@@ -190,19 +190,19 @@ $ git diff 36c7db </code></pre>
 
 <p>One simple workflow merges your work into your <code>master</code> branch. In this scenario, you have a <code>master</code> branch that contains basically stable code. When you have work in a topic branch that you’ve done or that someone has contributed and you’ve verified, you merge it into your master branch, delete the topic branch, and then continue the process. If we have a repository with work in two branches named <code>ruby_client</code> and <code>php_client</code> that looks like Figure 5-19 and merge <code>ruby_client</code> first and then <code>php_client</code> next, then your history will end up looking like Figure 5-20.</p>
 
-<p><center><img src="/figures/ch5/18333fig0519-tn.png"></center><br/> Figure 5-19. History with several topic branches</p>
+<p><center><img src="/figures/ch5/18333fig0519-tn.png"></center><br/> Figure 5-19. History with several topic branches.</p>
 
-<p><center><img src="/figures/ch5/18333fig0520-tn.png"></center><br/> Figure 5-20. After a topic branch merge</p>
+<p><center><img src="/figures/ch5/18333fig0520-tn.png"></center><br/> Figure 5-20. After a topic branch merge.</p>
 
 <p>That is probably the simplest workflow, but it’s problematic if you’re dealing with larger repositories or projects.</p>
 
 <p>If you have more developers or a larger project, you’ll probably want to use at least a two-phase merge cycle. In this scenario, you have two long-running branches, <code>master</code> and <code>develop</code>, in which you determine that <code>master</code> is updated only when a very stable release is cut and all new code is integrated into the <code>develop</code> branch. You regularly push both of these branches to the public repository. Each time you have a new topic branch to merge in (Figure 5-21), you merge it into <code>develop</code> (Figure 5-22); then, when you tag a release, you fast-forward <code>master</code> to wherever the now-stable <code>develop</code> branch is (Figure 5-23).</p>
 
-<p><center><img src="/figures/ch5/18333fig0521-tn.png"></center><br/> Figure 5-21. Before a topic branch merge</p>
+<p><center><img src="/figures/ch5/18333fig0521-tn.png"></center><br/> Figure 5-21. Before a topic branch merge.</p>
 
-<p><center><img src="/figures/ch5/18333fig0522-tn.png"></center><br/> Figure 5-22. After a topic branch merge</p>
+<p><center><img src="/figures/ch5/18333fig0522-tn.png"></center><br/> Figure 5-22. After a topic branch merge.</p>
 
-<p><center><img src="/figures/ch5/18333fig0523-tn.png"></center><br/> Figure 5-23. After a topic branch release</p>
+<p><center><img src="/figures/ch5/18333fig0523-tn.png"></center><br/> Figure 5-23. After a topic branch release.</p>
 
 <p>This way, when people clone your project’s repository, they can either check out master to build the latest stable version and keep up to date on that easily, or they can check out develop, which is the more cutting-edge stuff. You can also continue this concept, having an integrate branch where all the work is merged together. Then, when the codebase on that branch is stable and passes tests, you merge it into a develop branch; and when that has proven itself stable for a while, you fast-forward your master branch.</p>
 
@@ -210,11 +210,11 @@ $ git diff 36c7db </code></pre>
 
 <p>The Git project has four long-running branches: <code>master</code>, <code>next</code>, and <code>pu</code> (proposed updates) for new work, and <code>maint</code> for maintenance backports. When new work is introduced by contributors, it’s collected into topic branches in the maintainer’s repository in a manner similar to what I’ve described (see Figure 5-24). At this point, the topics are evaluated to determine whether they’re safe and ready for consumption or whether they need more work. If they’re safe, they’re merged into <code>next</code>, and that branch is pushed up so everyone can try the topics integrated together.</p>
 
-<p><center><img src="/figures/ch5/18333fig0524-tn.png"></center><br/> Figure 5-24. Managing a complex series of parallel contributed topic branches</p>
+<p><center><img src="/figures/ch5/18333fig0524-tn.png"></center><br/> Figure 5-24. Managing a complex series of parallel contributed topic branches.</p>
 
 <p>If the topics still need work, they’re merged into <code>pu</code> instead. When it’s determined that they’re totally stable, the topics are re-merged into <code>master</code> and are then rebuilt from the topics that were in <code>next</code> but didn’t yet graduate to <code>master</code>. This means <code>master</code> almost always moves forward, <code>next</code> is rebased occasionally, and <code>pu</code> is rebased even more often (see Figure 5-25).</p>
 
-<p><center><img src="/figures/ch5/18333fig0525-tn.png"></center><br/> Figure 5-25. Merging contributed topic branches into long-term integration branches</p>
+<p><center><img src="/figures/ch5/18333fig0525-tn.png"></center><br/> Figure 5-25. Merging contributed topic branches into long-term integration branches.</p>
 
 <p>When a topic branch has finally been merged into <code>master</code>, it’s removed from the repository. The Git project also has a <code>maint</code> branch that is forked off from the last release to provide backported patches in case a maintenance release is required. Thus, when you clone the Git repository, you have four branches that you can check out to evaluate the project in different stages of development, depending on how cutting edge you want to be or how you want to contribute; and the maintainer has a structured workflow to help them vet new contributions.</p>
 
@@ -224,7 +224,7 @@ $ git diff 36c7db </code></pre>
 
 <p>The other way to move introduced work from one branch to another is to cherry-pick it. A cherry-pick in Git is like a rebase for a single commit. It takes the patch that was introduced in a commit and tries to reapply it on the branch you’re currently on. This is useful if you have a number of commits on a topic branch and you want to integrate only one of them, or if you only have one commit on a topic branch and you’d prefer to cherry-pick it rather than run rebase. For example, suppose you have a project that looks like Figure 5-26.</p>
 
-<p><center><img src="/figures/ch5/18333fig0526-tn.png"></center><br/> Figure 5-26. Example history before a cherry pick</p>
+<p><center><img src="/figures/ch5/18333fig0526-tn.png"></center><br/> Figure 5-26. Example history before a cherry pick.</p>
 
 <p>If you want to pull commit <code>e43a6</code> into your master branch, you can run</p>
 
@@ -235,7 +235,7 @@ Finished one cherry-pick.
 
 <p>This pulls the same change introduced in <code>e43a6</code>, but you get a new commit SHA-1 value, because the date applied is different. Now your history looks like Figure 5-27.</p>
 
-<p><center><img src="/figures/ch5/18333fig0527-tn.png"></center><br/> Figure 5-27. History after cherry-picking a commit on a topic branch</p>
+<p><center><img src="/figures/ch5/18333fig0527-tn.png"></center><br/> Figure 5-27. History after cherry-picking a commit on a topic branch.</p>
 
 <p>Now you can remove your topic branch and drop the commits you didn’t want to pull in.</p>
 

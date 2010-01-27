@@ -6,7 +6,7 @@ title: Pro Git 4.6 Git on the Server GitWeb
 
 <p>Now that you have basic read/write and read-only access to your project, you may want to set up a simple web-based visualizer. Git comes with a CGI script called GitWeb that is commonly used for this. You can see GitWeb in use at sites like <code>http://git.kernel.org</code> (see Figure 4-1).</p>
 
-<p><center><img src="/figures/ch4/18333fig0401-tn.png"></center><br/> Figure 4-1. The GitWeb web-based user interface</p>
+<p><center><img src="/figures/ch4/18333fig0401-tn.png"></center><br/> Figure 4-1. The GitWeb web-based user interface.</p>
 
 <p>If you want to check out what GitWeb would look like for your project, Git comes with a command to fire up a temporary instance if you have a lightweight server on your system like <code>lighttpd</code> or <code>webrick</code>. On Linux machines, <code>lighttpd</code> is often installed, so you may be able to get it to run by typing <code>git instaweb</code> in your project directory. If you’re running a Mac, Leopard comes preinstalled with Ruby, so <code>webrick</code> may be your best bet. To start <code>instaweb</code> with a non-lighttpd handler, you can run it with the <code>--httpd</code> option.</p>
 
