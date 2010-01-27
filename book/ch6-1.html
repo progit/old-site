@@ -187,7 +187,7 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
 <p>The most common range specification is the double-dot syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but aren’t reachable from another. For example, say you have a commit history that looks like Figure 6-1.</p>
 
-<p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> Figure 6-1. Example history for range selection.</p>
+<p><center><img src="/figures/ch6/18333fig0601-tn.png"></center><br/> Figure 6-1. Example history for range selection</p>
 
 <p>You want to see what is in your experiment branch that hasn’t yet been merged into your master branch. You can ask Git to show you a log of just those commits with <code>master..experiment</code> — that means &#8220;all commits reachable by experiment that aren’t reachable by master.&#8221; For the sake of brevity and clarity in these examples, I’ll use the letters of the commit objects from the diagram in place of the actual log output in the order that they would display:</p>
 

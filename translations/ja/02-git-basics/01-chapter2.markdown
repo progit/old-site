@@ -1,65 +1,65 @@
-# Git の基本 #
+# Dasar-dasar Git #
 
-Git を使い始めるにあたってどれかひとつの章だけしか読めないとしたら、読むべきは本章です。この章では、あなたが実際に Git を使う際に必要となる基本コマンドをすべて取り上げています。本章を最後まで読めば、リポジトリの設定や初期化、ファイルの追跡、そして変更内容のステージやコミットなどができるようになるでしょう。また、Git で特定のファイル (あるいは特定のファイルパターン) を無視させる方法やミスを簡単に取り消す方法、プロジェクトの歴史や各コミットの変更内容を見る方法、リモートリポジトリとの間でのプッシュやプルを行う方法についても説明します。
+Jika Anda hanya sempat membaca satu bab untuk dapat bekerja dengan Git, bab inilah yang tepat. Bab ini menjelaskan setiap perintah dasar yang Anda butuhkan untuk menyelesaikan sebagian besar permasalahan yang akan Anda hadapi dalam penggunaan Git. Pada akhir bab, Anda akan dapat mengkonfigurasi dan memulai sebuah repositori, memulai dan mengakhiri pemantauan berkas, dan melakukan staging dan committing perubahannya. Kami juga akan menunjukkan kepada Anda cara menata Git untuk mengabaikan berkas-berkas ataupun pola berkas tertentu, cara untuk membatalkan kesalahan secara cepat dan mudah, cara untuk melihat sejarah perubahan dari proyek dan melihat perubahan-perubahan yang telah terjadi diantara commit, dan cara untuk mendorong dan menarik perubahan dari repositori lain.
 
-## Git リポジトリの取得 ##
+## Mengambil Repositori Git ##
 
-Git プロジェクトを取得するには、大きく二通りの方法があります。ひとつは既存のプロジェクトやディレクトリを Git にインポートする方法、そしてもうひとつは既存の Git リポジトリを別のサーバーからクローンする方法です。
+Anda dapat mengambil sebuah proyek Git melalui 2 pendekatan utama. Cara pertama adalah dengan mengambil proyek atau direktori tersedia untuk dimasukkan ke dalam Git. Cara kedua adalah dengan melakukan kloning/duplikasi dari repositori Git yang sudah ada dari server. 
 
-### 既存のディレクトリでのリポジトリの初期化 ###
+### Memulai Repository di Direktori Tersedia ###
 
-既存のプロジェクトを Git で管理し始めるときは、そのプロジェクトのディレクトリに移動して次のように打ち込みます。
+Jika Anda mulai memantau proyek yang sudah ada menggunakan Git, Anda perlu masuk ke direktori dari proyek tersebut dan mengetikkan
 
 	$ git init
 
-これを実行すると .git という名前の新しいサブディレクトリが作られ、リポジトリに必要なすべてのファイル (Git リポジトリのスケルトン) がその中に格納されます。この時点では、まだプロジェクト内のファイルは一切管理対象になっていません (今作った .git ディレクトリに実際のところどんなファイルが含まれているのかについての詳細な情報は、第 9 章を参照ください)。
+Git akan membuat sebuah subdirektori baru bernama .git yang akan berisi semua berkas penting dari repositori Anda, yaitu kerangka repositori dari Git. Pada titik ini, belum ada apapun dari proyek Anda yang dipantau. (Lihat Bab 9 untuk informasi lebih lanjut mengenai berkas apa saja yang terdapat di dalam direktori `.git` yang baru saja kita buat.)
 
-空のディレクトリではなくすでに存在するファイルのバージョン管理を始めたい場合は、まずそのファイルを監視対象に追加してから最初のコミットをすることになります。この場合は、追加したいファイルについて git add コマンドを実行したあとでコミットを行います。
+Jika Anda ingin mulai mengendalikan versi dari berkas tersedia (bukan direktori kosong), Anda lebih baik mulai memantau berkas tersebut dengan melakukan commit awal. Caranya adalah dengan beberapa perintah `git add` untuk merumuskan berkas yang ingin anda pantau, diikuti dengan sebuah commit:
 
 	$ git add *.c
 	$ git add README
-	$ git commit –m 'initial project version'
+	$ git commit –m 'versi awal proyek'
 
-これが実際のところどういう意味なのかについては後で説明します。ひとまずこの時点で、監視対象のファイルを持つ Git リポジトリができあがり最初のコミットまで済んだことになります。
+Kita akan membahas apa yang dilakukan perintah-perintah di atas sebentar lagi. Pada saat ini, Anda sudah memiliki sebuah repositori Git berisi file-file terpantau dan sebuah commit awal.
 
-### 既存のリポジトリのクローン ###
+### Duplikasi Repositori Tersedia ###
 
-既存の Git リポジトリ (何か協力したいと思っているプロジェクトなど) のコピーを取得したい場合に使うコマンドが、git clone です。Subversion などの他の VCS を使っている人なら「checkout じゃなくて clone なのか」と気になることでしょう。これは重要な違いです。Git は、サーバーが保持しているデータをほぼすべてコピーするのです。そのプロジェクトのすべてのファイルのすべての歴史が、`git clone` で手元にやってきます。実際、もし仮にサーバーのディスクが壊れてしまったとしても、どこかのクライアントに残っているクローンをサーバーに戻せばクローンした時点まで復元することができます (サーバーサイドのフックなど一部の情報は失われてしまいますが、これまでのバージョン管理履歴はすべてそこに残っています。第 4 章で詳しく説明します)。
+Jika Anda ingin membuat salinan dari repositori Git yang sudah tersedia — misalnya, dari sebuah proyek yang Anda ingin ikut berkontribusi di dalamnya — perintah yang Anda butuhkan adalah `git clone`. Jika Anda sudah terbiasa dengan sistem VCS lainnya seperti Subversion, Anda akan tersadar bahwa perintahnya adalah clone dan bukan checkout. Ini adalah pembedaan yang penting — Git menerima salinan dari hampir semua data yang server miliki. Setiap versi dari setiap berkas yang tercatat dalam sejarah dari proyek tersebut akan ditarik ketika Anda menjalankan `git clone`. Bahkan, ketika cakram di server Anda rusak, Anda masih dapat menggunakan hasil duplikasi di klien untuk mengembalikan server Anda ke keadaan tepat pada saat duplikasi dibuat (Anda mungkin kehilangan beberapa hooks atau sejenisnya yang sebelumnya telah ditata di sisi server, namun semua versi data sudah kembali seperti sediakala-lihat Bab 4 untuk lebih detil).
 
-リポジトリをクローンするには `git clone [url]` とします。たとえば、Ruby の Git ライブラリである Grit をクローンする場合は次のようになります。
+Anda menduplikasi sebuah repositori menggunakan perintah `git clone [url]`. Sebagai contoh, jika Anda ingin menduplikasi pustaka Git Ruby yang disebut Grit, Anda dapat melakukannya sebagai berikut:
 
 	$ git clone git://github.com/schacon/grit.git
 
-これは、まず "grit" というディレクトリを作成してその中で `.git` ディレクトリを初期化し、リポジトリのすべてのデータを引き出し、そして最新バージョンの作業コピーをチェックアウトします。新しくできた `grit` ディレクトリに入ると、プロジェクトのファイルをごらんいただけます。もし grit ではない別の名前のディレクトリにクローンしたいのなら、コマンドラインオプションでディレクトリ名を指定します。
+Perintah ini akan membuat sebuah direktori yang dinamakan "grit", menata awal sebuah direktori `.git` di dalamnya, menarik semua data dari repositori, dan `checkout` versi mutakhir dari salinan kerja. Jika Anda masuk ke dalam direktori `grit` tersebut, Anda akan melihat berkas-berkas proyek sudah ada di sana, siap untuk digunakan. Jika Anda ingin membuat duplikasi dari repositori tersebut ke direktori yang tidak dinamakan grit, Anda harus merumuskan namanya sebagai opsi di perintah di atas:
 
 	$ git clone git://github.com/schacon/grit.git mygrit
 
-このコマンドは先ほどと同じ処理をしますが、ディレクトリ名は mygrit となります。
+Perintah ini bekerja seperti perintah sebelumnya, namun direktori tujuannya akan diberi nama mygrit.
 
-Git では、さまざまな転送プロトコルを使用することができます。先ほどの例では `git://` プロトコルを使用しましたが、`http(s)://` や `user@server:/path.git` といった形式を使うこともできます。これらは SSH プロトコルを使用します。第 4 章で、サーバー側で準備できるすべてのアクセス方式についての利点と欠点を説明します。
+Git memiliki beberapa protokol transfer yang berbeda yang dapat digunakan. Pada contoh sebelumnya, kita menggunakan protokol `git://`, tetapi Anda juga dapat menggunakan `http(s)://` atau `user@server:/path.git`, yang akan menggunakan SSH sebagai protokol transfer. Bab 4 akan memperkenalkan Anda kepada semua opsi yang tersedia yang dapat ditata di sisi server untuk mengakses repositori Git Anda dan keuntungan dan kelebihan dari masing-masing protokol.
 
-## 変更内容のリポジトリへの記録 ##
+## Merekam Perubahan ke dalam Repositori ##
 
-これで、れっきとした Git リポジトリを準備して、そのプロジェクト内のファイルの作業コピーを取得することができました。次は、そのコピーに対して何らかの変更を行い、適当な時点で変更内容のスナップショットをリポジトリにコミットすることになります。
+Anda sudah memiliki repositori Git yang bonafide dan sebuah salinan kerja dari semua berkas untuk proyek tersebut. Anda harus membuat beberapa perubahan dan commit perubahan tersebut ke dalam repositori setiap saat proyek mencapai sebuah keadaan yang ingin Anda rekam.
 
-作業コピー内の各ファイルには「追跡されている(tracked)」ものと「追跡されてない(untracked)」ものの二通りがあることを知っておきましょう。追跡されているファイルとは、直近のスナップショットに存在したファイルのことです。これらのファイルについては「変更されていない(unmodified)」「変更されている(modified)」「ステージされている(staged)」の三つの状態があります。追跡されていないファイルは、そのどれでもありません。直近のスナップショットには存在せず、ステージングエリアにも存在しないファイルのことです。最初にプロジェクトをクローンした時点では、すべてのファイルは「追跡されている」かつ「変更されていない」状態となります。チェックアウトしただけで何も編集していない状態だからです。
+Ingat bahwa setiap berkas di dalam direktori kerja Anda dapat berada di 2 keadaan: terpantau atau tak-terpantau. Berkas terpantau adalah berkas yang sebelumnya berada di snapshot terakhir; mereka dapat berada dalam kondisi belum terubah, terubah, ataupun staged (berada di area stage). Berkas tak-terpantau adalah kebalikannya - merupakan berkas-berkas di dalam direktori kerja yang tidak berada di dalam snapshot terakhir dan juga tidak berada di area staging. Ketika Anda pertama kali menduplikasi sebuah repositori, semua berkas Anda akan terpantau dan belum terubah karena Anda baru saja melakukan checkout dan belum mengubah apapun.
 
-ファイルを編集すると、Git はそれを「変更された」とみなします。直近のコミットの後で変更が加えられたからです。変更されたファイルをステージし、それをコミットする。この繰り返しです。ここまでの流れを図 2-1 にまとめました。
+Sejalan dengan proses edit yang Anda lakukan terhadap berkas-berkas tersebut, Git mencatatnya sebagai terubah, karena Anda telah mengubahnya sejak terakhir commit. Anda kemudian memasukkan berkas-berkas terubah ini ke dalam area stage untuk kemudian dilakukan commit, dan terus siklus ini berulang. Siklus perubahan ini diilustrasikan di Figure-2.1 
 
 Insert 18333fig0201.png 
-図 2-1. ファイルの状態の流れ
+Figure 2-1. The lifecycle of the status of your files.
 
-### ファイルの状態の確認 ###
+### Cek Status dari Berkas Anda ###
 
-どのファイルがどの状態にあるのかを知るために主に使うツールが git status コマンドです。このコマンドをクローン直後に実行すると、このような結果となるでしょう。
+Alat utama yang Anda gunakan untuk menentukan berkas-berkas mana yang berada dalam keadaan tertentu adalah melalui perintah `git status`. Jika Anda menggunakan alat ini langsung setelah sebuah `clone`, Anda akan melihat serupa seperti di bawah ini:
 
 	$ git status
 	# On branch master
 	nothing to commit (working directory clean)
 
-これは、クリーンな作業コピーである (つまり、追跡されているファイルの中に変更されているものがない) ことを意味します。また、追跡されていないファイルも存在しません (もし追跡されていないファイルがあれば、Git はそれを表示します)。最後に、このコマンドを実行するとあなたが今どのブランチにいるのかを知ることができます。現時点では常に master となります。これはデフォルトであり、ここでは特に気にする必要はありません。ブランチについては次の章で詳しく説明します。
+Ini berarti Anda memiliki direktori kerja yang bersih-dengan kata lain, tidak ada berkas terpantau yang terubah. Git juga tidak melihat berkas-berkas yang tak terpantau, karena pasti akan dilaporkan oleh alat ini. Juga, perintah ini memberitahu Anda tentang cabang tempat Anda berada. Pada saat ini, cabang akan selalu berada di master, karena sudah menjadi default-nya; Anda tidak perlu khawatir tentang cabang dulu. Bab berikutnya akan membahas tentang percabangan dan referensi secara lebih detil.
 
-ではここで、新しいファイルをプロジェクトに追加してみましょう。シンプルに、README ファイルを追加してみます。それ以前に README ファイルがなかった場合、`git status` を実行すると次のように表示されます。
+Mari kita umpamakan Anda menambah sebuah berkas baru ke dalam proyek Anda, misalnya sesederhana berkas README. Jika file tersebut belum ada sebelumnya, dan Anda melakukan `git status`, Anda akan melihatnya sebagai berkas tak-terpantau seperti berikut ini:
 
 	$ vim README
 	$ git status
@@ -70,15 +70,15 @@ Insert 18333fig0201.png
 	#	README
 	nothing added to commit but untracked files present (use "git add" to track)
 
-出力結果の “Untracked files” 欄に README ファイルがあることから、このファイルが追跡されていないということがわかります。これは、Git が「前回のスナップショット (コミット) にはこのファイルが存在しなかった」とみなしたということです。明示的に指示しない限り、Git はコミット時にこのファイルを含めることはありません。自動生成されたバイナリファイルなど、コミットしたくないファイルを間違えてコミットしてしまう心配はないということです。今回は README をコミットに含めたいわけですから、まずファイルを追跡対象に含めるようにしましょう。
+Anda akan melihat bahwa berkas baru Anda README belum terpantau, karena berada di bawah judul "Untracked files" di keluaran status Anda. Untracked pada dasarnya berarti bahwa Git melihat sebuah berkas yang sebelumnya tidak Anda miliki di snapshot (commit) sebelumnya; Git tidak akan mulai memasukkannya ke dalam snapshot commit hingga Anda secara eksplisit memerintahkan Git. Git berlaku seperti ini agar Anda tidak secara tak-sengaja mulai menyertakan berkas biner hasil kompilasi atau berkas lain yang tidak Anda inginkan untuk disertakan. Anda hanya ingin mulai menyertakan README, mari kita mulai memantau berkas tersebut.
 
-### 新しいファイルの追跡 ###
+### Memantau Berkas Baru ###
 
-新しいファイルの追跡を開始するには `git add` コマンドを使用します。README ファイルの追跡を開始する場合はこのようになります。
+Untuk mulai memantau berkas baru, Anda menggunakan perintah `git add`. Untuk mulai memantau berkas README tadi, Anda menjalankannya seperti berikut:
 
 	$ git add README
 
-再び status コマンドを実行すると、README ファイルが追跡対象となり、ステージされていることがわかるでしょう。
+Jika Anda menjalankan perintah `status` lagi, Anda akan melihat bahwa berkas README Anda sekarang sudah terpantau dan sudah masuk ke dalam area stage:
 
 	$ git status
 	# On branch master
@@ -88,11 +88,11 @@ Insert 18333fig0201.png
 	#	new file:   README
 	#
 
-ステージされていると判断できるのは、“Changes to be committed” 欄に表示されているからです。ここでコミットを行うと、git add した時点の状態のファイルがスナップショットとして歴史に書き込まれます。先ほど git init をしたときに、ディレクトリ内のファイルを追跡するためにその後 git add したことを思い出すことでしょう。git add コマンドには、ファイルあるいはディレクトリのパスを指定します。ディレクトリを指定した場合は、そのディレクトリ以下にあるすべてのファイルを再起的に追加します。
+Anda dapat mengatakan bahwa berkas tersebut berada di dalam area stage karena tertulis di bawah judul "Changes to be committed". Jika Anda melakukan commit pada saat ini, versi berkas pada saat Anda menjalankan `git add` inilah yang akan dimasukkan ke dalam sejarah snapshot. Anda mungkin ingat bahwa ketika Anda menjalankan `git init` sebelumnya, Anda melanjutkannya dengan `git add (nama berkas)` - yang akan mulai dipantau di direktori Anda. Perintah `git add` ini mengambil alamat dari berkas ataupun direktori; jika sebuah direktori, perintah tersebut akan menambahkan seluruh berkas yang berada di dalam direktori secara rekursif.
 
-### 変更したファイルのステージング ###
+### Memasukkan Berkas Terubah ke Dalam Area Stage ###
 
-すでに追跡対象となっているファイルを変更してみましょう。たとえば、すでに追跡対象となっているファイル `benchmarks.rb` を変更して `status` コマンドを実行すると、結果はこのようになります。
+Mari kita ubah sebuah berkas yang sudah terpantau. Jika Anda mengubah berkas yang sebelumnya terpantau bernama `benchmarks.rb` dan kemudian menjalankan perintah `status` lagi, Anda akan mendapatkan keluaran kurang lebih seperti ini:
 
 	$ git status
 	# On branch master
@@ -107,7 +107,7 @@ Insert 18333fig0201.png
 	#	modified:   benchmarks.rb
 	#
 
-benchmarks.rb ファイルは “Changed but not updated” という欄に表示されます。これは、追跡対象のファイルが作業ディレクトリ内で変更されたけれどもまだステージされていないという意味です。ステージするには `git add` コマンドを実行します (このコマンドにはいろんな意味合いがあり、新しいファイルの追跡開始・ファイルのステージング・マージ時に衝突が発生したファイルに対する「解決済み」マーク付けなどで使用します)。では、`git add` で benchmarks.rb をステージしてもういちど `git status` を実行してみましょう。
+Berkas benchmarks.rb terlihat di bawah bagian yang bernama "Changed but not updated" - yang berarti bahwa sebuah berkas terpantau telah berubah di dalam direktori kerja namun belum masuk ke area stage. Untuk memasukkannya ke area stage, Anda menjalankan perintah `git add` (perintah ini adalah perintah multiguna - Anda menggunakannya untuk mulai memantau berkas baru, untuk memasukkannya ke area stage, dan untuk melakukan hal lain seperti menandai berkas terkonflik menjadi terpecahkan). Mari kita sekarang jalankan `git add` untuk memasukkan berkas benchmarks.rb ke dalam area stage, dan jalankan `git status` lagi:
 
 	$ git add benchmarks.rb
 	$ git status
@@ -119,7 +119,7 @@ benchmarks.rb ファイルは “Changed but not updated” という欄に表�
 	#	modified:   benchmarks.rb
 	#
 
-両方のファイルがステージされました。これで、次回のコミットに両方のファイルが含まれるようになります。ここで、さらに benchmarks.rb にちょっとした変更を加えてからコミットしたくなったとしましょう。ファイルを開いて変更を終え、コミットの準備が整いました。しかし、`git status` を実行してみると何か変です。
+Kedua file sekarang berada di area stage dan akan masuk ke dalam commit Anda berikutnya. Pada saat ini, semisal Anda teringat satu perubahan yang Anda ingin buat di benchmarks.rb sebelum Anda lakukan commit. Anda buka berkas tersebut kembali dan melakukan perubahan tersebut, dan Anda siap untuk melakukan commit. Namun, mari kita coba jalankan `git status` kembali:
 
 	$ vim benchmarks.rb 
 	$ git status
@@ -136,7 +136,7 @@ benchmarks.rb ファイルは “Changed but not updated” という欄に表�
 	#	modified:   benchmarks.rb
 	#
 
-これはどういうことでしょう? benchmarks.rb が、ステージされているほうにもステージされていないほうにも登場しています。こんなことってありえるんでしょうか? 要するに、Git は「git add コマンドを実行した時点の状態のファイル」をステージするということです。ここでコミットをすると、実際にコミットされるのは git add を実行した時点の benchmarks.rb であり、git commit した時点の作業ディレクトリにある内容とは違うものになります。`git add` した後にファイルを変更した場合に、最新版のファイルをステージしなおすにはもう一度 `git add` を実行します。
+Apa? Sekarang benchmarks.rb terdaftar di dua tempat: area stage dan area terubah. Bagaimana hal ini bisa terjadi? Ternyata Git memasukkan berkas ke area stage tepat seperti ketika Anda menjalankan perintah `git add`. Jika Anda commit sekarang, versi benchmarks.rb pada saat Anda terakhir lakukan perintah `git add`-lah yang akan masuk ke dalam commit, bukan versi berkas yang saat ini terlihat di direktori kerja Anda ketika Anda menjalankan `git commit`. Jika Anda mengubah sebuah berkas setelah Anda menjalankan `git add`, Anda harus menjalankan `git add` kembali untuk memasukkan versi berkas terakhir ke dalam area stage:
 
 	$ git add benchmarks.rb
 	$ git status
@@ -148,39 +148,39 @@ benchmarks.rb ファイルは “Changed but not updated” という欄に表�
 	#	modified:   benchmarks.rb
 	#
 
-### ファイルの無視 ###
+### Mengabaikan Berkas ###
 
-ある種のファイルについては、Git で自動的に追加してほしくないしそもそも「追跡されていない」と表示されるのも気になる。そんなことがよくあります。たとえば、ログファイルやビルドシステムが生成するファイルなどの自動生成されるファイルがそれにあたるでしょう。そんな場合は、無視させたいファイルのパターンを並べた .gitignore というファイルを作成します。.gitignore ファイルは、たとえばこのようになります。
+Terkadang, Anda memiliki sekumpulan berkas yang Anda tidak ingin Git tambahkan secara otomatis atau bahkan terlihat sebagai tak-terpantau. Biasanya berkas hasil keluaran seperti berkas log atau berkas yang dihasilkan oleh sistem build Anda. Dalam kasus ini, Anda dapat membuat sebuah berkas bernama .gitignore yang berisi pola dari berkas terabaikan. Berikut adalah sebuah contoh isi dari berkas .gitignore:
 
 	$ cat .gitignore
 	*.[oa]
 	*~
 
-最初の行は .o あるいは .a で終わる名前のファイル (コードをビルドする際にできるであろうオブジェクトファイルとアーカイブファイル) を無視するよう Git に伝えています。次の行で Git に無視させているのは、チルダ (`~`) で終わる名前のファイルです。Emacs をはじめとする多くのエディタが、この形式の一時ファイルを作成します。これ以外には、たとえば log、tmp、pid といった名前のディレクトリや自動生成されるドキュメントなどもここに含めることになるでしょう。実際に作業を始める前に .gitignore ファイルを準備しておくことをお勧めします。そうすれば、予期せぬファイルを間違って Git リポジトリにコミットしてしまう事故を防げます。
+Baris pertama memberitahu Git untuk mengabaikan semua file yang berakhiran .o atau .a - berkas object dan arsip yang mungkin dihasilkan dari kompilasi kode Anda. Baris kedua memberitahu Git untuk mengabaikan semua file yang berakhiran dengan sebuah tilde (`~`), yang biasanya digunakan oleh banyak aplikasi olah-kata seperti Emacs untuk menandai berkas sementara. Anda juga dapat memasukkan direktori log, tmp ataupun pid; dokumentasi otomatis; dan lainnya. Menata berkas .gitignore sebelum Anda mulai bekerja secara umum merupakan ide yang baik sehingga Anda tidak secara tak-sengaja melakukan commit terhadap berkas yang sangat tidak Anda inginkan berada di dalam repositori Git.
 
-.gitignore ファイルに記述するパターンの規則は、次のようになります。
+Aturan untuk pola yang dapat Anda gunakan di dalam berkas .gitignore adalah sebagai berikut:
 
-*	空行あるいは # で始まる行は無視される
-*	標準の glob パターンを使用可能
-*	ディレクトリを指定するには、パターンの最後にスラッシュ (`/`) をつける
-*	パターンを逆転させるには、最初に感嘆符 (`!`) をつける
+*	Baris kosong atau baris dimulai dengan # akan diabaikan.
+*	Pola glob standar dapat digunakan.
+*	Anda dapat mengakhir pola dengan sebuah slash (`/`) untuk menandai sebuah direktori.
+*	Anda dapat menegasikan sebuah pola dengan memulainya menggunakan karakter tanda seru (`!`).
 
-glob パターンとは、シェルで用いる簡易正規表現のようなものです。アスタリスク (`*`) は、ゼロ個以上の文字にマッチします。`[abc]` は、角括弧内の任意の文字 (この場合は a、b あるいは c) にマッチします。疑問符 (`?`) は一文字にマッチします。また、ハイフン区切りの文字を角括弧で囲んだ形式 (`[0-9]`) は、ふたつの文字の間の任意の文字 (この場合は 0 から 9 までの間の文字) にマッチします。
+Pola Glob adalah seperti regular expression yang disederhanakan yang biasanya digunakan di shell. Sebuah asterisk (`*`) berarti 0 atau lebih karakter; `[abc]` terpasangkan dengan karakter apapun yang ditulis dalam kurung siku (dalam hal ini a, b, atau c); sebuah tanda tanya (`?`) terpasangkan dengan sebuah karakter; dan kurung siku yang melingkupi karakter yang terpisahkan dengan sebuah tanda hubung(`[0-9]`) terpasangkan dengan karakter apapun yang berada diantaranya (dalam hal ini 0 hingga 9).
 
-では、.gitignore ファイルの例をもうひとつ見てみましょう。
+Berikut adalah contoh lain dari isi berkas .gitignore:
 
-	# コメント。これは無視されます
-	*.a       # .a ファイルは無視
-	!lib.a    # しかし、lib.a ファイルだけは .a であっても追跡対象とします
-	/TODO     # ルートディレクトリの TODO ファイルだけを無視し、サブディレクトリの TODO は無視しません
-	build/    # build/ ディレクトリのすべてのファイルを無視します
-	doc/*.txt # doc/notes.txt は無視しますが、doc/server/arch.txt は無視しません
+	# sebuah komentar – akan diabaikan
+	*.a       # abaikan berkas .a
+	!lib.a    # tapi pantau lib.a, walaupun Anda abaikan berkas .a di atas
+	/TODO     # hanya abaikan berkas TODO yang berada di rooto, bukan di subdir/TODO
+	build/    # abaikan semua berkas di dalam direktori build/
+	doc/*.txt # abaikan doc/notes.txt, tapi bukan doc/server/arch.txt
 
-### ステージされている変更 / されていない変更の閲覧 ###
+### Melihat Perubahan di Area Stage dan di luar Area Stage ###
 
-`git status` コマンドだけではよくわからない (どのファイルが変更されたのかだけではなく、実際にどのように変わったのかが知りたい) という場合は `git diff` コマンドを使用します。`git diff` コマンドについては後で詳しく解説します。おそらく、最もよく使う場面としては次の二つの問いに答えるときになるでしょう。「変更したけどまだステージしていない変更は?」「コミット対象としてステージした変更は?」もちろん `git status` でもこれらの質問に対するおおまかな答えは得られますが、`git diff` の場合は追加したり削除したりした正確な行をパッチ形式で表示します。
+Jika perintah `git status` terlalu kabur untuk Anda - Anda ingin mengetahui secara pasti apa yang telah berubah, bukan hanya berkas mana yang berubah - Anda dapat menggunakan perintah `git diff`. Kita akan bahas `git diff` secara lebih detil nanti; namun Anda mungkin menggunakannya paling sering untuk menjawab 2 pertanyaan berikut: Apa yang Anda ubah tapi belum dimasukkan ke area stage? Dan apa yang telah Anda ubah yang akan segera Anda commit? Walaupun `git status` menjawab pertanyaan tersebut secara umum, `git diff` menunjukkan kepada Anda dengan tepat baris yang ditambahkan dan dibuang - dalam bentuk patch-nya.
 
-先ほどの続きで、ふたたび README ファイルを編集してステージし、一方 benchmarks.rb ファイルは編集だけしてステージしない状態にあると仮定しましょう。ここで `status` コマンドを実行すると、次のような結果となります。
+Mari kita anggap Anda mengubah dan memasukkan berkas README ke area stage lagi dan kemudian mengubah berkas benchmarks.rb tanpa memasukkannya ke area stage. Jika Anda jalankan perintah `status` Anda, Anda akan sekali lagi melihat keluaran seperti berikut:
 
 	$ git status
 	# On branch master
@@ -195,7 +195,7 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	#	modified:   benchmarks.rb
 	#
 
-変更したけれどもまだステージしていない内容を見るには、引数なしで `git diff` を実行します。
+Untuk melihat apa yang Anda telah ubah namun belum masuk ke area stage, ketikkan `git diff` tanpa argumen lainnya.
 
 	$ git diff
 	diff --git a/benchmarks.rb b/benchmarks.rb
@@ -214,9 +214,9 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	           log = git.commits('master', 15)
 	           log.size
 
-このコマンドは、作業ディレクトリの内容とステージングエリアの内容を比較します。この結果を見れば、あなたが変更した内容のうちまだステージされていないものを知ることができます。
+Perintah di atas membandingkan apa yang ada di direktori kerja Anda dengan apa yang ada di area stage. Hasilnya memberitahu Anda bahwa perubahan yang Anda ubah namun belum masuk ke area stage.
 
-次のコミットに含めるべくステージされた内容を知りたい場合は、`git diff –-cached` を使用します (Git バージョン 1.6.1 以降では `git diff –-staged` も使えます。こちらのほうが覚えやすいでしょう)。このコマンドは、ステージされている変更と直近のコミットの内容を比較します。
+Jika Anda ingin melihat apa yang telah Anda masukkan ke area stage yang nantinya akan masuk ke commit Anda berikutnya, Anda dapat menggunakan `git diff --cached`. (Di Git versi 1.6.1 atau yang lebih tinggi, Anda dapat juga menggunakan `git diff --staged`, yang mungkin lebih mudah untuk diingat). Perintah ini membandingkan area stage Anda dengan commit Anda terakhir:
 
 	$ git diff --cached
 	diff --git a/README b/README
@@ -231,9 +231,9 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	+
 	+Grit is a Ruby library for extracting information from a Git repository
 
-`git diff` 自体は、直近のコミット以降のすべての変更を表示するわけではないことに注意しましょう。あくまでもステージされていない変更だけの表示となります。これにはすこし戸惑うかもしれません。変更内容をすべてステージしてしまえば `git diff` は何も出力しなくなるわけですから。
+Satu hal penting yang harus dicatat adalah bahwa `git diff` saja tidak memperlihatkan semua perubahan yang telah Anda lakukan sejak terakhir Anda commit - hanya perubahan yang belum masuk ke area stage saja. Mungkin agak sedikit membingungkan, karena jika Anda telah memasukkan semua perubahan ke area stage, `git diff` akan memberikan keluaran kosong.
 
-もうひとつの例を見てみましょう。benchmarks.rb ファイルをいったんステージした後に編集してみましょう。`git diff` を使用すると、ステージされたファイルの変更とまだステージされていないファイルの変更を見ることができます。
+Sebagai contoh lain, jika Anda memasukkan berkas benchmarks.rb ke area stage dan kemudian meng-editnya, Anda dapat menggunakan `git diff` untuk melihat perubahan di berkas tersebut yang telah masuk ke area stage dan perubahan yang masih di luar area stage:
 
 	$ git add benchmarks.rb
 	$ echo '# test line' >> benchmarks.rb
@@ -249,7 +249,7 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	#	modified:   benchmarks.rb
 	#
 
-ここで `git diff` を使うと、まだステージされていない内容を知ることができます。
+Sekarang Anda dapat menggunakan `git diff` untuk melihat apa saja yang masih belum dimasukkan ke area stage:
 
 	$ git diff 
 	diff --git a/benchmarks.rb b/benchmarks.rb
@@ -262,7 +262,7 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	 ##pp Grit::GitRuby.cache_client.stats 
 	+# test line
 
-そして `git diff --cached` を使うと、これまでにステージした内容を知ることができます。
+dan `git diff --cached` untuk melihat apa yang telah Anda masukkan ke area stage sejauh ini:
 
 	$ git diff --cached
 	diff --git a/benchmarks.rb b/benchmarks.rb
@@ -281,15 +281,16 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	          log = git.commits('master', 15)
 	          log.size
 
-### 変更のコミット ###
+### Commit Perubahan Anda ###
 
-ステージングエリアの準備ができたら、変更内容をコミットすることができます。コミットの対象となるのはステージされたものだけ、つまり追加したり変更したりしただけでまだ `git add` を実行していないファイルはコミットされないことを覚えておきましょう。そういったファイルは、変更されたままの状態でディスク上に残ります。今回の場合は、最後に `git status` を実行したときにすべてがステージされていることを確認しています。つまり、変更をコミットする準備ができた状態です。コミットするための最もシンプルな方法は `git commit` と打ち込むことです。
+Sekarang setelah area stage Anda tertata sebagaimana yang Anda inginkan, Anda dapat melakukan commit terhadap perubahan Anda. Ingat bahwa apapun yang masih di luar area stage - berkas apapun yang Anda telah buat atau ubah yang belum Anda jalankan `git add` terhadapnya sejak terakhir Anda edit - tidak akan masuk ke dalam commit ini. Perubahan tersebut akan tetap sebagai berkas terubah di cakram Anda. 
+Dalam hal ini, saat terakhir Anda jalankan `git status`, Anda telah melihat bahwa semuanya telah masuk ke stage, sehingga Anda siap untuk melakukan commit dari perubahan Anda. Cara termudah untuk melakukan commit adalah dengan mengetikkan `git commit`:
 
 	$ git commit
 
-これを実行すると、指定したエディタが立ち上がります (シェルの `$EDITOR` 環境変数で設定されているエディタ。通常は vim あるいは emacs でしょう。しかし、それ以外にも第 1 章で説明した `git config --global core.editor` コマンドでお好みのエディタを指定することもできます)。
+Dengan melakukan ini, aplikasi olahkata pilihan Anda akan terjalankan (Ini ditata oleh variabel lingkungan `$EDITOR` di shell Anda - biasanya vim atau emacs, walaupun Anda dapat mengkonfigurasinya dengan apapun yang Anda inginkan menggunakan perintah `git config -- global core.editor` yang telah Anda lihat di Bab 1).
 
-エディタには次のようなテキストが表示されています (これは Vim の画面の例です)。
+Aplikasi olahkata akan menampilakn teks berikut (contoh berikut adalah dari layar Vim):
 
 	# Please enter the commit message for your changes. Lines starting
 	# with '#' will be ignored, and an empty message aborts the commit.
@@ -304,22 +305,22 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	~
 	".git/COMMIT_EDITMSG" 10L, 283C
 
-デフォルトのコミットメッセージとして、直近の `git status` コマンドの結果がコメントアウトして表示され、先頭に空行があることがわかるでしょう。このコメントを消して自分でコミットメッセージを書き入れていくこともできますし、何をコミットしようとしているのかの確認のためにそのまま残しておいてもかまいません (何を変更したのかをより明確に知りたい場合は、`git commit` に `-v` オプションを指定します。そうすると、diff の内容がエディタに表示されるので何を行ったのかが正確にわかるようになります)。エディタを終了させると、Git はそのメッセージつきのコミットを作成します (コメントおよび diff は削除されます)。
+Anda dapat melihat bahwa pesan commit standar berisi keluaran terakhir dari perintah `git status` yang terkomentari dan sebuah baris kosong di bagian atas. Anda dapat membuang komentar-komentar ini dan mengetikkan pesan commit Anda, atau Anda dapat membiarkannya untuk membantu Anda mengingat apa yang akan Anda commit. (Untuk pengingat yang lebih eksplisit dari apa yang Anda ubah, Anda dapat menggunakan opsi `-v` di perintah `git commit`. Melakukan hal ini akan membuat diff dari perubahan Anda di dalam olahkata sehingga Anda dapat melihat secara tepat apa yang telah Anda lakukan). Ketika Anda keluar dari olahkata, Git akan membuat commit Anda dengan pesan yang Anda buat (dengan bagian terkomentari dibuang).
 
-あるいは、コミットメッセージをインラインで記述することもできます。その場合は、`commit` コマンドの後で -m フラグに続けて次のように記述します。
+Cara lainnya, Anda dapat mengetikkan pesan commit Anda sebaris denegan perintah `commit` dengan mencantumkannya setelah tanda -m seperti berikut:
 
 	$ git commit -m "Story 182: Fix benchmarks for speed"
 	[master]: created 463dc4f: "Fix benchmarks for speed"
 	 2 files changed, 3 insertions(+), 0 deletions(-)
 	 create mode 100644 README
 
-これではじめてのコミットができました! 今回のコミットについて、「どのブランチにコミットしたのか (master)」「そのコミットの SHA-1 チェックサム (`463dc4f`)」「変更されたファイルの数」「そのコミットで追加されたり削除されたりした行数」といった情報が表示されているのがわかるでしょう。
+Sekarang Anda telah membuat commit pertama Anda~ Anda dapat lihat bahwa commit tersebut telah memberi Anda beberapa keluaran tentang dirinya sendiri: cabang apa yang Anda jadikan target commit (master), ceksum SHA-1 apa yang commit tersebut miliki (`463dc4f`), berapa banyak berkas yang diubah, dan statistik tentang jumlah baris yang ditambah dan dibuang dalam commit tersebut.
 
-コミットが記録するのは、ステージングエリアのスナップショットであることを覚えておきましょう。ステージしていない情報については変更された状態のまま残っています。別のコミットで歴史にそれを書き加えるには、改めて add する必要があります。コミットするたびにプロジェクトのスナップショットが記録され、あとからそれを取り消したり参照したりできるようになります。
+Ingat bahwa commit merekam snapshot yang Anda telah tata di area stage. Apapun yang tidak Anda masukkan ke area stage akan tetap berada di tempatnya, tetap dalam keadaan terubah; Anda dapat melakukan commit lagi untuk memasukkannya ke dalam sejarah Anda. Setiap saat Anda melakukan sebuah commit, Anda merekamkan sebuah snapshot dari proyek Anda yang bisa Anda kembalikan atau Anda bandingkan nantinya.
 
-### ステージングエリアの省略 ###
+### Melewatkan Area Stage ###
 
-コミットの内容を思い通りに作り上げることができるという点でステージングエリアは非常に便利なのですが、普段の作業においては必要以上に複雑に感じられることもあるでしょう。ステージングエリアを省略したい場合のために、Git ではシンプルなショートカットを用意しています。`git commit` コマンドに `-a` オプションを指定すると、追跡対象となっているファイルを自動的にステージしてからコミットを行います。つまり `git add` を省略できるというわけです。
+Walaupun dapat menjadi sangat berguna untuk menata commit tepat sebagaimana Anda inginkan, area stage terkadang sedikit lebih kompleks dibandingkan apa yang Anda butuhkan di dalam alurkerja Anda. Jika Anda ingin melewatkan area stage, Git menyediakan sebuah jalan pintas sederhana. Dengan memberikan opsi `-a` ke perintah `git commit` akan membuat Git secara otomatis menempatkan setiap berkas yang telah terpantau ke area stage sebelum melakukan commit, membuat Anda dapat melewatkan bagian `git add`:
 
 	$ git status
 	# On branch master
@@ -332,13 +333,13 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	[master 83e38c7] added new benchmarks
 	 1 files changed, 5 insertions(+), 0 deletions(-)
 
-この場合、コミットする前に benchmarks.rb を `git add` する必要がないことに注意しましょう。
+Perhatikan bagaimana Anda tidak perlu menjalankan `git add` terhadap berkas benchmarks.rb dalam hal ini sebelum Anda commit.
 
-### ファイルの削除 ###
+### Menghapus Berkas ###
 
-ファイルを Git から削除するには、追跡対象からはずし (より正確に言うとステージングエリアから削除し)、そしてコミットします。`git rm` コマンドは、この作業を行い、そして作業ディレクトリからファイルを削除します。つまり、追跡されていないファイルとして残り続けることはありません。
+Untuk menghapus sebuah berkas dari Git, Anda harus menghapusnya dari berkas terpantau (lebih tepatnya, mengpus dari area stage) dan kemudian commit. Perintah `git rm` melakukan hal tadi dan juga menghapus berkas tersebut dari direktori kerja Anda sehingga Anda tidak melihatnya sebagai berkas yang tak terpantau nantinya.
 
-単に作業ディレクトリからファイルを削除しただけの場合は、`git status` の出力の中では “Changed but not updated” (つまり _ステージされていない_) 欄に表示されます。
+Jika Anda hanya menghapus berkas dari direktori kerja Anda, berkas tersebut akan muncul di bagian "Changed but not updated" (yaitu, di luar area stage) dari keluaran `git status` Anda:
 
 	$ rm grit.gemspec
 	$ git status
@@ -350,7 +351,7 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	#       deleted:    grit.gemspec
 	#
 
-`git rm` を実行すると、ファイルの削除がステージされます。
+Kemudian, jika Anda jalankan `git rm`, Git akan memasukkan penghapusan berkas tersebut ke area stage:
 
 	$ git rm grit.gemspec
 	rm 'grit.gemspec'
@@ -363,31 +364,32 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	#       deleted:    grit.gemspec
 	#
 
-次にコミットするときにファイルが削除され、追跡対象外となります。変更したファイルをすでにステージしている場合は、`-f` オプションで強制的に削除しなければなりません。まだスナップショットに記録されていないファイルを誤って削除してしまうと Git で復旧することができなくなってしまうので、それを防ぐための安全装置です。
+Pada saat Anda commit nantinya, berkas tersebut akan hilang dan tidak lagi terpantau. Jika Anda mengubah berkas tersebut dan menambahkannya lagi ke index, Anda harus memaksa penghapusannya dengan menggunakan opsi `-f`. Ini adalah fitur keamanan (safety) untuk mencegah ketidaksengajaan penghapusan terhadap data yang belum terekam di dalam snapshot dan tak dapat dikembalikan oleh Git.
 
-ほかに「こんなことできたらいいな」と思われるであろう機能として、ファイル自体は作業ツリーに残しつつステージングエリアからの削除だけを行うこともできます。つまり、ハードディスク上にはファイルを残しておきたいけれど、もう Git では追跡させたくないというような場合のことです。これが特に便利なのは、`.gitignore` ファイルに書き足すのを忘れたために巨大なログファイルや大量の `.a` ファイルが追加されてしまったなどというときです。そんな場合は `--cached` オプションを使用します。
+Hal berguna lain yang Anda dapat lakukan adalah untuk tetap menyimpan berkas di direktori kerja tetapi menghapusnya dari area kerja. Dengan kata lain, Anda mungkin ingin tetap menyimpan berkas tersebut di dalam cakram keras tetapi tidak ingin Git untuk memantaunya lagi. Hal ini khususnya berguna jika Anda lupa untuk menambahkan sesuaitu ke berkas `.gitignore` Anda dan secara tak-sengaja menambahkannya, seperti sebuah berkas log yang besar, atau sekumpulan berkas hasil kompilasi `.a`. Untuk melakukan ini, gunakan opsi `--cached`:
 
 	$ git rm --cached readme.txt
 
-ファイル名やディレクトリ名、そしてファイル glob パターンを `git rm` コマンドに渡すことができます。つまり、このようなこともできるということです。
+Anda dapat menambahkan nama berkas, direktori, dan pola glob ke perintah `git rm`. Ini berarti Anda dapat melakukan hal seperti
 
 	$ git rm log/\*.log
 
-`*` の前にバックスラッシュ (`\`) があることに注意しましょう。これが必要なのは、シェルによるファイル名の展開だけでなく Git が自前でファイル名の展開を行うからです。このコマンドは、`log/` ディレクトリにある拡張子 `.log` のファイルをすべて削除します。あるいは、このような書き方もできます。
+Perhatikan karakter backslash (`\`) di depan tanda `*`. Ini dibutuhkan agar Git juga meng-ekspansi nama berkas sebagai tambahan dari ekspansi nama berkas oleh shell Anda. Perintah ini mengapus semua berkas yang memiliki ekstensi `.log` di dalam direktori `log/`. Atau, Anda dapat melakukannya seperti ini:
 
 	$ git rm \*~
 
-このコマンドは、`~` で終わるファイル名のファイルをすべて削除します。
+Perintah ini akan membuang semua berkas yang berakhiran dengan `~`.
+This command removes all files that end with `~`.
 
-### ファイルの移動 ###
+### Moving Files ###
 
-他の多くの VCS とは異なり、Git はファイルの移動を明示的に追跡することはありません。Git の中でファイル名を変更しても、「ファイル名を変更した」というメタデータは Git には保存されないのです。しかし Git は賢いので、ファイル名が変わったことを知ることができます。ファイルの移動を検出する仕組みについては後ほど説明します。
+Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.
 
-しかし Git には `mv` コマンドがあります。ちょっと混乱するかもしれませんね。Git の中でファイル名を変更したい場合は次のようなコマンドを実行します。
+Thus it’s a bit confusing that Git has a `mv` command. If you want to rename a file in Git, you can run something like
 
 	$ git mv file_from file_to
 
-このようなコマンドを実行してから status を確認すると、Git はそれをファイル名が変更されたと解釈していることがわかるでしょう。
+and it works fine. In fact, if you run something like this and look at the status, you’ll see that Git considers it a renamed file:
 
 	$ git mv README.txt README
 	$ git status
@@ -400,23 +402,23 @@ glob パターンとは、シェルで用いる簡易正規表現のようなも
 	#       renamed:    README.txt -> README
 	#
 
-しかし、実際のところこれは、次のようなコマンドを実行するのと同じ意味となります。
+However, this is equivalent to running something like this:
 
 	$ mv README.txt README
 	$ git rm README.txt
 	$ git add README
 
-Git はこれが暗黙的なファイル名の変更であると理解するので、この方法であろうが `mv` コマンドを使おうがどちらでもかまいません。唯一の違いは、この方法だと 3 つのコマンドが必要になるかわりに `mv` だとひとつのコマンドだけで実行できるという点です。より重要なのは、ファイル名の変更は何でもお好みのツールで行えるということです。あとでコミットする前に add/rm を指示してやればいいのです。
+Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the `mv` command. The only real difference is that `mv` is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.
 
-## コミット履歴の閲覧 ##
+## Viewing the Commit History ##
 
-何度かコミットを繰り返すと、あるいはコミット履歴つきの既存のリポジトリをクローンすると、過去に何が起こったのかを振り返りたくなることでしょう。そのために使用するもっとも基本的かつパワフルな道具が `git log` コマンドです。
+After you have created several commits, or if you have cloned a repository with an existing commit history, you’ll probably want to look back to see what has happened. The most basic and powerful tool to do this is the `git log` command.
 
-ここからの例では、simplegit という非常にシンプルなプロジェクトを使用します。これは、私が説明用によく用いているプロジェクトで、次のようにして取得できます。
+These examples use a very simple project called simplegit that I often use for demonstrations. To get the project, run 
 
 	git clone git://github.com/schacon/simplegit-progit.git
 
-このプロジェクトで `git log` を実行すると、このような結果が得られます。
+When you run `git log` in this project, you should get output that looks something like this:
 
 	$ git log
 	commit ca82a6dff817ec66f44342007202690a93763949
@@ -437,11 +439,11 @@ Git はこれが暗黙的なファイル名の変更であると理解するの�
 
 	    first commit
 
-デフォルトで引数を何も指定しなければ、`git log` はそのリポジトリでのコミットを新しい順に表示します。つまり、直近のコミットが最初に登場するということです。ごらんのとおり、このコマンドは各コミットについて SHA-1 チェックサム・作者の名前とメールアドレス・コミット日時・コミットメッセージを一覧表示します。
+By default, with no arguments, `git log` lists the commits made in that repository in reverse chronological order. That is, the most recent commits show up first. As you can see, this command lists each commit with its SHA-1 checksum, the author’s name and e-mail, the date written, and the commit message.
 
-`git log` コマンドには数多くのバラエティに富んだオプションがあり、あなたが本当に見たいものを表示させることができます。ここでは、よく用いられるオプションのいくつかをご覧に入れましょう。
+A huge number and variety of options to the `git log` command are available to show you exactly what you’re looking for. Here, we’ll show you some of the most-used options.
 
-もっとも便利なオプションのひとつが `-p` で、これは各コミットの diff を表示します。また `-2` は、直近の 2 エントリだけを出力します。
+One of the more helpful options is `-p`, which shows the diff introduced in each commit. You can also use `-2`, which limits the output to only the last two entries:
 
 	$ git log –p -2
 	commit ca82a6dff817ec66f44342007202690a93763949
@@ -481,7 +483,8 @@ Git はこれが暗黙的なファイル名の変更であると理解するの�
 	-end
 	\ No newline at end of file
 
-このオプションは、先ほどと同じ情報を表示するとともに、各エントリの直後にその diff を表示します。これはコードレビューのときに非常に便利です。また、他のメンバーが一連のコミットで何を行ったのかをざっと眺めるのにも便利でしょう。また、`git log` では「まとめ」系のオプションを使うこともできます。たとえば、各コミットに関するちょっとした統計情報を見たい場合は `--stat` オプションを使用します。
+This option displays the same information but with a diff directly following each entry. This is very helpful for code review or to quickly browse what happened during a series of commits that a collaborator has added.
+You can also use a series of summarizing options with `git log`. For example, if you want to see some abbreviated stats for each commit, you can use the `--stat` option:
 
 	$ git log --stat 
 	commit ca82a6dff817ec66f44342007202690a93763949
@@ -513,42 +516,43 @@ Git はこれが暗黙的なファイル名の変更であると理解するの�
 	 lib/simplegit.rb |   25 +++++++++++++++++++++++++
 	 3 files changed, 54 insertions(+), 0 deletions(-)
 
-ごらんの通り `--stat` オプションは、各コミットエントリに続けて変更されたファイルの一覧と変更されたファイルの数、追加・削除された行数が表示されます。また、それらの情報のまとめを最後に出力します。もうひとつの便利なオプションが `--pretty` です。これは、ログをデフォルトの書式以外で出力します。あらかじめ用意されているいくつかのオプションを指定することができます。oneline オプションは、各コミットを一行で出力します。これは、大量のコミットを見る場合に便利です。さらに `short` や `full` そして `fuller` といったオプションもあり、これは標準とほぼ同じ書式だけれども情報量がそれぞれ少なめあるいは多めになります。
+As you can see, the `--stat` option prints below each commit entry a list of modified files, how many files were changed, and how many lines in those files were added and removed. It also puts a summary of the information at the end.
+Another really useful option is `--pretty`. This option changes the log output to formats other than the default. A few prebuilt options are available for you to use. The oneline option prints each commit on a single line, which is useful if you’re looking at a lot of commits. In addition, the `short`, `full`, and `fuller` options show the output in roughly the same format but with less or more information, respectively:
 
 	$ git log --pretty=oneline
 	ca82a6dff817ec66f44342007202690a93763949 changed the version number
 	085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
 	a11bef06a3f659402fe7563abf99ad00de2209e6 first commit
 
-もっとも興味深いオプションは `format` で、これは独自のログ出力フォーマットを指定することができます。これは、出力結果を機械にパースさせる際に非常に便利です。自分でフォーマットを指定しておけば、将来 Git をアップデートしても結果が変わらないようにできるからです。
+The most interesting option is `format`, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:
 
 	$ git log --pretty=format:"%h - %an, %ar : %s"
 	ca82a6d - Scott Chacon, 11 months ago : changed the version number
 	085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
 	a11bef0 - Scott Chacon, 11 months ago : first commit
 
-表 2-1 は、format で使用できる便利なオプションをまとめたものです。
+Table 2-1 lists some of the more useful options that format takes.
 
-	オプション	出力される内容
-	%H	コミットのハッシュ
-	%h	コミットのハッシュ (短縮版)
-	%T	ツリーのハッシュ
-	%t	ツリーのハッシュ (短縮版)
-	%P	親のハッシュ
-	%p	親のハッシュ (短縮版)
-	%an	Author の名前
-	%ae	Author のメールアドレス
-	%ad	Author の日付 (–date= オプションにしたがった形式)
-	%ar	Author の相対日付
-	%cn	Committer の名前
-	%ce	Committer のメールアドレス
-	%cd	Committer の日付
-	%cr	Committer の相対日付
-	%s	件名
+	Option	Description of Output
+	%H	Commit hash
+	%h	Abbreviated commit hash
+	%T	Tree hash
+	%t	Abbreviated tree hash
+	%P	Parent hashes
+	%p	Abbreviated parent hashes
+	%an	Author name
+	%ae	Author e-mail
+	%ad	Author date (format respects the –date= option)
+	%ar	Author date, relative
+	%cn	Committer name
+	%ce	Committer email
+	%cd	Committer date
+	%cr	Committer date, relative
+	%s	Subject
 
-_author_ と _committer_ は何が違うのか気になる方もいるでしょう。author とはその作業をもともと行った人、committer とはその作業を適用した人のことを指します。あなたがとあるプロジェクトにパッチを送り、コアメンバーのだれかがそのパッチを適用したとしましょう。この場合、両方がクレジットされます (あなたが author、コアメンバーが committer です)。この区別については第 5 章でもう少し詳しく説明します。
+You may be wondering what the difference is between _author_ and _committer_. The author is the person who originally wrote the work, whereas the committer is the person who last applied the work. So, if you send in a patch to a project and one of the core members applies the patch, both of you get credit — you as the author and the core member as the committer. We’ll cover this distinction a bit more in Chapter 5.
 
-oneline オプションおよび format オプションは、`log` のもうひとつのオプションである `--graph` と組み合わせるとさらに便利です。このオプションは、ちょっといい感じのアスキーグラフでブランチやマージの歴史を表示します。Grit プロジェクトのリポジトリならこのようになります。
+The oneline and format options are particularly useful with another `log` option called `--graph`. This option adds a nice little ASCII graph showing your branch and merge history, which we can see our copy of the Grit project repository:
 
 	$ git log --pretty=format:"%h %s" --graph
 	* 2d3acf9 ignore errors from SIGCHLD on trap
@@ -562,43 +566,43 @@ oneline オプションおよび format オプションは、`log` のもうひ�
 	* d6016bc require time for xmlschema
 	*  11d191e Merge branch 'defunkt' into local
 
-これらは `git log` の出力フォーマット指定のほんの一部でしかありません。まだまだオプションはあります。表 2-2 に、今まで取り上げたオプションとそれ以外によく使われるオプション、そしてそれぞれがログの出力をどのように変えるのかをまとめました。
+Those are only some simple output-formatting options to `git log` — there are many more. Table 2-2 lists the options we’ve covered so far and some other common formatting options that may be useful, along with how they change the output of the log command.
 
-	オプション	説明
-	-p	各コミットのパッチを表示する
-	--stat	各コミットで変更されたファイルの統計情報を表示する
-	--shortstat	--stat コマンドのうち、変更/追加/削除 の行だけを表示する
-	--name-only	コミット情報の後に変更されたファイルの一覧を表示する
-	--name-status	変更されたファイルと 追加/修正/削除 情報を表示する
-	--abbrev-commit	SHA-1 チェックサムの全体 (40文字) ではなく最初の数文字のみを表示する
-	--relative-date	完全な日付フォーマットではなく、相対フォーマット (“2 weeks ago”など) で日付を表示する
-	--graph	ブランチやマージの歴史を、ログ出力とともにアスキーグラフで表示する
-	--pretty	コミットを別のフォーマットで表示する。オプションとして oneline, short, full, fuller そして format (独自フォーマットを設定する) を指定可能
+	Option	Description
+	-p	Show the patch introduced with each commit.
+	--stat	Show statistics for files modified in each commit.
+	--shortstat	Display only the changed/insertions/deletions line from the --stat command.
+	--name-only	Show the list of files modified after the commit information.
+	--name-status	Show the list of files affected with added/modified/deleted information as well.
+	--abbrev-commit	Show only the first few characters of the SHA-1 checksum instead of all 40.
+	--relative-date	Display the date in a relative format (for example, “2 weeks ago”) instead of using the full date format.
+	--graph	Display an ASCII graph of the branch and merge history beside the log output.
+	--pretty	Show commits in an alternate format. Options include oneline, short, full, fuller, and format (where you specify your own format).
 
-### ログ出力の制限 ###
+### Limiting Log Output ###
 
-出力のフォーマット用オプションだけでなく、git log にはログの制限用の便利なオプションもあります。コミットの一部だけを表示するようなオプションのことです。既にひとつだけ紹介していますね。`-2` オプション、これは直近のふたつのコミットだけを表示するものです。実は `-<n>` の `n` には任意の整数値を指定することができ、直近の `n` 件のコミットだけを表示させることができます。ただ、実際のところはこれを使うことはあまりないでしょう。というのも、Git はデフォルトですべての出力をページャにパイプするので、ログを一度に 1 ページだけ見ることになるからです。
+In addition to output-formatting options, git log takes a number of useful limiting options — that is, options that let you show only a subset of commits. You’ve seen one such option already — the `-2` option, which show only the last two commits. In fact, you can do `-<n>`, where `n` is any integer to show the last `n` commits. In reality, you’re unlikely to use that often, because Git by default pipes all output through a pager so you see only one page of log output at a time.
 
-しかし `--since` や `--until` のような時間制限のオプションは非常に便利です。たとえばこのコマンドは、過去二週間のコミットの一覧を取得します。
+However, the time-limiting options such as `--since` and `--until` are very useful. For example, this command gets the list of commits made in the last two weeks:
 
 	$ git log --since=2.weeks
 
-このコマンドはさまざまな書式で動作します。特定の日を指定する (“2008-01-15”) こともできますし、相対日付を“2 years 1 day 3 minutes ago”のように指定することも可能です。
+This command works with lots of formats — you can specify a specific date (“2008-01-15”) or a relative date such as “2 years 1 day 3 minutes ago”.
 
-コミット一覧から検索条件にマッチするものだけを取り出すこともできます。`--author` オプションは特定の author のみを抜き出し、`--grep` オプションはコミットメッセージの中のキーワードを検索します (author と grep を両方指定したい場合は `--all-match` を追加しないといけません。そうしないと、どちらか一方にだけマッチするものも対象になってしまいます)。
+You can also filter the list to commits that match some search criteria. The `--author` option allows you to filter on a specific author, and the `--grep` option lets you search for keywords in the commit messages. (Note that if you want to specify both author and grep options, you have to add `--all-match` or the command will match commits with either.)
 
-最後に紹介する `git log` のフィルタリング用オプションは、パスです。ディレクトリ名あるいはファイル名を指定すると、それを変更したコミットのみが対象となります。このオプションは常に最後に指定し、一般にダブルダッシュ (`--`) の後に記述します。このダブルダッシュが他のオプションとパスの区切りとなります。
+The last really useful option to pass to `git log` as a filter is a path. If you specify a directory or file name, you can limit the log output to commits that introduced a change to those files. This is always the last option and is generally preceded by double dashes (`--`) to separate the paths from the options.
 
-表 2-3 に、これらのオプションとその他の一般的なオプションをまとめました。
+In Table 2-3 we’ll list these and a few other common options for your reference.
 
-	オプション	説明
-	-(n)	直近の n 件のコミットのみを表示する
-	--since, --after	指定した日付以降のコミットのみに制限する
-	--until, --before	指定した日付以前のコミットのみに制限する
-	--author	author エントリが指定した文字列にマッチするコミットのみを表示する
-	--committer	committer エントリが指定した文字列にマッチするコミットのみを表示する
+	Option	Description
+	-(n)	Show only the last n commits
+	--since, --after	Limit the commits to those made after the specified date.
+	--until, --before	Limit the commits to those made before the specified date.
+	--author	Only show commits in which the author entry matches the specified string.
+	--committer	Only show commits in which the committer entry matches the specified string.
 
-たとえば、Git ソースツリーのテストファイルに対する変更があったコミットのうち、Junio Hamano がコミットしたもの (マージは除く) で 2008 年 10 月に行われたものを知りたければ次のように指定します。
+For example, if you want to see which commits modifying test files in the Git source code history were committed by Junio Hamano and were not merges in the month of October 2008, you can run something like this:
 
 	$ git log --pretty="%h - %s" --author=gitster --since="2008-10-01" \
 	   --before="2008-11-01" --no-merges -- t/
@@ -609,42 +613,42 @@ oneline オプションおよび format オプションは、`log` のもうひ�
 	51a94af - Fix "checkout --track -b newbranch" on detac
 	b0ad11e - pull: allow "git pull origin $something:$cur
 
-約 20,000 件におよぶ Git ソースコードのコミットの歴史の中で、このコマンドの条件にマッチするのは 6 件となります。
+Of the nearly 20,000 commits in the Git source code history, this command shows the 6 that match those criteria.
 
-### GUI による歴史の可視化 ###
+### Using a GUI to Visualize History ###
 
-もう少しグラフィカルなツールでコミットの歴史を見たい場合は、Tcl/Tk のプログラムである gitk を見てみましょう。これは Git に同梱されています。gitk は、簡単に言うとビジュアルな `git log` ツールです。`git log` で使えるフィルタリングオプションにはほぼすべて対応しています。プロジェクトのコマンドラインで gitk と打ち込むと、図 2-2 のような画面があらわれるでしょう。
+If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual `git log` tool, and it accepts nearly all the filtering options that `git log` does. If you type gitk on the command line in your project, you should see something like Figure 2-2.
 
 Insert 18333fig0202.png 
-図 2-2. gitk history visualizer
+Figure 2-2. The gitk history visualizer.
 
-ウィンドウの上半分に、コミットの歴史がきれいな家系図とともに表示されます。ウィンドウの下半分には diff ビューアがあり、任意のコミットをクリックしてその変更内容を確認することができます。
+You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.
 
-## 作業のやり直し ##
+## Undoing Things ##
 
-どんな場面であっても、何かをやり直したくなることはあります。ここでは、行った変更を取り消すための基本的なツールについて説明します。注意しなければならいのは、ここで扱う内容の中には「やり直しのやり直し」ができないものもあるということです。Git で何か間違えたときに作業内容を失ってしまう数少ない例がここにあります。
+At any stage, you may want to undo something. Here, we’ll review a few basic tools for undoing changes that you’ve made. Be careful, because you can’t always undo some of these undos. This is one of the few areas in Git where you may lose some work if you do it wrong.
 
-### 直近のコミットの変更 ###
+### Changing Your Last Commit ###
 
-やり直しを行う場面としてもっともよくあるのは、「コミットを早まりすぎて追加すべきファイルを忘れてしまった」「コミットメッセージが変になってしまった」などです。そのコミットをもう一度やりなおす場合は、`--amend` オプションをつけてもう一度コミットします。
+One of the common undos takes place when you commit too early and possibly forget to add some files, or you mess up your commit message. If you want to try that commit again, you can run commit with the `--amend` option:
 
 	$ git commit --amend
 
-このコマンドは、ステージングエリアの内容をコミットに使用します。直近のコミット以降に何も変更をしていない場合 (たとえば、コミットの直後にこのコマンドを実行したような場合)、スナップショットの内容はまったく同じでありコミットメッセージを変更することになります。
+This command takes your staging area and uses it for the commit. If you’ve have made no changes since your last commit (for instance, you run this command immediately after your previous commit), then your snapshot will look exactly the same and all you’ll change is your commit message.
 
-コミットメッセージのエディタが同じように立ち上がりますが、既に前回のコミット時のメッセージが書き込まれた状態になっています。ふだんと同様にメッセージを編集できますが、前回のコミット時のメッセージがその内容で上書きされます。
+The same commit-message editor fires up, but it already contains the message of your previous commit. You can edit the message the same as always, but it overwrites your previous commit.
 
-たとえば、いったんコミットした後、何かのファイルをステージするのを忘れていたのに気づいたとしましょう。そんな場合はこのようにします。
+As an example, if you commit and then realize you forgot to stage the changes in a file you wanted to add to this commit, you can do something like this:
 
-	$ git commit -m '初期コミット'
-	$ git add 忘れてたファイル
+	$ git commit -m 'initial commit'
+	$ git add forgotten_file
 	$ git commit --amend 
 
-この 3 つのコマンドの結果、最終的にできあがるのはひとつのコミットです。二番目の commit コマンドが、最初のコミットの結果を上書きするのです。
+All three of these commands end up with a single commit — the second commit replaces the results of the first.
 
-### ステージしたファイルの取り消し ###
+### Unstaging a Staged File ###
 
-続くふたつのセクションでは、ステージングエリアと作業ディレクトリの変更に関する作業を扱います。すばらしいことに、これらふたつの場所の状態を表示するコマンドを使用すると、変更内容を取り消す方法も同時に表示されます。たとえば、ふたつのファイルを変更し、それぞれを別のコミットとするつもりだったのに間違えて `git add *` と打ち込んでしまったときのことを考えましょう。ファイルが両方ともステージされてしまいました。ふたつのうちの一方だけのステージを解除するにはどうすればいいでしょう? `git status` コマンドが教えてくれます。
+The next two sections demonstrate how to wrangle your staging area and working directory changes. The nice part is that the command you use to determine the state of those two areas also reminds you how to undo changes to them. For example, let’s say you’ve changed two files and want to commit them as two separate changes, but you accidentally type `git add *` and stage them both. How can you unstage one of the two? The `git status` command reminds you:
 
 	$ git add .
 	$ git status
@@ -656,7 +660,7 @@ Insert 18333fig0202.png
 	#       modified:   benchmarks.rb
 	#
 
-“Changes to be committed”の直後に、use `git reset HEAD <file>...` to unstage と書かれています。では、アドバイスに従って benchmarks.rb ファイルのステージを解除してみましょう。
+Right below the “Changes to be committed” text, it says use `git reset HEAD <file>...` to unstage. So, let’s use that advice to unstage the benchmarks.rb file:
 
 	$ git reset HEAD benchmarks.rb 
 	benchmarks.rb: locally modified
@@ -674,11 +678,11 @@ Insert 18333fig0202.png
 	#       modified:   benchmarks.rb
 	#
 
-ちょっと奇妙に見えるコマンドですが、きちんと動作します。benchmarks.rb ファイルは、変更されたもののステージされていない状態に戻りました。
+The command is a bit strange, but it works. The benchmarks.rb file is modified but once again unstaged.
 
-### ファイルへの変更の取り消し ###
+### Unmodifying a Modified File ###
 
-benchmarks.rb に加えた変更が、実は不要なものだったとしたらどうしますか? 変更を取り消す (直近のコミット時点の状態、あるいは最初にクローンしたり最初に作業ディレクトリに取得したときの状態に戻す) 最も簡単な方法は? 幸いなことに、またもや `git status` がその方法を教えてくれます。先ほどの例の出力結果で、ステージされていないファイル一覧の部分を見てみましょう。
+What if you realize that you don’t want to keep your changes to the benchmarks.rb file? How can you easily unmodify it — revert it back to what it looked like when you last committed (or initially cloned, or however you got it into your working directory)? Luckily, `git status` tells you how to do that, too. In the last example output, the unstaged area looks like this:
 
 	# Changed but not updated:
 	#   (use "git add <file>..." to update what will be committed)
@@ -687,7 +691,7 @@ benchmarks.rb に加えた変更が、実は不要なものだったとしたら
 	#       modified:   benchmarks.rb
 	#
 
-とても明確に、変更を取り消す方法が書かれています (少なくとも、バージョン 1.6.1 以降の新しい Git ではこのようになります。もし古いバージョンを使用しているのなら、アップグレードしてこのすばらしい機能を活用することをおすすめします)。ではそのとおりにしてみましょう。
+It tells you pretty explicitly how to discard the changes you’ve made (at least, the newer versions of Git, 1.6.1 and later, do this — if you have an older version, we highly recommend upgrading it to get some of these nicer usability features). Let’s do what it says:
 
 	$ git checkout -- benchmarks.rb
 	$ git status
@@ -698,17 +702,18 @@ benchmarks.rb に加えた変更が、実は不要なものだったとしたら
 	#       modified:   README.txt
 	#
 
-変更が取り消されたことがわかります。また、これが危険なコマンドであることも知っておかねばなりません。あなたがファイルに加えた変更はすべて消えてしまいます。変更した内容を、別のファイルで上書きしたのと同じことになります。そのファイルが不要であることが確実にわかっているとき以外は、このコマンドを使わないようにしましょう。単にファイルを片付けたいだけなら、次の章で説明する stash やブランチを調べてみましょう。一般にこちらのほうがおすすめの方法です。
+You can see that the changes have been reverted. You should also realize that this is a dangerous command: any changes you made to that file are gone — you just copied another file over it. Don’t ever use this command unless you absolutely know that you don’t want the file. If you just need to get it out of the way, we’ll go over stashing and branching in the next chapter; these are generally better ways to go. 
 
-Git にコミットした内容のすべては、ほぼ常に取り消しが可能であることを覚えておきましょう。削除したブランチへのコミットや `--amend` コミットで上書きされた元のコミットでさえも復旧することができます (データの復元方法については第 9 章を参照ください)。しかし、まだコミットしていない内容を失ってしまうと、それは二度と取り戻せません。
+Remember, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an `--amend` commit can be recovered (see Chapter 9 for data recovery). However, anything you lose that was never committed is likely never to be seen again.
 
-## リモートでの作業 ##
+## Working with Remotes ##
 
-Git を使ったプロジェクトで共同作業を進めていくには、リモートリポジトリの扱い方を知る必要があります。リモートリポジトリとは、インターネット上あるいはその他ネットワーク上のどこかに存在するプロジェクトのことです。複数のリモートリポジトリを持つこともできますし、それぞれを読み込み専用にしたり読み書き可能にしたりすることもできます。他のメンバーと共同作業を進めていくにあたっては、これらのリモートリポジトリを管理し、必要に応じてデータのプル・プッシュを行うことで作業を分担していくことになります。リモートリポジトリの管理には「リモートリポジトリの追加」「不要になったリモートリポジトリの削除」「リモートブランチの管理や追跡対象/追跡対象外の設定」などさまざまな作業が含まれます。このセクションでは、これらの作業について説明します。
+To be able to collaborate on any Git project, you need to know how to manage your remote repositories. Remote repositories are versions of your project that are hosted on the Internet or network somewhere. You can have several of them, each of which generally is either read-only or read/write for you. Collaborating with others involves managing these remote repositories and pushing and pulling data to and from them when you need to share work.
+Managing remote repositories includes knowing how to add remote repositories, remove remotes that are no longer valid, manage various remote branches and define them as being tracked or not, and more. In this section, we’ll cover these remote-management skills.
 
-### リモートの表示 ###
+### Showing Your Remotes ###
 
-今までにどのリモートサーバーを設定したのかを知るには git remote コマンドを実行します。これは、今までに設定したリモートハンドルの名前を一覧表示します。リポジトリをクローンしたのなら、少なくとも origin という名前が見えるはずです。これは、クローン元のサーバーに対して Git がデフォルトでつける名前です。
+To see which remote servers you have configured, you can run the git remote command. It lists the shortnames of each remote handle you’ve specified. If you’ve cloned your repository, you should at least see origin — that is the default name Git gives to the server you cloned from:
 
 	$ git clone git://github.com/schacon/ticgit.git
 	Initialized empty Git repository in /private/tmp/ticgit/.git/
@@ -721,12 +726,12 @@ Git を使ったプロジェクトで共同作業を進めていくには、リ�
 	$ git remote 
 	origin
 
-`-v` を指定すると、その名前に対応する URL を表示します。
+You can also specify `-v`, which shows you the URL that Git has stored for the shortname to be expanded to:
 
 	$ git remote -v
 	origin	git://github.com/schacon/ticgit.git
 
-複数のリモートを設定している場合は、このコマンドはそれをすべて表示します。たとえば、私の Grit リポジトリの場合はこのようになっています。
+If you have more than one remote, the command lists them all. For example, my Grit repository looks something like this.
 
 	$ cd grit
 	$ git remote -v
@@ -736,11 +741,11 @@ Git を使ったプロジェクトで共同作業を進めていくには、リ�
 	koke      git://github.com/koke/grit.git
 	origin    git@github.com:mojombo/grit.git
 
-つまり、これらのユーザーによる変更を用意にプルして取り込めるということです。ここで、origin リモートだけが SSH の URL であることに注目しましょう。私がプッシュできるのは origin だけだということになります (なぜそうなるのかについては第 4 章で説明します)。
+This means we can pull contributions from any of these users pretty easily. But notice that only the origin remote is an SSH URL, so it’s the only one I can push to (we’ll cover why this is in Chapter 4).
 
-### リモートリポジトリの追加 ###
+### Adding Remote Repositories ###
 
-これまでのセクションでも何度かリモートリポジトリの追加を行ってきましたが、ここで改めてその方法をきちんと説明しておきます。新しいリモート Git リポジトリにアクセスしやすいような名前をつけて追加するには、`git remote add [shortname] [url]` を実行します。
+I’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run `git remote add [shortname] [url]`:
 
 	$ git remote
 	origin
@@ -749,7 +754,7 @@ Git を使ったプロジェクトで共同作業を進めていくには、リ�
 	origin	git://github.com/schacon/ticgit.git
 	pb	git://github.com/paulboone/ticgit.git
 
-これで、コマンドラインに URL を全部打ち込むかわりに pb という文字列を指定するだけでよくなりました。たとえば、Paul が持つ情報の中で自分のリポジトリにまだ存在しないものをすべて取得するには、git fetch pb を実行すればよいのです。
+Now you can use the string pb on the command line in lieu of the whole URL. For example, if you want to fetch all the information that Paul has but that you don’t yet have in your repository, you can run git fetch pb:
 
 	$ git fetch pb
 	remote: Counting objects: 58, done.
@@ -760,31 +765,31 @@ Git を使ったプロジェクトで共同作業を進めていくには、リ�
 	 * [new branch]      master     -> pb/master
 	 * [new branch]      ticgit     -> pb/ticgit
 
-Paul の master ブランチは、ローカルでは `pb/master` としてアクセスできます。これを自分のブランチにマージしたり、ローカルブランチとしてチェックアウトして中身を調べたりといったことが可能となります。
+Paul’s master branch is accessible locally as `pb/master` — you can merge it into one of your branches, or you can check out a local branch at that point if you want to inspect it.
 
-### リモートからのフェッチ、そしてプル ###
+### Fetching and Pulling from Your Remotes ###
 
-ごらんいただいたように、データをリモートリポジトリから取得するには次のコマンドを実行します。
+As you just saw, to get data from your remote projects, you can run:
 
 	$ git fetch [remote-name]
 
-このコマンドは、リモートプロジェクトのすべてのデータの中からまだあなたが持っていないものを引き出します。実行後は、リモートにあるすべてのブランチを参照できるようになり、いつでもそれをマージしたり中身を調べたりすることが可能となります (ブランチとは何なのか、どのように使うのかについては、第 3 章でより詳しく説明します)。
+The command goes out to that remote project and pulls down all the data from that remote project that you don’t have yet. After you do this, you should have references to all the branches from that remote, which you can merge in or inspect at any time. (We’ll go over what branches are and how to use them in much more detail in Chapter 3.)
 
-リポジトリをクローンしたときには、リモートリポジトリに対して自動的に origin という名前がつけられます。つまり、`git fetch origin` とすると、クローンしたとき (あるいは直近でフェッチを実行したとき) 以降にサーバーにプッシュされた変更をすべて取得することができます。ひとつ注意すべき点は、fetch コマンドはデータをローカルリポジトリに引き出すだけだということです。ローカルの環境にマージされたり作業中の内容を書き換えたりすることはありません。したがって、必要に応じて自分でマージをする必要があります。
+If you clone a repository, the command automatically adds that remote repository under the name origin. So, `git fetch origin` fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.
 
-リモートブランチを追跡するためのブランチを作成すれば (次のセクションと第 3 章で詳しく説明します)、`git pull` コマンドを使うことができます。これは、自動的にフェッチを行い、リモートブランチの内容を現在のブランチにマージします。おそらくこのほうが、よりお手軽で使いやすいことでしょう。またデフォルトで、`git clone` コマンドはローカルの master ブランチが (取得元サーバー上の) リモートの master ブランチを追跡するよう自動設定します (リモートに master ブランチが存在することを前提としています)。`git pull` を実行すると、通常は最初にクローンしたサーバーからデータを取得し、現在作業中のコードへのマージを試みます。
+If you have a branch set up to track a remote branch (see the next section and Chapter 3 for more information), you can use the `git pull` command to automatically fetch and then merge a remote branch into your current branch. This may be an easier or more comfortable workflow for you; and by default, the `git clone` command automatically sets up your local master branch to track the remote master branch on the server you cloned from (assuming the remote has a master branch). Running `git pull` generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on.
 
-### リモートへのプッシュ ###
+### Pushing to Your Remotes ###
 
-あなたのプロジェクトがみんなと共有できる状態に達したら、それを上流にプッシュしなければなりません。そのためのコマンドが `git push [remote-name] [branch-name]` です。master ブランチの内容を `origin` サーバー (何度も言いますが、クローンした地点でこのブランチ名とサーバー名が自動設定されます) にプッシュしたい場合は、このように実行します。
+When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: `git push [remote-name] [branch-name]`. If you want to push your master branch to your `origin` server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:
 
 	$ git push origin master
 
-このコマンドが動作するのは、自分が書き込みアクセス権を持つサーバーからクローンし、かつその後だれもそのサーバーにプッシュしていない場合のみです。あなた以外の誰かが同じサーバーからクローンし、誰かが上流にプッシュした後で自分がプッシュしようとすると、それは拒否されます。拒否された場合は、まず誰かがプッシュした作業内容を引き出してきてローカル環境で調整してからでないとプッシュできません。リモートサーバーへのプッシュ方法の詳細については第 3 章を参照ください。
+This command works only if you cloned from a server to which you have write access and if nobody has pushed in the meantime. If you and someone else clone at the same time and they push upstream and then you push upstream, your push will rightly be rejected. You’ll have to pull down their work first and incorporate it into yours before you’ll be allowed to push. See Chapter 3 for more detailed information on how to push to remote servers.
 
-### リモートの調査 ###
+### Inspecting a Remote ###
 
-特定のリモートの情報をより詳しく知りたい場合は `git remote show [remote-name]` コマンドを実行します。たとえば `origin` のように名前を指定すると、このような結果が得られます。
+If you want to see more information about a particular remote, you can use the `git remote show [remote-name]` command. If you run this command with a particular shortname, such as `origin`, you get something like this:
 
 	$ git remote show origin
 	* remote origin
@@ -795,9 +800,9 @@ Paul の master ブランチは、ローカルでは `pb/master` としてアク
 	    master
 	    ticgit
 
-リモートリポジトリの URL と、追跡対象になっているブランチの情報が表示されます。また、ご丁寧にも「master ブランチ上で `git pull` すると、リモートの情報を取得した後で自動的にリモートの master ブランチの内容をマージする」という説明があります。また、引き出してきたすべてのリモート情報も一覧表示されます。
+It lists the URL for the remote repository as well as the tracking branch information. The command helpfully tells you that if you’re on the master branch and you run `git pull`, it will automatically merge in the master branch on the remote after it fetches all the remote references. It also lists all the remote references it has pulled down.
 
-Git をもっと使い込むようになると、`git remote show` で得られる情報はどんどん増えていきます。たとえば次のような結果を得ることになるかもしれません。
+That is a simple example you’re likely to encounter. When you’re using Git more heavily, however, you may see much more information from `git remote show`:
 
 	$ git remote show origin
 	* remote origin
@@ -821,40 +826,40 @@ Git をもっと使い込むようになると、`git remote show` で得られ�
 	  Local branch pushed with 'git push'
 	    master:master
 
-このコマンドは、特定のブランチ上で `git push` したときにどのブランチに自動プッシュされるのかを表示しています。また、サーバー上のリモートブランチのうちまだ手元に持っていないもの、手元にあるブランチのうちすでにサーバー上では削除されているもの、`git pull` を実行したときに自動的にマージされるブランチなども表示されています。
+This command shows which branch is automatically pushed when you run `git push` on certain branches. It also shows you which remote branches on the server you don’t yet have, which remote branches you have that have been removed from the server, and multiple branches that are automatically merged when you run `git pull`.
 
-### リモートの削除・リネーム ###
+### Removing and Renaming Remotes ###
 
-リモートを参照する名前を変更したい場合、新しいバージョンの Git では `git remote rename` を使うことができます。たとえば `pb` を `paul` に変更したい場合は `git remote rename` をこのように実行します。
+If you want to rename a reference, in newer versions of Git you can run `git remote rename` to change a remote’s shortname. For instance, if you want to rename `pb` to `paul`, you can do so with `git remote rename`:
 
 	$ git remote rename pb paul
 	$ git remote
 	origin
 	paul
 
-これは、リモートブランチ名も変更することを付け加えておきましょう。これまで `pb/master` として参照していたブランチは、これからは `paul/master` となります。
+It’s worth mentioning that this changes your remote branch names, too. What used to be referenced at `pb/master` is now at `paul/master`.
 
-何らかの理由でリモートの参照を削除したい場合 (サーバーを移動したとか特定のミラーを使わなくなったとか、あるいはプロジェクトからメンバーが抜けたとかいった場合) は `git remote rm` を使用します。
+If you want to remove a reference for some reason — you’ve moved the server or are no longer using a particular mirror, or perhaps a contributor isn’t contributing anymore — you can use `git remote rm`:
 
 	$ git remote rm paul
 	$ git remote
 	origin
 
-## タグ ##
+## Tagging ##
 
-多くの VCS と同様に Git にもタグ機能があり、歴史上の重要なポイントに印をつけることができます。一般に、この機能は (バージョン 1.0 などの) リリースポイントとして使われています。このセクションでは、既存のタグ一覧の取得や新しいタグの作成、さまざまなタグの形式などについて扱います。
+Like most VCSs, Git has the ability to tag specific points in history as being important. Generally, people use this functionality to mark release points (v1.0, and so on). In this section, you’ll learn how to list the available tags, how to create new tags, and what the different types of tags are.
 
-### タグの一覧表示 ###
+### Listing Your Tags ###
 
-Git で既存のタグの一覧を表示するのは簡単で、単に `git tag` と打ち込むだけです。
+Listing the available tags in Git is straightforward. Just type `git tag`:
 
 	$ git tag
 	v0.1
 	v1.3
 
-このコマンドは、タグをアルファベット順に表示します。この表示順に深い意味はありません。
+This command lists the tags in alphabetical order; the order in which they appear has no real importance.
 
-パターンを指定してタグを検索することもできます。Git のソースリポジトリを例にとると、240 以上のタグが登録されています。その中で 1.4.2 系のタグのみを見たい場合は、このようにします。
+You can also search for tags with a particular pattern. The Git source repo, for instance, contains more than 240 tags. If you’re only interested in looking at the 1.4.2 series, you can run this:
 
 	$ git tag -l 'v1.4.2.*'
 	v1.4.2.1
@@ -862,13 +867,13 @@ Git で既存のタグの一覧を表示するのは簡単で、単に `git tag`
 	v1.4.2.3
 	v1.4.2.4
 
-### タグの作成 ###
+### Creating Tags ###
 
-Git のタグには、軽量 (lightweight) 版と注釈付き (annotated) 版の二通りがあります。軽量版のタグは、変更のないブランチのようなものです。特定のコミットに対する単なるポインタでしかありません。しかし注釈付きのタグは、Git データベース内に完全なオブジェクトとして格納されます。チェックサムが付き、タグを作成した人の名前・メールアドレス・作成日時・タグ付け時のメッセージなども含まれます。また、署名をつけて GNU Privacy Guard (GPG) で検証することもできます。一般的には、これらの情報を含められる注釈付きのタグを使うことをおすすめします。しかし、一時的に使うだけのタグである場合や何らかの理由で情報を含めたくない場合は、軽量版のタグも使用可能です。
+Git uses two main types of tags: lightweight and annotated. A lightweight tag is very much like a branch that doesn’t change — it’s just a pointer to a specific commit. Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, e-mail, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information; but if you want a temporary tag or for some reason don’t want to keep the other information, lightweight tags are available too.
 
-### 注釈付きのタグ ###
+### Annotated Tags ###
 
-Git では、注釈付きのタグをシンプルな方法で作成できます。もっとも簡単な方法は、`tag` コマンドの実行時に `-a` を指定することです。
+Creating an annotated tag in Git is simple. The easiest way is to specify `-a` when you run the `tag` command:
 
 	$ git tag -a v1.4 -m 'my version 1.4'
 	$ git tag
@@ -876,9 +881,9 @@ Git では、注釈付きのタグをシンプルな方法で作成できます�
 	v1.3
 	v1.4
 
-`-m` で、タグ付け時のメッセージを指定します。これはタグとともに格納されます。注釈付きタグの作成時にメッセージを省略すると、エディタが立ち上がるのでそこでメッセージを記入します。
+The `-m` specifies a tagging message, which is stored with the tag. If you don’t specify a message for an annotated tag, Git launches your editor so you can type it in.
 
-タグのデータとそれに関連づけられたコミットを見るには `git show` コマンドを使用します。
+You can see the tag data along with the commit that was tagged by using the `git show` command:
 
 	$ git show v1.4
 	tag v1.4
@@ -893,18 +898,18 @@ Git では、注釈付きのタグをシンプルな方法で作成できます�
 
 	    Merge branch 'experiment'
 
-タグ付けした人の情報とその日時、そして注釈メッセージを表示したあとにコミットの情報が続きます。
+That shows the tagger information, the date the commit was tagged, and the annotation message before showing the commit information.
 
-### 署名付きのタグ ###
+### Signed Tags ###
 
-GPG 秘密鍵を持っていれば、タグに署名をすることができます。その場合は `-a` の場合に `-s` を指定すればいいだけです。
+You can also sign your tags with GPG, assuming you have a private key. All you have to do is use `-s` instead of `-a`:
 
 	$ git tag -s v1.5 -m 'my signed 1.5 tag'
 	You need a passphrase to unlock the secret key for
 	user: "Scott Chacon <schacon@gee-mail.com>"
 	1024-bit DSA key, ID F721C45A, created 2009-02-09
 
-このタグに対して `git show` を実行すると、あなたの GPG 署名が表示されます。
+If you run `git show` on that tag, you can see your GPG signature attached to it:
 
 	$ git show v1.5
 	tag v1.5
@@ -926,11 +931,11 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 
 	    Merge branch 'experiment'
 
-タグの署名を検証する方法については後ほど説明します。
+A bit later, you’ll learn how to verify signed tags.
 
-### 軽量版のタグ ###
+### Lightweight Tags ###
 
-コミットにタグをつけるもうひとつの方法が、軽量版のタグです。これは基本的に、コミットのチェックサムだけを保持するもので、それ以外の情報は含まれません。軽量版のタグを作成するには `-a`、`-s` あるいは `-m` といったオプションをつけずにコマンドを実行します。
+Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept. To create a lightweight tag, don’t supply the `-a`, `-s`, or `-m` option:
 
 	$ git tag v1.4-lw
 	$ git tag
@@ -940,7 +945,7 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	v1.4-lw
 	v1.5
 
-このタグに対して `git show` を実行しても、先ほどのような追加情報は表示されません。単に、対応するコミットの情報を表示するだけです。
+This time, if you run `git show` on the tag, you don’t see the extra tag information. The command just shows the commit:
 
 	$ git show v1.4-lw
 	commit 15027957951b64cf874c3557a0f3547bd83b3ff6
@@ -950,9 +955,9 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 
 	    Merge branch 'experiment'
 
-### タグの検証 ###
+### Verifying Tags ###
 
-署名付きのタグを検証するには `git tag -v [tag-name]` を使用します。このコマンドは、GPG を使って署名を検証します。これを正しく実行するには、署名者の公開鍵があなたの鍵リングに含まれている必要があります。
+To verify a signed tag, you use `git tag -v [tag-name]`. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:
 
 	$ git tag -v v1.4.2.1
 	object 883653babd8ee7ea23e6a5c392bb739348b1eb61
@@ -968,15 +973,15 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	gpg:                 aka "[jpeg image of size 1513]"
 	Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A
 
-署名者の公開鍵を持っていない場合は、このようなメッセージが表示されます。
+If you don’t have the signer’s public key, you get something like this instead:
 
 	gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
 	gpg: Can't check signature: public key not found
 	error: could not verify the tag 'v1.4.2.1'
 
-### 後からのタグ付け ###
+### Tagging Later ###
 
-過去にさかのぼってコミットにタグ付けすることもできます。仮にあなたのコミットの歴史が次のようなものであったとしましょう。
+You can also tag commits after you’ve moved past them. Suppose your commit history looks like this:
 
 	$ git log --pretty=oneline
 	15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch 'experiment'
@@ -990,11 +995,11 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
 	8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme
 
-今になって、このプロジェクトに v1.2 のタグをつけるのを忘れていたことに気づきました。本来なら "updated rakefile" のコミットにつけておくべきだったものです。しかし今からでも遅くありません。特定のコミットにタグをつけるには、そのコミットのチェックサム (あるいはその一部) をコマンドの最後に指定します。
+Now, suppose you forgot to tag the project at v1.2, which was at the "updated rakefile" commit. You can add it after the fact. To tag that commit, you specify the commit checksum (or part of it) at the end of the command:
 
 	$ git tag -a v1.2 9fceb02
 
-これで、そのコミットにタグがつけられたことが確認できます。
+You can see that you’ve tagged the commit:
 
 	$ git tag 
 	v0.1
@@ -1017,9 +1022,9 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	    updated rakefile
 	...
 
-### タグの共有 ###
+### Sharing Tags ###
 
-デフォルトでは、`git push` コマンドはタグ情報をリモートに送りません。タグを作ったら、タグをリモートサーバーにプッシュするよう明示する必要があります。その方法は、リモートブランチを共有するときと煮ています。`git push origin [tagname]` を実行するのです。
+By default, the `git push` command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them.  This process is just like sharing remote branches – you can run `git push origin [tagname]`.
 
 	$ git push origin v1.5
 	Counting objects: 50, done.
@@ -1029,7 +1034,7 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	To git@github.com:schacon/simplegit.git
 	* [new tag]         v1.5 -> v1.5
 
-多くのタグを一度にプッシュしたい場合は、`git push` コマンドのオプション `--tags` を使用します。これは、手元にあるタグのうちまだリモートサーバーに存在しないものをすべて転送します。
+If you have a lot of tags that you want to push up at once, you can also use the `--tags` option to the `git push` command.  This will transfer all of your tags to the remote server that are not already there.
 
 	$ git push origin --tags
 	Counting objects: 50, done.
@@ -1043,61 +1048,61 @@ GPG 秘密鍵を持っていれば、タグに署名をすることができま�
 	 * [new tag]         v1.4-lw -> v1.4-lw
 	 * [new tag]         v1.5 -> v1.5
 
-これで、誰か他の人がリポジトリのクローンやプルを行ったときにすべてのタグを取得できるようになりました。
+Now, when someone else clones or pulls from your repository, they will get all your tags as well.
 
-## ヒントと裏技 ##
+## Tips and Tricks ##
 
-Git の基本を説明した本章を終える前に、ほんの少しだけヒントと裏技を披露しましょう。これを知っておけば、Git をよりシンプルかつお手軽に使えるようになり、Git になじみやすくなることでしょう。ほとんどの人はこれらのことを知らずに Git を使っています。別にどうでもいいことですし本書の後半でこれらの技を使うわけでもないのですが、その方法ぐらいは知っておいたほうがよいでしょう。
+Before we finish this chapter on basic Git, a few little tips and tricks may make your Git experience a bit simpler, easier, or more familiar. Many people use Git without using any of these tips, and we won’t refer to them or assume you’ve used them later in the book; but you should probably know how to do them.
 
-### 自動補完 ###
+### Auto-Completion ###
 
-Bash シェルを使っているのなら、Git にはよくできた自動補完スクリプトが付属しています。Git のソースコードをダウンロードし、`contrib/completion` ディレクトリを見てみましょう。`git-completion.bash` というファイルがあるはずです。このファイルをホームディレクトリにコピーし、それを `.bashrc` ファイルに追加しましょう。
+If you use the Bash shell, Git comes with a nice auto-completion script you can enable. Download the Git source code, and look in the `contrib/completion` directory; there should be a file called `git-completion.bash`. Copy this file to your home directory, and add this to your `.bashrc` file:
 
 	source ~/.git-completion.bash
 
-すべてのユーザーに対して Git 用の Bash シェル補完を使わせたい場合は、Mac なら `/opt/local/etc/bash_completion.d` ディレクトリ、Linux 系なら `/etc/bash_completion.d/` ディレクトリにこのスクリプトをコピーします。Bash は、これらのディレクトリにあるスクリプトを自動的に読み込んでシェル補完を行います。
+If you want to set up Git to automatically have Bash shell completion for all users, copy this script to the `/opt/local/etc/bash_completion.d` directory on Mac systems or to the `/etc/bash_completion.d/` directory on Linux systems. This is a directory of scripts that Bash will automatically load to provide shell completions.
 
-Windows で Git Bash を使用している人は、msysGit で Windows 版 Git をインストールした際にデフォルトでこの機能が有効になっています。
+If you’re using Windows with Git Bash, which is the default when installing Git on Windows with msysGit, auto-completion should be preconfigured.
 
-Git コマンドの入力中にタブキーを押せば、補完候補があらわれて選択できるようになります。
+Press the Tab key when you’re writing a Git command, and it should return a set of suggestions for you to pick from:
 
 	$ git co<tab><tab>
 	commit config
 
-ここでは、git co と打ち込んだ後にタブキーを二度押してみました。すると commit と config という候補があらわれました。さらに `m<tab>` と入力すると、自動的に `git commit` と補完されます。
+In this case, typing git co and then pressing the Tab key twice suggests commit and config. Adding `m<tab>` completes `git commit` automatically.
 	
-これは、コマンドのオプションに対しても機能します。おそらくこっちのほうがより有用でしょう。たとえば、`git log` を実行しようとしてそのオプションを思い出せなかった場合、タブキーを押せばどんなオプションを使えるのかがわかります。
+This also works with options, which is probably more useful. For instance, if you’re running a `git log` command and can’t remember one of the options, you can start typing it and press Tab to see what matches:
 
 	$ git log --s<tab>
 	--shortstat  --since=  --src-prefix=  --stat   --summary
 
-この裏技を使えば、ドキュメントを調べる時間を節約できることでしょう。
+That’s a pretty nice trick and may save you some time and documentation reading.
 
-### Git エイリアス ###
+### Git Aliases ###
 
-Git は、コマンドの一部だけが入力された状態でそのコマンドを推測することはありません。Git の各コマンドをいちいち全部入力するのがいやなら、`git config` でコマンドのエイリアスを設定することができます。たとえばこんなふうに設定すると便利かもしれません。
+Git doesn’t infer your command if you type it in partially. If you don’t want to type the entire text of each of the Git commands, you can easily set up an alias for each command using `git config`. Here are a couple of examples you may want to set up:
 
 	$ git config --global alias.co checkout
 	$ git config --global alias.br branch
 	$ git config --global alias.ci commit
 	$ git config --global alias.st status
 
-こうすると、たとえば `git commit` と同じことが単に `git ci` と入力するだけでできるようになります。Git を使い続けるにつれて、よく使うコマンドがさらに増えてくることでしょう。そんな場合は、きにせずどんどん新しいエイリアスを作りましょう。
+This means that, for example, instead of typing `git commit`, you just need to type `git ci`. As you go on using Git, you’ll probably use other commands frequently as well; in this case, don’t hesitate to create new aliases.
 
-このテクニックは、「こんなことできたらいいな」というコマンドを作る際にも便利です。たとえば、ステージを解除するときにどうしたらいいかいつも迷うという人なら、こんなふうに自分で unstage エイリアスを追加してしまえばいいのです。
+This technique can also be very useful in creating commands that you think should exist. For example, to correct the usability problem you encountered with unstaging a file, you can add your own unstage alias to Git:
 
 	$ git config --global alias.unstage 'reset HEAD --'
 
-こうすれば、次のふたつのコマンドが同じ意味となります。
+This makes the following two commands equivalent:
 
 	$ git unstage fileA
 	$ git reset HEAD fileA
 
-少しはわかりやすくなりましたね。あるいは、こんなふうに `last` コマンドを追加することもできます。
+This seems a bit clearer. It’s also common to add a `last` command, like this:
 
 	$ git config --global alias.last 'log -1 HEAD'
 
-こうすれば、直近のコミットの情報を見ることができます。
+This way, you can see the last commit easily:
 	
 	$ git last
 	commit 66938dae3329c7aebe598c2246a8e6af90d04646
@@ -1108,10 +1113,10 @@ Git は、コマンドの一部だけが入力された状態でそのコマン�
 
 	    Signed-off-by: Scott Chacon <schacon@example.com>
 
-Git が単に新しいコマンドをエイリアスで置き換えていることがわかります。しかし、時には Git のサブコマンドではなく外部コマンドを実行したくなることもあるでしょう。そんな場合は、コマンドの先頭に `!` をつけます。これは、Git リポジトリ上で動作する自作のツールを書くときに便利です。例として、`git visual` で `gitk` が起動するようにしてみましょう。
+As you can tell, Git simply replaces the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a `!` character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing `git visual` to run `gitk`:
 
 	$ git config --global alias.visual "!gitk"
 
-## まとめ ##
+## Summary ##
 
-これで、ローカルでの Git の基本的な操作がこなせるようになりました。リポジトリの作成やクローン、リポジトリへの変更・ステージ・コミット、リポジトリのこれまでの変更履歴の閲覧などです。次は、Git の強力な機能であるブランチモデルについて説明しましょう。
+At this point, you can do all the basic local Git operations — creating or cloning a repository, making changes, staging and committing those changes, and viewing the history of all the changes the repository has been through. Next, we’ll cover Git’s killer feature: its branching model.

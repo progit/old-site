@@ -71,7 +71,7 @@ If you have a commit-message policy in place, then putting a template for that p
 
 #### core.pager ####
 
-The core.pager setting determines what pager is used when Git pages output such as `log` and `diff`. You can set it to `more` or to your favorite pager (by default, it’s `less`), or you can turn it off by setting it to a blank string:
+The core.pager setting determines what pager is used when Git pages output such as `log` and `diff`. You can set it to more or to your favorite pager (by default, it’s `less`), or you can turn it off by setting it to a blank string:
 
 	$ git config --global core.pager ''
 
@@ -190,7 +190,7 @@ After all this is set, if you run diff commands such as this:
 Instead of getting the diff output on the command line, Git fires up P4Merge, which looks something like Figure 7-1.
 
 Insert 18333fig0701.png 
-Figure 7-1. P4Merge.
+Figure 7-1. P4Merge
 
 If you try to merge two branches and subsequently have merge conflicts, you can run the command `git mergetool`; it starts P4Merge to let you resolve the conflicts through that GUI tool.
 
@@ -285,7 +285,7 @@ This denies branch and tag deletion over a push across the board — no user can
 
 ## Git Attributes ##
 
-Some of these settings can also be specified for a path, so that Git applies those settings only for a subdirectory or subset of files. These path-specific settings are called Git attributes and are set either in a `.gitattributes` file in one of your directories (normally the root of your project) or in the `.git/info/attributes` file if you don’t want the attributes file committed with your project.
+Some of these settings can also be specified for a path, so that Git applies those settings only for a subdirectory or subset of files. These path-specific settings are called Git attributes and are set either in a `.gitattribute` file in one of your directories (normally the root of your project) or in the `.git/info/attributes` file if you don’t want the attributes file committed with your project.
 
 Using attributes, you can do things like specify separate merge strategies for individual files or directories in your project, tell Git how to diff non-text files, or have Git filter content before you check it into or out of Git. In this section, you’ll learn about some of the attributes you can set on your paths in your Git project and see a few examples of using this feature in practice.
 

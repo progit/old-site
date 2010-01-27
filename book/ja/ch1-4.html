@@ -1,69 +1,69 @@
 ---
 layout: translation
-title: Pro Git 1.4 使い始める Gitのインストール
+title: Pro Git 1.4 Memulai Git Menginstall Git
 ---
-<h2 id='git'>Gitのインストール</h2>
+<h2 id='menginstall_git'>Menginstall Git</h2>
 
-<p>少しGitを使う事に入りましょう。何よりも最初に、Gitをインストールしなければなりません。幾つもの経路で入手することができ、主要な二つの方法のうちの一つはソースからインストールすることで、もう一つはプラットフォームに応じて存在するパッケージをインストールすることです。</p>
+<p>Mari memulai menggunakan Git. Pertama, tentu saja anda harus menginstallnya terlebih dahulu. Anda dapat melakukan melalui berbagai cara; dua cara paling poluler adalah menginstallnya dari kode sumbernya atau menginstalkan paket yang telah disediakan untuk platform anda.</p>
 
-<h3 id='id10'>ソースからのインストール</h3>
+<h3 id='menginstall_dari_kode_sumber'>Menginstall Dari Kode Sumber</h3>
 
-<p>もし可能であれば、もっとも最新のバージョンを入手できるので、一般的にソースからGitをインストールするのが便利です。Gitのそれぞれのバージョンは、実用的なユーザー・インターフェイスの向上が含まれており、もしソースからソフトウェアをコンパイルすることに違和感を感じないのであれば、最新バージョンを入手することは、大抵は最も良い経路になります。また、多くのLinuxディストリビューションがとても古いパッケージを収録している事は良くあることであり、最新のディストリビューションを使っているか、バックポート（訳者注：最新のパッケージを古いディストリビューションで使えるようにする事）をしていない限りは、ソースからのインストールがベストな選択になるでしょう。</p>
+<p>Jika anda dapat melakukannya, akan sangat berguna untuk dapat menginstallnya dari kode sumber, karena anda akan mendapatkan versi terbaru dari Git. Setiap versi dari Git cenderung akan menampilkan kemajuan pada sisi antarmuka pengguna, jadi menggunakan versi terbaru seringkali menjadi jalan terbaik jika anda terbiasa melakukan kompilasi perangkat lunak dari kode sumbernya. Dan juga menjadi masalah bahwa banyak distribusi Linux yang menyertakan versi Git yang sangat lama; kecuali anda mempergunakan distribusi Linux paling up-to-date atau menggunakan backport, menginstall dari kode sumbernya mungkin menjadi solusi terbaik.</p>
 
-<p>Gitをインストールするためには、Gitが依存するライブラリーである、curl、zlib、openssl、expat、libiconvを入手する必要があります。例えば、もし（Fedoraなどで）yumか（Debianベースのシステムなどで）apt-getが入ったシステムを使っているのであれば、これらのコマンドの一つを依存対象の全てをインストールするのに使う事ができます：</p>
+<p>Untuk menginstall Git, anda membutuhkan beberapa library yang dibutuhkan oleh Git: curl, zlib, openssl, expat, dan libiconv. Sebagai contoh, jika anda berada pada sistem yang menggunakan yum (seperti Fedora) atau apt-get (seperti sistem berbasis Debian), anda dapat menggunakan salah satu dari perintah berikut untuk menginstall semua library yang dibutuhkan oleh Git:</p>
 
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
 
-$ apt-get install curl-devel expat-devel gettext-devel \
-  openssl-devel zlib-devel</code></pre>
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev</code></pre>
 
-<p>全ての必要な依存対象を持っているのであれば、先に進んでGitのウェブサイトから最新版のスナップショットを持ってくる事ができます：</p>
+<p>Setelah anda memperoleh semua library yang dibutuhkan, anda kemudian dapat melanjutkan dengan mengunduh Git dari situsnya:</p>
 
 <pre><code>http://git-scm.com/download</code></pre>
 
-<p>そして、コンパイルしてインストールします：</p>
+<p>Kemudian, kompilasi dan install:</p>
 
 <pre><code>$ tar -zxf git-1.6.0.5.tar.gz
 $ cd git-1.6.0.5
 $ make prefix=/usr/local all
 $ sudo make prefix=/usr/local install</code></pre>
 
-<p>また、Gitのインストール後、アップデートでGitを通して最新版のGitを得ることができます。</p>
+<p>Setelah semua ini selesai, anda juga dapat memperoleh Git terbaru melalui Git sendiri:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
 
-<h3 id='linux'>Linuxにインストール</h3>
+<h3 id='menginstall_git_di_linux'>Menginstall Git di Linux</h3>
 
-<p>バイナリのインストーラーを通じてLinux上にGitをインストールしたいのであれば、大抵はディストリビューションに付属する基本的なパッケージ・マネジメント・ツールを使って、それを行なう事ができます。もしFedoraを使っているのであれば、yumを使う事が出来ます：</p>
+<p>Jika anda ingin menginstall Git di Linux menggunakan installer biner, anda bisa melakukannya melalui perkakas manajemen paket yang anda pada distribusi Linux yang anda gunakan. Jika anda menggunakan Fedora, anda dapat menggunakan yum:</p>
 
 <pre><code>$ yum install git-core</code></pre>
 
-<p>もしくは、もしUbuntuのようなDebianベースのディストリュビューションを使っているのであれば、apt-getをやってみましょう：</p>
+<p>Atau jika anda menggunakan distro berbasis Debian seperti Ubuntu, coba gunakan apt-get:</p>
 
 <pre><code>$ apt-get install git-core</code></pre>
 
-<h3 id='mac'>Macにインストール</h3>
+<h3 id='menginstall_git_pada_mac'>Menginstall Git pada Mac</h3>
 
-<p>MacにGitをインストールするには2つの簡単な方法があります。もっとも簡単な方法は、グラフィカルなGitインストーラーを使うことで、このGitインストーラーはGoogle Codeのページ（図1-7参照）からダウンロードすることができます：</p>
+<p>Terdapat dua cara mudah untuk menginstal Git pada sebuah komputer Mac. Cara termudah adalah menggunakan installer Git berbasis GUI, yang dapat anda peroleh dari halaman Google Code (lihat Gambar 1-7):</p>
 
 <pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
-<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Git OS X installer</p>
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Gambar 1-7. Git OS X installer.</p>
 
-<p>もう一つの主要な方法は、MacPorts (<code>http://www.macports.org</code>) からGitをインストールすることです。MacPortsをインストールした状態であれば、Gitを以下のようにインストールできます。</p>
+<p>Cara lainnya adalah dengan menggunakan MacPorts (<code>http://www.macports.org</code>). Jika anda telah menginstall MacPorts, maka anda dapat menginstall Git melalui cara berikut</p>
 
 <pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
 
-<p>全てのvariantsを追加する必要はありませんが、SubversionのリポジトリでGitを使う必要がまだあるなら、恐らく+svnを含めないといけないでしょう（第8章参照）。</p>
+<p>Anda tidak harus menambahkan extras-nya, tetapi anda mungkin membutuhkan +svn jika anda harus menggunakan Git pada repositori Subversion (lihat Bab 8).</p>
 
-<h3 id='windows'>Windowsにインストール</h3>
+<h3 id='menginstall_pada_sistem_operasi_windows'>Menginstall pada Sistem Operasi Windows</h3>
 
-<p>WindowsにGitをインストールするのはとても簡単です。msysGitプロジェクトは、より簡単なインストール手続きの一つを備えています。Google Codeのページから、単純にインストーラーのexeファイルをダウンロードをし、実行してください：</p>
+<p>Menginstall Git pada Windows sangatlah mudah. Cara termudah dapat anda peroleh dengan menggunakan msysGit. Cukup download file installernya dari halaman Google Code, lalu eksekusi.</p>
 
 <pre><code>http://code.google.com/p/msysgit</code></pre>
 
-<p>インストール後、コマンドライン版（後で役に立つSSHクライアントを含む）とスタンダードGUI版の両方を使う事ができます。</p>
+<p>Setelah terinstall, anda akan memperoleh versi command-line (bersama dengan klien SSH yang praktis) dan versi GUI-nya.</p>
 
 <div id='nav'>
 <a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>

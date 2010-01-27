@@ -4,9 +4,9 @@ title: Pro Git 6.6 Git Tools Submodules
 ---
 <h2 id='submodules'>Submodules</h2>
 
-<p>Het gebeurd vaak dat terwijl je zit te werken aan het ene project, je een ander project er binnenin nodig hebt. Misschien is het een library die een derde partij ontwikkeld heeft, of die je apart aan het ontwikkelen bent en gebruikt in meerdere ouder projecten. Een veel voorkomend probleem komt in deze scenario&#8217;s naar boven: je wilt de twee projecten apart behandelen, maar de ene binnen de andere kunnen gebruiken.</p>
+<p>Het gebeurt vaak dat terwijl je zit te werken aan het ene project, je een ander project er binnenin nodig hebt. Bijvoorbeeld een library die een derde partij ontwikkeld heeft, of die je apart aan het ontwikkelen bent en gebruikt in meerdere projecten. Een veel voorkomend probleem komt in deze scenario&#8217;s naar voren: je wilt de twee projecten apart behandelen, maar de ene binnen de andere kunnen gebruiken.</p>
 
-<p>Hier is een voorbeeld. Stel dat je een website aan het ontwikkelen bent en Atom feeds aan het maken bent. In plaats van je eigen Atom feedcode te schrijven, besluit je een library te gebruiken. Je zult deze code waarschijnlijk moeten includen van een gedeelde library zoals een CPAN installatie of een Ruby gem, of de brondcode kopieeren naar je eigen projectboom. Het probleem met de library includen is dat het lastig is om de library op enige manier aan te passen, en vaak is het lastiger om het uit te rollen, omdat je zeker moet zijn dat iedere klant die library beschikbaar heeft. Het probleem van de broncode in je project stoppen is dat alle aanpassingen die je maakt lastig te mergen zijn op het moment dat stroomopwaarts veranderingen beschikbaar komen.</p>
+<p>Hier is een voorbeeld. Stel dat je een website aan het ontwikkelen bent en Atom feeds aan het maken bent. In plaats van je eigen Atom feedcode te schrijven, besluit je een library te gebruiken. Je zult deze code waarschijnlijk moeten includen van een gedeelde library zoals een CPAN installatie of een Ruby gem, of de broncode kopieëren naar je eigen projectboom. Het probleem met de library includen is dat het lastig is om de library op enige manier aan te passen, en vaak is het lastiger om het uit te rollen, omdat je zeker moet zijn dat iedere klant die library beschikbaar heeft. Het probleem van de broncode in je project stoppen is dat alle aanpassingen die je maakt lastig te mergen zijn op het moment dat stroomopwaarts veranderingen beschikbaar komen.</p>
 
 <p>Git pakt dit probleem aan door submodules te gebruiken. Submodules geven je de mogelijkheid om een Git repository als een subdirectory van een ander Git repository te gebruiken. Dit staat je toe een ander repository in je project te clonen en je commits gescheiden te houden.</p>
 
@@ -65,7 +65,7 @@ index 0000000..08d709f
  create mode 100644 .gitmodules
  create mode 160000 rack</code></pre>
 
-<p>Zie de 160000 modus voor de rack vermelding. Dat is een speciale modus binnen Git, die in feite betekend dat je een commit als een map vermelding opslaat in plaats van als een submap of een bestand.</p>
+<p>Zie de 160000 modus voor de rack vermelding. Dat is een speciale modus binnen Git, die in feite betekent dat je een commit als een map vermelding opslaat in plaats van als een submap of een bestand.</p>
 
 <p>Je kunt de <code>rack</code> map als een apart project behandelen en je superproject van tijd tot tijd vernieuwen met een pointer naar de laatste commit in dat subproject. Alle Git commando&#8217;s werken onafhankelijk in de twee mappen:</p>
 
@@ -173,13 +173,13 @@ Date:   Thu Apr 9 09:19:14 2009 -0700
 
 <h3 id='superprojecten'>Superprojecten</h3>
 
-<p>Soms willen developers een combinatie van de submappen van een groot project hebben, afhankelijk van het team waarin ze zitten. Dit komt vaak voor als je van CVS of Subversion af komt, waar je een module of verzameling submappen gedefinieerd hebt, en je wilt deze manier van werken behouden.</p>
+<p>Soms willen developers een combinatie van de submappen van een groot project hebben, afhankelijk van het team waarin ze zitten. Dit komt vaak voor als je van CVS of Subversion af komt, waar je een module of verzameling submappen gedefiniëerd hebt, en je wilt deze manier van werken behouden.</p>
 
-<p>Een goeie manier om dit in Git te doen is om ieder van de submappen een aparte Git repository te maken en dan superproject Git repositories te maken die meerdere submodules kunnen bevatten. Een voordeel van deze aanpak is dat je meer specifiek kunt definieeren wat de relaties tussen de projecten zijn met behulp van tags en branches in de superprojects.</p>
+<p>Een goeie manier om dit in Git te doen is om ieder van de submappen een aparte Git repository te maken en dan superproject Git repositories te maken die meerdere submodules kunnen bevatten. Een voordeel van deze aanpak is dat je meer specifiek kunt definiëeren wat de relaties tussen de projecten zijn met behulp van tags en branches in de superprojects.</p>
 
 <h3 id='problemen_met_submodules'>Problemen Met Submodules</h3>
 
-<p>Submodules gebruiken is echter niet zonder gevaar. Ten eerste moet je relatief voorzichtig zijn met het werken in een submap. Als je <code>git submodule update</code> uitvoerd, zal het de specifieke versie van het project uitchecken, maar niet binnen een branch. Dit wordt een afgekoppelde HEAD genoemd – het betekend dat het HEAD bestand direct naar een commit wijst, en niet naar een symbolische referentie. Het probleem is dat je over het algemeen niet wilt werken in een afgekoppelde head omgeving, omdat het makkelijk is om veranderingen te verliezen. Als je een initiele <code>submodule update</code> doet, in die submodule map commit zonder een branch te maken om in te werken, an dan nogmaals <code>git submodule update</code> uitvoert in het superproject zonder in de tussentijd te committen, dan zal Git je veranderingen overschrijven zonder het je te vertellen. Technisch gezien ben je het werk niet kwijt, maar je zult geen branch hebben die er naar wijst, dus het zal lastig zijn om het terug te halen.</p>
+<p>Submodules gebruiken is echter niet zonder gevaar. Ten eerste moet je relatief voorzichtig zijn met het werken in een submap. Als je <code>git submodule update</code> uitvoerd, zal het de specifieke versie van het project uitchecken, maar niet binnen een branch. Dit wordt een afgekoppelde HEAD genoemd – het betekent dat het HEAD bestand direct naar een commit wijst, en niet naar een symbolische referentie. Het probleem is dat je over het algemeen niet wilt werken in een afgekoppelde head omgeving, omdat het makkelijk is om veranderingen te verliezen. Als je een initiele <code>submodule update</code> doet, in die submodule map commit zonder een branch te maken om in te werken, an dan nogmaals <code>git submodule update</code> uitvoert in het superproject zonder in de tussentijd te committen, dan zal Git je veranderingen overschrijven zonder het je te vertellen. Technisch gezien ben je het werk niet kwijt, maar je zult geen branch hebben die er naar wijst, dus het zal lastig zijn om het terug te halen.</p>
 
 <p>Om dit probleem te vermijden, creeer je een branch zodra je in een submodule map werkt met behulp van <code>git checkout -b work</code> of iets gelijkwaardigs. Als je de tweede keer de submodule update doet, zal het nog steeds je werk terugdraaien, maar je heb er tenminste een pointer van om naar terug te keren.</p>
 

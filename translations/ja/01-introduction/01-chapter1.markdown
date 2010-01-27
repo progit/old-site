@@ -1,227 +1,225 @@
-# 使い始める #
+# Memulai Git #
 
-この章は、Gitを使い始めることに関してになります。まずはバージョン管理システムの背景に触れ、その後にGitをあなたのシステムで動かす方法、そしてGitで作業を始めるための設定方法について説明します。この章を読み終えるころには、なぜGitが広まっているか、なぜGitを使うべきなのか、それをするための準備が全て整っているだろうということを、あなたはきっと理解しているでしょう。
+Bab ini berisi pendahuluan mengenai Git. Kita akan memulai dengan membahas sedikit mengenai latar belakang sejarah version control, kemudian berlanjut pada tata cara menjalankan Git pada sistem anda dan terakhir cara untuk melakukan penyetingan dan memulai bekerja dengan Git. Pada akhir bab ini diharapkan anda dapat memahami mengapa Git ada, kenapa anda harus menggunakan dan harus melakukan pengaturan untuk menggunakannya.
 
-## バージョン管理に関して ##
+## Tentang Version Control ##
 
-バージョン管理とは何でしょうか、また、なぜそれを気にする必要があるのでしょうか？
-バージョン管理とは、変更を一つのファイル、もしくは時間を通じたファイルの集合に記録するシステムで、そのため後で特定バージョンを呼び出すことができます。現実にはコンピューター上のほとんどあらゆるファイルのタイプでバージョン管理を行なう事ができますが、本書の中の例では、バージョン管理されるファイルとして、ソフトウェアのソースコードを利用します。
+Apa itu version control, dan kenapa anda harus peduli? Version control adalah sebuah sistem yang mencatat setiap perubahan terhadap sebuah berkas atau kumpulan berkas sehingga pada suatu saat anda dapat kembali kepada salah satu versi dari berkas tersebut. For the examples in this book you will use software source code as the files being version controlled, though in reality you can do this with nearly any type of file on a computer.
 
-もしあなたが、グラフィックス・デザイナー、もしくはウェブ・デザイナーであって、（あなたが最も確実に望んでいるであろう）画像もしくはレイアウトの全てのバージョンを管理したいのであれば、バージョン管理システム（VCS）はとても賢く利用できるものです。それは、ファイルを以前の状態まで戻し、プロジェクト丸ごとを以前の状態に戻し、時間を通じた変化を比較し、誰が最後に問題を引き起こすだろう何かを修正したか、誰が、何時、課題を導入したかを知り、それ以上のことを可能にします。VCSを使うということはまた、一般的に、何かをもみくちゃにするか、ファイルを失うとしても、簡単に復活させることができることを意味します。加えて、とても僅かな諸経費で、それら全てを得ることができます。
+Jika anda adalah seorang desainer grafis atau desainer web dan anda ingin menyimpan setiap versi dari gambar atau layout yang anda buat (kemungkinan besar anda pasti ingin melakukannya), maka Version Control System (VCS) merupakan sebuah solusi bijak untuk digunakan. Sistem ini memungkinkan anda untuk mengembalikan berkas anda pada kondisi/keadaan sebelumnya, mengembalikan seluruh proyek pada keadaan sebelumnya, membandingkan perubahan setiap saat, melihat siapa yang terakhir melakukan perubahan terbaru pada suatu objek sehingga berpotensi menimbulkan masalah, siapa yang menerbitkan isu, dan lainnya. Dengan menggunakan VCS dapat berarti jika anda telah mengacaukan atau kehilangan berkas, anda dapat dengan mudah mengembalikannya. In addition, you get all this for very little overhead.
 
-### ローカル・バージョン管理システム ###
+### Local Version Control Systems ###
 
-多くの人々の選り抜きのバージョン管理手法は、他のディレクトリ（もし彼らが賢いのであれば、恐らく日時が書かれたディレクトリ）にファイルをコピーするというものです。このアプローチは、とても単純なためにすごく一般的ですが、信じられない間違い傾向もあります。どのディレクトリにいるのか忘れやすいですし、偶然に間違ったファイルに書き込んだり、意図しないファイルに上書きしたりします。
+Kebanyakan orang melakukan pengontrolan versi dengan cara menyalin berkas-berkas pada direktori lain (mungkin dengan memberikan penanggalan pada direktori tersebut, jika mereka rajin). Metode seperti ini sangat umum karena sangat sederhana, namun cenderung rawan terhadap kesalahan. Anda akan sangat mudah lupa dimana direktori anda sedang berada, selain itu dapat pula terjadi ketidak sengajaan penulisan pada berkas yang salah atau menyalin pada berkas yang bukan anda maksudkan.
 
-この問題を扱うため、大昔にプログラマは、バージョン管理下で全ての変更をファイルに保持するシンプルなデータベースを持つ、ローカルなバージョン管理システムを開発しました（図1-1参照）。
+Untuk mengatasi permasalahan ini, para programmer mengembangkan berbagai VCS lokal yang memiliki sebuah basis data sederhana untuk menyimpan semua perubahan pada berkas yang berada dalam cakupan revision control (Lihat Gambar 1-1).
 
 Insert 18333fig0101.png 
-図1-1. ローカル・バージョン管理図解
+Gambar 1-1. Diagram version control lokal.
 
-もっとも有名なVCSツールの一つが、RCSと呼ばれるシステムでした。今日でも依然として多くのコンピューターに入っています。人気のMac OS Xオペレーティング・システムさえも、開発者ツールをインストールしたときは、rcsコマンドを含みます。このツールは基本的に、ディスク上に特殊フォーマットで、一つの変更からもう一つの変更へのパッチ（これはファイル間の差分です）の集合を保持することで稼動します。そういうわけで、全てのパッチを積み上げることで、いつかは、あらゆる時点の、あらゆるファイルのように見えるものを再生成する事ができます。
+Salah satu perkakas VCS yang populer adalah rcs, kakas ini masih didistribusikan dengan berbagai komputer pada masa kini. Bahkan sistem operasi Mac OS X menyertakan rcs ketika menginstal Developer Tools. Kakas ini pada dasarnya bekerja dengan cara menyimpan kumpulan patch dari satu perubahan ke perubahan lainnya dalam format khusus pada disk; ini kemudian dapat digunakan untuk menciptakan kembali wujud/keadaan suatu berkas pada suatu saat dengan cara menggunakan patch yang berkesesuaian dengan berkas dan waktu yang diinginkan.
 
-### 集中バージョン管理システム ###
+### Version Control Systems Terpusat ###
 
-次に人々が遭遇した大きな問題は、他のシステムの開発者と共同制作をする必要があることです。この問題に対処するために、集中バージョン管理システム（CVCSs）が開発されました。CVSやSubversion、Perforceのような、これらのシステムは、全てのバージョン管理されたファイルと、その中央の場所からファイルをチェック・アウトする多数のクライアントを含む単一のサーバーを持ちます。長年の間、これはバージョン管理の標準となって来ました（図1-2参照）。
+Permasalahan berikutnya yang dihadapi adalah para pengembang perlu melakukan kolaborasi dengan pengembang pada sistem lainnya. Untuk mengatasi permasalahan ini maka dibangunlah Centralized Version Control Systems (CVCSs). Sistem ini, diantaranya CVS, Subversion, dan Perforce, memiliki sebuah server untuk menyimpan setiap versi berkas, dan beberapa klien yang dapat melakukan checkout berkas dari server pusat. Untuk beberapa tahun, sistem seperti ini menjadi standard untuk version control (lihat Gambar 1-2).
 
 Insert 18333fig0102.png 
-図1-2. 集中バージョン管理図解
+Gambar 1-2. Diagram version control terpusat.
 
-この構成は、特にローカルVCSと比較して、多くの利点を提供します。例えば、全ての人は、プロジェクトのその他の全ての人々が何をしているのか、一定の程度は知っています。管理者は、誰が何をできるのかについて、きめ細かい統制手段を持ちます。このため、一つのCVCSを管理するということは、全てのクライアントのローカル・データベースを取り扱うより、はるかに容易です。
+Sistem seperti ini memiliki beberapa kelebihan, terutama jika dibandingkan dengan VCS lokal. Misalnya, setiap orang pada tingkat tertentu mengetahui apa yang orang lain lakukan pada proyek. Administrators have fine-grained control over who can do what; and it’s far easier to administer a CVCS than it is to deal with local databases on every client.
 
-しかしながら、この構成はまた、深刻な不利益も持ちます。もっとも明白なのは、中央サーバーで発生する単一障害点です。もし、そのサーバーが1時間の間停止すると、その1時間の間は誰も全く、共同作業や、彼らが作業を進めている全てに対してバージョン変更の保存をすることができなくなります。もし中央データベースがのっているハードディスクが破損し、適切なバックアップが保持されていないとすると、人々が偶然にローカル・マシンに持っていた幾らかの単一スナップショット（訳者注：ある時点のファイル、ディレクトリなどの編集対象の状態）を除いた、プロジェクト全体の履歴を失うことになります。ローカルVCSシステムも、これと同じ問題に悩まされます。つまり、単一の場所にプロジェクトの全体の履歴を持っているときはいつでも、全てを失う事を覚悟することになります。
+Walau demikian, sistem dengan tatanan seperti ini memiliki kelemahan serius. Kelemahan nyata yang direpresesntasikan oleh sistem dengan server terpusat. Jika server mati untuk beberapa jam, maka tidak ada seorangpun yang bisa berkolaborasi atau menyimpan perubahan terhadap apa yang mereka telah kerjakan. Jika harddisk yang menyimpan basisdata mengalami kerusakan, dan salinan yang beran belum tersimpan, anda akan kehilangan setiap perubahan dari proyek kecuali snapshot yang dimiliki oleh setiap kolaborator pada komputernya masing-masing.VCS lokal juga mengalami nasib yang sama jika anda menyimpan seluruh history perubahan proyek pada satu tempat, anda mempunyai resiko kehilangan semuanya. 
 
-### 分散バージョン管理システム ###
+### Distributed Version Control Systems ###
 
-ここから分散バージョン管理システム(DVCs)に入ります。DVCS(Git、Mercurial、Bazaar、Darcsのようなもの)では、クライアントはファイルの最新スナップショットをチェックアウト（訳者注：バージョン管理システムから、作業ディレクトリにファイルやディレクトリをコピーすること）するだけではありません。リポジトリ（訳者注：バージョン管理の対象になるファイル、ディレクトリ、更新履歴などの一群）全体をミラーリングします。故にどのサーバーが故障したとして、故障したサーバーを介してそれらのDVCSが共同作業をしていたとしても、あらゆるクライアント・リポジトリは修復のためにサーバーにコピーして戻す事ができます。そのサーバーを介してコラボレーションしていたシステムは, どれか一つのクライアントのリポジトリからサーバー復旧の為バックアップをコピーすることができます. 全てのチェックアウトは、実は全データの完全バックアップなのです(図1-3を参照)。
+Inilah saatnya bagi Distributed Version Control Systems untuk mengambil tempat. dalam sebuah DVCS (seperti Git, Mercurial, Bazaar atau Darcs), klien tidak hanya melakukan checkout untuk snapshot terakhir setiap berkas, namun mereka (klien) memiliki salinan penuh dari repositori tersebut. Jadi, jika server mati, dan sistem berkolaborasi melalui server tersebut, maka klien manapun dapat mengirimkan salinan repositori tersebut kembali ke server. Setiap checkout pada DVCS merupakan sebuah backup dari keseluruhan data (lihat Gambar 1-3).
 
 Insert 18333fig0103.png 
-図1-3. 分散バージョン管理システムの図解
+Gambar 1-3. Diagram distributed version control.
 
-そのうえ、これらのDVCSの多くは、 連携する複数のリモート・リポジトリを扱いながら大変よく機能するため、同一のプロジェクト内において、同時に異なった方法で、異なる人々のグループと共同作業が可能です。このことは、集中システムでは不可能であった階層モデルのような、幾つかの様式のワークフローを始めることを許します。
+Lebih jauh lagi, kebanyakan sistem seperti ini mampu menangani sejumlah remote repository dengan baik, jadi anda dapat melakukan kolaborasi dengan berbagai kelompok kolaborator dalam berbagai cara secara bersama-sama pada suatu proyek. Hal ini memungkinkan anda untuk menyusun beberapa jenis alur kerja yang tidak mungkin dilakukan pada sistem terpusat, seperti hierarchical model. 
 
-## Git略史 ##
+## A Short History of Git ##
 
-人生における多くの素晴らしい出来事のように、Gitはわずかな創造的破壊と熱烈な論争から始まりました。Linuxカーネルは、非常に巨大な範囲のオープンソース・ソフトウェア・プロジェクトの一つです。Linuxカーネル保守の大部分の期間（1991-2002）の間は、このソフトウェアに対する変更は、パッチとアーカイブしたファイルとして次々にまわされていました。2002年に、Linuxカーネル・プロジェクトはプロプライエタリのDVCSであるBitKeeperを使い始めました。
+Seperti hal besar lainnya, Git diawali dengan sedikit permasalahan dan kontroversi. Kernel Linux merupakan sebuah proyek perangkat lunak open source skala besar. Sepanjang perjalanan perawatan Kernel Linux (1991-2002), perubahan disimpan sebagai patch dan arsip-arsip berkas. Pada tahun 2002, proyek ini mulai menggunakan sebuah DVCS proprietary bernama BitKeeper.
 
-2005年に、Linuxカーネルを開発していたコミュニティと、BitKeeperを開発していた営利企業との間の協力関係が崩壊して、課金無しの状態が取り消されました。これは、Linux開発コミュニティ（と、特にLinuxの作者のLinus Torvalds）に、BitKeeperを利用している間に学んだ幾つかの教訓を元に、彼ら独自のツールの開発を促しました。新しいシステムの目標の幾つかは、次の通りでした：
+Pada tahun 2005, hubungan antara komunitas pengembang Kernel Linux dengan perusahan yang mengembangkan Bitkeeper retak, dan status "gratis" pada BitKeeper dicabut. Hal ini membuat komunitas pengembang Kernel Linux (dan khususnya Linus Torvalds, sang pencipta Linux) harus mengembangkan perkakas sendiri dengan berbekal pengalaman yang mereka peroleh ketika menggunakan BitKeeper. Dan sistem tersebut diharapkan dapat memenuhi beberapa hal berikut:
 
-*	スピード
-*	シンプルな設計
-*	ノンリニア開発(数千の並列ブランチ)への強力なサポート
-*	完全な分散
-*	Linux カーネルのような大規模プロジェクトを(スピードとデータサイズで)効率的に取り扱い可能
+* Kecepatan
+* Desain yang sederhana
+* Dukungan penuh untuk pengembangan non-linear (ribuan cabang paralel)
+* Terdistribusi secara penuh
+* Mampu menangani proyek besar seperti Kernel Linux secara efisien (dalam kecepatan dan ukuran data)
 
-2005年のその誕生から、Gitは使いやすく発展・成熟してきており、さらにその初期の品質を維持しています。とても高速で、巨大プロジェクトではとても効率的で、ノンリニア開発のためのすごい分岐システム（branching system）を備えています（第3章参照）。
+Sejak kelahirannya pada tahun 2005, Git telah berkembang dan semakin mudah digunakan serta hingga saat ini masih mempertahankan kualitasnya tersebut. Git luar biasa cepat, sangat efisien dalam proyek besar, dan memiliki sistem pencabangan yang luar biasa untuk pengembangan non-linear (Lihat Bab 3).
 
-## Gitの基本 ##
+## Dasar Git ##
 
-では、要するにGitとは何なのでしょうか。これは、Gitを吸収するには重要な節です。なぜならば、もしGitが何かを理解し、Gitがどうやって稼動しているかの根本を理解できれば、Gitを効果的に使う事が恐らくとても容易になるからです。
-Gitを学ぶときは、SubversionやPerforceのような他のVCSsに関してあなたが恐らく知っていることは、意識しないでください。このツールを使うときに、ちょっとした混乱を回避することに役立ちます。Gitは、ユーザー・インターフェイスがとてもよく似ているのにも関わらず、それら他のシステムとは大きく異なって、情報を格納して取り扱います（訳者注：「取り扱う」の部分はthinksなので、「見なします」と訳す方が原語に近い）。これらの相違を理解する事は、Gitを扱っている間の混乱を、防いでくれるでしょう。
+Jadi, sebenarnya apa yang dimaksud dengan Git? Ini adalah bagian penting untuk dipahami, karena jika anda memahami apa itu Git dan cara kerjanya, maka dapat dipastikan anda dapat menggunakan Git secara efektif dengan mudah. Selama mempelajari Git, cobalah untuk melupakan VCS lain yang mungkin telah anda kenal sebelumnya, misalnya Subversion dan Perforce. Git sangat berbeda dengan sistem-sistem tersebut dalam hal menyimpan dan memperlakukan informasi yang digunakan, walaupun antar-muka penggunanya hampir mirip. Dengan memahami perbedaan tersebut diharapkan dapat membantu anda menghindari kebingungan saat menggunakan Git.
 
-### スナップショットで、差分ではない ###
+### Snapshots, Not Differences ###
 
-Gitと他のVCS (Subversionとその類を含む)の主要な相違は、Gitのデータについての考え方です。概念的には、他のシステムのほとんどは、情報をファイルを基本とした変更のリストとして格納します。これらのシステム（CVS、Subversion、Perforce、Bazaar等々）は、図1-4に描かれているように、システムが保持しているファイルの集合と、時間を通じてそれぞれのファイルに加えられた変更の情報を考えます。
+Salah satu perbedaan yang mencolok antar Git dengan VCS lainnya (Subversion dan kawan-kawan) adalah dalam cara Git memperlakukan datanya. Secara konseptual, kebanyakan sistem lain menyimpan informasi sebagai sebuah daftar perubahan berkas. Sistem seperti ini (CVS, Subversion, Bazaar, dan yang lainnya) memperlakukan informasi yang disimpannya sebagai sekumpulan berkas dan perubahan yang terjadi pada berkas-berkas tersebut, sebagaimana yang diperlihatkan pada Gambar 1-4.
 
 Insert 18333fig0104.png 
-図1-4. 他のシステムは、データをそれぞれのファイルの基本バージョンへの変更として格納する傾向があります。
+Gambar 1-4. Sistem lain menyimpan data perubahan terhadap versi awal setiap berkas.
 
-Gitは、この方法ではデータを考えたり、格納しません。代わりに、Gitはデータをミニ・ファイルシステムのスナップショットの集合のように考えます。Gitで全てのコミット（訳注：commitとは変更を記録・保存するGitの操作。詳細は後の章を参照）をするとき、もしくはプロジェクトの状態を保存するとき、Gitは基本的に、その時の全てのファイルの状態のスナップショットを撮り（訳者注：意訳）、そのスナップショットへの参照を格納するのです。効率化のため、ファイルに変更が無い場合は、Gitはファイルを再格納せず、既に格納してある、以前の同一のファイルへのリンクを格納します。Gitは、むしろデータを図1-5のように考えます。
+Git tidak bekerja seperti ini. Melainkan, Git memperlakukan datanya sebagai sebuah kumpulan snapshot dari sebuah miniatur sistem berkas. Setiap kali anda melakukan commit, atau melakukan perubahan pada proyek Git anda, pada dasarnya Git merekam gambaran keadaan berkas-berkas anda pada saat itu dan menyimpan referensi untuk gambaran tersebut. Agar efisien, jika berkas tidak mengalami perubahan, Git tidak akan menyimpan berkas tersebut melainkan hanya pada file yang sama yang sebelumnya telah disimpan. Git memperlakukan datanya seperti terlihat pada Gambar 1-5.
 
 Insert 18333fig0105.png 
-図1-5. Gitは時間を通じたプロジェクトのスナップショットとしてデータを格納します。
+Gambar 1-5. Git menyimpan datanya sebagai snapshot dari proyek setiap saat.
 
-これが、Gitと類似の全ての他のVCSsとの間の重要な違いです。ほとんどの他のシステムが以前の世代から真似してきた、ほとんど全てのバージョン管理のやり方（訳者注：aspectを意訳）を、Gitに見直させます。これは、Gitを、単純にVCSと言うより、その上に組み込まれた幾つかの途方も無くパワフルなツールを備えたミニ・ファイルシステムにしています。このやり方でデータを考えることで得られる利益の幾つかを、第3章のGit branchingを扱ったときに探求します。
+This is an important distinction between Git and nearly all other VCSs. It makes Git reconsider almost every aspect of version control that most other systems copied from the previous generation. This makes Git more like a mini filesystem with some incredibly powerful tools built on top of it, rather than simply a VCS. We’ll explore some of the benefits you gain by thinking of your data this way when we cover Git branching in Chapter 3.
 
-### ほとんど全ての操作がローカル ###
+### Hampir Semua Operasi Dilakukan Secara Lokal ###
 
-Gitのほとんどの操作は、ローカル・ファイルと操作する資源だけ必要とします。大体はネットワークの他のコンピューターからの情報は必要ではありません。ほとんどの操作がネットワーク遅延損失を伴うCVCSに慣れているのであれば、もっさりとしたCVCSに慣れているのであれば、このGitの速度は神業のように感じるでしょう（訳者注：直訳は「このGitの側面はスピードの神様がこの世のものとは思えない力でGitを祝福したと考えさせるでしょう」）。プロジェクトの履歴は丸ごとすぐそこのローカル・ディスクに保持しているので、大概の操作はほぼ瞬時のように見えます。
+Kebanyakan operasi pada Git hanya membutuhkan berkas-berkas dan resource lokal – tidak ada informasi yang dibutuhkan dari komputer lain pada jaringan anda. If you’re used to a CVCS where most operations have that network latency overhead, this aspect of Git will make you think that the gods of speed have blessed Git with unworldly powers. Because you have the entire history of the project right there on your local disk, most operations seem almost instantaneous.
 
-例えば、プロジェクトの履歴を閲覧するために、Gitはサーバーに履歴を取得しに行って表示する必要がありません。直接にローカル・データベースからそれを読むだけです。これは、プロジェクトの履歴をほとんど即座に知るということです。もし、あるファイルの現在のバージョンと、そのファイルの1ヶ月前の間に導入された変更点を知りたいのであれば、Gitは、遠隔のサーバーに差分を計算するように問い合わせたり、ローカルで差分を計算するために遠隔サーバーからファイルの古いバージョンを持ってくる代わりに、1か月前のファイルを調べてローカルで差分の計算を行なえます。
+Sebagai contoh, untuk melihat history dari proyek, Git tidak membutuhkan data histori dari server untuk kemudian menampilkannya untuk anda, namun secara sedarhana Git membaca historinya langsung dari basisdata lokal proyek tersebut. Ini berarti anda melihat histori proyek hampir secara instant. Jika anda ingin membandingkan perubahan pada sebuah berkas antara versi saat ini dengan versi sebulan yang lalu, Git dapat mencari berkas yang sama pada sebulan yang lalu dan melakukan pembandingan perubahan secara lokal, bukan dengan cara meminta remote server melakukannya atau meminta server mengirimkan berkas versi yang lebih lama kemudian membandingkannya secara lokal.
 
-これはまた、オフラインであるか、VPNから切り離されていたとしても、出来ない事は非常に少ないことを意味します。もし、飛行機もしくは列車にに乗ってちょっとした仕事をしたいとしても、アップロードするためにネットワーク接続し始めるまで、楽しくコミットできます。もし、帰宅してVPNクライアントを適切に作動させられないとしても、さらに作業ができます。多くの他のシステムでは、それらを行なう事は、不可能であるか苦痛です。例えばPerforceにおいては、サーバーに接続できないときは、多くの事が行なえません。SubversionとCVSにおいては、ファイルの編集はできますが、データベースに変更をコミットできません（なぜならば、データベースがオフラインだからです）。このことは巨大な問題に思えないでしょうが、実に大きな違いを生じうることに驚くでしょう。
+Hal ini berarti bahwa sangat sedikit yang tidak bisa anda kerjakan jika anda sedang offline atau berada diluar VPN. Jika anda sedang berada dalam pesawat terbang atau sebuah kereta dan ingin melakukan pekerjaan kecil, anda dapat melakukan commit sampai anda memperoleh koneksi internet hingga anda dapat menguploadnya. Jika anda pulang ke rumah dan VPN client anda tidak bekerja dengan benar, anda tetap dapat bekerja. Pada kebanyakan sistem lainnya, melakukan hal ini cukup sulit atau bahkan tidak mungkin sama sekali. Pada Perforce misalnya, anda tidak dapat berbuat banyak ketika anda tidak terhubung dengan server; pada Subversion dan CVS, anda dapat mengubah berkas, tapi anda tidak dapat melakukan commit pada basisdata anda (karena anda tidak terhubung dengan basisdata). Hal ini mungkin saja bukanlah masalah yang besar, namun anda akan terkejut dengan perbedaan besar yang disebabkannya.
 
-### Gitは完全性を持つ ###
+### Git Memiliki Integritas ###
 
-Gitの全てのものは、格納される前にチェックサムが取られ、その後、そのチェックサムで照合されます。これは、Gitがそれに関して感知することなしに、あらゆるファイルの内容を変更することが不可能であることを意味します。この機能は、Gitの最下層に組み込まれ、またGitの哲学に不可欠です。Gitがそれを感知できない状態で、転送中に情報を失う、もしくは壊れたファイルを取得することはありません。
+Segala sesuatu pada Git akan melalui proses checksum terlebih dahulu sebelum disimpan yang kemudian direferensikan oleh hasil checksum tersebut. Hal ini berarti tidak mungkin melakukan perubahan terhadap berkas manapun tanpa diketahui oleh Git. Fungsionalitas ini dimiliki oleh Git pada level terendahnya dan ini merupakan bagian tak terpisahkan dari filosofi Git. Anda tidak akan kehilangan informasi atau mendapatkan file yang cacat tanpa diketahui oleh Git.
 
-Gitがチェックサム生成に用いる機構は、SHA-1ハッシュと呼ばれます。これは、16進数の文字（0-9とa-f）で構成された40文字の文字列で、ファイルの内容もしくはGit内のディレクトリ構造を元に計算されます。SHA-1ハッシュは、このようなもののように見えます:
+Mekanisme checksum yang digunakan oleh Git adalah SHA-1 hash. Ini merupakan sebuah susunan string yang terdiri dari 40 karakter heksadesimal (0 hingga 9 dan a hingga f) dan dihitung berdasarkan isi dari sebuah berkas atau struktur direktori pada Git. sebuah hash SHA-1 berupa seperti berikut:
 
 	24b9da6552252987aa493b52f8696cd6d3b00373
 
-Gitはハッシュ値を大変よく利用するので、Gitのいたるところで、これらのハッシュ値を見ることでしょう。事実、Gitはファイル名ではなく、ファイル内容のハッシュ値によってアドレスが呼び出されるGitデータベースの中に全てを格納しています。
+Anda akan melihat nilai seperti ini pada berbagai tempat di Git. Faktanya, Git tidak menyimpan nama berkas pada basisdatanya, melainkan nilai hash dari isi berkas.
 
-### Gitは通常はデータを追加するだけ ###
+### Secara Umum Git Hanya Menambahkan Data ###
 
-Gitで行動するとき、ほとんど全てはGitデータベースにデータを追加するだけです。システムにいかなる方法でも、UNDO不可能なこと、もしくはデータを消させることをさせるのは、大変難しいです。あらゆるVCSと同様に、まだコミットしていない変更は失ったり、台無しにできたりします。しかし、スナップショットをGitにコミットした後は、特にもし定期的にデータベースを他のリポジトリにプッシュ（訳注：pushはGitで管理するあるリポジトリのデータを、他のリポジトリに転送する操作。詳細は後の章を参照）していれば、変更を失うことは大変難しくなります。
+Ketika anda melakukan operasi pada Git, kebanyakan dari operasi tersebut hanya menambahkan data pada basisdata Git. It is very difficult to get the system to do anything that is not undoable or to make it erase data in any way. Seperti pada berbagai VCS, anda dapat kehilangan atau mengacaukan perubahan yang belum di-commit; namun jika anda melakukan commit pada Git, akan sangat sulit kehilanngannya, terutama jika anda secara teratur melakukan push basisdata anda pada repositori lain.
 
-激しく物事をもみくちゃにする危険なしに試行錯誤を行なえるため、これはGitの利用を喜びに変えます。Gitがデータをどのように格納しているのかと失われたように思えるデータをどうやって回復できるのかについての、より詳細な解説に関しては、第9章の"Under the Covers"を参照してください。
+Hal ini menjadikan Git menyenangkan karena kita dapat berexperimen tanpa kehawatiran untuk mengacaukan proyek. Untuk lebih jelas dan dalam lagi tentang bagaimana Git menyimpan datanya dan bagaimana anda dapat mengembalikan yang hilang, lihat "Under the Covers" pada Bab 9.
 
-### 三つの状態 ###
+### Tiga Keadaan ###
 
-今、注意してください。もし学習プロセスの残りをスムーズに進めたいのであれば、これはGitに関して覚えておく主要な事です。Gitは、ファイルが帰属する、コミット済、修正済、ステージ済の、三つの主要な状態を持ちます。コミット済は、ローカル・データベースにデータが安全に格納されていることを意味します。修正済は、ファイルに変更を加えていますが、データベースにそれがまだコミットされていないことを意味します。ステージ済は、次のスナップショットのコミットに加えるために、現在のバージョンの修正されたファイルに印をつけている状態を意味します。
+Sekarang perhatika. Ini adalah hal utama yang harus diingat tentang Git jika anda ingin proses belajar anda berjalan lancar. Git memiliki 3 keadaan utama dimana berkas anda dapat berada: committed, modified dan staged. Committed berarti data telah tersimpan secara aman pada basisdata lokal. Modified berarti anda telah melakukan perubahan pada berkas namun anda belum melakukan commit pada basisdata. Staged berarti anda telah menandai berkas yang telah diubah pada versi yang sedang berlangsung untuk kemudian dilakukan commit.
 
-このことは、Gitプロジェクト（訳者注：ディレクトリ内）の、Gitディレクトリ、作業ディレクトリ、ステージング・エリアの三つの主要な部分（訳者注：の理解）に導きます。
+This leads us to the three main sections of a Git project: the Git directory, the working directory, and the staging area.
 
 Insert 18333fig0106.png 
-図1-6. 作業ディレクトリ、ステージング・エリア、Gitディレクトリ
+Figure 1-6. Working directory, staging area, and git directory.
 
-Gitディレクトリは、プロジェクトのためのメタデータ（訳者注：Gitが管理するファイルやディレクトリなどのオブジェクトの要約）とオブジェクトのデータベースがあるところです。これは、Gitの最も重要な部分で、他のコンピューターからリポジトリをクローン（訳者注：コピー元の情報を記録した状態で、Gitリポジトリをコピーすること）したときに、コピーされるものです。
+The Git directory is where Git stores the metadata and object database for your project. This is the most important part of Git, and it is what is copied when you clone a repository from another computer.
 
-作業ディレクトリは、プロジェクトの一つのバージョンの単一チェックアウトです。これらのファイルはGitディレクトリの圧縮されたデータベースから引き出されて、利用するか修正するためにディスクに配置されます。
+The working directory is a single checkout of one version of the project. These files are pulled out of the compressed database in the Git directory and placed on disk for you to use or modify.
 
-ステージング・エリアは、普通はGitディレクトリに含まれる、次のコミットに何が含まれるかに関しての情報を蓄えた一つの単純なファイルです。ときどきインデックスのように引き合いにだされますが、ステージング・エリアとして呼ばれることが基本になりつつあります。
+The staging area is a simple file, generally contained in your Git directory, that stores information about what will go into your next commit. It’s sometimes referred to as the index, but it’s becoming standard to refer to it as the staging area.
 
-基本的なGitのワークフローは、このような風に進みます：
+The basic Git workflow goes something like this:
 
-1. 作業ディレクトリのファイルを修正します。
-2. 修正されたファイルのスナップショットをステージング・エリアに追加して、ファイルをステージします。
-3. コミットします。（訳者注：Gitでは）これは、ステージング・エリアにあるファイルを取得し、永久不変に保持するスナップショットとしてGitディレクトリに格納することです。
+1.	You modify files in your working directory.
+2.	You stage the files, adding snapshots of them to your staging area.
+3.	You do a commit, which takes the files as they are in the staging area and stores that snapshot permanently to your Git directory.
 
-もしファイルの特定のバージョンがGitディレクトリの中にあるとしたら、コミット済だと見なされます。もし修正されていて、ステージング・エリアに加えられていれば、ステージ済です。そして、チェックアウトされてから変更されましたが、ステージされていないとするなら、修正済です。第2章では、これらの状態と、どうやってこれらを利用をするか、もしくは完全にステージ化部分を省略するかに関してより詳しく学習します。
+If a particular version of a file is in the git directory, it’s considered committed. If it’s modified but has been added to the staging area, it is staged. And if it was changed since it was checked out but has not been staged, it is modified. In Chapter 2, you’ll learn more about these states and how you can either take advantage of them or skip the staged part entirely.
 
-## Gitのインストール ##
+## Menginstall Git ##
 
-少しGitを使う事に入りましょう。何よりも最初に、Gitをインストールしなければなりません。幾つもの経路で入手することができ、主要な二つの方法のうちの一つはソースからインストールすることで、もう一つはプラットフォームに応じて存在するパッケージをインストールすることです。
+Mari memulai menggunakan Git. Pertama, tentu saja anda harus menginstallnya terlebih dahulu. Anda dapat melakukan melalui berbagai cara; dua cara paling poluler adalah menginstallnya dari kode sumbernya atau menginstalkan paket yang telah disediakan untuk platform anda.
 
-### ソースからのインストール ###
+### Menginstall Dari Kode Sumber ###
 
-もし可能であれば、もっとも最新のバージョンを入手できるので、一般的にソースからGitをインストールするのが便利です。Gitのそれぞれのバージョンは、実用的なユーザー・インターフェイスの向上が含まれており、もしソースからソフトウェアをコンパイルすることに違和感を感じないのであれば、最新バージョンを入手することは、大抵は最も良い経路になります。また、多くのLinuxディストリビューションがとても古いパッケージを収録している事は良くあることであり、最新のディストリビューションを使っているか、バックポート（訳者注：最新のパッケージを古いディストリビューションで使えるようにする事）をしていない限りは、ソースからのインストールがベストな選択になるでしょう。
+Jika anda dapat melakukannya, akan sangat berguna untuk dapat menginstallnya dari kode sumber, karena anda akan mendapatkan versi terbaru dari Git. Setiap versi dari Git cenderung akan menampilkan kemajuan pada sisi antarmuka pengguna, jadi menggunakan versi terbaru seringkali menjadi jalan terbaik jika anda terbiasa melakukan kompilasi perangkat lunak dari kode sumbernya. Dan juga menjadi masalah bahwa banyak distribusi Linux yang menyertakan versi Git yang sangat lama; kecuali anda mempergunakan distribusi Linux paling up-to-date atau menggunakan backport, menginstall dari kode sumbernya mungkin menjadi solusi terbaik.
 
-Gitをインストールするためには、Gitが依存するライブラリーである、curl、zlib、openssl、expat、libiconvを入手する必要があります。例えば、もし（Fedoraなどで）yumか（Debianベースのシステムなどで）apt-getが入ったシステムを使っているのであれば、これらのコマンドの一つを依存対象の全てをインストールするのに使う事ができます：
+Untuk menginstall Git, anda membutuhkan beberapa library yang dibutuhkan oleh Git: curl, zlib, openssl, expat, dan libiconv. Sebagai contoh, jika anda berada pada sistem yang menggunakan yum (seperti Fedora) atau apt-get (seperti sistem berbasis Debian), anda dapat menggunakan salah satu dari perintah berikut untuk menginstall semua library yang dibutuhkan oleh Git:
 
 	$ yum install curl-devel expat-devel gettext-devel \
 	  openssl-devel zlib-devel
 
-	$ apt-get install curl-devel expat-devel gettext-devel \
-	  openssl-devel zlib-devel
-	
-全ての必要な依存対象を持っているのであれば、先に進んでGitのウェブサイトから最新版のスナップショットを持ってくる事ができます：
+	$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+	  libz-dev
+
+Setelah anda memperoleh semua library yang dibutuhkan, anda kemudian dapat melanjutkan dengan mengunduh Git dari situsnya:
 
 	http://git-scm.com/download
 	
-そして、コンパイルしてインストールします：
+Kemudian, kompilasi dan install:
 
 	$ tar -zxf git-1.6.0.5.tar.gz
 	$ cd git-1.6.0.5
 	$ make prefix=/usr/local all
 	$ sudo make prefix=/usr/local install
 
-また、Gitのインストール後、アップデートでGitを通して最新版のGitを得ることができます。
+Setelah semua ini selesai, anda juga dapat memperoleh Git terbaru melalui Git sendiri:
 
 	$ git clone git://git.kernel.org/pub/scm/git/git.git
 	
-### Linuxにインストール ###
+### Menginstall Git di Linux ###
 
-バイナリのインストーラーを通じてLinux上にGitをインストールしたいのであれば、大抵はディストリビューションに付属する基本的なパッケージ・マネジメント・ツールを使って、それを行なう事ができます。もしFedoraを使っているのであれば、yumを使う事が出来ます：
+Jika anda ingin menginstall Git di Linux menggunakan installer biner, anda bisa melakukannya melalui perkakas manajemen paket yang anda pada distribusi Linux yang anda gunakan. Jika anda menggunakan Fedora, anda dapat menggunakan yum:
 
 	$ yum install git-core
 
-もしくは、もしUbuntuのようなDebianベースのディストリュビューションを使っているのであれば、apt-getをやってみましょう：
+Atau jika anda menggunakan distro berbasis Debian seperti Ubuntu, coba gunakan apt-get:
 
 	$ apt-get install git-core
 
-### Macにインストール ###
+### Menginstall Git pada Mac ###
 
-MacにGitをインストールするには2つの簡単な方法があります。もっとも簡単な方法は、グラフィカルなGitインストーラーを使うことで、このGitインストーラーはGoogle Codeのページ（図1-7参照）からダウンロードすることができます：
+Terdapat dua cara mudah untuk menginstal Git pada sebuah komputer Mac. Cara termudah adalah menggunakan installer Git berbasis GUI, yang dapat anda peroleh dari halaman Google Code (lihat Gambar 1-7):
 
 	http://code.google.com/p/git-osx-installer
 
 Insert 18333fig0107.png 
-Figure 1-7. Git OS X installer
+Gambar 1-7. Git OS X installer.
 
-もう一つの主要な方法は、MacPorts (`http://www.macports.org`) からGitをインストールすることです。MacPortsをインストールした状態であれば、Gitを以下のようにインストールできます。
+Cara lainnya adalah dengan menggunakan MacPorts (`http://www.macports.org`). Jika anda telah menginstall MacPorts, maka anda dapat menginstall Git melalui cara berikut
 
 	$ sudo port install git-core +svn +doc +bash_completion +gitweb
 
-全てのvariantsを追加する必要はありませんが、SubversionのリポジトリでGitを使う必要がまだあるなら、恐らく+svnを含めないといけないでしょう（第8章参照）。
+Anda tidak harus menambahkan extras-nya, tetapi anda mungkin membutuhkan +svn jika anda harus menggunakan Git pada repositori Subversion (lihat Bab 8).
 
-### Windowsにインストール ###
+### Menginstall pada Sistem Operasi Windows ###
 
-WindowsにGitをインストールするのはとても簡単です。msysGitプロジェクトは、より簡単なインストール手続きの一つを備えています。Google Codeのページから、単純にインストーラーのexeファイルをダウンロードをし、実行してください：
+Menginstall Git pada Windows sangatlah mudah. Cara termudah dapat anda peroleh dengan menggunakan msysGit. Cukup download file installernya dari halaman Google Code, lalu eksekusi.
 
 	http://code.google.com/p/msysgit
 
-インストール後、コマンドライン版（後で役に立つSSHクライアントを含む）とスタンダードGUI版の両方を使う事ができます。
+Setelah terinstall, anda akan memperoleh versi command-line (bersama dengan klien SSH yang praktis) dan versi GUI-nya.
 
-## 最初のGitの構成 ##
+## Setup Git Untuk Pertama Kalinya ##
 
-今や、Gitがシステムにあります。Git環境をカスタマイズするためにしたい事が少しはあることでしょう。アップグレードの度についてまわるので、たった一度でそれらを終わらすべきでしょう。またそれらは、またコマンドを実行することによっていつでも変更することができます。
+Sekarang anda telah memiliki Git pada sistem anda, berikutnya anda akan harus melakukan beberapa penyesuai pada lingkungan Git anda. Anda hanya perlu melakukan hal ini sekali saja; pada saat memperbaharui versi Git anda, penyesuai tidak perlu dilakukan lagi. Anda pun dapat mengubah penyesuaian tersebut setiap saat.
 
-Gitには、git configと呼ばれるツールが付属します。これで、どのようにGitが見えて機能するかの全ての面を制御できる設定変数を取得し、設定することができます。これらの変数は三つの異なる場所に格納されうります：
+Pada Git terdapat sebuah perkakas yang disebut dengan git config yang memungkinkan anda untuk memperoleh informasi dan menetapkan variable konfigurasi yang mengontrol segala aspek bagaimana Git beroperasi dan berperilaku. Variable-variable ini dapat disimpan pada tiga tempat berbeda:
 
-*	`/etc/gitconfig` file: システム上の全てのユーザーと全てのリポジトリに対する設定値を保持します。もし`--system`オプションを`git config`に指定すると、明確にこのファイルに読み書きを行ないます。
-*	`~/.gitconfig` file: 特定のユーザーに対する設定値を保持します. `--global`オプションを指定することで、Gitに、明確にこのファイルに読み書きを行なわせることができます。
-*	現在使っている、あらゆるリポジトリのGitディレクトリの設定ファイル(`.git/config`のことです): 特定の単一リポジトリに対する設定値を保持します。それぞれのレベルの値は以前のレベルの値を上書きするため、`.git/config`の中の設定値は`/etc/gitconfig`の設定値に優先されます。
+*	`/etc/gitconfig` file: Menyimpan berbagai nilai-nilai variable untuk setiap pengguna pada sistem dan semua repositori milik para pengguna tersebut. Jika anda memberikan opsi `--system` pada `git config`, maka Git akan membaca dan menulis file konfigurasi ini secara spesifik.
+*	`~/.gitconfig` file: Spesifik hanya untuk pengguna yang bersangkutan. Anda dapat membuat Git membaca dan menulis pada berkas ini secara spesifik dengan memberikan opsi `--global`. 
+*	config file pada direktori git (yaitu, `.git/config`) atau reposotori manapun yang sedang anda gunakan: Spesifik hanya pada repositori itu saja. Setiap nilai pada setiap tingkat akan selalu menimpa nilai yang telah ditetapkan pada level sebelumnya, jadi nilai yang telah di-set pada `.git/config` akan menimpa nilai yang telah di-set pada `/etc/gitconfig`.
 
-Windows環境下では、Gitは`$HOME`ディレクトリ（ほとんどのユーザーは`C:\Documents and Settings\$USER`)（訳者注：環境変数`USERPROFILE`で指定される）の中の`.gitconfig`ファイルを検索に行きます。また、インストーラー時にWidnowsシステムにGitをインストールすると決めたところにある、MSysのルートとの相対位置であったとしても、/etc/gitconfigも見に行きます。
+Pada Sistem Operasi Windows, Git akan mencari berkas `.gitconfig` pada direktori `$HOME` (`C:\Documents and Settings\$USER` untuk kebanyakan kasus). Selain itu juga akan mencari /etc/gitconfig, direktori ini relatif terhadap direktori root MSys, yang mana tergantung dari direktori yang dipilih saat anda menginstall Git pada Windows anda.
 
-### 個人の識別情報 ###
+### Identitas Anda ###
 
-Gitをインストールしたときに最初にすべきことは、ユーザー名とE-mailアドレスを設定することです。全てのGitのコミットはこの情報を用いるため、これは重要で、次々とまわすコミットに永続的に焼き付けられます：
+Hal pertama yang harus anda lakukan ketika menginstalkan Git adalah mengatur username dan alamat e-mail anda. Hal ini penting karena setiap commit pada Git akan menggunakan informasi ini, dan informasi ini akan selamanya disimpan dengan commit yang anda buat tersebut:
 
 	$ git config --global user.name "John Doe"
 	$ git config --global user.email johndoe@example.com
 
-また、もし`--global`オプションを指定するのであれば、Gitはその後、そのシステム上で行なう（訳者注：あるユーザーの）全ての操作に対して常にこの情報を使うようになるため、この操作を行なう必要はたった一度だけです。もし、違う名前とE-mailアドレスを特定のプロジェクトで上書きしたいのであれば、そのプロジェクトの（訳者注：Gitディレクトリの）中で、`--global`オプション無しでこのコマンドを実行することができます。
+Lagi-lagi, anda hanya perlu melakukan ini sekali saja jika anda menggunakan opsi `--global`, karena Git akan selalu menggunakan informasi tersebut selama anda berada pada sistem yang sama. Jika anda ingin menimpa informasi ini dengan menggunakan e-mail atau username yang berbeda untuk proyek tertentu, anda dapat perintah tersebut tanpa menggunakan opsi `--global` ketika anda berada pada proyek tersebut.
 
-### エディター ###
+### Editor Anda ###
 
-今や、個人の識別情報が設定され、Gitがメッセージのタイプをさせる必要があるときに使う、標準のテキストエディターを設定できます。標準では、Gitはシステムのデフォルト・エディターを使います。これは大抵の場合、ViかVimです。Emacsのような違うテキスト・エディターを使いたい場合は、次のようにします：
+Sekarang identitas anda telah siap, berikutnya anda dapat memilih text editor default yang akan digunakan manakala Git membutuhkan anda untuk menulis sebuah pesan. Secara default, Git akan menggunakan default editor sesuai dengan sistem operasi, biasanya adalah Vi atau Vim pada sistem Unix. Jika anda ingin menggunakan text editor yang lainnya, seperti Emacs, anda dapat melakukan perintah seperti berikut:
 
 	$ git config --global core.editor emacs
 	
-### diffツール ###
+### Perkakas Diff Anda ###
 
-設定したいと思われる、その他の便利なオプションは、マージ（訳者注：複数のリポジトリを併合すること）時の衝突を解決するために使う、標準のdiffツールです。vimdiffを使いたいとします：
+Opsi lainnya yang mungkin berguna dan mungkin ingin anda ubah adalah perkakas diff yang digunakan untuk menyelesaikan konflik yang terjadi ketika dilakukannya merge (penggabungan). Katakanlah anda ingin menggunakan vimdiff:
 
 	$ git config --global merge.tool vimdiff
 
-Gitはkdiff3、tkdiff、meld、xxdiff、emerge、vimdiff、gvimdiff、ecmerge、opendiffを確かなマージ・ツールとして扱えます。カスタム・ツールもまた設定できますが、これをする事に関しての詳細な情報は第7章を参照してください。
+Git dapat menggunakan berbagai perkakas diff ini diantaranya kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, dan opendiff. Anda pun dapat menggunakan perkakas kastem; lihat Bab 7 untuk informasi lebih jauh lagi mengenai hal tersebut.
 
-### 設定の確認 ###
+### Mengecek Settingan Anda ###
 
-設定を確認したい場合は、その時点でGitが見つけられる全ての設定を一覧するコマンドである`git config --list`を使う事ができます：
+Jika anda ingin mengecek settingan anda, anda dapat menggunakan peritah `git config --list` untuk menampilkan semua settingan yang digunakan Git:
 
 	$ git config --list
 	user.name=Scott Chacon
@@ -232,28 +230,28 @@ Gitはkdiff3、tkdiff、meld、xxdiff、emerge、vimdiff、gvimdiff、ecmerge、
 	color.diff=auto
 	...
 
-Gitは異なったファイル(例えば`/etc/gitconfig`と`~/.gitconfig`)から同一のキーを読み込むため、同一のキーを1度以上見ることになるでしょう。この場合、Gitは見つけたそれぞれ同一のキーに対して最後の値を用います。
+Anda mungkin akan melihat beberapa variable yang ditampilkan lebih dari sekali, hal ini terjadi karena variable yang sama diperoleh dari beberapa file konfigurasi berbeda (misalnya, `/etc/gitconfig` dan `~/.gitconfig`). Pada kasus seperti ini, Git hanya akan menggunakan nilai yang terlihat paling akhir saja.
 
-また、Gitに設定されている特定のキーの値を、`git config {key}`をタイプすることで確認することができます：
+Andapun dapat melihat apa nilai yang Git pergunakan untuk suatu variable secara spesifik dengan mengunakan `git config {key}`:
 
 	$ git config user.name
 	Scott Chacon
 
-## ヘルプを見る ##
+## Memperoleh Pertolongan ##
 
-もし、Gitを使っている間は助けがいつも必要なら、あらゆるGitコマンドのヘルプのマニュアル・ページ（manpage）を参照する3種類の方法があります。
+Jika anda membutuhkan pertolongan ketika menggunakan Git, terdapat 3 cara yang dapat digunakan untuk membuka halaman manual (manpage) untuk setiap perintah Git:
 
 	$ git help <verb>
 	$ git <verb> --help
 	$ man git-<verb>
 
-例えば、configコマンドのヘルプのmanpageを次のコマンドを走らせることで見ることができます。
+Sebagai contoh, anda dapat memperoleh halaman manual untuk perintah config dengan menjalankan perintah:
 
 	$ git help config
 
-これらのコマンドは、オフラインのときでさえ、どこでも見る事ができるので、すばらしいです。
-もしmanpageとこの本が十分でなく、人の助けが必要であれば、フリーノードIRCサーバー（irc.freenode.net）の`#git`もしくは`#github`チャンネルにアクセスしてみてください。これらのチャンネルはいつも、全員がGitに関してとても知識があり、よく助けてくれようとする数百人の人々でいっぱいです。
+Perintah ini sangatlah luar biasa karena anda dapat mengaksesnya kapan saja, bahkan ketika sedang offline.
+Jika manpage dan buku ini tidaklah cukup, dan anda membutuhkan pertolongan dari seorang manusia, anda dapat mencoba channel `#git` atau `#github` pada Freenode IRC server (irc.freenode.net). Channel ini biasanya berisi ratusan orang yang memiliki pengetahuan tentang Git dan sering kali memiliki kemauan untuk menolong.
 
-## まとめ ##
+## Kesimpulan ##
 
-Gitとは何か、どのように今まで使われてきた他のCVCSと異なるのかについて、基本的な理解ができたはずです。また、今や個人情報の設定ができた、システムに稼動するバージョンのGitがあるはずです。今や、本格的にGitの基本を学習するときです。
+Sekarang anda memiliki pengetahuan dasar mengenai apa yang dimaksud dengan Git dan perbedaannya dari VCS terpusat yang mungkin pernah anda gunakan. Anda pun seharusnya sekarang memiliki Git pada sistem anda yang telah diatur dengan identitas personal anda. Sekarang saatnya untuk mempelajari beberapa dasar Git.

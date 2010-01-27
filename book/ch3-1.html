@@ -17,15 +17,15 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>Your Git repository now contains five objects: one blob for the contents of each of your three files, one tree that lists the contents of the directory and specifies which file names are stored as which blobs, and one commit with the pointer to that root tree and all the commit metadata. Conceptually, the data in your Git repository looks something like Figure 3-1.</p>
 
-<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figure 3-1. Single commit repository data.</p>
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figure 3-1. Single commit repository data</p>
 
 <p>If you make some changes and commit again, the next commit stores a pointer to the commit that came immediately before it. After two more commits, your history might look something like Figure 3-2.</p>
 
-<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Figure 3-2. Git object data for multiple commits.</p>
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Figure 3-2. Git object data for multiple commits</p>
 
 <p>A branch in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master. As you initially make commits, you’re given a master branch that points to the last commit you made. Every time you commit, it moves forward automatically.</p>
 
-<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Figure 3-3. Branch pointing into the commit data’s history.</p>
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Figure 3-3. Branch pointing into the commit data’s history</p>
 
 <p>What happens if you create a new branch? Well, doing so creates a new pointer for you to move around. Let’s say you create a new branch called testing. You do this with the <code>git branch</code> command:</p>
 
@@ -33,11 +33,11 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>This creates a new pointer at the same commit you’re currently on (see Figure 3-4).</p>
 
-<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figure 3-4. Multiple branches pointing into the commit’s data history.</p>
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figure 3-4. Multiple branches pointing into the commit’s data history</p>
 
 <p>How does Git know what branch you’re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you’re currently on. In this case, you’re still on master. The git branch command only created a new branch — it didn’t switch to that branch (see Figure 3-5).</p>
 
-<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. HEAD file pointing to the branch you’re on.</p>
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. HEAD file pointing to the branch you’re on</p>
 
 <p>To switch to an existing branch, you run the <code>git checkout</code> command. Let’s switch to the new testing branch:</p>
 

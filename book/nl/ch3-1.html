@@ -1,85 +1,85 @@
 ---
 layout: translation
-title: Pro Git 3.1 Branchen in Git What a Branch Is
+title: Pro Git 3.1 Branchen in Git Wat Een Branch Is
 ---
-<h2 id='what_a_branch_is'>What a Branch Is</h2>
+<h2 id='wat_een_branch_is'>Wat Een Branch Is</h2>
 
-<p>To really understand the way Git does branching, we need to take a step back and examine how Git stores its data. As you may remember from Chapter 1, Git doesn’t store data as a series of changesets or deltas, but instead as a series of snapshots.</p>
+<p>Om de manier waarop Git branched echt te begrijpen, moeten we een stap terug doen en onderzoeken hoe Git zijn gegevens opslaat. Zoals je je kunt herinneren van Hoofdstuk 1, slaat Git zijn gegevens niet op als een reeks van verandersets of delta&#8217;s, maar in plaats daarvan als een serie snapshots.</p>
 
-<p>When you commit in Git, Git stores a commit object that contains a pointer to the snapshot of the content you staged, the author and message metadata, and zero or more pointers to the commit or commits that were the direct parents of this commit: zero parents for the first commit, one parent for a normal commit, and multiple parents for a commit that results from a merge of two or more branches.</p>
+<p>Als je in Git commit, dan slaat Git een commit object op dat een verwijzing bevat naar het snapshot van de inhoud die je gestaged hebt, de auteur en bericht metagegevens, en nul of meer verwijzingen naar de commit of commits die de directe ouders van deze commit waren: nul ouders voor de eerste commit, één ouder voor een normale commit, en meerdere ouders voor een commit die resulteert uit een samenvoeging of twee of meer branches.</p>
 
-<p>To visualize this, let’s assume that you have a directory containing three files, and you stage them all and commit. Staging the files checksums each one (the SHA-1 hash we mentioned in Chapter 1), stores that version of the file in the Git repository (Git refers to them as blobs), and adds that checksum to the staging area:</p>
+<p>Om dit te visualiseren, laten we aannemen dat je een map hebt die drie bestanden bevat, en je staged ze allemaal en commit. Door de bestanden te stagen krijgen ze allen een checksum (de SHA-1 hash die we in Hoofdstuk 1 noemden), bewaart die versie van het bestand in het Git repository (Git verwijst ernaar als blobs), en voegt die checksum toe aan het stage gebied:</p>
 
 <pre><code>$ git add README test.rb LICENSE
 $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
-<p>When you create the commit by running <code>git commit</code>, Git checksums each subdirectory (in this case, just the root project directory) and stores those tree objects in the Git repository. Git then creates a commit object that has the metadata and a pointer to the root project tree so it can re-create that snapshot when needed.</p>
+<p>Als je de commit aanmaakt door <code>git commit</code> uit te voeren, zal Git iedere submap van een checksum voorzien (in dit geval, alleen de hoofdmap). en die drie objecten in het Git repository opslaan. Daarna crëeert Git een commit object dat de metagegevens bevat en een verwijzing naar de hoofd project boom zodat het het snapshot kan namaken als dat nodig is.</p>
 
-<p>Your Git repository now contains five objects: one blob for the contents of each of your three files, one tree that lists the contents of the directory and specifies which file names are stored as which blobs, and one commit with the pointer to that root tree and all the commit metadata. Conceptually, the data in your Git repository looks something like Figure 3-1.</p>
+<p>Je Git repository bevat nu vijf objecten: een blob voor de inhoud van ieder van je drie bestanden, een boom dat de inhoud van de map weergeeft en specificeert welke bestandsnamen opgeslagen zijn als welke blobs, en een commit met de verwijzing naar die hoofd boom en alle commit metagegevens. Conceptueel zien de gegevens in je Git repository eruit zoals in Figuur 3-1.</p>
 
-<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figure 3-1. Single commit repository data.</p>
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figuur 3-1. Enkele commit repository gegevens.</p>
 
-<p>If you make some changes and commit again, the next commit stores a pointer to the commit that came immediately before it. After two more commits, your history might look something like Figure 3-2.</p>
+<p>Als je wat wijzigingen doet en nogmaals commit, dan slaat de volgende commit een verwijzing op naar de commit die er direct aan vooraf ging. Na nog eens twee commits, zal je historie er misschien uit zien als Figuur 3-2.</p>
 
-<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Figure 3-2. Git object data for multiple commits.</p>
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Figuur 3-2. Git object gegevens voor meerdere commits.</p>
 
-<p>A branch in Git is simply a lightweight movable pointer to one of these commits. The default branch name in Git is master. As you initially make commits, you’re given a master branch that points to the last commit you made. Every time you commit, it moves forward automatically.</p>
+<p>Een branch in Git is simpelweg een lichtgewicht beweegbare verwijzing naar een van deze commits. De standaard branch naam in Git is master. Als je initieel commits maakt, dan wordt je een master branch gegeven die wijst naar de laatste commit die je gemaakt hebt. Iedere keer als je commit, beweegt het automatisch vooruit.</p>
 
-<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Figure 3-3. Branch pointing into the commit data’s history.</p>
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Figuur 3-3. Branch wijzend in de commit gegevens historie.</p>
 
-<p>What happens if you create a new branch? Well, doing so creates a new pointer for you to move around. Let’s say you create a new branch called testing. You do this with the <code>git branch</code> command:</p>
+<p>Wat gebeurt er als je een nieuwe branch maakt? Wel, door dat te doen wordt een nieuwe verwijzing aangemaakt voor jou om voort de duwen. Laten we zeggen dat je een nieuwe branch genaamd testing maakt. Je doet dit met het <code>git branch</code> commando:</p>
 
 <pre><code>$ git branch testing</code></pre>
 
-<p>This creates a new pointer at the same commit you’re currently on (see Figure 3-4).</p>
+<p>Dit maakt een nieuwe verwijzing naar dezelfde commit waar je nu op zit (zie Figuur 3-4).</p>
 
-<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figure 3-4. Multiple branches pointing into the commit’s data history.</p>
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figuur 3-4. Meerdere branches wijzend naar de commit gegevens historie.</p>
 
-<p>How does Git know what branch you’re currently on? It keeps a special pointer called HEAD. Note that this is a lot different than the concept of HEAD in other VCSs you may be used to, such as Subversion or CVS. In Git, this is a pointer to the local branch you’re currently on. In this case, you’re still on master. The git branch command only created a new branch — it didn’t switch to that branch (see Figure 3-5).</p>
+<p>Hoe weet Git op welke branch je nu zit? Het houdt een speciale verwijzing bij genaamd HEAD. Let op dat dit heel anders is dan het concept van HEAD in andere VCS&#8217;s waar je misschien gewend aan bent, zoals bijvoorbeeld Subversion of CVS. In Git, is dit een verwijzing naar de lokale branch waar je nu op zit. In dit geval, zit je nog steeds op master. Het git branch commando heeft alleen een nieuwe branch aangemaakt – het is nog niet omgeschakeld naar die branch (zie Figuur 3-5).</p>
 
-<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. HEAD file pointing to the branch you’re on.</p>
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figuur 3-5. HEAD bestand wijzend naar de branch waar je op zit.</p>
 
-<p>To switch to an existing branch, you run the <code>git checkout</code> command. Let’s switch to the new testing branch:</p>
+<p>Om te schakelen naar een bestaande branch, voer je het <code>git checkout</code> commando uit. Laten we eens omschakelen naar de nieuwe testing branch:</p>
 
 <pre><code>$ git checkout testing</code></pre>
 
-<p>This moves HEAD to point to the testing branch (see Figure 3-6).</p>
+<p>Dit verplaatst HEAD zodat het wijst naar de testing branch (zie Figuur 3-6).</p>
 
-<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> Figure 3-6. HEAD points to another branch when you switch branches.</p>
+<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> Figuur 3-6. HEAD wijst naar een andere branch als je omschakelt.</p>
 
-<p>What is the significance of that? Well, let’s do another commit:</p>
+<p>Wat is hier het belang van? Wel, laten we eens een andere commit doen:</p>
 
 <pre><code>$ vim test.rb
 $ git commit -a -m &#39;made a change&#39;</code></pre>
 
-<p>Figure 3-7 illustrates the result.</p>
+<p>Figuur 3-7 toont het resultaat.</p>
 
-<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> Figure 3-7. The branch that HEAD points to moves forward with each commit.</p>
+<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> Figuur 3-7. De branch waar HEAD naar wijst gaat vooruit met iedere commit.</p>
 
-<p>This is interesting, because now your testing branch has moved forward, but your master branch still points to the commit you were on when you ran <code>git checkout</code> to switch branches. Let’s switch back to the master branch:</p>
+<p>Dit is interessant, omdat je testing branch nu vooruit is gegaan, maar je master branch nog steeds wijst naar de commit waar je op was toen je <code>git checkout</code> uitvoerde om om te schakelen. Laten we eens terugschakelen naar de master branch:</p>
 
 <pre><code>$ git checkout master</code></pre>
 
-<p>Figure 3-8 shows the result.</p>
+<p>Figuur 3-8 toont het resultaat.</p>
 
-<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> Figure 3-8. HEAD moves to another branch on a checkout.</p>
+<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> Figuur 3-8. HEAD verschuift naar een andere branch bij een checkout.</p>
 
-<p>That command did two things. It moved the HEAD pointer back to point to the master branch, and it reverted the files in your working directory back to the snapshot that master points to. This also means the changes you make from this point forward will diverge from an older version of the project. It essentially rewinds the work you’ve done in your testing branch temporarily so you can go in a different direction.</p>
+<p>Dat commando deed twee dingen. Het verplaatste de HEAD verwijzing terug naar de master branch, en het draaide de bestanden in je werkmap terug naar het snapshot waar master naar wijst. Dit betekend ook dat de wijzigingen die je vanaf dit punt maakt zullen afwijken van een oudere versie van het project. Het betekent in essentie dat het het werk dat je in je testing branch hebt gedaan tijdelijk terugdraait zodat je in een andere richting kunt gaan.</p>
 
-<p>Let’s make a few changes and commit again:</p>
+<p>Laten we een paar wijzigingen doen en nog eens committen:</p>
 
 <pre><code>$ vim test.rb
 $ git commit -a -m &#39;made other changes&#39;</code></pre>
 
-<p>Now your project history has diverged (see Figure 3-9). You created and switched to a branch, did some work on it, and then switched back to your main branch and did other work. Both of those changes are isolated in separate branches: you can switch back and forth between the branches and merge them together when you’re ready. And you did all that with simple <code>branch</code> and <code>checkout</code> commands.</p>
+<p>Nu is je project historie afgeweken (zie Figuur 3-9). Je hebt een branch gemaakt en bent er naartoe omgeschakeld, hebt er wat werk op gedaan, en bent toen teruggeschakeld naar je hoofd branch en hebt nog ander werk gedaan. Beide van die veranderingen zijn geïsoleerd van elkaar in aparte branches: je kunt heen en weer schakelen tussen de branches en ze samenvoegen als je klaar bent. En je hebt dat alles gedaan met eenvoudige <code>branch</code> en <code>checkout</code> commando&#8217;s.</p>
 
-<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Figure 3-9. The branch histories have diverged.</p>
+<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Figuur 3-9. De branch histories zijn uiteen gegaan.</p>
 
-<p>Because a branch in Git is in actuality a simple file that contains the 40 character SHA-1 checksum of the commit it points to, branches are cheap to create and destroy. Creating a new branch is as quick and simple as writing 41 bytes to a file (40 characters and a newline).</p>
+<p>Omdat een branch in Git in feite een eenvoudig bestand is dat de 40 karakter lange SHA-1 checksum van de commit bevat waar het naar wijst, zijn branches goedkoop om te maken en weg te gooien. Een nieuwe branch aanmaken is zo makkelijk en eenvoudig als 41 bytes naar een bestand schrijven (40 karakters en een harde return).</p>
 
-<p>This is in sharp contrast to the way most VCS tools branch, which involves copying all of the project’s files into a second directory. This can take several seconds or even minutes, depending on the size of the project, whereas in Git the process is always instantaneous. Also, because we’re recording the parents when we commit, finding a proper merge base for merging is automatically done for us and is generally very easy to do. These features help encourage developers to create and use branches often.</p>
+<p>Dit is in scherp contrast met de manier waarop de meeste VCS applicaties branchen, wat inhoud dat alle project bestanden naar een tweede map gekopieerd worden. Dit kan enkele seconden of zelfs minuten duren, afhankelijk van de grootte van het project, en daarentegen is het in Git altijd meteen klaar is. En omdat we de ouders opslaan terwijl we comitten, wordt het vinden van een goede samenvoeg basis automatisch voor ons gedaan en is over het algemeen eenvoudig om te doen. Deze eigenschappen helpen ontwikkelaars aan te moedigen om branches vaak aan te maken en te gebruiken.</p>
 
-<p>Let’s see why you should do so.</p>
+<p>Laten we eens kijken waarom je dat zou moeten doen.</p>
 
 <div id='nav'>
 <a href='ch3-0.html'>prev</a> | <a href='ch3-2.html'>next</a>

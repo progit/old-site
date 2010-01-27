@@ -4,7 +4,7 @@ title: Pro Git 6.2 Git Tools Interactief Stagen
 ---
 <h2 id='interactief_stagen'>Interactief Stagen</h2>
 
-<p>Bij Git zitten een aantal scripts, die sommige commando-regel taken makkelijker maken. Hier zul je een aantal interactieve commando&#8217;s zien, die je kunnen helpen om je commits zo te maken dat ze alleen bepaalde combinaties en delen van bestanden bevatten. Deze tools zijn erg bruikbaar als je een serie bestanden aanpast en dan besluit dat je deze veranderingen in een aantal gefocuste commits wilt hebben in plaats van een rommelige commit. Op deze manier ben je er zeker van dat je commits logische aparte wijzigingensets zijn en makkelijk gereviewed kunnen worden door je mede-ontwikkelaars. Als je <code>git add</code> uitvoert met de <code>-i</code> of <code>--interactive</code> optie, dan gaat Git over in de interactieve shell modus, waarbij zoiets als dit getoond wordt:</p>
+<p>Bij Git zitten een aantal scripts, die sommige commandline taken makkelijker maken. Hier zul je een aantal interactieve commando&#8217;s zien, die je kunnen helpen om je commits zo te maken dat ze alleen bepaalde combinaties en delen van bestanden bevatten. Deze tools zijn erg bruikbaar als je een serie bestanden aanpast en dan besluit dat je deze veranderingen in een aantal gefocuste commits wilt hebben in plaats van een rommelige commit. Op deze manier ben je er zeker van dat je commits logische aparte wijzigingensets zijn en makkelijk gereviewed kunnen worden door je mede-ontwikkelaars. Als je <code>git add</code> uitvoert met de <code>-i</code> of <code>--interactive</code> optie, dan gaat Git over in de interactieve shell modus, waarbij zoiets als dit getoond wordt:</p>
 
 <pre><code>$ git add -i
            staged     unstaged path
@@ -17,13 +17,13 @@ title: Pro Git 6.2 Git Tools Interactief Stagen
   5: patch      6: diff        7: quit       8: help
 What now&gt; </code></pre>
 
-<p>Je kunt zien dat dit commando je een heel andere view van je staging gebied geeft – eigenlijk dezelfde informatie die je krijgt met het <code>git status</code> commando, maar dan compacter en meer informatief. Het toont links de wijzigingen die je gestaged hebt, en de niet gestagede wijzigingen rechts.</p>
+<p>Je kunt zien dat dit commando je een heel andere view van je staging area geeft – eigenlijk dezelfde informatie die je krijgt met het <code>git status</code> commando, maar dan compacter en meer informatief. Het toont links de wijzigingen die je gestaged hebt, en de niet gestagede wijzigingen rechts.</p>
 
-<p>Hierna komt een Commando sectie. Hier kun je een aantal dingen mee doen, inclusief bestanden stagen, bestanden unstagen, delen van bestanden stagen, ongevolgde bestanden toevoegen, en diffs zien van wat gestaged is.</p>
+<p>Hierna volgt een commandosectie. Hier kun je een aantal dingen mee doen, inclusief bestanden stagen, bestanden unstagen, delen van bestanden stagen, ongevolgde bestanden toevoegen, en diffs zien van wat gestaged is.</p>
 
 <h3 id='bestanden_stagen_en_unstagen'>Bestanden Stagen en Unstagen</h3>
 
-<p>Als je <code>2</code> of <code>u</code> op de <code>What now&gt;</code> prompt typted, dan vraagt he script welke bestanden je wilt stagen:</p>
+<p>Als je <code>2</code> of <code>u</code> op de <code>What now&gt;</code> prompt typted, dan vraagt het script welke bestanden je wilt stagen:</p>
 
 <pre><code>What now&gt; 2
            staged     unstaged path
@@ -41,7 +41,7 @@ Update&gt;&gt;</code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>Het <code>*</code> naast ieder bestand betekend dat het bestand geselecteerd staat om gestaged te worden. Als je Enter indrukt na niets getyped te hebben op de <code>Update&gt;&gt;</code> prompt, dan zal Git alles wat geselecteerd staat pakken en voor je stagen:</p>
+<p>De <code>*</code> naast ieder bestand betekent dat het bestand geselecteerd staat om gestaged te worden. Als je Enter indrukt na niets getyped te hebben op de <code>Update&gt;&gt;</code> prompt, dan zal Git alles wat geselecteerd staat pakken en voor je stagen:</p>
 
 <pre><code>Update&gt;&gt; 
 updated 2 paths
@@ -106,7 +106,7 @@ index 4d07108..4335f49 100644
 
  &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
 
-<p>Met deze basis commando&#8217;s, kun je de interactieve toevoeg modus gebruiken om een beetje makkelijker met je staging gebied om te gaan.</p>
+<p>Met deze basiscommando&#8217;s kun je de interactieve toevoegmodus gebruiken om een beetje makkelijker met je staging area om te gaan.</p>
 
 <h3 id='patches_stagen'>Patches Stagen</h3>
 

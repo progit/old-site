@@ -10,7 +10,7 @@ title: Pro Git 5.1 Distributed Git Distributed Workflows
 
 <p>In centralized systems, there is generally a single collaboration model—the centralized workflow. One central hub, or repository, can accept code, and everyone synchronizes their work to it. A number of developers are nodes — consumers of that hub — and synchronize to that one place (see Figure 5-1).</p>
 
-<p><center><img src="/figures/ch5/18333fig0501-tn.png"></center><br/> Figure 5-1. Centralized workflow.</p>
+<p><center><img src="/figures/ch5/18333fig0501-tn.png"></center><br/> Figure 5-1. Centralized workflow</p>
 
 <p>This means that if two developers clone from the hub and both make changes, the first developer to push their changes back up can do so with no problems. The second developer must merge in the first one’s work before pushing changes up, so as not to overwrite the first developer’s changes. This concept is true in Git as it is in Subversion (or any CVCS), and this model works perfectly in Git.</p>
 
@@ -34,7 +34,7 @@ title: Pro Git 5.1 Distributed Git Distributed Workflows
 <li>The maintainer pushes merged changes to the main repository.</li>
 </ol>
 
-<p><center><img src="/figures/ch5/18333fig0502-tn.png"></center><br/> Figure 5-2. Integration-manager workflow.</p>
+<p><center><img src="/figures/ch5/18333fig0502-tn.png"></center><br/> Figure 5-2. Integration-manager workflow</p>
 
 <p>This is a very common workflow with sites like GitHub, where it’s easy to fork a project and push your changes into your fork for everyone to see. One of the main advantages of this approach is that you can continue to work, and the maintainer of the main repository can pull in your changes at any time. Contributors don’t have to wait for the project to incorporate their changes — each party can work at their own pace.</p>
 
@@ -52,7 +52,7 @@ title: Pro Git 5.1 Distributed Git Distributed Workflows
 <li>The dictator pushes their master to the reference repository so the other developers can rebase on it.</li>
 </ol>
 
-<p><center><img src="/figures/ch5/18333fig0503-tn.png"></center><br/><br />Figure 5-3. Benevolent dictator workflow.</p>
+<p><center><img src="/figures/ch5/18333fig0503-tn.png"></center><br/><br />Figure 5-3. Benevolent dictator workflow</p>
 
 <p>This kind of workflow isn’t common but can be useful in very big projects or in highly hierarchical environments, because as it allows the project leader (the dictator) to delegate much of the work and collect large subsets of code at multiple points before integrating them.</p>
 

@@ -4,7 +4,7 @@ title: Pro Git 6.4 Git Tools Geschiedenis Herschrijven
 ---
 <h2 id='geschiedenis_herschrijven'>Geschiedenis Herschrijven</h2>
 
-<p>Vaak zul je, als je met Git werkt, je commit geschiedenis om een of andere reden willen aanpassen. Eén van de mooie dingen van Git is dat het je toelaat om beslissingen op het laatste moment te kunnen maken. Je kunt bepalen welke bestanden in welke commits gaan vlak voordat je commit op het staging gebied, je kunt beslissen dat je niet aan iets bedoelde te werken met het stash commando en je kunt commits herschrijven ook al zijn ze reeds gebeurd, zodat het lijkt alsof ze op een andere manier gebeurd zijn. Dit kan bijvoorbeeld de volgorde van de commits zijn, berichten of bestanden wijzigen, commits samenvoegen of opsplitsen, of complete commits weghalen – dat alles voordat je je werk met anderen deelt.</p>
+<p>Vaak zul je, als je met Git werkt, je commit geschiedenis om een of andere reden willen aanpassen. Eén van de mooie dingen van Git is dat het je toelaat om beslissingen op het laatste moment te kunnen maken. Je kunt bepalen welke bestanden in welke commits gaan vlak voordat je commit op het staging area, je kunt beslissen dat je niet aan iets bedoelde te werken met het stash commando en je kunt commits herschrijven ook al zijn ze reeds gebeurd, zodat het lijkt alsof ze op een andere manier gebeurd zijn. Dit kan bijvoorbeeld de volgorde van de commits zijn, berichten of bestanden wijzigen, commits samenvoegen of opsplitsen, of complete commits weghalen – dat alles voordat je je werk met anderen deelt.</p>
 
 <p>In deze sectie zul je leren hoe je deze handige taken doet, zodat je je commit geschiedenis er uit kunt laten zien zoals jij dat wilt, voordat je hem met anderen deelt.</p>
 
@@ -18,7 +18,7 @@ title: Pro Git 6.4 Git Tools Geschiedenis Herschrijven
 
 <p>Dat plaatst je in je teksteditor, met je laatste commit bericht erin, klaar voor jou om je bericht te wijzigen. Als je de editor opslaat en sluit, dan schrijft de editor een nieuwe commit met dat bericht en maakt dat je laatste commit.</p>
 
-<p>Als je hebt gecommit en je wilt het snapshot dat je gecommit hebt wijzigen, door het toevoegen of wijzigen van bestanden, misschien omdat je vergeten was een nieuw bestand toe te voegen toen je committe, werkt het proces ongeveer op dezelfde manier. Je staged de wijzigingen die je wilt door een bestand te wijzigen en <code>git add</code> er op uit te voeren, of <code>git rm</code> op een gevolgd bestand, en de daaropvolgende <code>git commit --amend</code> pakt je huidige staging gebied en maakt dat het snapshot voor de nieuwe commit.</p>
+<p>Als je hebt gecommit en je wilt het snapshot dat je gecommit hebt wijzigen, door het toevoegen of wijzigen van bestanden, misschien omdat je vergeten was een nieuw bestand toe te voegen toen je committe, werkt het proces ongeveer op dezelfde manier. Je staged de wijzigingen die je wilt door een bestand te wijzigen en <code>git add</code> er op uit te voeren, of <code>git rm</code> op een gevolgd bestand, en de daaropvolgende <code>git commit --amend</code> pakt je huidige staging area en maakt dat het snapshot voor de nieuwe commit.</p>
 
 <p>Je moet oppassen met deze techniek, omdat het amenden de SHA-1 van de commit wijzigt. Het is vergelijkbaar met een kleine rebase – niet je laatste commit wijzigen als je die al gepushed hebt.</p>
 

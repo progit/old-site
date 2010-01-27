@@ -10,11 +10,11 @@ title: Pro Git 3.6 Git Branching Rebasing
 
 <p>If you go back to an earlier example from the Merge section (see Figure 3-27), you can see that you diverged your work and made commits on two different branches.</p>
 
-<p><center><img src="/figures/ch3/18333fig0327-tn.png"></center><br/> Figure 3-27. Your initial diverged commit history.</p>
+<p><center><img src="/figures/ch3/18333fig0327-tn.png"></center><br/> Figure 3-27. Your initial diverged commit history</p>
 
 <p>The easiest way to integrate the branches, as we’ve already covered, is the <code>merge</code> command. It performs a three-way merge between the two latest branch snapshots (C3 and C4) and the most recent common ancestor of the two (C2), creating a new snapshot (and commit), as shown in Figure 3-28.</p>
 
-<p><center><img src="/figures/ch3/18333fig0328-tn.png"></center><br/> Figure 3-28. Merging a branch to integrate the diverged work history.</p>
+<p><center><img src="/figures/ch3/18333fig0328-tn.png"></center><br/> Figure 3-28. Merging a branch to integrate the diverged work history</p>
 
 <p>However, there is another way: you can take the patch of the change that was introduced in C3 and reapply it on top of C4. In Git, this is called <em>rebasing</em>. With the <code>rebase</code> command, you can take all the changes that were committed on one branch and replay them on another one.</p>
 
@@ -27,11 +27,11 @@ Applying: added staged command</code></pre>
 
 <p>It works by going to the common ancestor of the two branches (the one you’re on and the one you’re rebasing onto), getting the diff introduced by each commit of the branch you’re on, saving those diffs to temporary files, resetting the current branch to the same commit as the branch you are rebasing onto, and finally applying each change in turn. Figure 3-29 illustrates this process.</p>
 
-<p><center><img src="/figures/ch3/18333fig0329-tn.png"></center><br/> Figure 3-29. Rebasing the change introduced in C3 onto C4.</p>
+<p><center><img src="/figures/ch3/18333fig0329-tn.png"></center><br/> Figure 3-29. Rebasing the change introduced in C3 onto C4</p>
 
 <p>At this point, you can go back to the master branch and do a fast-forward merge (see Figure 3-30).</p>
 
-<p><center><img src="/figures/ch3/18333fig0330-tn.png"></center><br/> Figure 3-30. Fast-forwarding the master branch.</p>
+<p><center><img src="/figures/ch3/18333fig0330-tn.png"></center><br/> Figure 3-30. Fast-forwarding the master branch</p>
 
 <p>Now, the snapshot pointed to by C3 is exactly the same as the one that was pointed to by C5 in the merge example. There is no difference in the end product of the integration, but rebasing makes for a cleaner history. If you examine the log of a rebased branch, it looks like a linear history: it appears that all the work happened in series, even when it originally happened in parallel.</p>
 
@@ -43,7 +43,7 @@ Applying: added staged command</code></pre>
 
 <p>You can also have your rebase replay on something other than the rebase branch. Take a history like Figure 3-31, for example. You branched a topic branch (<code>server</code>) to add some server-side functionality to your project, and made a commit. Then, you branched off that to make the client-side changes (<code>client</code>) and committed a few times. Finally, you went back to your server branch and did a few more commits.</p>
 
-<p><center><img src="/figures/ch3/18333fig0331-tn.png"></center><br/> Figure 3-31. A history with a topic branch off another topic branch.</p>
+<p><center><img src="/figures/ch3/18333fig0331-tn.png"></center><br/> Figure 3-31. A history with a topic branch off another topic branch</p>
 
 <p>Suppose you decide that you want to merge your client-side changes into your mainline for a release, but you want to hold off on the server-side changes until it’s tested further. You can take the changes on client that aren’t on server (C8 and C9) and replay them on your master branch by using the <code>--onto</code> option of <code>git rebase</code>:</p>
 
@@ -51,14 +51,14 @@ Applying: added staged command</code></pre>
 
 <p>This basically says, “Check out the client branch, figure out the patches from the common ancestor of the <code>client</code> and <code>server</code> branches, and then replay them onto <code>master</code>.” It’s a bit complex; but the result, shown in Figure 3-32, is pretty cool.</p>
 
-<p><center><img src="/figures/ch3/18333fig0332-tn.png"></center><br/> Figure 3-32. Rebasing a topic branch off another topic branch.</p>
+<p><center><img src="/figures/ch3/18333fig0332-tn.png"></center><br/> Figure 3-32. Rebasing a topic branch off another topic branch</p>
 
 <p>Now you can fast-forward your master branch (see Figure 3-33):</p>
 
 <pre><code>$ git checkout master
 $ git merge client</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0333-tn.png"></center><br/> Figure 3-33. Fast-forwarding your master branch to include the client branch changes.</p>
+<p><center><img src="/figures/ch3/18333fig0333-tn.png"></center><br/> Figure 3-33. Fast-forwarding your master branch to include the client branch changes</p>
 
 <p>Let’s say you decide to pull in your server branch as well. You can rebase the server branch onto the master branch without having to check it out first by running <code>git rebase [basebranch] [topicbranch]</code> — which checks out the topic branch (in this case, <code>server</code>) for you and replays it onto the base branch (<code>master</code>):</p>
 
@@ -66,7 +66,7 @@ $ git merge client</code></pre>
 
 <p>This replays your <code>server</code> work on top of your <code>master</code> work, as shown in Figure 3-34.</p>
 
-<p><center><img src="/figures/ch3/18333fig0334-tn.png"></center><br/> Figure 3-34. Rebasing your server branch on top of your master branch.</p>
+<p><center><img src="/figures/ch3/18333fig0334-tn.png"></center><br/> Figure 3-34. Rebasing your server branch on top of your master branch</p>
 
 <p>Then, you can fast-forward the base branch (<code>master</code>):</p>
 
@@ -78,7 +78,7 @@ $ git merge server</code></pre>
 <pre><code>$ git branch -d client
 $ git branch -d server</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0335-tn.png"></center><br/> Figure 3-35. Final commit history.</p>
+<p><center><img src="/figures/ch3/18333fig0335-tn.png"></center><br/> Figure 3-35. Final commit history</p>
 
 <h3 id='the_perils_of_rebasing'>The Perils of Rebasing</h3>
 

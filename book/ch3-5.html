@@ -22,7 +22,7 @@ title: Pro Git 3.5 Git Branching Remote Branches
 
 <p>To demonstrate having multiple remote servers and what remote branches for those remote projects look like, let’s assume you have another internal Git server that is used only for development by one of your sprint teams. This server is at <code>git.team1.ourcompany.com</code>. You can add it as a new remote reference to the project you’re currently working on by running the <code>git remote add</code> command as we covered in Chapter 2. Name this remote <code>teamone</code>, which will be your shortname for that whole URL (see Figure 3-25).</p>
 
-<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Figure 3-25. Adding another server as a remote.</p>
+<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Figure 3-25. Adding another server as a remote</p>
 
 <p>Now, you can run <code>git fetch teamone</code> to fetch everything server has that you don’t have yet. Because that server is a subset of the data your <code>origin</code> server has right now, Git fetches no data but sets a remote branch called <code>teamone/master</code> to point to the commit that <code>teamone</code> has as its <code>master</code> branch (see Figure 3-26).</p>
 

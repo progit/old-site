@@ -1,6 +1,6 @@
 ---
 layout: master
-title: Pro Git 2.5 Git Basics Working with Remotes
+title: Pro Git 2.5 Základy Gitu Working with Remotes
 ---
 <h2 id='working_with_remotes'>Working with Remotes</h2>
 
@@ -64,13 +64,13 @@ From git://github.com/paulboone/ticgit
 
 <h3 id='fetching_and_pulling_from_your_remotes'>Fetching and Pulling from Your Remotes</h3>
 
-<p>As you just saw, to get data from your remote projects, you can run:</p>
+<p>As you just saw, to get data from your remote projects, you can run</p>
 
 <pre><code>$ git fetch [remote-name]</code></pre>
 
 <p>The command goes out to that remote project and pulls down all the data from that remote project that you don’t have yet. After you do this, you should have references to all the branches from that remote, which you can merge in or inspect at any time. (We’ll go over what branches are and how to use them in much more detail in Chapter 3.)</p>
 
-<p>If you clone a repository, the command automatically adds that remote repository under the name origin. So, <code>git fetch origin</code> fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.</p>
+<p>If you cloned a repository, the command automatically adds that remote repository under the name origin. So, <code>git fetch origin</code> fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.</p>
 
 <p>If you have a branch set up to track a remote branch (see the next section and Chapter 3 for more information), you can use the <code>git pull</code> command to automatically fetch and then merge a remote branch into your current branch. This may be an easier or more comfortable workflow for you; and by default, the <code>git clone</code> command automatically sets up your local master branch to track the remote master branch on the server you cloned from (assuming the remote has a master branch). Running <code>git pull</code> generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on.</p>
 
