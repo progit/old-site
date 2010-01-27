@@ -1,0 +1,70 @@
+---
+layout: translation
+title: Pro Git 1.4 Empezando Instalando Git
+---
+<h2 id='instalando_git'>Instalando Git</h2>
+
+<p>Vamos a empezar a usar un poco de Git. Lo primero es lo primero - tienes que instalarlo. Puedes obtenerlo de varias maneras; las dos principales son instalarlo desde código fuente, o instalar un paquete existente para tu plataforma.</p>
+
+<h3 id='instalando_desde_cdigo_fuente'>Instalando desde código fuente</h3>
+
+<p>Si puedes, en general es útil instalar Git desde código fuente, porque obtendrás la versión más reciente. Cada versión de Git tiende a incluir útiles mejoras en la interfaz de usuario, por lo que utilizar la última versión es a menudo el camino más adecuado si te sientes cómodo compilando software desde código fuente. También ocurre que muchas distribuciones de Linux contienen paquetes muy antiguos; así que a menos que estés en una distribución muy actualizada o estés usando backports, instalar desde código fuente puede ser la mejor apuesta.</p>
+
+<p>Para instalar Git, necesitas tener las siguientes librerías de las que Git depende: curl, zlib, openssl, expat, y libiconv. Por ejemplo, si estás en un sistema que tiene yum (como Fedora) o apt-get (como un sistema basado en Debian), puedes usar uno de estos comandos para instalar todas las dependencias:</p>
+
+<pre><code>$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev</code></pre>
+
+<p>Cuando tengas todas las dependencias necesarias, puedes descargar la versión más reciente de Git desde su página web:</p>
+
+<pre><code>http://git-scm.com/download</code></pre>
+
+<p>Luego compila e instala:</p>
+
+<pre><code>$ tar -zxf git-1.6.0.5.tar.gz
+$ cd git-1.6.0.5
+$ make prefix=/usr/local all
+$ sudo make prefix=/usr/local install</code></pre>
+
+<p>Una vez hecho esto, también puedes obtener Git a través del propio Git para futuras actualizaciones:</p>
+
+<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
+
+<h3 id='instalando_en_linux'>Instalando en Linux</h3>
+
+<p>Si quieres instalar Git en Linux a través de un instalador binario, en general puedes hacerlo a través de la herramienta básica de gestión de paquetes que trae tu distribución. Si estás en Fedora, puedes usar yum:</p>
+
+<pre><code>$ yum install git-core</code></pre>
+
+<p>O si estás en una distribución basada en Debian como Ubuntu, prueba con apt-get:</p>
+
+<pre><code>$ apt-get install git-core</code></pre>
+
+<h3 id='instalando_en_mac'>Instalando en Mac</h3>
+
+<p>Hay dos maneras fáciles de instalar Git en un Mac. La más sencilla es usar el instalador gráfico de Git, que puedes descargar desde la página de Google Code (véase Figura 1-7):</p>
+
+<pre><code>http://code.google.com/p/git-osx-installer</code></pre>
+
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figura 1-7. Instalador de Git para OS X.</p>
+
+<p>La otra manera es instalar Git a través de MacPorts (<code>http://www.macports.org</code>). Si tienes MacPorts instalado, instala Git con:</p>
+
+<pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
+
+<p>No necesitas añadir todos los extras, pero probablemente quieras incluir +svn en caso de que alguna vez necesites usar Git con repositorios Subversion (véase el Capítulo 8).</p>
+
+<h3 id='instalando_en_windows'>Instalando en Windows</h3>
+
+<p>Instalar Git en Windows es muy fácil. El proyecto msysGit tiene uno de los procesos de instalación más sencillos. Simplemente descarga el archivo exe del instalador desde la página de Google Code, y ejecútalo:</p>
+
+<pre><code>http://code.google.com/p/msysgit</code></pre>
+
+<p>Una vez instalado, tendrás tanto la versión de línea de comandos (incluido un cliente SSH que nos será útil más adelante) como la interfaz gráfica de usuario estándar.</p>
+
+<div id='nav'>
+<a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>
+</div>
