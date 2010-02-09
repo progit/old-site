@@ -1,0 +1,381 @@
+---
+layout: translation
+title: Pro Git 2.2 Dasar-dasar Git Merekam Perubahan ke dalam Repositori
+---
+<h2 id='merekam_perubahan_ke_dalam_repositori'>Merekam Perubahan ke dalam Repositori</h2>
+
+<p>Anda sudah memiliki repositori Git yang bonafide dan sebuah salinan kerja dari semua berkas untuk proyek tersebut. Anda harus membuat beberapa perubahan dan commit perubahan tersebut ke dalam repositori setiap saat proyek mencapai sebuah keadaan yang ingin Anda rekam.</p>
+
+<p>Ingat bahwa setiap berkas di dalam direktori kerja Anda dapat berada di 2 keadaan: terpantau atau tak-terpantau. Berkas terpantau adalah berkas yang sebelumnya berada di snapshot terakhir; mereka dapat berada dalam kondisi belum terubah, terubah, ataupun staged (berada di area stage). Berkas tak-terpantau adalah kebalikannya - merupakan berkas-berkas di dalam direktori kerja yang tidak berada di dalam snapshot terakhir dan juga tidak berada di area staging. Ketika Anda pertama kali menduplikasi sebuah repositori, semua berkas Anda akan terpantau dan belum terubah karena Anda baru saja melakukan checkout dan belum mengubah apapun.</p>
+
+<p>Sejalan dengan proses edit yang Anda lakukan terhadap berkas-berkas tersebut, Git mencatatnya sebagai terubah, karena Anda telah mengubahnya sejak terakhir commit. Anda kemudian memasukkan berkas-berkas terubah ini ke dalam area stage untuk kemudian dilakukan commit, dan terus siklus ini berulang. Siklus perubahan ini diilustrasikan di Figure-2.1</p>
+
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figure 2-1. The lifecycle of the status of your files.</p>
+
+<h3 id='cek_status_dari_berkas_anda'>Cek Status dari Berkas Anda</h3>
+
+<p>Alat utama yang Anda gunakan untuk menentukan berkas-berkas mana yang berada dalam keadaan tertentu adalah melalui perintah <code>git status</code>. Jika Anda menggunakan alat ini langsung setelah sebuah <code>clone</code>, Anda akan melihat serupa seperti di bawah ini:</p>
+
+<pre><code>$ git status
+# On branch master
+nothing to commit (working directory clean)</code></pre>
+
+<p>Ini berarti Anda memiliki direktori kerja yang bersih-dengan kata lain, tidak ada berkas terpantau yang terubah. Git juga tidak melihat berkas-berkas yang tak terpantau, karena pasti akan dilaporkan oleh alat ini. Juga, perintah ini memberitahu Anda tentang cabang tempat Anda berada. Pada saat ini, cabang akan selalu berada di master, karena sudah menjadi default-nya; Anda tidak perlu khawatir tentang cabang dulu. Bab berikutnya akan membahas tentang percabangan dan referensi secara lebih detil.</p>
+
+<p>Mari kita umpamakan Anda menambah sebuah berkas baru ke dalam proyek Anda, misalnya sesederhana berkas README. Jika file tersebut belum ada sebelumnya, dan Anda melakukan <code>git status</code>, Anda akan melihatnya sebagai berkas tak-terpantau seperti berikut ini:</p>
+
+<pre><code>$ vim README
+$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	README
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
+
+<p>Anda akan melihat bahwa berkas baru Anda README belum terpantau, karena berada di bawah judul &#8220;Untracked files&#8221; di keluaran status Anda. Untracked pada dasarnya berarti bahwa Git melihat sebuah berkas yang sebelumnya tidak Anda miliki di snapshot (commit) sebelumnya; Git tidak akan mulai memasukkannya ke dalam snapshot commit hingga Anda secara eksplisit memerintahkan Git. Git berlaku seperti ini agar Anda tidak secara tak-sengaja mulai menyertakan berkas biner hasil kompilasi atau berkas lain yang tidak Anda inginkan untuk disertakan. Anda hanya ingin mulai menyertakan README, mari kita mulai memantau berkas tersebut.</p>
+
+<h3 id='memantau_berkas_baru'>Memantau Berkas Baru</h3>
+
+<p>Untuk mulai memantau berkas baru, Anda menggunakan perintah <code>git add</code>. Untuk mulai memantau berkas README tadi, Anda menjalankannya seperti berikut:</p>
+
+<pre><code>$ git add README</code></pre>
+
+<p>Jika Anda menjalankan perintah <code>status</code> lagi, Anda akan melihat bahwa berkas README Anda sekarang sudah terpantau dan sudah masuk ke dalam area stage:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#</code></pre>
+
+<p>Anda dapat mengatakan bahwa berkas tersebut berada di dalam area stage karena tertulis di bawah judul &#8220;Changes to be committed&#8221;. Jika Anda melakukan commit pada saat ini, versi berkas pada saat Anda menjalankan <code>git add</code> inilah yang akan dimasukkan ke dalam sejarah snapshot. Anda mungkin ingat bahwa ketika Anda menjalankan <code>git init</code> sebelumnya, Anda melanjutkannya dengan <code>git add (nama berkas)</code> - yang akan mulai dipantau di direktori Anda. Perintah <code>git add</code> ini mengambil alamat dari berkas ataupun direktori; jika sebuah direktori, perintah tersebut akan menambahkan seluruh berkas yang berada di dalam direktori secara rekursif.</p>
+
+<h3 id='memasukkan_berkas_terubah_ke_dalam_area_stage'>Memasukkan Berkas Terubah ke Dalam Area Stage</h3>
+
+<p>Mari kita ubah sebuah berkas yang sudah terpantau. Jika Anda mengubah berkas yang sebelumnya terpantau bernama <code>benchmarks.rb</code> dan kemudian menjalankan perintah <code>status</code> lagi, Anda akan mendapatkan keluaran kurang lebih seperti ini:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Berkas benchmarks.rb terlihat di bawah bagian yang bernama &#8220;Changed but not updated&#8221; - yang berarti bahwa sebuah berkas terpantau telah berubah di dalam direktori kerja namun belum masuk ke area stage. Untuk memasukkannya ke area stage, Anda menjalankan perintah <code>git add</code> (perintah ini adalah perintah multiguna - Anda menggunakannya untuk mulai memantau berkas baru, untuk memasukkannya ke area stage, dan untuk melakukan hal lain seperti menandai berkas terkonflik menjadi terpecahkan). Mari kita sekarang jalankan <code>git add</code> untuk memasukkan berkas benchmarks.rb ke dalam area stage, dan jalankan <code>git status</code> lagi:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Kedua file sekarang berada di area stage dan akan masuk ke dalam commit Anda berikutnya. Pada saat ini, semisal Anda teringat satu perubahan yang Anda ingin buat di benchmarks.rb sebelum Anda lakukan commit. Anda buka berkas tersebut kembali dan melakukan perubahan tersebut, dan Anda siap untuk melakukan commit. Namun, mari kita coba jalankan <code>git status</code> kembali:</p>
+
+<pre><code>$ vim benchmarks.rb 
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Apa? Sekarang benchmarks.rb terdaftar di dua tempat: area stage dan area terubah. Bagaimana hal ini bisa terjadi? Ternyata Git memasukkan berkas ke area stage tepat seperti ketika Anda menjalankan perintah <code>git add</code>. Jika Anda commit sekarang, versi benchmarks.rb pada saat Anda terakhir lakukan perintah <code>git add</code>-lah yang akan masuk ke dalam commit, bukan versi berkas yang saat ini terlihat di direktori kerja Anda ketika Anda menjalankan <code>git commit</code>. Jika Anda mengubah sebuah berkas setelah Anda menjalankan <code>git add</code>, Anda harus menjalankan <code>git add</code> kembali untuk memasukkan versi berkas terakhir ke dalam area stage:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<h3 id='mengabaikan_berkas'>Mengabaikan Berkas</h3>
+
+<p>Terkadang, Anda memiliki sekumpulan berkas yang Anda tidak ingin Git tambahkan secara otomatis atau bahkan terlihat sebagai tak-terpantau. Biasanya berkas hasil keluaran seperti berkas log atau berkas yang dihasilkan oleh sistem build Anda. Dalam kasus ini, Anda dapat membuat sebuah berkas bernama .gitignore yang berisi pola dari berkas terabaikan. Berikut adalah sebuah contoh isi dari berkas .gitignore:</p>
+
+<pre><code>$ cat .gitignore
+*.[oa]
+*~</code></pre>
+
+<p>Baris pertama memberitahu Git untuk mengabaikan semua file yang berakhiran .o atau .a - berkas object dan arsip yang mungkin dihasilkan dari kompilasi kode Anda. Baris kedua memberitahu Git untuk mengabaikan semua file yang berakhiran dengan sebuah tilde (<code>~</code>), yang biasanya digunakan oleh banyak aplikasi olah-kata seperti Emacs untuk menandai berkas sementara. Anda juga dapat memasukkan direktori log, tmp ataupun pid; dokumentasi otomatis; dan lainnya. Menata berkas .gitignore sebelum Anda mulai bekerja secara umum merupakan ide yang baik sehingga Anda tidak secara tak-sengaja melakukan commit terhadap berkas yang sangat tidak Anda inginkan berada di dalam repositori Git.</p>
+
+<p>Aturan untuk pola yang dapat Anda gunakan di dalam berkas .gitignore adalah sebagai berikut:</p>
+
+<ul>
+<li>Baris kosong atau baris dimulai dengan # akan diabaikan.</li>
+
+<li>Pola glob standar dapat digunakan.</li>
+
+<li>Anda dapat mengakhir pola dengan sebuah slash (<code>/</code>) untuk menandai sebuah direktori.</li>
+
+<li>Anda dapat menegasikan sebuah pola dengan memulainya menggunakan karakter tanda seru (<code>!</code>).</li>
+</ul>
+
+<p>Pola Glob adalah seperti regular expression yang disederhanakan yang biasanya digunakan di shell. Sebuah asterisk (<code>*</code>) berarti 0 atau lebih karakter; <code>[abc]</code> terpasangkan dengan karakter apapun yang ditulis dalam kurung siku (dalam hal ini a, b, atau c); sebuah tanda tanya (<code>?</code>) terpasangkan dengan sebuah karakter; dan kurung siku yang melingkupi karakter yang terpisahkan dengan sebuah tanda hubung(<code>[0-9]</code>) terpasangkan dengan karakter apapun yang berada diantaranya (dalam hal ini 0 hingga 9).</p>
+
+<p>Berikut adalah contoh lain dari isi berkas .gitignore:</p>
+
+<pre><code># sebuah komentar – akan diabaikan
+*.a       # abaikan berkas .a
+!lib.a    # tapi pantau lib.a, walaupun Anda abaikan berkas .a di atas
+/TODO     # hanya abaikan berkas TODO yang berada di rooto, bukan di subdir/TODO
+build/    # abaikan semua berkas di dalam direktori build/
+doc/*.txt # abaikan doc/notes.txt, tapi bukan doc/server/arch.txt</code></pre>
+
+<h3 id='melihat_perubahan_di_area_stage_dan_di_luar_area_stage'>Melihat Perubahan di Area Stage dan di luar Area Stage</h3>
+
+<p>Jika perintah <code>git status</code> terlalu kabur untuk Anda - Anda ingin mengetahui secara pasti apa yang telah berubah, bukan hanya berkas mana yang berubah - Anda dapat menggunakan perintah <code>git diff</code>. Kita akan bahas <code>git diff</code> secara lebih detil nanti; namun Anda mungkin menggunakannya paling sering untuk menjawab 2 pertanyaan berikut: Apa yang Anda ubah tapi belum dimasukkan ke area stage? Dan apa yang telah Anda ubah yang akan segera Anda commit? Walaupun <code>git status</code> menjawab pertanyaan tersebut secara umum, <code>git diff</code> menunjukkan kepada Anda dengan tepat baris yang ditambahkan dan dibuang - dalam bentuk patch-nya.</p>
+
+<p>Mari kita anggap Anda mengubah dan memasukkan berkas README ke area stage lagi dan kemudian mengubah berkas benchmarks.rb tanpa memasukkannya ke area stage. Jika Anda jalankan perintah <code>status</code> Anda, Anda akan sekali lagi melihat keluaran seperti berikut:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Untuk melihat apa yang Anda telah ubah namun belum masuk ke area stage, ketikkan <code>git diff</code> tanpa argumen lainnya.</p>
+
+<pre><code>$ git diff
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..da65585 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+           @commit.parents[0].parents[0].parents[0]
+         end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++
+         run_code(x, &#39;commits 2&#39;) do
+           log = git.commits(&#39;master&#39;, 15)
+           log.size</code></pre>
+
+<p>Perintah di atas membandingkan apa yang ada di direktori kerja Anda dengan apa yang ada di area stage. Hasilnya memberitahu Anda bahwa perubahan yang Anda ubah namun belum masuk ke area stage.</p>
+
+<p>Jika Anda ingin melihat apa yang telah Anda masukkan ke area stage yang nantinya akan masuk ke commit Anda berikutnya, Anda dapat menggunakan <code>git diff --cached</code>. (Di Git versi 1.6.1 atau yang lebih tinggi, Anda dapat juga menggunakan <code>git diff --staged</code>, yang mungkin lebih mudah untuk diingat). Perintah ini membandingkan area stage Anda dengan commit Anda terakhir:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/README b/README
+new file mode 100644
+index 0000000..03902a1
+--- /dev/null
++++ b/README2
+@@ -0,0 +1,5 @@
++grit
++ by Tom Preston-Werner, Chris Wanstrath
++ http://github.com/mojombo/grit
++
++Grit is a Ruby library for extracting information from a Git repository</code></pre>
+
+<p>Satu hal penting yang harus dicatat adalah bahwa <code>git diff</code> saja tidak memperlihatkan semua perubahan yang telah Anda lakukan sejak terakhir Anda commit - hanya perubahan yang belum masuk ke area stage saja. Mungkin agak sedikit membingungkan, karena jika Anda telah memasukkan semua perubahan ke area stage, <code>git diff</code> akan memberikan keluaran kosong.</p>
+
+<p>Sebagai contoh lain, jika Anda memasukkan berkas benchmarks.rb ke area stage dan kemudian meng-editnya, Anda dapat menggunakan <code>git diff</code> untuk melihat perubahan di berkas tersebut yang telah masuk ke area stage dan perubahan yang masih di luar area stage:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Sekarang Anda dapat menggunakan <code>git diff</code> untuk melihat apa saja yang masih belum dimasukkan ke area stage:</p>
+
+<pre><code>$ git diff 
+diff --git a/benchmarks.rb b/benchmarks.rb
+index e445e28..86b2f7c 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -127,3 +127,4 @@ end
+ main()
+
+ ##pp Grit::GitRuby.cache_client.stats 
++# test line</code></pre>
+
+<p>dan <code>git diff --cached</code> untuk melihat apa yang telah Anda masukkan ke area stage sejauh ini:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..e445e28 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+          @commit.parents[0].parents[0].parents[0]
+        end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++              
+        run_code(x, &#39;commits 2&#39;) do
+          log = git.commits(&#39;master&#39;, 15)
+          log.size</code></pre>
+
+<h3 id='commit_perubahan_anda'>Commit Perubahan Anda</h3>
+
+<p>Sekarang setelah area stage Anda tertata sebagaimana yang Anda inginkan, Anda dapat melakukan commit terhadap perubahan Anda. Ingat bahwa apapun yang masih di luar area stage - berkas apapun yang Anda telah buat atau ubah yang belum Anda jalankan <code>git add</code> terhadapnya sejak terakhir Anda edit - tidak akan masuk ke dalam commit ini. Perubahan tersebut akan tetap sebagai berkas terubah di cakram Anda. Dalam hal ini, saat terakhir Anda jalankan <code>git status</code>, Anda telah melihat bahwa semuanya telah masuk ke stage, sehingga Anda siap untuk melakukan commit dari perubahan Anda. Cara termudah untuk melakukan commit adalah dengan mengetikkan <code>git commit</code>:</p>
+
+<pre><code>$ git commit</code></pre>
+
+<p>Dengan melakukan ini, aplikasi olahkata pilihan Anda akan terjalankan (Ini ditata oleh variabel lingkungan <code>$EDITOR</code> di shell Anda - biasanya vim atau emacs, walaupun Anda dapat mengkonfigurasinya dengan apapun yang Anda inginkan menggunakan perintah <code>git config -- global core.editor</code> yang telah Anda lihat di Bab 1).</p>
+
+<p>Aplikasi olahkata akan menampilakn teks berikut (contoh berikut adalah dari layar Vim):</p>
+
+<pre><code># Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       new file:   README
+#       modified:   benchmarks.rb 
+~
+~
+~
+&quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
+
+<p>Anda dapat melihat bahwa pesan commit standar berisi keluaran terakhir dari perintah <code>git status</code> yang terkomentari dan sebuah baris kosong di bagian atas. Anda dapat membuang komentar-komentar ini dan mengetikkan pesan commit Anda, atau Anda dapat membiarkannya untuk membantu Anda mengingat apa yang akan Anda commit. (Untuk pengingat yang lebih eksplisit dari apa yang Anda ubah, Anda dapat menggunakan opsi <code>-v</code> di perintah <code>git commit</code>. Melakukan hal ini akan membuat diff dari perubahan Anda di dalam olahkata sehingga Anda dapat melihat secara tepat apa yang telah Anda lakukan). Ketika Anda keluar dari olahkata, Git akan membuat commit Anda dengan pesan yang Anda buat (dengan bagian terkomentari dibuang).</p>
+
+<p>Cara lainnya, Anda dapat mengetikkan pesan commit Anda sebaris denegan perintah <code>commit</code> dengan mencantumkannya setelah tanda -m seperti berikut:</p>
+
+<pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
+[master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+ create mode 100644 README</code></pre>
+
+<p>Sekarang Anda telah membuat commit pertama Anda~ Anda dapat lihat bahwa commit tersebut telah memberi Anda beberapa keluaran tentang dirinya sendiri: cabang apa yang Anda jadikan target commit (master), ceksum SHA-1 apa yang commit tersebut miliki (<code>463dc4f</code>), berapa banyak berkas yang diubah, dan statistik tentang jumlah baris yang ditambah dan dibuang dalam commit tersebut.</p>
+
+<p>Ingat bahwa commit merekam snapshot yang Anda telah tata di area stage. Apapun yang tidak Anda masukkan ke area stage akan tetap berada di tempatnya, tetap dalam keadaan terubah; Anda dapat melakukan commit lagi untuk memasukkannya ke dalam sejarah Anda. Setiap saat Anda melakukan sebuah commit, Anda merekamkan sebuah snapshot dari proyek Anda yang bisa Anda kembalikan atau Anda bandingkan nantinya.</p>
+
+<h3 id='melewatkan_area_stage'>Melewatkan Area Stage</h3>
+
+<p>Walaupun dapat menjadi sangat berguna untuk menata commit tepat sebagaimana Anda inginkan, area stage terkadang sedikit lebih kompleks dibandingkan apa yang Anda butuhkan di dalam alurkerja Anda. Jika Anda ingin melewatkan area stage, Git menyediakan sebuah jalan pintas sederhana. Dengan memberikan opsi <code>-a</code> ke perintah <code>git commit</code> akan membuat Git secara otomatis menempatkan setiap berkas yang telah terpantau ke area stage sebelum melakukan commit, membuat Anda dapat melewatkan bagian <code>git add</code>:</p>
+
+<pre><code>$ git status
+# On branch master
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#
+$ git commit -a -m &#39;added new benchmarks&#39;
+[master 83e38c7] added new benchmarks
+ 1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Perhatikan bagaimana Anda tidak perlu menjalankan <code>git add</code> terhadap berkas benchmarks.rb dalam hal ini sebelum Anda commit.</p>
+
+<h3 id='menghapus_berkas'>Menghapus Berkas</h3>
+
+<p>Untuk menghapus sebuah berkas dari Git, Anda harus menghapusnya dari berkas terpantau (lebih tepatnya, mengpus dari area stage) dan kemudian commit. Perintah <code>git rm</code> melakukan hal tadi dan juga menghapus berkas tersebut dari direktori kerja Anda sehingga Anda tidak melihatnya sebagai berkas yang tak terpantau nantinya.</p>
+
+<p>Jika Anda hanya menghapus berkas dari direktori kerja Anda, berkas tersebut akan muncul di bagian &#8220;Changed but not updated&#8221; (yaitu, di luar area stage) dari keluaran <code>git status</code> Anda:</p>
+
+<pre><code>$ rm grit.gemspec
+$ git status
+# On branch master
+#
+# Changed but not updated:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Kemudian, jika Anda jalankan <code>git rm</code>, Git akan memasukkan penghapusan berkas tersebut ke area stage:</p>
+
+<pre><code>$ git rm grit.gemspec
+rm &#39;grit.gemspec&#39;
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Pada saat Anda commit nantinya, berkas tersebut akan hilang dan tidak lagi terpantau. Jika Anda mengubah berkas tersebut dan menambahkannya lagi ke index, Anda harus memaksa penghapusannya dengan menggunakan opsi <code>-f</code>. Ini adalah fitur keamanan (safety) untuk mencegah ketidaksengajaan penghapusan terhadap data yang belum terekam di dalam snapshot dan tak dapat dikembalikan oleh Git.</p>
+
+<p>Hal berguna lain yang Anda dapat lakukan adalah untuk tetap menyimpan berkas di direktori kerja tetapi menghapusnya dari area kerja. Dengan kata lain, Anda mungkin ingin tetap menyimpan berkas tersebut di dalam cakram keras tetapi tidak ingin Git untuk memantaunya lagi. Hal ini khususnya berguna jika Anda lupa untuk menambahkan sesuaitu ke berkas <code>.gitignore</code> Anda dan secara tak-sengaja menambahkannya, seperti sebuah berkas log yang besar, atau sekumpulan berkas hasil kompilasi <code>.a</code>. Untuk melakukan ini, gunakan opsi <code>--cached</code>:</p>
+
+<pre><code>$ git rm --cached readme.txt</code></pre>
+
+<p>Anda dapat menambahkan nama berkas, direktori, dan pola glob ke perintah <code>git rm</code>. Ini berarti Anda dapat melakukan hal seperti</p>
+
+<pre><code>$ git rm log/\*.log</code></pre>
+
+<p>Perhatikan karakter backslash (<code>\</code>) di depan tanda <code>*</code>. Ini dibutuhkan agar Git juga meng-ekspansi nama berkas sebagai tambahan dari ekspansi nama berkas oleh shell Anda. Perintah ini mengapus semua berkas yang memiliki ekstensi <code>.log</code> di dalam direktori <code>log/</code>. Atau, Anda dapat melakukannya seperti ini:</p>
+
+<pre><code>$ git rm \*~</code></pre>
+
+<p>Perintah ini akan membuang semua berkas yang berakhiran dengan <code>~</code>. This command removes all files that end with <code>~</code>.</p>
+
+<h3 id='moving_files'>Moving Files</h3>
+
+<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.</p>
+
+<p>Thus it’s a bit confusing that Git has a <code>mv</code> command. If you want to rename a file in Git, you can run something like</p>
+
+<pre><code>$ git mv file_from file_to</code></pre>
+
+<p>and it works fine. In fact, if you run something like this and look at the status, you’ll see that Git considers it a renamed file:</p>
+
+<pre><code>$ git mv README.txt README
+$ git status
+# On branch master
+# Your branch is ahead of &#39;origin/master&#39; by 1 commit.
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       renamed:    README.txt -&gt; README
+#</code></pre>
+
+<p>However, this is equivalent to running something like this:</p>
+
+<pre><code>$ mv README.txt README
+$ git rm README.txt
+$ git add README</code></pre>
+
+<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the <code>mv</code> command. The only real difference is that <code>mv</code> is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
+
+<div id='nav'>
+<a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
+</div>

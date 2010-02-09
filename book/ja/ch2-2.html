@@ -1,28 +1,28 @@
 ---
 layout: translation
-title: Pro Git 2.2 Dasar-dasar Git Merekam Perubahan ke dalam Repositori
+title: Pro Git 2.2 Git の基本 変更内容のリポジトリへの記録
 ---
-<h2 id='merekam_perubahan_ke_dalam_repositori'>Merekam Perubahan ke dalam Repositori</h2>
+<h2 id='id21'>変更内容のリポジトリへの記録</h2>
 
-<p>Anda sudah memiliki repositori Git yang bonafide dan sebuah salinan kerja dari semua berkas untuk proyek tersebut. Anda harus membuat beberapa perubahan dan commit perubahan tersebut ke dalam repositori setiap saat proyek mencapai sebuah keadaan yang ingin Anda rekam.</p>
+<p>これで、れっきとした Git リポジトリを準備して、そのプロジェクト内のファイルの作業コピーを取得することができました。次は、そのコピーに対して何らかの変更を行い、適当な時点で変更内容のスナップショットをリポジトリにコミットすることになります。</p>
 
-<p>Ingat bahwa setiap berkas di dalam direktori kerja Anda dapat berada di 2 keadaan: terpantau atau tak-terpantau. Berkas terpantau adalah berkas yang sebelumnya berada di snapshot terakhir; mereka dapat berada dalam kondisi belum terubah, terubah, ataupun staged (berada di area stage). Berkas tak-terpantau adalah kebalikannya - merupakan berkas-berkas di dalam direktori kerja yang tidak berada di dalam snapshot terakhir dan juga tidak berada di area staging. Ketika Anda pertama kali menduplikasi sebuah repositori, semua berkas Anda akan terpantau dan belum terubah karena Anda baru saja melakukan checkout dan belum mengubah apapun.</p>
+<p>作業コピー内の各ファイルには「追跡されている(tracked)」ものと「追跡されてない(untracked)」ものの二通りがあることを知っておきましょう。追跡されているファイルとは、直近のスナップショットに存在したファイルのことです。これらのファイルについては「変更されていない(unmodified)」「変更されている(modified)」「ステージされている(staged)」の三つの状態があります。追跡されていないファイルは、そのどれでもありません。直近のスナップショットには存在せず、ステージングエリアにも存在しないファイルのことです。最初にプロジェクトをクローンした時点では、すべてのファイルは「追跡されている」かつ「変更されていない」状態となります。チェックアウトしただけで何も編集していない状態だからです。</p>
 
-<p>Sejalan dengan proses edit yang Anda lakukan terhadap berkas-berkas tersebut, Git mencatatnya sebagai terubah, karena Anda telah mengubahnya sejak terakhir commit. Anda kemudian memasukkan berkas-berkas terubah ini ke dalam area stage untuk kemudian dilakukan commit, dan terus siklus ini berulang. Siklus perubahan ini diilustrasikan di Figure-2.1</p>
+<p>ファイルを編集すると、Git はそれを「変更された」とみなします。直近のコミットの後で変更が加えられたからです。変更されたファイルをステージし、それをコミットする。この繰り返しです。ここまでの流れを図 2-1 にまとめました。</p>
 
-<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figure 2-1. The lifecycle of the status of your files.</p>
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> 図 2-1. ファイルの状態の流れ</p>
 
-<h3 id='cek_status_dari_berkas_anda'>Cek Status dari Berkas Anda</h3>
+<h3 id='id22'>ファイルの状態の確認</h3>
 
-<p>Alat utama yang Anda gunakan untuk menentukan berkas-berkas mana yang berada dalam keadaan tertentu adalah melalui perintah <code>git status</code>. Jika Anda menggunakan alat ini langsung setelah sebuah <code>clone</code>, Anda akan melihat serupa seperti di bawah ini:</p>
+<p>どのファイルがどの状態にあるのかを知るために主に使うツールが git status コマンドです。このコマンドをクローン直後に実行すると、このような結果となるでしょう。</p>
 
 <pre><code>$ git status
 # On branch master
 nothing to commit (working directory clean)</code></pre>
 
-<p>Ini berarti Anda memiliki direktori kerja yang bersih-dengan kata lain, tidak ada berkas terpantau yang terubah. Git juga tidak melihat berkas-berkas yang tak terpantau, karena pasti akan dilaporkan oleh alat ini. Juga, perintah ini memberitahu Anda tentang cabang tempat Anda berada. Pada saat ini, cabang akan selalu berada di master, karena sudah menjadi default-nya; Anda tidak perlu khawatir tentang cabang dulu. Bab berikutnya akan membahas tentang percabangan dan referensi secara lebih detil.</p>
+<p>これは、クリーンな作業コピーである (つまり、追跡されているファイルの中に変更されているものがない) ことを意味します。また、追跡されていないファイルも存在しません (もし追跡されていないファイルがあれば、Git はそれを表示します)。最後に、このコマンドを実行するとあなたが今どのブランチにいるのかを知ることができます。現時点では常に master となります。これはデフォルトであり、ここでは特に気にする必要はありません。ブランチについては次の章で詳しく説明します。</p>
 
-<p>Mari kita umpamakan Anda menambah sebuah berkas baru ke dalam proyek Anda, misalnya sesederhana berkas README. Jika file tersebut belum ada sebelumnya, dan Anda melakukan <code>git status</code>, Anda akan melihatnya sebagai berkas tak-terpantau seperti berikut ini:</p>
+<p>ではここで、新しいファイルをプロジェクトに追加してみましょう。シンプルに、README ファイルを追加してみます。それ以前に README ファイルがなかった場合、<code>git status</code> を実行すると次のように表示されます。</p>
 
 <pre><code>$ vim README
 $ git status
@@ -33,15 +33,15 @@ $ git status
 #	README
 nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
 
-<p>Anda akan melihat bahwa berkas baru Anda README belum terpantau, karena berada di bawah judul &#8220;Untracked files&#8221; di keluaran status Anda. Untracked pada dasarnya berarti bahwa Git melihat sebuah berkas yang sebelumnya tidak Anda miliki di snapshot (commit) sebelumnya; Git tidak akan mulai memasukkannya ke dalam snapshot commit hingga Anda secara eksplisit memerintahkan Git. Git berlaku seperti ini agar Anda tidak secara tak-sengaja mulai menyertakan berkas biner hasil kompilasi atau berkas lain yang tidak Anda inginkan untuk disertakan. Anda hanya ingin mulai menyertakan README, mari kita mulai memantau berkas tersebut.</p>
+<p>出力結果の “Untracked files” 欄に README ファイルがあることから、このファイルが追跡されていないということがわかります。これは、Git が「前回のスナップショット (コミット) にはこのファイルが存在しなかった」とみなしたということです。明示的に指示しない限り、Git はコミット時にこのファイルを含めることはありません。自動生成されたバイナリファイルなど、コミットしたくないファイルを間違えてコミットしてしまう心配はないということです。今回は README をコミットに含めたいわけですから、まずファイルを追跡対象に含めるようにしましょう。</p>
 
-<h3 id='memantau_berkas_baru'>Memantau Berkas Baru</h3>
+<h3 id='id23'>新しいファイルの追跡</h3>
 
-<p>Untuk mulai memantau berkas baru, Anda menggunakan perintah <code>git add</code>. Untuk mulai memantau berkas README tadi, Anda menjalankannya seperti berikut:</p>
+<p>新しいファイルの追跡を開始するには <code>git add</code> コマンドを使用します。README ファイルの追跡を開始する場合はこのようになります。</p>
 
 <pre><code>$ git add README</code></pre>
 
-<p>Jika Anda menjalankan perintah <code>status</code> lagi, Anda akan melihat bahwa berkas README Anda sekarang sudah terpantau dan sudah masuk ke dalam area stage:</p>
+<p>再び status コマンドを実行すると、README ファイルが追跡対象となり、ステージされていることがわかるでしょう。</p>
 
 <pre><code>$ git status
 # On branch master
@@ -51,11 +51,11 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	new file:   README
 #</code></pre>
 
-<p>Anda dapat mengatakan bahwa berkas tersebut berada di dalam area stage karena tertulis di bawah judul &#8220;Changes to be committed&#8221;. Jika Anda melakukan commit pada saat ini, versi berkas pada saat Anda menjalankan <code>git add</code> inilah yang akan dimasukkan ke dalam sejarah snapshot. Anda mungkin ingat bahwa ketika Anda menjalankan <code>git init</code> sebelumnya, Anda melanjutkannya dengan <code>git add (nama berkas)</code> - yang akan mulai dipantau di direktori Anda. Perintah <code>git add</code> ini mengambil alamat dari berkas ataupun direktori; jika sebuah direktori, perintah tersebut akan menambahkan seluruh berkas yang berada di dalam direktori secara rekursif.</p>
+<p>ステージされていると判断できるのは、“Changes to be committed” 欄に表示されているからです。ここでコミットを行うと、git add した時点の状態のファイルがスナップショットとして歴史に書き込まれます。先ほど git init をしたときに、ディレクトリ内のファイルを追跡するためにその後 git add したことを思い出すことでしょう。git add コマンドには、ファイルあるいはディレクトリのパスを指定します。ディレクトリを指定した場合は、そのディレクトリ以下にあるすべてのファイルを再起的に追加します。</p>
 
-<h3 id='memasukkan_berkas_terubah_ke_dalam_area_stage'>Memasukkan Berkas Terubah ke Dalam Area Stage</h3>
+<h3 id='id24'>変更したファイルのステージング</h3>
 
-<p>Mari kita ubah sebuah berkas yang sudah terpantau. Jika Anda mengubah berkas yang sebelumnya terpantau bernama <code>benchmarks.rb</code> dan kemudian menjalankan perintah <code>status</code> lagi, Anda akan mendapatkan keluaran kurang lebih seperti ini:</p>
+<p>すでに追跡対象となっているファイルを変更してみましょう。たとえば、すでに追跡対象となっているファイル <code>benchmarks.rb</code> を変更して <code>status</code> コマンドを実行すると、結果はこのようになります。</p>
 
 <pre><code>$ git status
 # On branch master
@@ -70,7 +70,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Berkas benchmarks.rb terlihat di bawah bagian yang bernama &#8220;Changed but not updated&#8221; - yang berarti bahwa sebuah berkas terpantau telah berubah di dalam direktori kerja namun belum masuk ke area stage. Untuk memasukkannya ke area stage, Anda menjalankan perintah <code>git add</code> (perintah ini adalah perintah multiguna - Anda menggunakannya untuk mulai memantau berkas baru, untuk memasukkannya ke area stage, dan untuk melakukan hal lain seperti menandai berkas terkonflik menjadi terpecahkan). Mari kita sekarang jalankan <code>git add</code> untuk memasukkan berkas benchmarks.rb ke dalam area stage, dan jalankan <code>git status</code> lagi:</p>
+<p>benchmarks.rb ファイルは “Changed but not updated” という欄に表示されます。これは、追跡対象のファイルが作業ディレクトリ内で変更されたけれどもまだステージされていないという意味です。ステージするには <code>git add</code> コマンドを実行します (このコマンドにはいろんな意味合いがあり、新しいファイルの追跡開始・ファイルのステージング・マージ時に衝突が発生したファイルに対する「解決済み」マーク付けなどで使用します)。では、<code>git add</code> で benchmarks.rb をステージしてもういちど <code>git status</code> を実行してみましょう。</p>
 
 <pre><code>$ git add benchmarks.rb
 $ git status
@@ -82,7 +82,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Kedua file sekarang berada di area stage dan akan masuk ke dalam commit Anda berikutnya. Pada saat ini, semisal Anda teringat satu perubahan yang Anda ingin buat di benchmarks.rb sebelum Anda lakukan commit. Anda buka berkas tersebut kembali dan melakukan perubahan tersebut, dan Anda siap untuk melakukan commit. Namun, mari kita coba jalankan <code>git status</code> kembali:</p>
+<p>両方のファイルがステージされました。これで、次回のコミットに両方のファイルが含まれるようになります。ここで、さらに benchmarks.rb にちょっとした変更を加えてからコミットしたくなったとしましょう。ファイルを開いて変更を終え、コミットの準備が整いました。しかし、<code>git status</code> を実行してみると何か変です。</p>
 
 <pre><code>$ vim benchmarks.rb 
 $ git status
@@ -99,7 +99,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Apa? Sekarang benchmarks.rb terdaftar di dua tempat: area stage dan area terubah. Bagaimana hal ini bisa terjadi? Ternyata Git memasukkan berkas ke area stage tepat seperti ketika Anda menjalankan perintah <code>git add</code>. Jika Anda commit sekarang, versi benchmarks.rb pada saat Anda terakhir lakukan perintah <code>git add</code>-lah yang akan masuk ke dalam commit, bukan versi berkas yang saat ini terlihat di direktori kerja Anda ketika Anda menjalankan <code>git commit</code>. Jika Anda mengubah sebuah berkas setelah Anda menjalankan <code>git add</code>, Anda harus menjalankan <code>git add</code> kembali untuk memasukkan versi berkas terakhir ke dalam area stage:</p>
+<p>これはどういうことでしょう? benchmarks.rb が、ステージされているほうにもステージされていないほうにも登場しています。こんなことってありえるんでしょうか? 要するに、Git は「git add コマンドを実行した時点の状態のファイル」をステージするということです。ここでコミットをすると、実際にコミットされるのは git add を実行した時点の benchmarks.rb であり、git commit した時点の作業ディレクトリにある内容とは違うものになります。<code>git add</code> した後にファイルを変更した場合に、最新版のファイルをステージしなおすにはもう一度 <code>git add</code> を実行します。</p>
 
 <pre><code>$ git add benchmarks.rb
 $ git status
@@ -111,44 +111,36 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<h3 id='mengabaikan_berkas'>Mengabaikan Berkas</h3>
+<h3 id='id25'>ファイルの無視</h3>
 
-<p>Terkadang, Anda memiliki sekumpulan berkas yang Anda tidak ingin Git tambahkan secara otomatis atau bahkan terlihat sebagai tak-terpantau. Biasanya berkas hasil keluaran seperti berkas log atau berkas yang dihasilkan oleh sistem build Anda. Dalam kasus ini, Anda dapat membuat sebuah berkas bernama .gitignore yang berisi pola dari berkas terabaikan. Berikut adalah sebuah contoh isi dari berkas .gitignore:</p>
+<p>ある種のファイルについては、Git で自動的に追加してほしくないしそもそも「追跡されていない」と表示されるのも気になる。そんなことがよくあります。たとえば、ログファイルやビルドシステムが生成するファイルなどの自動生成されるファイルがそれにあたるでしょう。そんな場合は、無視させたいファイルのパターンを並べた .gitignore というファイルを作成します。.gitignore ファイルは、たとえばこのようになります。</p>
 
 <pre><code>$ cat .gitignore
 *.[oa]
 *~</code></pre>
 
-<p>Baris pertama memberitahu Git untuk mengabaikan semua file yang berakhiran .o atau .a - berkas object dan arsip yang mungkin dihasilkan dari kompilasi kode Anda. Baris kedua memberitahu Git untuk mengabaikan semua file yang berakhiran dengan sebuah tilde (<code>~</code>), yang biasanya digunakan oleh banyak aplikasi olah-kata seperti Emacs untuk menandai berkas sementara. Anda juga dapat memasukkan direktori log, tmp ataupun pid; dokumentasi otomatis; dan lainnya. Menata berkas .gitignore sebelum Anda mulai bekerja secara umum merupakan ide yang baik sehingga Anda tidak secara tak-sengaja melakukan commit terhadap berkas yang sangat tidak Anda inginkan berada di dalam repositori Git.</p>
+<p>最初の行は .o あるいは .a で終わる名前のファイル (コードをビルドする際にできるであろうオブジェクトファイルとアーカイブファイル) を無視するよう Git に伝えています。次の行で Git に無視させているのは、チルダ (<code>~</code>) で終わる名前のファイルです。Emacs をはじめとする多くのエディタが、この形式の一時ファイルを作成します。これ以外には、たとえば log、tmp、pid といった名前のディレクトリや自動生成されるドキュメントなどもここに含めることになるでしょう。実際に作業を始める前に .gitignore ファイルを準備しておくことをお勧めします。そうすれば、予期せぬファイルを間違って Git リポジトリにコミットしてしまう事故を防げます。</p>
 
-<p>Aturan untuk pola yang dapat Anda gunakan di dalam berkas .gitignore adalah sebagai berikut:</p>
+<p>.gitignore ファイルに記述するパターンの規則は、次のようになります。</p>
 
-<ul>
-<li>Baris kosong atau baris dimulai dengan # akan diabaikan.</li>
+<p>* 空行あるいは # で始まる行は無視される * 標準の glob パターンを使用可能 * ディレクトリを指定するには、パターンの最後にスラッシュ (<code>/</code>) をつける * パターンを逆転させるには、最初に感嘆符 (<code>!</code>) をつける</p>
 
-<li>Pola glob standar dapat digunakan.</li>
+<p>glob パターンとは、シェルで用いる簡易正規表現のようなものです。アスタリスク (<code>*</code>) は、ゼロ個以上の文字にマッチします。<code>[abc]</code> は、角括弧内の任意の文字 (この場合は a、b あるいは c) にマッチします。疑問符 (<code>?</code>) は一文字にマッチします。また、ハイフン区切りの文字を角括弧で囲んだ形式 (<code>[0-9]</code>) は、ふたつの文字の間の任意の文字 (この場合は 0 から 9 までの間の文字) にマッチします。</p>
 
-<li>Anda dapat mengakhir pola dengan sebuah slash (<code>/</code>) untuk menandai sebuah direktori.</li>
+<p>では、.gitignore ファイルの例をもうひとつ見てみましょう。</p>
 
-<li>Anda dapat menegasikan sebuah pola dengan memulainya menggunakan karakter tanda seru (<code>!</code>).</li>
-</ul>
+<pre><code># コメント。これは無視されます
+*.a       # .a ファイルは無視
+!lib.a    # しかし、lib.a ファイルだけは .a であっても追跡対象とします
+/TODO     # ルートディレクトリの TODO ファイルだけを無視し、サブディレクトリの TODO は無視しません
+build/    # build/ ディレクトリのすべてのファイルを無視します
+doc/*.txt # doc/notes.txt は無視しますが、doc/server/arch.txt は無視しません</code></pre>
 
-<p>Pola Glob adalah seperti regular expression yang disederhanakan yang biasanya digunakan di shell. Sebuah asterisk (<code>*</code>) berarti 0 atau lebih karakter; <code>[abc]</code> terpasangkan dengan karakter apapun yang ditulis dalam kurung siku (dalam hal ini a, b, atau c); sebuah tanda tanya (<code>?</code>) terpasangkan dengan sebuah karakter; dan kurung siku yang melingkupi karakter yang terpisahkan dengan sebuah tanda hubung(<code>[0-9]</code>) terpasangkan dengan karakter apapun yang berada diantaranya (dalam hal ini 0 hingga 9).</p>
+<h3 id='__'>ステージされている変更 / されていない変更の閲覧</h3>
 
-<p>Berikut adalah contoh lain dari isi berkas .gitignore:</p>
+<p><code>git status</code> コマンドだけではよくわからない (どのファイルが変更されたのかだけではなく、実際にどのように変わったのかが知りたい) という場合は <code>git diff</code> コマンドを使用します。<code>git diff</code> コマンドについては後で詳しく解説します。おそらく、最もよく使う場面としては次の二つの問いに答えるときになるでしょう。「変更したけどまだステージしていない変更は?」「コミット対象としてステージした変更は?」もちろん <code>git status</code> でもこれらの質問に対するおおまかな答えは得られますが、<code>git diff</code> の場合は追加したり削除したりした正確な行をパッチ形式で表示します。</p>
 
-<pre><code># sebuah komentar – akan diabaikan
-*.a       # abaikan berkas .a
-!lib.a    # tapi pantau lib.a, walaupun Anda abaikan berkas .a di atas
-/TODO     # hanya abaikan berkas TODO yang berada di rooto, bukan di subdir/TODO
-build/    # abaikan semua berkas di dalam direktori build/
-doc/*.txt # abaikan doc/notes.txt, tapi bukan doc/server/arch.txt</code></pre>
-
-<h3 id='melihat_perubahan_di_area_stage_dan_di_luar_area_stage'>Melihat Perubahan di Area Stage dan di luar Area Stage</h3>
-
-<p>Jika perintah <code>git status</code> terlalu kabur untuk Anda - Anda ingin mengetahui secara pasti apa yang telah berubah, bukan hanya berkas mana yang berubah - Anda dapat menggunakan perintah <code>git diff</code>. Kita akan bahas <code>git diff</code> secara lebih detil nanti; namun Anda mungkin menggunakannya paling sering untuk menjawab 2 pertanyaan berikut: Apa yang Anda ubah tapi belum dimasukkan ke area stage? Dan apa yang telah Anda ubah yang akan segera Anda commit? Walaupun <code>git status</code> menjawab pertanyaan tersebut secara umum, <code>git diff</code> menunjukkan kepada Anda dengan tepat baris yang ditambahkan dan dibuang - dalam bentuk patch-nya.</p>
-
-<p>Mari kita anggap Anda mengubah dan memasukkan berkas README ke area stage lagi dan kemudian mengubah berkas benchmarks.rb tanpa memasukkannya ke area stage. Jika Anda jalankan perintah <code>status</code> Anda, Anda akan sekali lagi melihat keluaran seperti berikut:</p>
+<p>先ほどの続きで、ふたたび README ファイルを編集してステージし、一方 benchmarks.rb ファイルは編集だけしてステージしない状態にあると仮定しましょう。ここで <code>status</code> コマンドを実行すると、次のような結果となります。</p>
 
 <pre><code>$ git status
 # On branch master
@@ -163,7 +155,7 @@ doc/*.txt # abaikan doc/notes.txt, tapi bukan doc/server/arch.txt</code></pre>
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Untuk melihat apa yang Anda telah ubah namun belum masuk ke area stage, ketikkan <code>git diff</code> tanpa argumen lainnya.</p>
+<p>変更したけれどもまだステージしていない内容を見るには、引数なしで <code>git diff</code> を実行します。</p>
 
 <pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -182,9 +174,9 @@ index 3cb747f..da65585 100644
            log = git.commits(&#39;master&#39;, 15)
            log.size</code></pre>
 
-<p>Perintah di atas membandingkan apa yang ada di direktori kerja Anda dengan apa yang ada di area stage. Hasilnya memberitahu Anda bahwa perubahan yang Anda ubah namun belum masuk ke area stage.</p>
+<p>このコマンドは、作業ディレクトリの内容とステージングエリアの内容を比較します。この結果を見れば、あなたが変更した内容のうちまだステージされていないものを知ることができます。</p>
 
-<p>Jika Anda ingin melihat apa yang telah Anda masukkan ke area stage yang nantinya akan masuk ke commit Anda berikutnya, Anda dapat menggunakan <code>git diff --cached</code>. (Di Git versi 1.6.1 atau yang lebih tinggi, Anda dapat juga menggunakan <code>git diff --staged</code>, yang mungkin lebih mudah untuk diingat). Perintah ini membandingkan area stage Anda dengan commit Anda terakhir:</p>
+<p>次のコミットに含めるべくステージされた内容を知りたい場合は、<code>git diff –-cached</code> を使用します (Git バージョン 1.6.1 以降では <code>git diff –-staged</code> も使えます。こちらのほうが覚えやすいでしょう)。このコマンドは、ステージされている変更と直近のコミットの内容を比較します。</p>
 
 <pre><code>$ git diff --cached
 diff --git a/README b/README
@@ -199,9 +191,9 @@ index 0000000..03902a1
 +
 +Grit is a Ruby library for extracting information from a Git repository</code></pre>
 
-<p>Satu hal penting yang harus dicatat adalah bahwa <code>git diff</code> saja tidak memperlihatkan semua perubahan yang telah Anda lakukan sejak terakhir Anda commit - hanya perubahan yang belum masuk ke area stage saja. Mungkin agak sedikit membingungkan, karena jika Anda telah memasukkan semua perubahan ke area stage, <code>git diff</code> akan memberikan keluaran kosong.</p>
+<p><code>git diff</code> 自体は、直近のコミット以降のすべての変更を表示するわけではないことに注意しましょう。あくまでもステージされていない変更だけの表示となります。これにはすこし戸惑うかもしれません。変更内容をすべてステージしてしまえば <code>git diff</code> は何も出力しなくなるわけですから。</p>
 
-<p>Sebagai contoh lain, jika Anda memasukkan berkas benchmarks.rb ke area stage dan kemudian meng-editnya, Anda dapat menggunakan <code>git diff</code> untuk melihat perubahan di berkas tersebut yang telah masuk ke area stage dan perubahan yang masih di luar area stage:</p>
+<p>もうひとつの例を見てみましょう。benchmarks.rb ファイルをいったんステージした後に編集してみましょう。<code>git diff</code> を使用すると、ステージされたファイルの変更とまだステージされていないファイルの変更を見ることができます。</p>
 
 <pre><code>$ git add benchmarks.rb
 $ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
@@ -217,7 +209,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Sekarang Anda dapat menggunakan <code>git diff</code> untuk melihat apa saja yang masih belum dimasukkan ke area stage:</p>
+<p>ここで <code>git diff</code> を使うと、まだステージされていない内容を知ることができます。</p>
 
 <pre><code>$ git diff 
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -230,7 +222,7 @@ index e445e28..86b2f7c 100644
  ##pp Grit::GitRuby.cache_client.stats 
 +# test line</code></pre>
 
-<p>dan <code>git diff --cached</code> untuk melihat apa yang telah Anda masukkan ke area stage sejauh ini:</p>
+<p>そして <code>git diff --cached</code> を使うと、これまでにステージした内容を知ることができます。</p>
 
 <pre><code>$ git diff --cached
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -249,15 +241,15 @@ index 3cb747f..e445e28 100644
           log = git.commits(&#39;master&#39;, 15)
           log.size</code></pre>
 
-<h3 id='commit_perubahan_anda'>Commit Perubahan Anda</h3>
+<h3 id='id26'>変更のコミット</h3>
 
-<p>Sekarang setelah area stage Anda tertata sebagaimana yang Anda inginkan, Anda dapat melakukan commit terhadap perubahan Anda. Ingat bahwa apapun yang masih di luar area stage - berkas apapun yang Anda telah buat atau ubah yang belum Anda jalankan <code>git add</code> terhadapnya sejak terakhir Anda edit - tidak akan masuk ke dalam commit ini. Perubahan tersebut akan tetap sebagai berkas terubah di cakram Anda. Dalam hal ini, saat terakhir Anda jalankan <code>git status</code>, Anda telah melihat bahwa semuanya telah masuk ke stage, sehingga Anda siap untuk melakukan commit dari perubahan Anda. Cara termudah untuk melakukan commit adalah dengan mengetikkan <code>git commit</code>:</p>
+<p>ステージングエリアの準備ができたら、変更内容をコミットすることができます。コミットの対象となるのはステージされたものだけ、つまり追加したり変更したりしただけでまだ <code>git add</code> を実行していないファイルはコミットされないことを覚えておきましょう。そういったファイルは、変更されたままの状態でディスク上に残ります。今回の場合は、最後に <code>git status</code> を実行したときにすべてがステージされていることを確認しています。つまり、変更をコミットする準備ができた状態です。コミットするための最もシンプルな方法は <code>git commit</code> と打ち込むことです。</p>
 
 <pre><code>$ git commit</code></pre>
 
-<p>Dengan melakukan ini, aplikasi olahkata pilihan Anda akan terjalankan (Ini ditata oleh variabel lingkungan <code>$EDITOR</code> di shell Anda - biasanya vim atau emacs, walaupun Anda dapat mengkonfigurasinya dengan apapun yang Anda inginkan menggunakan perintah <code>git config -- global core.editor</code> yang telah Anda lihat di Bab 1).</p>
+<p>これを実行すると、指定したエディタが立ち上がります (シェルの <code>$EDITOR</code> 環境変数で設定されているエディタ。通常は vim あるいは emacs でしょう。しかし、それ以外にも第 1 章で説明した <code>git config --global core.editor</code> コマンドでお好みのエディタを指定することもできます)。</p>
 
-<p>Aplikasi olahkata akan menampilakn teks berikut (contoh berikut adalah dari layar Vim):</p>
+<p>エディタには次のようなテキストが表示されています (これは Vim の画面の例です)。</p>
 
 <pre><code># Please enter the commit message for your changes. Lines starting
 # with &#39;#&#39; will be ignored, and an empty message aborts the commit.
@@ -272,22 +264,22 @@ index 3cb747f..e445e28 100644
 ~
 &quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
 
-<p>Anda dapat melihat bahwa pesan commit standar berisi keluaran terakhir dari perintah <code>git status</code> yang terkomentari dan sebuah baris kosong di bagian atas. Anda dapat membuang komentar-komentar ini dan mengetikkan pesan commit Anda, atau Anda dapat membiarkannya untuk membantu Anda mengingat apa yang akan Anda commit. (Untuk pengingat yang lebih eksplisit dari apa yang Anda ubah, Anda dapat menggunakan opsi <code>-v</code> di perintah <code>git commit</code>. Melakukan hal ini akan membuat diff dari perubahan Anda di dalam olahkata sehingga Anda dapat melihat secara tepat apa yang telah Anda lakukan). Ketika Anda keluar dari olahkata, Git akan membuat commit Anda dengan pesan yang Anda buat (dengan bagian terkomentari dibuang).</p>
+<p>デフォルトのコミットメッセージとして、直近の <code>git status</code> コマンドの結果がコメントアウトして表示され、先頭に空行があることがわかるでしょう。このコメントを消して自分でコミットメッセージを書き入れていくこともできますし、何をコミットしようとしているのかの確認のためにそのまま残しておいてもかまいません (何を変更したのかをより明確に知りたい場合は、<code>git commit</code> に <code>-v</code> オプションを指定します。そうすると、diff の内容がエディタに表示されるので何を行ったのかが正確にわかるようになります)。エディタを終了させると、Git はそのメッセージつきのコミットを作成します (コメントおよび diff は削除されます)。</p>
 
-<p>Cara lainnya, Anda dapat mengetikkan pesan commit Anda sebaris denegan perintah <code>commit</code> dengan mencantumkannya setelah tanda -m seperti berikut:</p>
+<p>あるいは、コミットメッセージをインラインで記述することもできます。その場合は、<code>commit</code> コマンドの後で -m フラグに続けて次のように記述します。</p>
 
 <pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
 [master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
  2 files changed, 3 insertions(+), 0 deletions(-)
  create mode 100644 README</code></pre>
 
-<p>Sekarang Anda telah membuat commit pertama Anda~ Anda dapat lihat bahwa commit tersebut telah memberi Anda beberapa keluaran tentang dirinya sendiri: cabang apa yang Anda jadikan target commit (master), ceksum SHA-1 apa yang commit tersebut miliki (<code>463dc4f</code>), berapa banyak berkas yang diubah, dan statistik tentang jumlah baris yang ditambah dan dibuang dalam commit tersebut.</p>
+<p>これではじめてのコミットができました! 今回のコミットについて、「どのブランチにコミットしたのか (master)」「そのコミットの SHA-1 チェックサム (<code>463dc4f</code>)」「変更されたファイルの数」「そのコミットで追加されたり削除されたりした行数」といった情報が表示されているのがわかるでしょう。</p>
 
-<p>Ingat bahwa commit merekam snapshot yang Anda telah tata di area stage. Apapun yang tidak Anda masukkan ke area stage akan tetap berada di tempatnya, tetap dalam keadaan terubah; Anda dapat melakukan commit lagi untuk memasukkannya ke dalam sejarah Anda. Setiap saat Anda melakukan sebuah commit, Anda merekamkan sebuah snapshot dari proyek Anda yang bisa Anda kembalikan atau Anda bandingkan nantinya.</p>
+<p>コミットが記録するのは、ステージングエリアのスナップショットであることを覚えておきましょう。ステージしていない情報については変更された状態のまま残っています。別のコミットで歴史にそれを書き加えるには、改めて add する必要があります。コミットするたびにプロジェクトのスナップショットが記録され、あとからそれを取り消したり参照したりできるようになります。</p>
 
-<h3 id='melewatkan_area_stage'>Melewatkan Area Stage</h3>
+<h3 id='id27'>ステージングエリアの省略</h3>
 
-<p>Walaupun dapat menjadi sangat berguna untuk menata commit tepat sebagaimana Anda inginkan, area stage terkadang sedikit lebih kompleks dibandingkan apa yang Anda butuhkan di dalam alurkerja Anda. Jika Anda ingin melewatkan area stage, Git menyediakan sebuah jalan pintas sederhana. Dengan memberikan opsi <code>-a</code> ke perintah <code>git commit</code> akan membuat Git secara otomatis menempatkan setiap berkas yang telah terpantau ke area stage sebelum melakukan commit, membuat Anda dapat melewatkan bagian <code>git add</code>:</p>
+<p>コミットの内容を思い通りに作り上げることができるという点でステージングエリアは非常に便利なのですが、普段の作業においては必要以上に複雑に感じられることもあるでしょう。ステージングエリアを省略したい場合のために、Git ではシンプルなショートカットを用意しています。<code>git commit</code> コマンドに <code>-a</code> オプションを指定すると、追跡対象となっているファイルを自動的にステージしてからコミットを行います。つまり <code>git add</code> を省略できるというわけです。</p>
 
 <pre><code>$ git status
 # On branch master
@@ -300,13 +292,13 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 [master 83e38c7] added new benchmarks
  1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Perhatikan bagaimana Anda tidak perlu menjalankan <code>git add</code> terhadap berkas benchmarks.rb dalam hal ini sebelum Anda commit.</p>
+<p>この場合、コミットする前に benchmarks.rb を <code>git add</code> する必要がないことに注意しましょう。</p>
 
-<h3 id='menghapus_berkas'>Menghapus Berkas</h3>
+<h3 id='id28'>ファイルの削除</h3>
 
-<p>Untuk menghapus sebuah berkas dari Git, Anda harus menghapusnya dari berkas terpantau (lebih tepatnya, mengpus dari area stage) dan kemudian commit. Perintah <code>git rm</code> melakukan hal tadi dan juga menghapus berkas tersebut dari direktori kerja Anda sehingga Anda tidak melihatnya sebagai berkas yang tak terpantau nantinya.</p>
+<p>ファイルを Git から削除するには、追跡対象からはずし (より正確に言うとステージングエリアから削除し)、そしてコミットします。<code>git rm</code> コマンドは、この作業を行い、そして作業ディレクトリからファイルを削除します。つまり、追跡されていないファイルとして残り続けることはありません。</p>
 
-<p>Jika Anda hanya menghapus berkas dari direktori kerja Anda, berkas tersebut akan muncul di bagian &#8220;Changed but not updated&#8221; (yaitu, di luar area stage) dari keluaran <code>git status</code> Anda:</p>
+<p>単に作業ディレクトリからファイルを削除しただけの場合は、<code>git status</code> の出力の中では “Changed but not updated” (つまり <em>ステージされていない</em>) 欄に表示されます。</p>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -318,7 +310,7 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>Kemudian, jika Anda jalankan <code>git rm</code>, Git akan memasukkan penghapusan berkas tersebut ke area stage:</p>
+<p><code>git rm</code> を実行すると、ファイルの削除がステージされます。</p>
 
 <pre><code>$ git rm grit.gemspec
 rm &#39;grit.gemspec&#39;
@@ -331,31 +323,31 @@ $ git status
 #       deleted:    grit.gemspec
 #</code></pre>
 
-<p>Pada saat Anda commit nantinya, berkas tersebut akan hilang dan tidak lagi terpantau. Jika Anda mengubah berkas tersebut dan menambahkannya lagi ke index, Anda harus memaksa penghapusannya dengan menggunakan opsi <code>-f</code>. Ini adalah fitur keamanan (safety) untuk mencegah ketidaksengajaan penghapusan terhadap data yang belum terekam di dalam snapshot dan tak dapat dikembalikan oleh Git.</p>
+<p>次にコミットするときにファイルが削除され、追跡対象外となります。変更したファイルをすでにステージしている場合は、<code>-f</code> オプションで強制的に削除しなければなりません。まだスナップショットに記録されていないファイルを誤って削除してしまうと Git で復旧することができなくなってしまうので、それを防ぐための安全装置です。</p>
 
-<p>Hal berguna lain yang Anda dapat lakukan adalah untuk tetap menyimpan berkas di direktori kerja tetapi menghapusnya dari area kerja. Dengan kata lain, Anda mungkin ingin tetap menyimpan berkas tersebut di dalam cakram keras tetapi tidak ingin Git untuk memantaunya lagi. Hal ini khususnya berguna jika Anda lupa untuk menambahkan sesuaitu ke berkas <code>.gitignore</code> Anda dan secara tak-sengaja menambahkannya, seperti sebuah berkas log yang besar, atau sekumpulan berkas hasil kompilasi <code>.a</code>. Untuk melakukan ini, gunakan opsi <code>--cached</code>:</p>
+<p>ほかに「こんなことできたらいいな」と思われるであろう機能として、ファイル自体は作業ツリーに残しつつステージングエリアからの削除だけを行うこともできます。つまり、ハードディスク上にはファイルを残しておきたいけれど、もう Git では追跡させたくないというような場合のことです。これが特に便利なのは、<code>.gitignore</code> ファイルに書き足すのを忘れたために巨大なログファイルや大量の <code>.a</code> ファイルが追加されてしまったなどというときです。そんな場合は <code>--cached</code> オプションを使用します。</p>
 
 <pre><code>$ git rm --cached readme.txt</code></pre>
 
-<p>Anda dapat menambahkan nama berkas, direktori, dan pola glob ke perintah <code>git rm</code>. Ini berarti Anda dapat melakukan hal seperti</p>
+<p>ファイル名やディレクトリ名、そしてファイル glob パターンを <code>git rm</code> コマンドに渡すことができます。つまり、このようなこともできるということです。</p>
 
 <pre><code>$ git rm log/\*.log</code></pre>
 
-<p>Perhatikan karakter backslash (<code>\</code>) di depan tanda <code>*</code>. Ini dibutuhkan agar Git juga meng-ekspansi nama berkas sebagai tambahan dari ekspansi nama berkas oleh shell Anda. Perintah ini mengapus semua berkas yang memiliki ekstensi <code>.log</code> di dalam direktori <code>log/</code>. Atau, Anda dapat melakukannya seperti ini:</p>
+<p><code>*</code> の前にバックスラッシュ (<code>\</code>) があることに注意しましょう。これが必要なのは、シェルによるファイル名の展開だけでなく Git が自前でファイル名の展開を行うからです。このコマンドは、<code>log/</code> ディレクトリにある拡張子 <code>.log</code> のファイルをすべて削除します。あるいは、このような書き方もできます。</p>
 
 <pre><code>$ git rm \*~</code></pre>
 
-<p>Perintah ini akan membuang semua berkas yang berakhiran dengan <code>~</code>. This command removes all files that end with <code>~</code>.</p>
+<p>このコマンドは、<code>~</code> で終わるファイル名のファイルをすべて削除します。</p>
 
-<h3 id='moving_files'>Moving Files</h3>
+<h3 id='id29'>ファイルの移動</h3>
 
-<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.</p>
+<p>他の多くの VCS とは異なり、Git はファイルの移動を明示的に追跡することはありません。Git の中でファイル名を変更しても、「ファイル名を変更した」というメタデータは Git には保存されないのです。しかし Git は賢いので、ファイル名が変わったことを知ることができます。ファイルの移動を検出する仕組みについては後ほど説明します。</p>
 
-<p>Thus it’s a bit confusing that Git has a <code>mv</code> command. If you want to rename a file in Git, you can run something like</p>
+<p>しかし Git には <code>mv</code> コマンドがあります。ちょっと混乱するかもしれませんね。Git の中でファイル名を変更したい場合は次のようなコマンドを実行します。</p>
 
 <pre><code>$ git mv file_from file_to</code></pre>
 
-<p>and it works fine. In fact, if you run something like this and look at the status, you’ll see that Git considers it a renamed file:</p>
+<p>このようなコマンドを実行してから status を確認すると、Git はそれをファイル名が変更されたと解釈していることがわかるでしょう。</p>
 
 <pre><code>$ git mv README.txt README
 $ git status
@@ -368,13 +360,13 @@ $ git status
 #       renamed:    README.txt -&gt; README
 #</code></pre>
 
-<p>However, this is equivalent to running something like this:</p>
+<p>しかし、実際のところこれは、次のようなコマンドを実行するのと同じ意味となります。</p>
 
 <pre><code>$ mv README.txt README
 $ git rm README.txt
 $ git add README</code></pre>
 
-<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the <code>mv</code> command. The only real difference is that <code>mv</code> is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
+<p>Git はこれが暗黙的なファイル名の変更であると理解するので、この方法であろうが <code>mv</code> コマンドを使おうがどちらでもかまいません。唯一の違いは、この方法だと 3 つのコマンドが必要になるかわりに <code>mv</code> だとひとつのコマンドだけで実行できるという点です。より重要なのは、ファイル名の変更は何でもお好みのツールで行えるということです。あとでコミットする前に add/rm を指示してやればいいのです。</p>
 
 <div id='nav'>
 <a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
