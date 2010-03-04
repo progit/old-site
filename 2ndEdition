@@ -5,3 +5,4 @@
 * smart http
 * checkout -m / --ours / --thiers
 * notes
+* reverting merge commits, unreverting the revert
