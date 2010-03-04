@@ -28,7 +28,7 @@ history, say 'C10' in this case.
 The first way to solve the problem could be to rewind 'master' back to C8 and
 then merge the remaining two lines back in again.  This requires that anyone
 you're collaborating with knows how to handle rewound heads, but if that's not
-an issue, this is a perfectly viable solution.  This is basically how the 'next'
+an issue, this is a perfectly viable solution.  This is basically how the 'pu'
 branch is handled in the Git project itself.
 
 	$ git checkout master
