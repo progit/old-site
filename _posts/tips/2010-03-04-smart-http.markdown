@@ -12,8 +12,6 @@ very inefficient.  Git would simply use the webserver to ask for individual
 objects and packfiles that it needed.  It would even ask for big packfiles even
 if it only needed one object from it.
 
-<img src="/images/smarthttp1.png">
-
 As of the release of version 1.6.6 at the end of last year, however, Git can
 now use the HTTP protocol just about as efficiently as the `git` or `ssh`
 versions (thanks to the amazing work by Shawn Pearce, who also happened to have
@@ -31,15 +29,53 @@ firewalls have those ports (80 and 443) open already and normal users don't
 have to deal with `ssh-keygen` and the like.  Once most clients have updated
 to at least v1.6.6, `http` will have a big place in the Git world, I believe.
 
+<h2>What is "Smart" HTTP?</h2>
+
+Before version 1.6.6, Git clients, when you clone or fetch over HTTP would
+basically just do a series of GETs to grab individual objects and packfiles on
+the server from bare Git repositories, since it knows the layout of the repo.
+This functionality is documented fairly completely in <a href="http://progit.org/book/ch9-6.html">Chapter 9</a>.
+Conversations over this protocol used to look like this:
+
+	$ git clone http://github.com/schacon/simplegit-progit.git
+	Initialized empty Git repository in /private/tmp/simplegit-progit/.git/
+	got ca82a6dff817ec66f44342007202690a93763949
+	walk ca82a6dff817ec66f44342007202690a93763949
+	got 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+	Getting alternates list for http://github.com/schacon/simplegit-progit.git
+	Getting pack list for http://github.com/schacon/simplegit-progit.git
+	Getting index for pack 816a9b2334da9953e530f27bcac22082a9f5b835
+	Getting pack 816a9b2334da9953e530f27bcac22082a9f5b835
+	 which contains cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+	walk 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+	walk a11bef06a3f659402fe7563abf99ad00de2209e6
+
+It is a completly passive server, and if the client needs one object in a packfile
+of thousands, the server cannot pull the single object out, the client is forced
+to request the entire packfile.
+
+<img src="/images/smarthttp1.png">
+
+In contrast, the smarter protocols (`git` and `ssh`) would instead have a
+conversation with the `git upload-pack` process on the server which would
+determine the exact set of objects the client needs and build a custom packfile
+with just those objects and stream it over.
+
+The new clients will now send a request with an extra GET parameter that older
+servers will simply ignore, but servers running the smart CGI will recognize
+and switch modes to a multi-POST mode that is similar to the conversation that
+happens over the `git` protocol.  Once this series of POSTs is complete, the
+server knows what objects the client needs and can build a custom packfile and
+stream it back.
+
+<img src="/images/smarthttp2.png">
+
 The rest of this article will explain setting up a server with the "smart"-http
 protocol, so you can test out this cool new feature.  This feature is referred
 to as "smart" HTTP vs "dumb" HTTP because it requires having the Git binary
 installed on the server, where the previous incantation of HTTP transfer
 required only a simple webserver.  It has a real conversation with the client,
 rather than just dumbly pushing out data.
-
-<img src="/images/smarthttp2.png">
-
 
 <h2>Setting up Smart HTTP</h2>
 
@@ -114,6 +150,3 @@ I think HTTP based Git will be a huge part of the future of Git, so if you're
 running your own Git server, you should really check it out.  If you're not,
 GitHub and I'm sure other hosts will soon be supporting it - upgrade your Git
 client to 1.7ish soon so you can take advantage of it when it happens.
-
-For further reading, if you want to get into the super nitty-gritty details of all the protocols,
-you can read the <a href="/pack-protocol.txt">Pack Protocol</a> documentation.
