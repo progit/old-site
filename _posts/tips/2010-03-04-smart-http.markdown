@@ -86,9 +86,10 @@ rather than just dumbly pushing out data.
 
 <h2>Setting up Smart HTTP</h2>
 
-So, Smart-HTTP is basically just enabling a CGI that calls the new
+So, Smart-HTTP is basically just enabling the new CGI script that is provided
+with Git called
 <a href="http://www.kernel.org/pub/software/scm/git/docs/git-http-backend.html">`git-http-backend`</a>
-script on the server.  This CGI will read the path and
+on the server.  This CGI will read the path and
 headers sent by the revamped `git fetch` and `git push` binaries who have
 learned to communicate in a specific way with a smart server.  If the CGI sees
 that the client is smart, it will communicate smartly with it, otherwise it will
