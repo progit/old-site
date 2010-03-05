@@ -1,10 +1,12 @@
-* difftool
-* bundles
-* GIT_DIR, GIT_WORK_TREE, GIT_INDEX
-* HTTP push / WebDAV
-- smart http
-* checkout -m / --ours / --thiers
-* notes
 - reverting merge commits, unreverting the revert
-* rerere
-
+- smart http
+- rerere
+* notes
+* bundles
+* friendlier submodules (1.7)
+* merge-recursive (http://gitster.livejournal.com/16077.html)
+* GIT_DIR, GIT_WORK_TREE, GIT_INDEX, GIT_TRACE
+* difftool
+* merge conflicts and the index
+* checkout -m / --ours / --thiers
+* HTTP push / WebDAV
