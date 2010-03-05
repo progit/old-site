@@ -27,7 +27,7 @@ both efficient and can be run either secure and authenticated (https) or open
 and unauthenticated (http).  It also has the huge advantage that most
 firewalls have those ports (80 and 443) open already and normal users don't
 have to deal with `ssh-keygen` and the like.  Once most clients have updated
-to at least v1.6.6, `http` will have a big place in the Git world, I believe.
+to at least v1.6.6, `http` will have a big place in the Git world.
 
 <h2>What is "Smart" HTTP?</h2>
 
