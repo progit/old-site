@@ -70,6 +70,13 @@ stream it back.
 
 <img src="/images/smarthttp2.png">
 
+Furthermore, in the olden days if you wanted to push over http, you had to setup
+a DAV-based server, which was rather difficult and also pretty inefficient compared
+to the smarter protocols.  Now you can push over this CGI, which again is very
+similar to the push mechanisms for the `git` and `ssh` protocols.  You simply
+have to authenticate via an HTTP-based method, like basic auth or the like
+(assuming you don't want your repository to be world-writable).
+
 The rest of this article will explain setting up a server with the "smart"-http
 protocol, so you can test out this cool new feature.  This feature is referred
 to as "smart" HTTP vs "dumb" HTTP because it requires having the Git binary
