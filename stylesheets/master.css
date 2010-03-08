@@ -6,7 +6,7 @@ body {
 
 .more { font-size: 0.7em;}
 
-img.right { 
+img.right {
   float: right;
   margin: 15px;
 }
@@ -36,9 +36,9 @@ a:visited {
   -moz-border-radius-topleft: 1em;
   -webkit-border-top-left-radius: 1em;
   -moz-border-radius-topright: 1em;
-  -webkit-border-top-right-radius: 1em;  
-  border-top-left-radius: 1em;  
-  border-top-right-radius: 1em;  
+  -webkit-border-top-right-radius: 1em;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
   padding: 1.5em;
   text-align: center;
 }
@@ -76,7 +76,7 @@ a:visited {
   color: white;
   font-size: 1.1em;
   padding: 0 0.8em;
-  line-height: 2.5em;  
+  line-height: 2.5em;
   font-weight: normal;
 }
 
@@ -262,4 +262,10 @@ ul#toc  {
 
 ul#toc ul  {
   list-style: none;
+}
+
+.book-ad a {
+    color: #262;
+    font-size: 1.5em;
+    text-decoration: none;
 }

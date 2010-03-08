@@ -3,10 +3,16 @@
 - rerere
 * notes
 * bundles
+* git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
+* branches without shared history
 * friendlier submodules (1.7)
 * merge-recursive (http://gitster.livejournal.com/16077.html)
 * GIT_DIR, GIT_WORK_TREE, GIT_INDEX, GIT_TRACE
+* git cat-file --batch
 * difftool
 * merge conflicts and the index
 * checkout -m / --ours / --thiers
 * HTTP push / WebDAV
+
+tricks:
+ - copy file w/history from one repo to another
