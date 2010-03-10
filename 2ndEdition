@@ -3,7 +3,9 @@
 - rerere
 * notes
 * bundles
+* grafts / replace mechanism
 * git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
+* "rebase --onto A...B" replays history on the merge base (A...B) 61dfa1
 * branches without shared history
 * friendlier submodules (1.7)
 * merge-recursive (http://gitster.livejournal.com/16077.html)
