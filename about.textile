@@ -9,7 +9,7 @@ The Pro Git book is an Apress publication.
 
 h2. About Scott Chacon
 
-Scott Chacon is a "Git":http://git-scm.com evangelist and Ruby developer employed at "Logical Awesome":http://logicalawesome.com working on "GitHub.com":http://github.com. He is the author of the "Git Internals Peepcode PDF":https://peepcode.com/products/git-internals-pdf as well as the maintainer of the "Git homepage":http://git-scm.com and the "Git Community Book":http://book.git-scm.com.  Scott has presented at RailsConf, RubyConf, Scotland on Rails, Ruby Kaigi, OSCON and a number of local groups and has done corporate training on Git across the country.
+Scott Chacon is a "Git":http://git-scm.com evangelist and Ruby developer working on "GitHub.com":http://github.com. He is the author of the "Git Internals Peepcode PDF":https://peepcode.com/products/git-internals-pdf as well as the maintainer of the "Git homepage":http://git-scm.com and the "Git Community Book":http://book.git-scm.com.  Scott has presented at RailsConf, RubyConf, Scotland on Rails, Ruby Kaigi, OSCON and a number of local groups and has done corporate training on Git across the country.
 
 h2. About This Site
 
