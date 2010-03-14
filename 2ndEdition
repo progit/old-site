@@ -2,7 +2,7 @@
 - smart http
 - rerere
 * notes
-* bundles
+- bundles
 * grafts / replace mechanism
 * git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
 * "rebase --onto A...B" replays history on the merge base (A...B) 61dfa1
