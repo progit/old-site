@@ -3,7 +3,9 @@
 - rerere
 * notes
 - bundles
-* grafts / replace mechanism
+- grafts / replace mechanism
+* custom merge strategy (git-merge-foo, git merge -s foo)
+* for-each-ref
 * git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
 * "rebase --onto A...B" replays history on the merge base (A...B) 61dfa1
 * branches without shared history
