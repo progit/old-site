@@ -1,0 +1,383 @@
+---
+layout: translation
+title: Pro Git 2.2 Les bases de Git Enregistrer des modifications dans le dépôt
+---
+<h2 id='enregistrer_des_modifications_dans_le_dpt'>Enregistrer des modifications dans le dépôt</h2>
+
+<p>Vous avez à présent un dépôt Git valide et une extraction ou copie de travail du projet. Vous devez faire quelques modifications et valider des instantanés de ces modifications dans votre dépôt chaque fois que votre projet atteint un état que vous souhaitez enregistrer.</p>
+
+<p>Souvenez-vous que chaque fichier de votre copie de travail peut avoir deux états : sous suivi de version ou non suivi. Les fichiers suivis sont les fichiers qui appartenait déjà au dernier instantané ; ils peuvent être inchangés, modifiés ou indexés. Tous les autres fichiers sont non suivis — tout fichier de votre copie de travail qui n&#8217;appartenait pas à votre dernier instantané et n&#8217;a pas été indexé. Quand vous clonez un dépôt pour la première fois, tous les fichiers seront sous suivi de version et inchangés car vous venez tout juste de les enregistrer sans les avoir encore édités.</p>
+
+<p>Au fur et à mesure que vous éditez des fichiers, Git les considère comme modifiés, car vous les avez modifiés depuis le dernier instantané. Vous indexez ces fichiers modifiés et vous enregistrez toutes les modifications indexées, puis ce cycle se répète. Ce cycle de vie est illustré par la figure 2-1.</p>
+
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figure 2-1. Le cycle de vie des états des fichiers.</p>
+
+<h3 id='vrifier_ltat_des_fichiers'>Vérifier l&#8217;état des fichiers</h3>
+
+<p>L&#8217;outil principal pour déterminer quels fichiers sont dans quel état est la commande <code>git status</code>. Si vous lancez cette commande juste après un clonage, vous devriez voir ce qui suit :</p>
+
+<pre><code>$ git status
+# On branch master
+nothing to commit (working directory clean)</code></pre>
+
+<p>Ce message signifie que votre copie de travail est propre, en d&#8217;autres mots, aucun fichier suivi n&#8217;a été modifié. Git ne voit pas non plus de fichiers non-suivis, sinon ils seraient listés ici. Enfin, la commande vous indique sur quelle branche vous êtes. Pour l&#8217;instant, c&#8217;est toujours master, qui correspond à la valeur par défaut ; nous ne nous en soucierons pas maintenant. Dans le chapitre suivant, nous parlerons plus en détail des branches et des références.</p>
+
+<p>Supposons que vous ajoutiez un nouveau fichier à votre projet, un simple fichier LISEZMOI. Si ce fichier n&#8217;existait pas auparavant, et que vous lancez la commande <code>git status</code>, vous verrez votre fichier non suivi comme ceci :</p>
+
+<pre><code>$ vim LISEZMOI
+$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	LISEZMOI
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
+
+<p>Vous pouvez constater que votre nouveau fichier LISEZMOI n&#8217;est pas en suivi de version, car il apparaît dans la section &#8220;Untracked files&#8221; de l&#8217;état de la copie de travail. &#8220;Untracked&#8221; signifie simplement que Git détecte un fichier qui n&#8217;était pas présent dans le dernier instantané ; Git ne la placera sous suivi en version que quand vous lui indiquer de le faire. Ce comportement permet de ne pas placer accidentellement sous suivi de version des fichiers binaires générés ou d&#8217;autres fichiers que vous ne voulez pas inclure. Mais vous voulez inclure le fichier LISEZMOI dans l&#8217;instantané, alors commençons à suivre ce fichier.</p>
+
+<h3 id='placer_de_nouveaux_fichiers_sous_suivi_de_version'>Placer de nouveaux fichiers sous suivi de version</h3>
+
+<p>Pour commencer à suivre un nouveau fichier, vous utilisez la commande <code>git add</code>. Pour commencer à suivre le fichier LISEZMOI, vous pouvez entrer ceci :</p>
+
+<pre><code>$ git add LISEZMOI</code></pre>
+
+<p>Si vous lancez à nouveau le commande status, vous pouvez constater que votre fichier LISEZMOI est maintenant suivi et indexé :</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#</code></pre>
+
+<p>Vous pouvez affirmer qu&#8217;il est indexé car il apparaît dans la section &#8220;Changes to be committed&#8221; (Modifications à enregistrer).Si vous enregistrez à ce moment, la version du fichier à l&#8217;instant où vous lancez <code>git add</code> est celle qui appartiendra à l&#8217;instantané. Vous pouvez vous souvenir que lorsque vous avez précédemment lancé <code>git init</code>, vous avez ensuite lancé <code>git add (fichiers)</code> — c&#8217;était bien sur pour commencer à placer sous suivi de version les fichiers de votre répertoire de travail. La commande git add accepte en paramètre un chemin qui correspond à un fichier ou un répertoire ; dans le cas d&#8217;un répertoire, la commande ajoute récursivement tous les fichiers de ce répertoire.</p>
+
+<h3 id='indexer_des_fichiers_modifis'>Indexer des fichiers modifiés</h3>
+
+<p>Maintenant, modifions un fichiers qui est déjà sous suivi de version. Si vous modifiez le fichier sous suivi de version appelé <code>benchmarks.rb</code> et que vous lancez à nouveau votre commande <code>status</code>, vous verrez ceci :</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Le fichier benchmarks.rb apparaît sous la section nommée « Changed but not updated » ce qui signifie que le fichier sous suivi de version a été modifié dans la copie de travail mais n&#8217;est pas encore indexé. Pour l&#8217;indexer, il faut lancer la commande <code>git add</code> (qui est une commande multi-usage — elle peut être utilisée pour placer un fichier sous suivi de version, pour indexer un fichier ou pour d&#8217;autres actions telles que marquer comme résolu des conflits de fusion de fichiers). Lançons maintenant <code>git add</code> pour indexer le fichier benchmarks.rb, et relançons la commande <code>git status</code> :</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>A présent, les deux fichiers sont indexés et feront partie de la prochaine validation. Mais supposons que vous souhaitiez apporter encore une petite modification au fichier benchmarks.rb avant de réellement valider la nouvelle version. Vous l&#8217;ouvrez à nouveau, réalisez la petite modification et vous voilà prêt à valider. Néanmoins, vous lancez <code>git status</code> une dernière fois :</p>
+
+<pre><code>$ vim benchmarks.rb 
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Que s&#8217;est-il donc passé ? À présent, benchmarks.rb apparaît à la fois comme indexé et non indexé. En fait, Git indexe un fichier dans son état au moment où la commande <code>git add</code> est lancée. Si on valide les modifications maintenant, la version de benchmarks.rb qui fera partie de l&#8217;instantané est celle correspondant au moment où la commande <code>git add benchmarks.rb</code> a été lancée, et non la version actuellement présente dans la copie de travail au moment où la commande git commit est lancée. Si le fichier est modifié après un <code>git add</code>, il faut relancer <code>git add</code> pour prendre en compte l&#8217;état actuel dans la copie de travail :</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<h3 id='ignorer_des_fichiers'>Ignorer des fichiers</h3>
+
+<p>Il apparaît souvent qu&#8217;un type de fichiers présent dans la copie de travail ne doit pas être ajouté automatiquement ou même apparaître comme fichier potentiel pour le suivi de version. Ce sont par exemple des fichiers générés automatiquement tels que les fichiers de journaux ou de sauvegardes produits par l&#8217;outil que vous utilisez. Dans un tel cas, on peut énumérer les patrons de noms de fichiers à ignorer dans un fichier .gitignore. Voici ci-dessous un exemple de fichier .gitignore :</p>
+
+<pre><code>$ cat .gitignore
+*.[oa]
+*~</code></pre>
+
+<p>La première ligne ordonne à Git d&#8217;ignorer tout fichier se terminant en .o ou .a — des fichiers objet ou archive qui sont généralement produits par la compilation d&#8217;un programme. La seconde ligne indique à Git d&#8217;ignorer tous les fichiers se terminant par un tilde (<code>~</code>), ce qui est le cas des noms des fichiers temporaires pour de nombreux éditeurs de texte tels qu&#8217;Emacs. On peut aussi inclure un répertoire log, tmp ou pid, ou le répertoire de documentation générée automatiquement, ou tout autre fichier. Renseigner un fichier .gitignore avant de commencer à travailler est généralement une bonne idée qui évitera de valider par inadvertance des fichiers qui ne doivent pas apparaître dans le dépôt Git.</p>
+
+<p>Les règles de construction des patrons à placer dans le fichier .gitignore sont les suivantes :</p>
+
+<ul>
+<li>Les lignes vides ou commençant par # sont ignorée</li>
+
+<li>Les patrons standards de fichiers sont utilisables</li>
+
+<li>Si le patron se termine par un slash (<code>/</code>), le patron dénote un répertoire</li>
+
+<li>Un patron commençant par un point d&#8217;exclamation (<code>!</code>) est inversé.</li>
+</ul>
+
+<p>Les patrons standards de fichiers sont des expressions régulières simplifiées utilisées par les shells. Un astérisque (<code>*</code>) correspond à un ou plusieurs caractères ; <code>[abc]</code> correspond à un des trois caractères listés dans les crochets, donc a ou b ou c ; un point d&#8217;interrogation (<code>?</code>) correspond à un unique caractère ; des crochets entourant des caractères séparés par un signe moins (<code>[0-9]</code>) correspond à un caractère dans l&#8217;intervalle des deux caractères indiqués, donc ici de 0 à 9.</p>
+
+<p>Voici un autre exemple de fichier .gitignore :</p>
+
+<pre><code># un commentaire, cette ligne est ignorée
+*.a       # pas de fichier .a
+!lib.a    # mais suivre en version lib.a malgré la règle précédente
+/TODO     # ignorer uniquement le fichier TODO à la racine du projet
+build/    # ignorer tous le fichiers dans le répertoire build
+doc/*.txt # ignorer doc/notes.txt, mais pas doc/server/arch.txt</code></pre>
+
+<h3 id='inspecter_les_modifications_indexes_et_non_indexes'>Inspecter les modifications indexées et non indexées</h3>
+
+<p>Si le résultat de la commande <code>git status</code> est encore trop vague — lorsqu&#8217;on désire savoir non seulement quels fichiers ont changé mais aussi ce qui a changé dans ces fichiers — on peut utiliser la commande <code>git diff</code>. Cette commande sera traitée en détail plus loin ; mais elle sera vraisemblablement utilisée le plus souvent pour répondre aux questions suivantes : qu&#8217;est-ce qui a été modifié mais pas encore indexé ? Quelle modifications a été indexée et est prête pour la validation ? Là où <code>git status</code> répond de manière générale à ces questions, <code>git diff</code> montre les lignes exactes qui ont été ajoutées, modifiées ou effacées — le patch en somme.</p>
+
+<p>Supposons que vous éditez et indexez le fichier LISEZMOI et que vous éditez le fichier benchmarks.rb sans l&#8217;indexer. Si vous lancez la commande <code>status</code>, vous verrez ceci :</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   LISEZMOI
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Pour visualiser ce qui a été modifié mais pas encore indexé, tapez <code>git diff</code> sans autre argument :</p>
+
+<pre><code>$ git diff
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..da65585 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+           @commit.parents[0].parents[0].parents[0]
+         end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++
+         run_code(x, &#39;commits 2&#39;) do
+           log = git.commits(&#39;master&#39;, 15)
+           log.size</code></pre>
+
+<p>Cette commande compare le contenu du répertoire de travail avec la zone d&#8217;index. Le résultat vous indique les modifications réalisées mais non indexées.</p>
+
+<p>Si vous souhaitez visualiser les modifications indexées qui feront partie de la prochaine validation, vous pouvez utiliser <code>git diff --cached</code> (avec les versions 1.6.1 et supérieures de Git, vous pouvez aussi utiliser <code>git diff --staged</code>, qui est plus mnémotechnique). Cette commande compare les fichiers indexés et le dernier instantané :</p>
+
+<pre><code>$ git diff --cached
+diff --git a/LISEZMOI b/LISEZMOI
+new file mode 100644
+index 0000000..03902a1
+--- /dev/null
++++ b/LISEZMOI2
+@@ -0,0 +1,5 @@
++grit
++ by Tom Preston-Werner, Chris Wanstrath
++ http://github.com/mojombo/grit
++
++Grit is a Ruby library for extracting information from a Git repository</code></pre>
+
+<p>Il est important de noter que <code>git diff</code> ne montre pas les modifications réalisées depuis la dernière validation — seulement les modifications qui sont non indexées. Cela peut introduire une confusion car si tous les fichiers modifiés ont été indexés, <code>git diff</code> n&#8217;indiquera aucun changement.</p>
+
+<p>Par exemple, si vous indexez le fichier benchmarks.rb et l&#8217;éditez en suite, vous pouvez utiliser <code>git diff</code> pour visualiser les modifications indexées et non indexées de ce fichier :</p>
+
+<pre><code>$ git add benchmarks.rb
+$ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>A présent, vous pouvez utiliser <code>git diff</code> pour visualiser les modifications non indexées :</p>
+
+<pre><code>$ git diff 
+diff --git a/benchmarks.rb b/benchmarks.rb
+index e445e28..86b2f7c 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -127,3 +127,4 @@ end
+ main()
+
+ ##pp Grit::GitRuby.cache_client.stats 
++# test line</code></pre>
+
+<p>et <code>git diff --cached</code> pour visualiser ce qui a été indexé jusqu&#8217;à maintenant :</p>
+
+<pre><code>$ git diff --cached
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..e445e28 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+          @commit.parents[0].parents[0].parents[0]
+        end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++              
+        run_code(x, &#39;commits 2&#39;) do
+          log = git.commits(&#39;master&#39;, 15)
+          log.size</code></pre>
+
+<h3 id='valider_vos_modifications'>Valider vos modifications</h3>
+
+<p>Votre zone d&#8217;index est dans l&#8217;état désiré, vous pouvez valider vos modifications. Souvenez-vous que tout ce qui encore non indexé — tous les fichiers qui ont été créés ou modifiés mais n&#8217;ont pas subi de <code>git add</code> depuis ne feront pas partie de la prochaine validation. Ils resteront en tant que fichiers modifiés sur votre disque.</p>
+
+<p>Dans notre cas, la dernière fois que vous avez lancé <code>git status</code>, vous avez vérifié que tout était indexé, et vous êtes donc prêt à valider vos modifications. La manière la plus simple de valider est de taper <code>git commit</code> :</p>
+
+<pre><code>$ git commit</code></pre>
+
+<p>Cette action lance votre éditeur par défaut (qui est paramétré par la variable d&#8217;environnement <code>$EDITOR</code> de votre shell — habituellement vim ou Emacs, mais vous pouvez le paramétrer spécifiquement pour git en utilisant la commande <code>git config --global core.editor</code> comme nous l&#8217;avons vu au chapitre 1).</p>
+
+<p>L&#8217;éditeur affiche le texte suivant :</p>
+
+<pre><code># Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       new file:   LISEZMOI
+#       modified:   benchmarks.rb 
+~
+~
+~
+&quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
+
+<p>Vous constatez que le message de validation par défaut contient une ligne vide suivie en commentaire le résultat de la commande <code>git status</code>. Vous pouvez effacer ces lignes de commentaire et saisir votre propre message de validation, ou vous pouvez les laisser en place vous aider à vous rappeler de ce que vous êtes en train de valider (pour un rappel plus explicite de ce que vous avez modifié, vous pouvez aussi passer l&#8217;option <code>-v</code> à la commande <code>git commit</code>. Cette option place le résultat du diff en commentaire dans l&#8217;éditeur pour vous permettre de visualiser exactement ce que vous avez modifié). Quand vous quittez l&#8217;éditeur (après avoir sauvegardé le message), Git crée votre validation avec ce message de validation (après avoir retiré les commentaires et le diff).</p>
+
+<p>D&#8217;une autre manière, vous pouvez spécifier votre message de validation en ligne avec la commande <code>commit</code> en le saisissant après l&#8217;option <code>-m</code>, de cette manière :</p>
+
+<pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
+[master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+ create mode 100644 LISEZMOI</code></pre>
+
+<p>A présent, vous avez créé votre premier commit ! Vous pouvez constater que le commit vous fournit quelques information sur lui-même : sur quelle branche vous avez validé (master), quelle est sa somme de contrôle SHA-1 (<code>463dc4f</code>), combien de fichiers ont été modifiés, et quelques statistiques sur les lignes ajoutées et effacées dans ce commit.</p>
+
+<p>Souvenez-vous que la validation enregistre l&#8217;instantané que vous avez préparé dans la zone d&#8217;index. Tout ce que vous n&#8217;avez pas indexé est toujours en état modifié ; vous pouvez réaliser une nouvelle validation pour l&#8217;ajouter à l&#8217;historique. A chaque validation, vous enregistrez un instantané du projet en forme de jalon auquel vous pourrez revenir ou comparer votre travail ultérieur.</p>
+
+<h3 id='liminer_la_phase_dindexation'>Éliminer la phase d&#8217;indexation</h3>
+
+<p>Bien qu&#8217;il soit incroyablement utile de pouvoir organiser les commits exactement comme on l&#8217;entend, la gestion de la zone d&#8217;index est parfois plus complexe que nécessaire dans une utilisation normale. Si vous souhaitez éviter la phase de placement des fichiers dans la zone d&#8217;index, Git fournit un raccourcis très simple. L&#8217;ajout de l&#8217;option <code>-a</code> à la commande <code>git commit</code> ordonne à Git de placer automatiquement tout fichier déjà en suivi de version dans la zone d&#8217;index avant de réaliser la validation, évitant ainsi d&#8217;avoir à taper les commandes <code>git add</code> :</p>
+
+<pre><code>$ git status
+# On branch master
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#
+$ git commit -a -m &#39;added new benchmarks&#39;
+[master 83e38c7] added new benchmarks
+ 1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Notez bien que vous n&#8217;avez pas eu à lancer <code>git add</code> sur le fichier benchmarks.rb avant de valider.</p>
+
+<h3 id='effacer_des_fichiers'>Effacer des fichiers</h3>
+
+<p>Pour effacer un fichier de Git, vous devez l&#8217;éliminer des fichiers en suivi de version (plus précisément, l&#8217;effacer dans la zone d&#8217;index) puis valider. La commande <code>git rm</code> réalise cette action mais efface aussi ce fichier de votre copie de travail de telle sorte que vous ne le verrez pas réapparaître comme fichier non suivi en version à la prochaine validation.</p>
+
+<p>Si vous effacez simplement le fichier dans votre copie de travail, il apparaît sous la section “Changed but not updated“ (c&#8217;est-à-dire, <em>non indexé</em>) dans le résultat de <code>git status</code> :</p>
+
+<pre><code>$ rm grit.gemspec
+$ git status
+# On branch master
+#
+# Changed but not updated:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Ensuite, si vous lancez <code>git rm</code>, l&#8217;effacement du fichier est indexé :</p>
+
+<pre><code>$ git rm grit.gemspec
+rm &#39;grit.gemspec&#39;
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Lors de la prochaine validation, le fichier sera absent et non-suivi en version. Si vous avez auparavant modifié et indexé le fichier, son élimination doit être forcée avec l&#8217;option <code>-f</code>. C&#8217;est une mesure de sécurité pour empêcher un effacement accidentel de données qui n&#8217;ont pas encore été enregistrées dans un instantané et qui seraient définitivement perdues.</p>
+
+<p>Un autre scénario serait de vouloir abandonner le suivi de version d&#8217;un fichier tout en le conservant dans la copie de travail. Ceci est particulièrement utile lorsqu&#8217;on a oublié de spécifier un patron dans le fichier <code>.gitignore</code> et on a accidentellement ajouté un fichier dans l&#8217;instantané, tel qu&#8217;un gros fichier de journal ou une série d&#8217;archives de compilation <code>.a</code>. Pour réaliser ce scénario, utilisez l&#8217;option <code>--cached</code> :</p>
+
+<pre><code>$ git rm --cached readme.txt</code></pre>
+
+<p>Vous pouvez spécifier des noms de fichiers ou de répertoires, ou des patrons de fichiers à la commande <code>git rm</code>. Cela signifie que vous pouvez lancer des commandes telles que</p>
+
+<pre><code>$ git rm log/\*.log</code></pre>
+
+<p>Notez bien l&#8217;antislash (<code>\</code>) devant <code>*</code>. Il est nécessaire d&#8217;échapper le caractère <code>*</code> car Git utilise sa propre expansion de nom de fichier en addition de l&#8217;expansion du shell. Cette commande efface tous le fichiers avec l&#8217;extension <code>.log</code> présents dans le répertoire <code>log/</code>. Vous pouvez aussi lancer une commande telle que :</p>
+
+<pre><code>$ git rm \*~</code></pre>
+
+<p>Cette commande élimine tous les fichiers se terminant par <code>~</code>.</p>
+
+<h3 id='dplacer_des_fichiers'>Déplacer des fichiers</h3>
+
+<p>À la différence des autres VCS, Git ne suit pas explicitement les mouvements des fichiers. Si vous renommez un fichier suivi par Git, aucune méta-donnée indiquant le renommage n&#8217;est stockée par Git. Néanmoins, Git est assez malin pour s&#8217;en apercevoir après coup — la détection de mouvement de fichier sera traitée plus loin.</p>
+
+<p>De ce fait, que Git ait une commande <code>mv</code> peut paraître trompeur. Si vous souhaitez renommer un fichier dans Git, vous pouvez lancer quelque chose comme</p>
+
+<pre><code>$ git mv nom_origine nom_cible</code></pre>
+
+<p>et cela fonctionne. En fait, si vous lancez quelque chose comme ceci et inspectez le résultat d&#8217;une commande <code>status</code>, vous constaterez que Git gère le renommage de fichier :</p>
+
+<pre><code>$ git mv LISEZMOI.txt LISEZMOI
+$ git status
+# On branch master
+# Your branch is ahead of &#39;origin/master&#39; by 1 commit.
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       renamed:    LISEZMOI.txt -&gt; LISEZMOI
+#</code></pre>
+
+<p>Néanmoins, cela revient à lancer les commandes suivantes :</p>
+
+<pre><code>$ mv LISEZMOI.txt LISEZMOI
+$ git rm LISEZMOI.txt
+$ git add LISEZMOI</code></pre>
+
+<p>Git trouve implicitement que c&#8217;est un renommage, donc cela importe peu si vous renommez un fichier de cette manière ou avec la commande <code>mv</code>. La seule différence réelle est que <code>mv</code> ne fait qu&#8217;une commande à taper au lieu de trois — c&#8217;est une commande de convenance. Le point principal est que vous pouvez utiliser n&#8217;importe quel outil pour renommer un fichier, et traiter les commandes <code>add</code>/<code>rm</code> plus tard, avant de valider la modification.</p>
+
+<div id='nav'>
+<a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
+</div>

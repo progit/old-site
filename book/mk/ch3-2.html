@@ -1,0 +1,198 @@
+---
+layout: translation
+title: Pro Git 3.2 Гранење со Git Основно Гранење и Спојување
+---
+<h2 id='___'>Основно Гранење и Спојување</h2>
+
+<p>Да разгледаме еден едноставен пример на гранење и спојување на гранки преку едноставен модел на работа кој реално би можел да се користи. Да го следиме следново сценарио:</p>
+
+<p>1. Работете на некоја веб страна. 2. Креирате гранка за нов натпис на кој работете. 3. Работете на оваа гранка.</p>
+
+<p>Во овој момент добивате повик дека друг настан е со поголем преоритет и треба брза реакција. Го правите следново:</p>
+
+<p>1. Се враќате назад кон вашата гранка која ја користите за продукција. 2. Креирајте гранка за да ги додадете потребните итни измени. 3. Откако се е истестирано, ја спојувате новата гранка со гранката за продукција. 4. Вратете се назад кон почетниот натпис на кој работевте.</p>
+
+<h3 id='_'>Основно гранење</h3>
+
+<p>Да претпоставиме дека работите на вашиот проект и веќе имате направено неколку комитирања (Слика 3-10).</p>
+
+<p><center><img src="/figures/ch3/18333fig0310-tn.png"></center><br/> Слика 3-10. Кратка и едноставна историја на записи.</p>
+
+<p>Сте одлучиле дека сакате да работите на изданието #53, во кој и да било систем за водење на евиденција кој го користи вашата компанија. Да разјасниме Git не е поврзан со никој специфичен систем за евиденција на изданијата, но бидејќи сакате да работите на изданието #53, креирате нова гранка на која ќе работите. За да креираме гранка и да се префрлиме на неа може да ја користеме командата <code>git checkout</code> со опцијата <code>-b</code>:</p>
+
+<pre><code>$ git checkout -b iss53
+Се префрламе на нова гранка &quot;iss53&quot;</code></pre>
+
+<p>Ова е скратеница за:</p>
+
+<pre><code>$ git branch iss53
+$ git checkout iss53</code></pre>
+
+<p>Слика 3-11 го прикажува резултатот.</p>
+
+<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> Слика 3-11. Креирање на нов покажувач кон гранка.</p>
+
+<p>Додека работите на вашата веб страна правите комит т.е ги зачувувате измените. Со ова гранката <code>iss53</code> се поместува нанапред, бидејќи сте направиле checked out (HEAD покажува кон неа; Слика 3-12):</p>
+
+<pre><code>$ vim index.html
+$ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0312-tn.png"></center><br/> Слика 3-12. Гранката iss53 се поместува нанапред.</p>
+
+<p>Во овој момент добивате известување дека има проблем со вашата веб страна и морате итно да го поравете проблемот. Со Git немора решението на проблемот да го направите заедно со промените на гранката <code>iss53</code>. Се што треба да направите е да се вратите назад кон вашата главна гранка (master branch).</p>
+
+<p>Мора да се запази фактот дека Git нема да ви дозволи да ја смените гранката доколку во вашиот работен директориум или на сцена имате некомитирани промени кои се во конфликт со грнаката од која сакате да направите нова гранка. Најдобро е да имате чиста работна состојба пред да правите промена на гранки. Постојат начини да се заобиколи ова, кои ќе бидат објаснети подоцна. Засега вршиме комитирање на сите измени, за да се префрлиме на главната гранка:</p>
+
+<pre><code>$ git checkout master
+Се префрламе на гранката &quot;master&quot;</code></pre>
+
+<p>Во овој момент, вашиот работен директориум за проектот е ист како пред почнување со работа на изданието #53 и можете да се концентрирате на решавање на настанатиот проблем. Ова е важна особина која треба да се запамети: Git го ресетира вашиот работен директориум да изгледа како целосната слика на записот од кој креирате нова гранка. Тој автоматски ги додава, бриши и модифицира датотеките се со цел вашата работна копија да биде иста со гранката во моментот кога последен пат сте комитирале на истата.</p>
+
+<p>Потоа треба да го внесете решението на проблемот кој го имате. Да креираме нова гранка hotfix на која ќе работиме на проблемот (Слика 3-13):</p>
+
+<pre><code>$ git checkout -b &#39;hotfix&#39;
+Се префрламе на нова гранка &quot;hotfix&quot;
+$ vim index.html
+$ git commit -a -m &#39;fixed the broken email address&#39;
+[hotfix]: created 3a0874c: &quot;fixed the broken email address&quot;
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Слика 3-13. Гранка hotfix базирана на вашата главна гранка.</p>
+
+<p>Можете да направите одредени тестови за да бидете сигурни дека проблемот е решен, а потоа ја соединувате гранката со вашата главна гранка. Ова се прави со командата <code>git merge</code>:</p>
+
+<pre><code>$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast forward
+ README |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p>Во ова соединување се појавува фразата &#8220;Fast forward&#8221;. Бидејќи записот кон кој што покажува гранката која ја споивте е наследник на записот на кој моментално се наоѓаме, Git го поместува покажувачот нанапред. Со други зборови кога спојуваме еден запис со запис кон кој може да се пристапи следејќи ја историјата на првиот запис, Git ги поедноставува работите со поместување на покажувачот нанапред бидејќи нема неконзистентни измени за спојување. Ова се нарекува &#8220;fast forward&#8221;.</p>
+
+<p>Вашите измени сега се наоѓаат во целосниот запис кон кој покажува <code>master</code> гранката (Слика 3-14).</p>
+
+<p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> Слика 3-14. По спојувањето главна гранка покажува кон истото место кон кое покажува hotfix гранката.</p>
+
+<p>Откако решенитео на ненадејниот проблем е зачувано, подготвени сме да се вратиме назад на работата која ја работевме пред да бидеме прекинати. Меѓутоа прво ја бришеме <code>hotfix</code> гранката бидејќи повеќе не ни е потребна - <code>master</code> гранката покажува на исто место. Ова се прави со додавање на опцијата <code>-d</code> на командата <code>git branch</code>:</p>
+
+<pre><code>$ git branch -d hotfix
+Deleted branch hotfix (3a0874c).</code></pre>
+
+<p>Сега можете да се вратите кон гранката за изданието #53 и да продолжите со работа (Слика 3-15):</p>
+
+<pre><code>$ git checkout iss53
+Switched to branch &quot;iss53&quot;
+$ vim index.html
+$ git commit -a -m &#39;finished the new footer [issue 53]&#39;
+[iss53]: created ad82d7a: &quot;finished the new footer [issue 53]&quot;
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0315-tn.png"></center><br/> Слика 3-15. Сега гранката iss53 може независно да се придвижува нанапред.</p>
+
+<p>Овде е важно да се напомене дека промените кои се направени во <code>hotfix</code> гранката не се вклучени во гранката <code>iss53</code>. Ако сакате да ги повлечете овие промени, може да ја споите вашата <code>master</code> гранка со гранката <code>iss53</code> со извршување на командата <code>git merge master</code> или пак може подоцна ги повечете измените од <code>iss53</code> назад кон <code>master</code> гранката.</p>
+
+<h3 id='_'>Основно спојување</h3>
+
+<p>Да претпоставиме дека сте завршиле со работа на изданието #53 и сте подготвени да ги споите измените во <code>master</code> гранката. За да го направиме ова ќе ја споиме <code>iss53</code> гранката слично како што направивме претходно со <code>hotfix</code> гранката. Се што треба да направиме е да ја одвоиме гранката која сакаме да ја надградиме и да ја повикаме командата <code>git merge</code>:</p>
+
+<pre><code>$ git checkout master
+$ git merge iss53
+Merge made by recursive.
+ README |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Ова изгледа малку поинаку отколку претходниот случај со спојувањето на <code>hotfix</code> гранката. Во овој случај вашата историја на развој започнува од некоја постара точка. Поради тоа што записот на гранката на која се наоѓате не е директен наследник на гранката на која што сакате да запишете, Git мора да изврши дополнителни работи. Во овој случај Git врши едноставено тристрано спојување, користејќи ги целосните записи кон кои покажуваат двете гранки и нивниот заеднички предок. На Слика 3-16 се прикажани трите целосни записи кои Git ги користи при ова спојување.</p>
+
+<p><center><img src="/figures/ch3/18333fig0316-tn.png"></center><br/> Слика 3-16. Git автоматски го пронаоѓа најдобриот заеднички предок, кој го користи како основа за спојување.</p>
+
+<p>Наместо да го помести покажувачот нанапред, Git креира нов целосен запис кој произлегува од ова тристрано спојување и креира нов комит кој покажува кон него (Слика 3-17). Овој запис при спојување е карактеристичен по тоа што има повеќе од еден родител.</p>
+
+<p>Важно е да се напомене дека Git го одредува најдобриот предок кој го користи како основа при спојувањето; ова е различно од CVS или од Subversion(пред верзијата 1.5), каде програмерот кој го врши спојувањето мора сам да одреди кој е најдобар предок. Ова го прави спојувањето со Git доста полесно во споредба со овие системи.</p>
+
+<p><center><img src="/figures/ch3/18333fig0317-tn.png"></center><br/> Слика 3-17. Git автоматски креира нов комит објект кој ги содржи споените измени.</p>
+
+<p>Сега откако вашите измени се споени со главната гранака немате потреба од гранката <code>iss53</code>. Може слободно да ја избришиме:</p>
+
+<pre><code>$ git branch -d iss53</code></pre>
+
+<h3 id='___'>Основни конфликти при спојување</h3>
+
+<p>Повремено овој процес не се одвива толку едноставно. Git нема да може да ги спои гранките доколку имате промени во ист дел од иста датотека во двете гранки кои сакате да ги споите. Доколку вашите измени во изданието #53 афектираат ист дел од датотека на која сте работеле на <code>hotfix</code> гранката, ќе добиете конфликт кој изгледа вака:</p>
+
+<pre><code>$ git merge iss53
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+
+<p>Git автоматски нема да креира нов комит објект. Тој го паузира процесот се додека не го разрешите конфликтот. Доколку сакате да видете кои датотеки не се споени после конфликтот може да ја повикате командата <code>git status</code>:</p>
+
+<pre><code>[master*]$ git status
+index.html: needs merge
+# On branch master
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#	unmerged:   index.html
+#</code></pre>
+
+<p>Секој директориум во кој има конфликти кои не се разрешени се пикажани како unmerged. Git додава стандардни маркери за разрешување на конфликти на директориумите кои имаат конфликти. Конфликтните датотеки имаат секции кои изгледаат вака:</p>
+
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html
+&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+=======
+&lt;div id=&quot;footer&quot;&gt;
+  please contact us at support@github.com
+&lt;/div&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
+
+<p>Ова означува дека везијата во HEAD (вашата master гранка, бидејќи таа е гранката која ја одвоивте при повикување на командата merge) е горниот дел од сегментот (се што е над <code>=======</code>), додека верзијата во <code>iss53</code> гранката изгледа како долниот дел од сегментот. Со цел да се разреши конфликтот треба да одберете една од можностите и да ја споете содржината мануелно. На пример овој конфликт може да се разреши со промена на целиот блок со:</p>
+
+<pre><code>&lt;div id=&quot;footer&quot;&gt;
+please contact us at email.support@github.com
+&lt;/div&gt;</code></pre>
+
+<p>This resolution has a little of each section, and I’ve fully removed the <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> lines. After you’ve resolved each of these sections in each conflicted file, run <code>git add</code> on each file to mark it as resolved. Staging the file marks it as resolved in Git. If you want to use a graphical tool to resolve these issues, you can run <code>git mergetool</code>, which fires up an appropriate visual merge tool and walks you through the conflicts:</p>
+
+<pre><code>$ git mergetool
+merge tool candidates: kdiff3 tkdiff xxdiff meld gvimdiff opendiff emerge vimdiff
+Merging the files: index.html
+
+Normal merge conflict for &#39;index.html&#39;:
+  {local}: modified
+  {remote}: modified
+Hit return to start merge resolution tool (opendiff):</code></pre>
+
+<p>If you want to use a merge tool other than the default (Git chose <code>opendiff</code> for me in this case because I ran the command on a Mac), you can see all the supported tools listed at the top after “merge tool candidates”. Type the name of the tool you’d rather use. In Chapter 7, we’ll discuss how you can change this default value for your environment.</p>
+
+<p>After you exit the merge tool, Git asks you if the merge was successful. If you tell the script that it was, it stages the file to mark it as resolved for you.</p>
+
+<p>You can run <code>git status</code> again to verify that all conflicts have been resolved:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	modified:   index.html
+#</code></pre>
+
+<p>If you’re happy with that, and you verify that everything that had conflicts has been staged, you can type <code>git commit</code> to finalize the merge commit. The commit message by default looks something like this:</p>
+
+<pre><code>Merge branch &#39;iss53&#39;
+
+Conflicts:
+  index.html
+#
+# It looks like you may be committing a MERGE.
+# If this is not correct, please remove the file
+# .git/MERGE_HEAD
+# and try again.
+#</code></pre>
+
+<p>You can modify that message with details about how you resolved the merge if you think it would be helpful to others looking at this merge in the future — why you did what you did, if it’s not obvious.</p>
+
+<div id='nav'>
+<a href='ch3-1.html'>prev</a> | <a href='ch3-3.html'>next</a>
+</div>

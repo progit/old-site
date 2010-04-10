@@ -1,0 +1,74 @@
+---
+layout: translation
+title: Pro Git 2.7 Les bases de Git Trucs et astuces
+---
+<h2 id='trucs_et_astuces'>Trucs et astuces</h2>
+
+<p>Avant de clore ce chapitre sur les bases de Git, voici quelques trucs et astuces qui peuvent rendre votre apprentissage de Git plus simple, facile ou famillier. De nombreuses personnes utilisent parfaitement Git sans connaître aucun de ces trucs, et nous n&#8217;y ferons pas référence, ni ne considérerons leur connaissance comme des prérequis pour la suite de ce livre, mais il est préférable de les connaître.</p>
+
+<h3 id='autocompltion'>Auto-Complétion</h3>
+
+<p>Si vous utilisez le shell Bash, Git est livré avec un script d&#8217;auto-complétion utile. Téléchargez le code source de Git, et jetez un œil dans le répertoire <code>contrib/completion</code>. Il devrait y avoir un fichier nommé <code>git-completion.bash</code>. Copiez ce fichier dans votre répertoire personnel et ajoutez cette ligne à votre fichier <code>.bashrc</code> :</p>
+
+<pre><code>source ~/.git-completion.bash</code></pre>
+
+<p>Si vous souhaitez paramétrer Bash pour activer la complétion automatique de Git pour tous les utilisateur, copiez le script dans le répertoire <code>/opt/local/etc/bash_completion.d</code> sur les systèmes Mac ou dans le répertoire <code>/etc/bash_completion.d</code> sur les systèmes Linux. C&#8217;est le répertoire dans lequel Bash lit pour fournir automatiquement la complétion en ligne de commande.</p>
+
+<p>Si vous utilisez Windows avec le Bash Git, qui est installé par défaut avec Git en msysGit, l&#8217;auto-complétion est préconfigurée.</p>
+
+<p>Pressez la touche Tab lorsque vous écrivez une commande Git, et le shell devrait vous indiquer une liste de suggestions pour continuer la commande :</p>
+
+<pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
+commit config</code></pre>
+
+<p>Dans ce cas, taper git co et appuyer sur la touche Tab deux fois suggère commit et config. Ajouter <code>m&lt;tab&gt;</code> complète <code>git commit</code> automatiquement.</p>
+
+<p>Cela fonctionne aussi avec les options, ce qui est probablement plus utile. Par exemple, si vous tapez la commande <code>git log</code> et ne vous souvenez plus d&#8217;une des options, vous pouvez commencer à la taper, et appuyer sur la touche Tab pour voir ce qui peut correspondre :</p>
+
+<pre><code>$ git log --s&lt;tab&gt;
+--shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
+
+<p>C&#8217;est une astuce qui peut clairement vous éviter de perdre du temps ou de lire de la documentation.</p>
+
+<h3 id='les_alias_git'>Les alias Git</h3>
+
+<p>Git n&#8217;infère pas votre commande si vous ne la tapez que partiellement. Si vous ne voulez pas avoir à taper l&#8217;intégralité du texte de chaque commande, vous pouvez facilement définir un alias pour chaque commande en utilisant <code>git config</code>. Voici quelques exemples qui pourraient vous intéresser :</p>
+
+<pre><code>$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status</code></pre>
+
+<p>Ceci signifie que, par exemple, au lieu de taper <code>git commit</code>, vous n&#8217;avez plus qu&#8217;à taper <code>git ci</code>. Au fur et à mesure de votre utilisation de git, vous utiliserez probablement d&#8217;autres commandes plus fréquemment. Dans ce cas, n&#8217;hésitez pas à créer de nouveaux alias.</p>
+
+<p>Cette technique peut aussi être utile pour créer des commandes qui vous manquent. Par exemple, pour corriger le problème d&#8217;ergonomie que vous avez rencontré lors de la désindexation d&#8217;un fichier, vous pourriez créer un alias pour desindexer :</p>
+
+<pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
+
+<p>Cela rend les deux commandes suivantes équivalentes :</p>
+
+<pre><code>$ git unstage fichierA
+$ git reset HEAD fichierA</code></pre>
+
+<p>Cela rend les choses plus claires. Il est aussi commun d&#8217;ajouter un alias <code>last</code>, de la manière suivante :</p>
+
+<pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
+
+<p>Ainsi, vous pouvez visualiser plus facilement le dernier commit :</p>
+
+<pre><code>$ git last
+commit 66938dae3329c7aebe598c2246a8e6af90d04646
+Author: Josh Goebel &lt;dreamer3@example.com&gt;
+Date:   Tue Aug 26 19:48:51 2008 +0800
+
+    test for current head
+
+    Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
+
+<p>Pour explication, Git remplace simplement la nouvelle commande par tout ce que vous lui aurez demandé d&#8217;aliaser. Si par contre vous souhaitez lancer une commande externe plutôt qu&#8217;une sous-commande Git, vous pouvez commencer votre commande par un caractère <code>!</code>. C&#8217;est utile si vous écrivez vos propres outils pour travailler dans un dépôt Git. On peut par exemple aliaser <code>git visual</code> pour lancer <code>gitk</code> :</p>
+
+<pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
+
+<div id='nav'>
+<a href='ch2-6.html'>prev</a> | <a href='ch2-8.html'>next</a>
+</div>

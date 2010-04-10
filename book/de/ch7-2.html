@@ -165,7 +165,7 @@ Did you mean this?
 
 <p>You’ll rarely want <code>color.ui = always</code>. In most scenarios, if you want color codes in your redirected output, you can instead pass a <code>--color</code> flag to the Git command to force it to use color codes. The <code>color.ui = true</code> setting is almost always what you’ll want to use.</p>
 
-<h4 id='id2'><code>color.*</code></h4>
+<h4 id='id5'><code>color.*</code></h4>
 
 <p>Falls Du im Detail kontrollieren willst welche Befehle wie gefärbt werden, oder wenn Du eine ältere Version benutzt, dann stellt Git Verb-spezifische Farbeinstellungen zur Verfuegung. Jede dieser Optionen kann auf <code>true</code>, <code>false</code>, oder <code>always</code> eingestellt werden:</p>
 
@@ -350,7 +350,7 @@ $ git config --global diff.external extDiff</code></pre>
 <pre><code>$ git config --global core.whitespace \
     trailing-space,space-before-tab,indent-with-non-tab</code></pre>
 
-<p>Git wird diese möglichen Problemstellen erkennen, wenn Du einen <code>git diff</code> Befehl ausfuehrst, und wird versuchen sie farblich hervorzuheben, damit Du sie vor einem Commit beheben kannst. Git wird diese Einstellungen auch benutzen, um Dir zu helfen, wenn Du mit <code>git apply</code> Patches anwendest. Wenn Du Patches ausfuehrst kannst Du Git anweisen eine Warnung auszugeben, falls es beim Patchen die spezifizierten Leerzeichenprobleme erkennt:</p>
+<p>Git wird diese möglichen Problemstellen erkennen, wenn Du einen <code>git diff</code> Befehl ausfuehrst, und es wird versuchen, sie farblich hervorzuheben, damit Du sie vor einem Commit beheben kannst. Git wird diese Einstellungen auch benutzen, um Dir zu helfen, wenn Du mit <code>git apply</code> Patches anwendest. Wenn Du Patches ausfuehrst kannst Du Git anweisen eine Warnung auszugeben, falls es beim Patchen die spezifizierten Leerzeichenprobleme erkennt:</p>
 
 <p>Git will detect these issues when you run a <code>git diff</code> command and try to color them so you can possibly fix them before you commit. It will also use these values to help you when you apply patches with <code>git apply</code>. When you’re applying patches, you can ask Git to warn you if it’s applying patches with the specified whitespace issues:</p>
 
@@ -362,35 +362,53 @@ $ git config --global diff.external extDiff</code></pre>
 
 <pre><code>$ git apply --whitespace=fix &lt;patch&gt;</code></pre>
 
+<p>Diese Optionen sind auch fuer den Rebase Befehl gueltig. Falls Du einen Commit gemacht hast, der problematische Leerzeichen enthält, aber Du die Änderungen noch nicht auf den Server gepusht hast, kannst Du ein <code>rebase</code> mit dem Parameter <code>--whitespace=fix</code> ausfuehren, damit Git automatisch die Leerzeichenfehler behebt, wenn es dir Patches aktualisiert.</p>
+
 <p>These options apply to the git rebase option as well. If you’ve committed whitespace issues but haven’t yet pushed upstream, you can run a <code>rebase</code> with the <code>--whitespace=fix</code> option to have Git automatically fix whitespace issues as it’s rewriting the patches.</p>
 
 <h3 id='server_configuration'>Server Configuration</h3>
+
+<p>Es gibt nicht annähernd so viele Konfigurationsmöglichkeiten fuer die Server Seite von Git, aber es gibt dabei einige interessante, die Du in Betracht ziehen solltest.</p>
 
 <p>Not nearly as many configuration options are available for the server side of Git, but there are a few interesting ones you may want to take note of.</p>
 
 <h4 id='receivefsckobjects'>receive.fsckObjects</h4>
 
+<p>Standardmässig prueft Git nicht alle Objekte auf Konsistenz, die es durch einen Push erhält. Auch wenn Git sicherstellen kann, dass jedes Objekt dessen SHA-1 Checksumme entspricht und auf gueltige Objekte verweist, so wird dies nicht als Standard bei jedem Push ausgefuehrt. Dies ist eine sehr kostspielige Operation und kann bei jedem Push eine Menge Zeit kosten, abhängig von der Grösse des Repositories oder des Pushes. Wenn Du die Objektkonsistenz bei jedem Push durch Git pruefen lassen willst, so kannst Du das erzwingen, indem Du <code>receive.fsckObjects</code> auf &#8216;true&#8217; setzt:</p>
+
 <p>By default, Git doesn’t check for consistency all the objects it receives during a push. Although Git can check to make sure each object still matches its SHA-1 checksum and points to valid objects, it doesn’t do that by default on every push. This is a relatively expensive operation and may add a lot of time to each push, depending on the size of the repository or the push. If you want Git to check object consistency on every push, you can force it to do so by setting <code>receive.fsckObjects</code> to true:</p>
 
 <pre><code>$ git config --system receive.fsckObjects true</code></pre>
+
+<p>Jetzt wird Git die Integrität Deines Repositories jedesmal pruefen, bevor ein Push akzeptiert wird, um sicherzustellen, dass kein Client korrupte Daten einspeist.</p>
 
 <p>Now, Git will check the integrity of your repository before each push is accepted to make sure faulty clients aren’t introducing corrupt data.</p>
 
 <h4 id='receivedenynonfastforwards'>receive.denyNonFastForwards</h4>
 
+<p>Falls Du auf Commits, die Du bereits hochgeladen hast, ein Rebase anwendest, und dann erneut einen Push mit ihnen versuchst, wird Dir dies verwehrt. Genauso verhält es sich, wenn Du versuchst ein Commit auf einen entfernten Server zu pushen, wenn der Commit nicht mit dem uebereinstimmt, auf den der entfernte Server momentan verweist. Ueblicherweise ist das eine gute Richtlinie; aber im Falle des Rebase könnte es sein, dass Du weisst, was Du tust. Dann kannst Du die Aktualisierung des entfernten Branches erzwingen, indem Du einen <code>-f</code> Parameter zu dem Push Kommando hinzufuegst.</p>
+
 <p>If you rebase commits that you’ve already pushed and then try to push again, or otherwise try to push a commit to a remote branch that doesn’t contain the commit that the remote branch currently points to, you’ll be denied. This is generally good policy; but in the case of the rebase, you may determine that you know what you’re doing and can force-update the remote branch with a <code>-f</code> flag to your push command.</p>
+
+<p>Um die Möglichkeit des erzwungenen Updates von entfernten Branches auf Referenzen, die nicht <code>fast-forward</code> Status haben, zu deaktivieren, setze <code>receive.denyNonFastForwards</code> auf &#8216;true&#8217;:</p>
 
 <p>To disable the ability to force-update remote branches to non-fast-forward references, set <code>receive.denyNonFastForwards</code>:</p>
 
 <pre><code>$ git config --system receive.denyNonFastForwards true</code></pre>
 
+<p>Eine andere Möglichkeit ist die Einrichtung von serverseitigen Empfangsschnittstellen, die ich etwas später beschreiben werde. Dieser Ansatz erlaubt noch komplexere Dinge wie zum Beispiel Nicht-<code>fast-forward</code> Referenzen nur bestimmten Benutzergruppen zu verweigern.</p>
+
 <p>The other way you can do this is via server-side receive hooks, which I’ll cover in a bit. That approach lets you do more complex things like deny non-fast-forwards to a certain subset of users.</p>
 
 <h4 id='receivedenydeletes'>receive.denyDeletes</h4>
 
+<p>Eine Möglichkeit fuer den Benutzer <code>denyNonFastForwards</code> zu umgehen, ist es den Branch zu löschen und dann mit der neuen Referenz erneut zu pushen. In neueren Versionsn von Git (ab Version 1.6.1) kannst Du <code>receive.denyDeletes</code> auf &#8216;true&#8217; setzen:</p>
+
 <p>One of the workarounds to the <code>denyNonFastForwards</code> policy is for the user to delete the branch and then push it back up with the new reference. In newer versions of Git (beginning with version 1.6.1), you can set <code>receive.denyDeletes</code> to true:</p>
 
 <pre><code>$ git config --system receive.denyDeletes true</code></pre>
+
+<p>Dies verbietet grundsätzlich das Löschen eines Branches oder einer Marke (Tag) — kein Benutzer hat dann dazu die Erlaubnis. Um einen entfernten Branch zu löschen musst Du die ref Dateien manuell vom Server entfernen. Es gibt aber auch noch ein paar interessantere Möglichkeiten dies auf Benutzerbasis ueber ACLs zu tun, wie Du am Ende dieses Kapitels lernen wirst.</p>
 
 <p>This denies branch and tag deletion over a push across the board — no user can do it. To remove remote branches, you must remove the ref files from the server manually. There are also more interesting ways to do this on a per-user basis via ACLs, as you’ll learn at the end of this chapter.</p>
 

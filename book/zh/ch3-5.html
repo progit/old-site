@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 3.5 Git 分支 远程分支
 ---
-<h2 id='id234'>远程分支</h2>
+<h2 id='id252'>远程分支</h2>
 
 <p>远程分支（remote branch）是对远程仓库状态的索引。它们是一些无法移动的本地分支；只有在进行 Git 的网络活动时才会更新。远程分支就像是书签，提醒着你上次连接远程仓库时上面各分支的位置。</p>
 
@@ -28,7 +28,7 @@ title: Pro Git 3.5 Git 分支 远程分支
 
 <p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> 图 3-26. 你在本地有了一个指向 teamone 服务器上 master 分支的索引。</p>
 
-<h3 id='id235'>推送</h3>
+<h3 id='id253'>推送</h3>
 
 <p>要想和其他人分享某个分支，你需要把它推送到一个你拥有写权限的远程仓库。你的本地分支不会被自动同步到你引入的远程分支中，除非你明确执行推送操作。换句话说，对于无意分享的，你尽可以保留为私人分支，而只推送那些协同工作的特性分支。</p>
 
@@ -64,7 +64,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <p>这会切换到新建的 <code>serverfix</code> 本地分支，其内容同远程分支 <code>origin/serverfix</code> 一致，你可以在里面继续开发了。</p>
 
-<h3 id='id236'>跟踪分支</h3>
+<h3 id='id254'>跟踪分支</h3>
 
 <p>从远程分支检出的本地分支，称为_跟踪分支(tracking branch)_。跟踪分支是一种和远程分支有直接联系的本地分支。在跟踪分支里输入 <code>git push</code>，Git 会自行推断应该向哪个服务器的哪个分支推送数据。反过来，在这些分支里运行 <code>git pull</code> 会获取所有远程索引，并把它们的数据都合并到本地分支中来。</p>
 
@@ -82,7 +82,7 @@ Switched to a new branch &quot;sf&quot;</code></pre>
 
 <p>现在你的本地分支 <code>sf</code> 会自动向 <code>origin/serverfix</code> 推送和抓取数据了。</p>
 
-<h3 id='id237'>删除远程分支</h3>
+<h3 id='id255'>删除远程分支</h3>
 
 <p>如果不再需要某个远程分支了，比如搞定了某个特性并把它合并进了远程的 <code>master</code> 分支（或任何其他存放稳定代码的地方），可以用这个非常无厘头的语法来删除它：<code>git push [远程名] :[分支名]</code>。如果想在服务器上删除 <code>serverfix</code> 分支，运行下面的命令：</p>
 

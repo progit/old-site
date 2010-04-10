@@ -4,61 +4,25 @@ title: Pro Git 2.2 Fundamentos de Git Guardando cambios en el repositorio
 ---
 <h2 id='guardando_cambios_en_el_repositorio'>Guardando cambios en el repositorio</h2>
 
-<blockquote>
-<p>Recording Changes to the Repository</p>
-</blockquote>
-
 <p>Tienes un repositorio Git completo, y una copia de trabajo de los archivos de ese proyecto. Necesitas hacer algunos cambios, y confirmar instantáneas de esos cambios a tu repositorio cada vez que el proyecto alcance un estado que desees grabar.</p>
 
-<blockquote>
-<p>You have a bona fide Git repository and a checkout or working copy of the files for that project. You need to make some changes and commit snapshots of those changes into your repository each time the project reaches a state you want to record.</p>
-</blockquote>
+<p>Recuerda que cada archivo de tu directorio de trabajo puede estar en uno de estos dos estados: bajo seguimiento (tracked), o sin seguimiento (untracked). Los archivos bajo seguimiento son aquellos que existían en la última instantánea; pueden estar sin modificaciones, modificados, o preparados. Los archivos sin seguimiento son todos los demás —cualquier archivo de tu directorio que no estuviese en tu última instantánea ni está en tu área de preparación—. La primera vez que clonas un repositorio, todos tus archivos estarán bajo seguimiento y sin modificaciones, ya que los acabas de copiar y no has modificado nada.</p>
 
-<p>Recuerda que cada archivo de tu directorio de trabajo puede estar en uno de estos dos estados: bajo seguimiento (tracked), o sin seguimiento (untracked). Los archivos bajo seguimiento son aquellos que existían en la última instantánea; pueden estar sin modificaciones, modificados, o preparados. Los archivos sin seguimiento son todos los demás - cualquier archivo de tu directorio que no estuviese en tu última instantánea, y que tampoco está en tu área de preparación. La primera vez que clonas un repositorio, todos tus archivos estarán bajo seguimiento y sin modificaciones, ya que los acabas de copiar y no has modificado nada.</p>
-
-<blockquote>
-<p>Remember that each file in your working directory can be in one of two states: tracked or untracked. Tracked files are files that were in the last snapshot; they can be unmodified, modified, or staged. Untracked files are everything else - any files in your working directory that were not in your last snapshot and are not in your staging area. When you first clone a repository, all of your files will be tracked and unmodified because you just checked them out and haven’t edited anything.</p>
-</blockquote>
-
-<p>Al editar archivos, Git los ve como modificados, porque los has cambiado desde tu última confirmación. Preparas estos archivos modificados, confirmas todos los cambios que hayas preparado, y repites el ciclo. Este proceso queda ilustrado en la Figura 2-1.</p>
-
-<blockquote>
-<p>As you edit files, Git sees them as modified, because you’ve changed them since your last commit. You stage these modified files and then commit all your staged changes, and the cycle repeats. This lifecycle is illustrated in Figure 2-1.</p>
-</blockquote>
+<p>A medida que editas archivos, Git los ve como modificados, porque los has cambiado desde tu última confirmación. Preparas estos archivos modificados y luego confirmas todos los cambios que hayas preparado, y el ciclo se repite. Este proceso queda ilustrado en la Figura 2-1.</p>
 
 <p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figura 2-1. El ciclo de vida del estado de tus archivos.</p>
 
-<blockquote>
-<p>Figure 2-1. The lifecycle of the status of your files.</p>
-</blockquote>
-
 <h3 id='comprobando_el_estado_de_tus_archivos'>Comprobando el estado de tus archivos</h3>
 
-<blockquote>
-<p>Checking the Status of Your Files</p>
-</blockquote>
-
 <p>Tu principal herramienta para determinar qué archivos están en qué estado es el comando <code>git status</code>. Si ejecutas este comando justo después de clonar un repositorio, deberías ver algo así:</p>
-
-<blockquote>
-<p>The main tool you use to determine which files are in which state is the git status command. If you run this command directly after a clone, you should see something like this:</p>
-</blockquote>
 
 <pre><code>$ git status
 # On branch master
 nothing to commit (working directory clean)</code></pre>
 
-<p>Esto significa que tienes un directorio de trabajo limpio - en otras palabras, no tienes archivos bajo seguimiento y modificados. Git tampoco ve ningún archivo que no esté bajo seguimiento, o estaría listado ahí. Por último, el comando te dice en qué rama estás. Por ahora, esa rama siempre es la maestra (master), que es la predeterminada; no te preocupes de eso por ahora. El siguiente capítulo tratará los temas de las ramas y las referencias en detalle.</p>
+<p>Esto significa que tienes un directorio de trabajo limpio —en otras palabras, no tienes archivos bajo seguimiento y modificados—. Git tampoco ve ningún archivo que no esté bajo seguimiento, o estaría listado ahí. Por último, el comando te dice en qué rama estás. Por ahora, esa rama siempre es &#8220;master&#8221;, que es la predeterminada. No te preocupes de eso por ahora, el siguiente capítulo tratará los temas de las ramas y las referencias en detalle.</p>
 
-<blockquote>
-<p>This means you have a clean working directory—in other words, there are no tracked and modified files. Git also doesn’t see any untracked files, or they would be listed here. Finally, the command tells you which branch you’re on. For now, that is always master, which is the default; you won’t worry about it here. The next chapter will go over branches and references in detail.</p>
-</blockquote>
-
-<p>Digamos que añades un nuevo archivo a tu proyecto, un sencillo archivo README. Si el archivo no existía ya, y ejecutas <code>git status</code>, verás tus archivos sin seguimiento:</p>
-
-<blockquote>
-<p>Let’s say you add a new file to your project, a simple README file. If the file didn’t exist before, and you run <code>git status</code>, you see your untracked file like so:</p>
-</blockquote>
+<p>Digamos que añades un nuevo archivo a tu proyecto, un sencillo archivo README. Si el archivo no existía y ejecutas <code>git status</code>, verás tus archivos sin seguimiento así:</p>
 
 <pre><code>$ vim README
 $ git status
@@ -69,31 +33,15 @@ $ git status
 #	README
 nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
 
-<p>Puedes ver que tu nuevo archivo README aparece bajo la cabecera “Archivos sin seguimiento” (“Untracked files”) de la salida del comando. Sin seguimiento significa básicamente que Git ve un archivo que no estaba en la instantánea anterior; Git no empezará a incluirlo en las confirmaciones de tus instantáneas hasta que se lo indiques explícitamente. Lo hace para que no incluyas accidentalmente archivos binarios, o de otro tipo, que no tenías intención de incluir. Sí que quieres incluir el README, así que vamos a iniciar el seguimiento del archivo.</p>
-
-<blockquote>
-<p>You can see that your new README file is untracked, because it’s under the “Untracked files” heading in your status output. Untracked basically means that Git sees a file you didn’t have in the previous snapshot (commit); Git won’t start including it in your commit snapshots until you explicitly tell it to do so. It does this so you don’t accidentally begin including generated binary files or other files that you did not mean to include. You do want to start including README, so let’s start tracking the file.</p>
-</blockquote>
+<p>Puedes ver que tu nuevo archivo README aparece bajo la cabecera “Archivos sin seguimiento” (“Untracked files”) de la salida del comando. Sin seguimiento significa básicamente que Git ve un archivo que no estaba en la instantánea anterior; Git no empezará a incluirlo en las confirmaciones de tus instantáneas hasta que se lo indiques explícitamente. Lo hace para que no incluyas accidentalmente archivos binarios generados u otros archivos que no tenías intención de incluir. Sí que quieres incluir el README, así que vamos a iniciar el seguimiento del archivo.</p>
 
 <h3 id='seguimiento_de_nuevos_archivos'>Seguimiento de nuevos archivos</h3>
 
-<blockquote>
-<p>Tracking New Files</p>
-</blockquote>
-
 <p>Para empezar el seguimiento de un nuevo archivo se usa el comando <code>git add</code>. Iniciaremos el seguimiento del archivo README ejecutando esto:</p>
-
-<blockquote>
-<p>In order to begin tracking a new file, you use the command <code>git add</code>. To begin tracking the README file, you can run this:</p>
-</blockquote>
 
 <pre><code>$ git add README</code></pre>
 
 <p>Si vuelves a ejecutar el comando <code>git status</code>, verás que tu README está ahora bajo seguimiento y preparado:</p>
-
-<blockquote>
-<p>If you run your status command again, you can see that your README file is now tracked and staged:</p>
-</blockquote>
 
 <pre><code>$ git status
 # On branch master
@@ -103,23 +51,11 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	new file:   README
 #</code></pre>
 
-<p>Puedes ver que está preparado porque aparece bajo la cabecera “Cambios a confirmar” (“Changes to be committed”). Si confirmas ahora, la versión del archivo en el momento de ejecutar <code>git add</code> será la que se incluya en la instantánea. Recordarás que cuando antes ejecutaste <code>git init</code>, seguidamente ejecutaste <code>git add (archivos)</code> - era para iniciar el seguimiento de los archivos de tu directorio. El comando <code>git add</code> recibe la ruta de un archivo o de un directorio; si es un directorio, añade todos los archivos que contenga de manera recursiva.</p>
-
-<blockquote>
-<p>You can tell that it’s staged because it’s under the “Changes to be committed” heading. If you commit at this point, the version of the file at the time you ran git add is what will be in the historical snapshot. You may recall that when you ran git init earlier, you then ran git add (files) — that was to begin tracking files in your directory. The git add command takes a path name for either a file or a directory; if it’s a directory, the command adds all the files in that directory recursively.</p>
-</blockquote>
+<p>Puedes ver que está preparado porque aparece bajo la cabecera “Cambios a confirmar” (“Changes to be committed”). Si confirmas ahora, la versión del archivo en el momento de ejecutar <code>git add</code> será la que se incluya en la instantánea. Recordarás que cuando antes ejecutaste <code>git init</code>, seguidamente ejecutaste <code>git add (archivos)</code>. Esto era para iniciar el seguimiento de los archivos de tu directorio. El comando <code>git add</code> recibe la ruta de un archivo o de un directorio; si es un directorio, añade todos los archivos que contenga de manera recursiva.</p>
 
 <h3 id='preparando_archivos_modificados'>Preparando archivos modificados</h3>
 
-<blockquote>
-<p>Staging Modified Files</p>
-</blockquote>
-
 <p>Vamos a modificar un archivo que estuviese bajo seguimiento. Si modificas el archivo <code>benchmarks.rb</code> que estaba bajo seguimiento, y ejecutas el comando <code>status</code> de nuevo, verás algo así:</p>
-
-<blockquote>
-<p>Let’s change a file that was already tracked. If you change a previously tracked file called <code>benchmarks.rb</code> and then run your <code>status</code> command again, you get something that looks like this:</p>
-</blockquote>
 
 <pre><code>$ git status
 # On branch master
@@ -134,11 +70,7 @@ nothing added to commit but untracked files present (use &quot;git add&quot; to 
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>El archivo benchmarks.rb aparece bajo la cabecera “Modificados pero no actualizados” (“Changed but not updated”) - esto significa que un archivo bajo seguimiento ha sido modificado en el directorio de trabajo, pero no ha sido preparado todavía. Para prepararlo, ejecuta el comando <code>git add</code> (es un comando multiuso - puedes utilizarlo para empezar el seguimiento de archivos nuevos, para preparar archivos, y para otras cosas como marcar como resueltos archivos con conflictos de unión). Ejecutamos <code>git add</code> para preparar el archivo benchmarks.rb, y volvemos a ejecutar <code>git status</code>:</p>
-
-<blockquote>
-<p>The benchmarks.rb file appears under a section named “Changed but not updated” — which means that a file that is tracked has been modified in the working directory but not yet staged. To stage it, you run the <code>git add</code> command (it’s a multipurpose command — you use it to begin tracking new files, to stage files, and to do other things like marking merge-conflicted files as resolved). Let’s run <code>git add</code> now to stage the benchmarks.rb file, and then run <code>git status</code> again:</p>
-</blockquote>
+<p>El archivo benchmarks.rb aparece bajo la cabecera “Modificados pero no actualizados” (“Changed but not updated”) —esto significa que un archivo bajo seguimiento ha sido modificado en el directorio de trabajo, pero no ha sido preparado todavía—. Para prepararlo, ejecuta el comando <code>git add</code> (es un comando multiuso —puedes utilizarlo para empezar el seguimiento de archivos nuevos, para preparar archivos, y para otras cosas como marcar como resueltos archivos con conflictos de unión—). Ejecutamos <code>git add</code> para preparar el archivo benchmarks.rb, y volvemos a ejecutar <code>git status</code>:</p>
 
 <pre><code>$ git add benchmarks.rb
 $ git status
@@ -150,11 +82,7 @@ $ git status
 #	modified:   benchmarks.rb
 #</code></pre>
 
-<p>Ambos archivos están ahora preparados, y se incluirán en tu próxima confirmación. Supón que en este momento recuerdas que tenías que hacer una pequeña modificación en benchmarks.rb antes de confirmarlo. Lo vuelves abrir, haces ese pequeño cambio, y ya estás listo para confirmar. Sin embargo, si vuelves a ejecutar <code>git status</code> verás lo siguiente:</p>
-
-<blockquote>
-<p>Both files are staged and will go into your next commit. At this point, suppose you remember one little change that you want to make in benchmarks.rb before you commit it. You open it again and make that change, and you’re ready to commit. However, let’s run <code>git status</code> one more time:</p>
-</blockquote>
+<p>Ambos archivos están ahora preparados y se incluirán en tu próxima confirmación. Supón que en este momento recuerdas que tenías que hacer una pequeña modificación en benchmarks.rb antes de confirmarlo. Lo vuelves abrir, haces ese pequeño cambio, y ya estás listo para confirmar. Sin embargo, si vuelves a ejecutar <code>git status</code> verás lo siguiente:</p>
 
 <pre><code>$ vim benchmarks.rb
 $ git status
@@ -173,10 +101,6 @@ $ git status
 
 <p>¿Pero qué&#8230;? Ahora benchmarks.rb aparece listado como preparado y como no preparado. ¿Cómo es posible? Resulta que Git prepara un archivo tal y como era en el momento de ejecutar el comando <code>git add</code>. Si haces <code>git commit</code> ahora, la versión de benchmarks.rb que se incluirá en la confirmación será la que fuese cuando ejecutaste el comando <code>git add</code>, no la versión que estás viendo ahora en tu directorio de trabajo. Si modificas un archivo después de haber ejecutado <code>git add</code>, tendrás que volver a ejecutar <code>git add</code> para preparar la última versión del archivo:</p>
 
-<blockquote>
-<p>What the heck? Now benchmarks.rb is listed as both staged and unstaged. How is that possible? It turns out that Git stages a file exactly as it is when you run the git add command. If you commit now, the version of benchmarks.rb as it was when you last ran the git add command is how it will go into the commit, not the version of the file as it looks in your working directory when you run git commit. If you modify a file after you run <code>git add</code>, you have to run <code>git add</code> again to stage the latest version of the file:</p>
-</blockquote>
-
 <pre><code>$ git add benchmarks.rb
 $ git status
 # On branch master
@@ -189,31 +113,15 @@ $ git status
 
 <h3 id='ignorando_archivos'>Ignorando archivos</h3>
 
-<blockquote>
-<p>Ignoring Files</p>
-</blockquote>
-
 <p>A menudo tendrás un tipo de archivos que no quieras que Git añada automáticamente o te muestre como no versionado. Suelen ser archivos generados automáticamente, como archivos de log, o archivos generados por tu compilador. Para estos casos puedes crear un archivo llamado .gitignore, en el que listas los patrones de nombres que deseas que sean ignorados. He aquí un archivo .gitignore de ejemplo:</p>
-
-<blockquote>
-<p>Often, you’ll have a class of files that you don’t want Git to automatically add or even show you as being untracked. These are generally automatically generated files such as log files or files produced by your build system. In such cases, you can create a file listing patterns to match them named .gitignore. Here is an example .gitignore file:</p>
-</blockquote>
 
 <pre><code>$ cat .gitignore
 *.[oa]
 *~</code></pre>
 
-<p>La primera línea le dice a Git que ignore cualquier archivo cuyo nombre termine en .o o .a - archivos objeto que suelen ser producto de la compilación de código. La segunda línea le dice a Git que ignore todos los archivos que terminan en tilde (<code>~</code>), usada por muchos editores de texto, como Emacs, para marcar archivos temporales. También puedes incluir directorios de log, temporales, documentación generada automáticamente, etc. Configurar un archivo .gitignore antes de empezar a trabajar suele ser una buena idea, para así no confirmar archivos que no quieres en tu repositorio Git.</p>
-
-<blockquote>
-<p>The first line tells Git to ignore any files ending in .o or .a — object and archive files that may be the product of building your code. The second line tells Git to ignore all files that end with a tilde (<code>~</code>), which is used by many text editors such as Emacs to mark temporary files. You may also include a log, tmp, or pid directory; automatically generated documentation; and so on. Setting up a .gitignore file before you get going is generally a good idea so you don’t accidentally commit files that you really don’t want in your Git repository.</p>
-</blockquote>
+<p>La primera línea le dice a Git que ignore cualquier archivo cuyo nombre termine en .o o .a —archivos objeto que suelen ser producto de la compilación de código—. La segunda línea le dice a Git que ignore todos los archivos que terminan en tilde (<code>~</code>), usada por muchos editores de texto, como Emacs, para marcar archivos temporales. También puedes incluir directorios de log, temporales, documentación generada automáticamente, etc. Configurar un archivo .gitignore antes de empezar a trabajar suele ser una buena idea, para así no confirmar archivos que no quieres en tu repositorio Git.</p>
 
 <p>Las reglas para los patrones que pueden ser incluidos en el archivo .gitignore son:</p>
-
-<blockquote>
-<p>The rules for the patterns you can put in the .gitignore file are as follows:</p>
-</blockquote>
 
 <ul>
 <li>Las líneas en blanco, o que comienzan por #, son ignoradas.</li>
@@ -222,32 +130,12 @@ $ git status
 
 <li>Puedes indicar un directorio añadiendo una barra hacia delante (<code>/</code>) al final.</li>
 
-<li>Puedes negar un patrón añadiéndo una exclamación (<code>!</code>) al principio.</li>
+<li>Puedes negar un patrón añadiendo una exclamación (<code>!</code>) al principio.</li>
 </ul>
 
-<blockquote>
-<ul>
-<li>Blank lines or lines starting with # are ignored.</li>
-
-<li>Standard glob patterns work.</li>
-
-<li>You can end patterns with a forward slash (<code>/</code>) to specify a directory.</li>
-
-<li>You can negate a pattern by starting it with an exclamation point (<code>!</code>).</li>
-</ul>
-</blockquote>
-
-<p>Los patrones glob son expresiones regulares simplificadas que pueden ser usadas por las shells. Un asterisco (<code>*</code>) reconoce cero o más caracteres; <code>[abc]</code> reconoce cualquier caracter de los especificados entre corchetes (en este caso, a, b, o c); una interrogación (<code>?</code>) reconoce un único caracter; y caracteres entre corchetes separados por un guión (<code>[0-9]</code>) reconoce cualquier caracter entre ellos (en este caso, de 0 a 9).</p>
-
-<blockquote>
-<p>Glob patterns are like simplified regular expressions that shells use. An asterisk (<code>*</code>) matches zero or more characters; <code>[abc]</code> matches any character inside the brackets (in this case a, b, or c); a question mark (<code>?</code>) matches a single character; and brackets enclosing characters separated by a hyphen (<code>[0-9]</code>) matches any character between them (in this case 0 through 9) .</p>
-</blockquote>
+<p>Los patrones glob son expresiones regulares simplificadas que pueden ser usadas por las shells. Un asterisco (<code>*</code>) reconoce cero o más caracteres; <code>[abc]</code> reconoce cualquier carácter de los especificados entre corchetes (en este caso, a, b, o c); una interrogación (<code>?</code>) reconoce un único carácter; y caracteres entre corchetes separados por un guión (<code>[0-9]</code>) reconoce cualquier carácter entre ellos (en este caso, de 0 a 9).</p>
 
 <p>He aquí otro ejemplo de archivo .gitignore:</p>
-
-<blockquote>
-<p>Here is another example .gitignore file:</p>
-</blockquote>
 
 <pre><code># a comment – this is ignored
 *.a       # no .a files
@@ -258,21 +146,9 @@ doc/*.txt # ignore doc/notes.txt, but not doc/server/arch.txt</code></pre>
 
 <h3 id='viendo_tus_cambios_preparados_y_no_preparados'>Viendo tus cambios preparados y no preparados</h3>
 
-<blockquote>
-<p>Viewing Your Staged and Unstaged Changes</p>
-</blockquote>
-
-<p>Si el comando <code>git status</code> es demasiado impreciso para ti - quieres saber exactamente lo que ha cambiado, no sólo qué archivos fueron modificados - puedes usar el comando <code>git diff</code>. Veremos <code>git diff</code> en más detalle después; pero probablemente lo usarás para responder estas dos preguntas: ¿qué has cambiado pero aún no has preparado?, y ¿qué has preparado y estás a punto de confirmar? Aunque <code>git status</code> responde esas preguntas de manera general, <code>git diff</code> te muestra exactamente las líneas añadidas y eliminadas - el parche, como si dijésemos.</p>
-
-<blockquote>
-<p>If the <code>git status</code> command is too vague for you — you want to know exactly what you changed, not just which files were changed — you can use the <code>git diff</code> command. We’ll cover <code>git diff</code> in more detail later; but you’ll probably use it most often to answer these two questions: What have you changed but not yet staged? And what have you staged that you are about to commit? Although <code>git status</code> answers those questions very generally, <code>git diff</code> shows you the exact lines added and removed — the patch, as it were.</p>
-</blockquote>
+<p>Si el comando <code>git status</code> es demasiado impreciso para ti —quieres saber exactamente lo que ha cambiado, no sólo qué archivos fueron modificados— puedes usar el comando <code>git diff</code>. Veremos <code>git diff</code> en más detalle después; pero probablemente lo usarás para responder estas dos preguntas: ¿qué has cambiado pero aún no has preparado?, y ¿qué has preparado y estás a punto de confirmar? Aunque <code>git status</code> responde esas preguntas de manera general, <code>git diff</code> te muestra exactamente las líneas añadidas y eliminadas —el parche, como si dijésemos—.</p>
 
 <p>Supongamos que quieres editar y preparar el archivo README otra vez, y luego editar el archivo benchmarks.rb sin prepararlo. Si ejecutas el comando <code>status</code>, de nuevo verás algo así:</p>
-
-<blockquote>
-<p>Let’s say you edit and stage the README file again and then edit the benchmarks.rb file without staging it. If you run your <code>status</code> command, you once again see something like this:</p>
-</blockquote>
 
 <pre><code>$ git status
 # On branch master
@@ -288,10 +164,6 @@ doc/*.txt # ignore doc/notes.txt, but not doc/server/arch.txt</code></pre>
 #</code></pre>
 
 <p>Para ver lo que has modificado pero aún no has preparado, escribe <code>git diff</code>:</p>
-
-<blockquote>
-<p>To see what you’ve changed but not yet staged, type <code>git diff</code> with no other arguments:</p>
-</blockquote>
 
 <pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -310,17 +182,9 @@ index 3cb747f..da65585 100644
            log = git.commits(&#39;master&#39;, 15)
            log.size</code></pre>
 
-<p>Ese comando compara lo que hay en tu directorio de trabajo con lo que hay en tu área de prepararción. El resultado te indica los cambios que has hecho y que todavía no has preparado.</p>
-
-<blockquote>
-<p>That command compares what is in your working directory with what is in your staging area. The result tells you the changes you’ve made that you haven’t yet staged.</p>
-</blockquote>
+<p>Ese comando compara lo que hay en tu directorio de trabajo con lo que hay en tu área de preparación. El resultado te indica los cambios que has hecho y que todavía no has preparado.</p>
 
 <p>Si quieres ver los cambios que has preparado y que irán en tu próxima confirmación, puedes usar <code>git diff –-cached</code>. (A partir de la versión 1.6.1 de Git, también puedes usar <code>git diff –-staged</code>, que puede resultar más fácil de recordar.) Este comando compara tus cambios preparados con tu última confirmación:</p>
-
-<blockquote>
-<p>If you want to see what you’ve staged that will go into your next commit, you can use <code>git diff –-cached</code>. (In Git versions 1.6.1 and later, you can also use <code>git diff –-staged</code>, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
-</blockquote>
 
 <pre><code>$ git diff --cached
 diff --git a/README b/README
@@ -335,17 +199,9 @@ index 0000000..03902a1
 +
 +Grit is a Ruby library for extracting information from a Git repository</code></pre>
 
-<p>Es importante indicar que <code>git diff</code> por sí solo no muestra todos los cambios hechos desde tu última confirmación - sólo los cambios que todavía no están preparados. Esto puede resultar desconcertante, porque si has preparado todos tus cambios, <code>git diff</code> no mostrará nada.</p>
-
-<blockquote>
-<p>It’s important to note that <code>git diff</code> by itself doesn’t show all changes made since your last commit — only changes that are still unstaged. This can be confusing, because if you’ve staged all of your changes, <code>git diff</code> will give you no output.</p>
-</blockquote>
+<p>Es importante indicar que <code>git diff</code> por sí solo no muestra todos los cambios hechos desde tu última confirmación —sólo los cambios que todavía no están preparados—. Esto puede resultar desconcertante, porque si has preparado todos tus cambios, <code>git diff</code> no mostrará nada.</p>
 
 <p>Por poner otro ejemplo, si preparas el archivo benchmarks.rb y después lo editas, puedes usar <code>git diff</code> para ver las modificaciones del archivo que están preparadas, y las que no lo están:</p>
-
-<blockquote>
-<p>For another example, if you stage the benchmarks.rb file and then edit it, you can use <code>git diff</code> to see the changes in the file that are staged and the changes that are unstaged:</p>
-</blockquote>
 
 <pre><code>$ git add benchmarks.rb
 $ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
@@ -363,10 +219,6 @@ $ git status
 
 <p>Ahora puedes usar <code>git diff</code> para ver qué es lo que aún no está preparado:</p>
 
-<blockquote>
-<p>Now you can use <code>git diff</code> to see what is still unstaged</p>
-</blockquote>
-
 <pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
 index e445e28..86b2f7c 100644
@@ -379,8 +231,6 @@ index e445e28..86b2f7c 100644
 +# test line</code></pre>
 
 <p>Y <code>git diff --cached</code> para ver los cambios que llevas preparados hasta ahora:</p>
-
-<p>and <code>git diff --cached</code> to see what you’ve staged so far:</p>
 
 <pre><code>$ git diff --cached
 diff --git a/benchmarks.rb b/benchmarks.rb
@@ -401,33 +251,15 @@ index 3cb747f..e445e28 100644
 
 <h3 id='confirmando_tus_cambios'>Confirmando tus cambios</h3>
 
-<blockquote>
-<p>Committing Your Changes</p>
-</blockquote>
-
-<p>Ahora que el área de prreparación está como tú quieres, puedes confirmar los cambios. Recuerda que cualquier cosa que todavía esté sin preparar - cualquier archivo que hayas creado o modificado, y sobre el que no hayas ejecutado <code>git add</code> desde su última edición - no se incluirá en esta confirmación. Se mantendrán como modificados en tu disco.</p>
+<p>Ahora que el área de preparación está como tú quieres, puedes confirmar los cambios. Recuerda que cualquier cosa que todavía esté sin preparar —cualquier archivo que hayas creado o modificado, y sobre el que no hayas ejecutado <code>git add</code> desde su última edición— no se incluirá en esta confirmación. Se mantendrán como modificados en tu disco.</p>
 
 <p>En este caso, la última vez que ejecutaste <code>git status</code> viste que estaba todo preparado, por lo que estás listo para confirmar tus cambios. La forma más fácil de confirmar es escribiendo <code>git commit</code>:</p>
 
-<blockquote>
-<p>Now that your staging area is set up the way you want it, you can commit your changes. Remember that anything that is still unstaged — any files you have created or modified that you haven’t run <code>git add</code> on since you edited them — won’t go into this commit. They will stay as modified files on your disk.</p>
-</blockquote>
-
-<p>In this case, the last time you ran <code>git status</code>, you saw that everything was staged, so you’re ready to commit your changes. The simplest way to commit is to type <code>git commit</code>:</p>
-
 <pre><code>$ git commit</code></pre>
 
-<p>Al hacerlo, se ejecutará tu editor de texto. (Esto se configura a través de la variable de entorno <code>$EDITOR</code> de tu shell - normalmente vim o emacs, aunque puedes configurarlo usando el comando <code>git config --global core.editor</code> como vimos en el Capítulo 1.)</p>
-
-<blockquote>
-<p>Doing so launches your editor of choice. (This is set by your shell’s <code>$EDITOR</code> environment variable — usually vim or emacs, although you can configure it with whatever you want using the <code>git config --global core.editor</code> command as you saw in Chapter 1).</p>
-</blockquote>
+<p>Al hacerlo, se ejecutará tu editor de texto. (Esto se configura a través de la variable de entorno <code>$EDITOR</code> de tu shell —normalmente vim o emacs, aunque puedes configurarlo usando el comando <code>git config --global core.editor</code> como vimos en el Capítulo 1.—)</p>
 
 <p>El editor mostrará el siguiente texto (este ejemplo usa Vim):</p>
-
-<blockquote>
-<p>The editor displays the following text (this example is a Vim screen):</p>
-</blockquote>
 
 <pre><code># Please enter the commit message for your changes. Lines starting
 # with &#39;#&#39; will be ignored, and an empty message aborts the commit.
@@ -444,15 +276,7 @@ index 3cb747f..e445e28 100644
 
 <p>Puedes ver que el mensaje de confirmación predeterminado contiene la salida del comando <code>git status</code> comentada, y una línea vacía arriba del todo. Puedes eliminar estos comentarios y escribir tu mensaje de confirmación, o puedes dejarlos para ayudarte a recordar las modificaciones que estás confirmando. (Para un recordatorio todavía más explícito de lo que has modificado, puedes pasar la opción <code>-v</code> a <code>git commit</code>. Esto provoca que se añadan también las diferencias de tus cambios, para que veas exactamente lo que hiciste.) Cuando sales del editor, Git crea tu confirmación con el mensaje que hayas especificado (omitiendo los comentarios y las diferencias).</p>
 
-<blockquote>
-<p>You can see that the default commit message contains the latest output of the <code>git status</code> command commented out and one empty line on top. You can remove these comments and type your commit message, or you can leave them there to help you remember what you’re committing. (For an even more explicit reminder of what you’ve modified, you can pass the <code>-v</code> option to <code>git commit</code>. Doing so also puts the diff of your change in the editor so you can see exactly what you did.) When you exit the editor, Git creates your commit with that commit message (with the comments and diff stripped out).</p>
-</blockquote>
-
 <p>Como alternativa, puedes escribir tu mensaje de confirmación desde la propia línea de comandos mediante la opción <code>-m</code>:</p>
-
-<blockquote>
-<p>Alternatively, you can type your commit message inline with the <code>commit</code> command by specifying it after a -m flag, like this:</p>
-</blockquote>
 
 <pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
 [master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
@@ -461,27 +285,11 @@ index 3cb747f..e445e28 100644
 
 <p>¡Acabas de crear tu primera confirmación! Puedes ver que el comando <code>commit</code> ha dado cierta información sobre la confirmación: a qué rama has confirmado (master), cuál es su suma de comprobación SHA-1 de la confirmación (<code>463dc4f</code>), cuántos archivos se modificaron, y estadísticas acerca de cuántas líneas se han añadido y cuántas se han eliminado.</p>
 
-<blockquote>
-<p>Now you’ve created your first commit! You can see that the commit has given you some output about itself: which branch you committed to (master), what SHA-1 checksum the commit has (<code>463dc4f</code>), how many files were changed, and statistics about lines added and removed in the commit.</p>
-</blockquote>
-
 <p>Recuerda que la confirmación registra la instantánea de tu área de preparación. Cualquier cosa que no preparases sigue estando modificada; puedes hacer otra confirmación para añadirla a la historia del proyecto. Cada vez que confirmas, estás registrando una instantánea de tu proyecto, a la que puedes volver o con la que puedes comparar más adelante.</p>
-
-<blockquote>
-<p>Remember that the commit records the snapshot you set up in your staging area. Anything you didn’t stage is still sitting there modified; you can do another commit to add it to your history. Every time you perform a commit, you’re recording a snapshot of your project that you can revert to or compare to later.</p>
-</blockquote>
 
 <h3 id='saltndote_el_rea_de_preparacin'>Saltándote el área de preparación</h3>
 
-<blockquote>
-<p>Skipping the Staging Area</p>
-</blockquote>
-
-<p>Aunque puede ser extremadamente útil para elaborar confirmaciones exactamente a tu gusto, el área de preparación es en ocasiones demasiado compleja para las necesidades de tu flujo de trabajo. Si quieres saltarte el área de preparación, Git proporciona un atajo. Pasar la opción <code>-a</code> al comando <code>git commit</code> hace que Git prepare todo archivo que estuviese en seguimiento antes de la confirmación, permitiéndote obviar toda la parte de los <code>git add</code>:</p>
-
-<blockquote>
-<p>Although it can be amazingly useful for crafting commits exactly how you want them, the staging area is sometimes a bit more complex than you need in your workflow. If you want to skip the staging area, Git provides a simple shortcut. Providing the <code>-a</code> option to the <code>git commit</code> command makes Git automatically stage every file that is already tracked before doing the commit, letting you skip the <code>git add</code> part:</p>
-</blockquote>
+<p>Aunque puede ser extremadamente útil para elaborar confirmaciones exactamente a tu gusto, el área de preparación es en ocasiones demasiado compleja para las necesidades de tu flujo de trabajo. Si quieres saltarte el área de preparación, Git proporciona un atajo. Pasar la opción <code>-a</code> al comando <code>git commit</code> hace que Git prepare todo archivo que estuviese en seguimiento antes de la confirmación, permitiéndote obviar toda la parte de <code>git add</code>:</p>
 
 <pre><code>$ git status
 # On branch master
@@ -496,27 +304,11 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 
 <p>Fíjate que no has tenido que ejecutar <code>git add</code> sobre el archivo benchmarks.rb antes de hacer la confirmación.</p>
 
-<blockquote>
-<p>Notice how you don’t have to run <code>git add</code> on the benchmarks.rb file in this case before you commit.</p>
-</blockquote>
-
 <h3 id='eliminando_archivos'>Eliminando archivos</h3>
-
-<blockquote>
-<p>Removing Files</p>
-</blockquote>
 
 <p>Para eliminar un archivo de Git, debes eliminarlo de tus archivos bajo seguimiento (más concretamente, debes eliminarlo de tu área de preparación), y después confirmar. El comando <code>git rm</code> se encarga de eso, y también elimina el archivo de tu directorio de trabajo, para que no lo veas entre los archivos sin seguimiento.</p>
 
-<blockquote>
-<p>To remove a file from Git, you have to remove it from your tracked files (more accurately, remove it from your staging area) and then commit. The <code>git rm</code> command does that and also removes the file from your working directory so you don’t see it as an untracked file next time around.</p>
-</blockquote>
-
 <p>Si simplemente eliminas el archivo de tu directorio de trabajo, aparecerá bajo la cabecera “Modificados pero no actualizados” (“Changed but not updated”) (es decir, <em>sin preparar</em>) de la salida del comando <code>git status</code>:</p>
-
-<blockquote>
-<p>If you simply remove the file from your working directory, it shows up under the “Changed but not updated” (that is, <em>unstaged</em>) area of your <code>git status</code> output:</p>
-</blockquote>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -529,10 +321,6 @@ $ git status
 #</code></pre>
 
 <p>Si entonces ejecutas el comando <code>git rm</code>, preparas la eliminación del archivo en cuestión:</p>
-
-<blockquote>
-<p>Then, if you run <code>git rm</code>, it stages the file’s removal:</p>
-</blockquote>
 
 <pre><code>$ git rm grit.gemspec
 rm &#39;grit.gemspec&#39;
@@ -547,65 +335,29 @@ $ git status
 
 <p>La próxima vez que confirmes, el archivo desaparecerá y dejará de estar bajo seguimiento. Si ya habías modificado el archivo y lo tenías en el área de preparación, deberás forzar su eliminación con la opción <code>-f</code>. Ésta es una medida de seguridad para evitar la eliminación accidental de información que no ha sido registrada en una instantánea, y que por tanto no podría ser recuperada.</p>
 
-<blockquote>
-<p>The next time you commit, the file will be gone and no longer tracked. If you modified the file and added it to the index already, you must force the removal with the <code>-f</code> option. This is a safety feature to prevent accidental removal of data that hasn’t yet been recorded in a snapshot and that can’t be recovered from Git.</p>
-</blockquote>
-
 <p>Otra cosa que puede que quieras hacer es mantener el archivo en tu directorio de trabajo, pero eliminarlo de tu área de preparación. Dicho de otro modo, puede que quieras mantener el archivo en tu disco duro, pero interrumpir su seguimiento por parte de Git. Esto resulta particularmente útil cuando olvidaste añadir algo a tu archivo <code>.gitignore</code> y lo añadiste accidentalmente, como un archivo de log enorme, o un montón de archivos <code>.a</code>. Para hacer esto, usa la opción <code>--cached</code>:</p>
-
-<blockquote>
-<p>Another useful thing you may want to do is to keep the file in your working tree but remove it from your staging area. In other words, you may want to keep the file on your hard drive but not have Git track it anymore. This is particularly useful if you forgot to add something to your <code>.gitignore</code> file and accidentally added it, like a large log file or a bunch of <code>.a</code> compiled files. To do this, use the <code>--cached</code> option:</p>
-</blockquote>
 
 <pre><code>$ git rm --cached readme.txt</code></pre>
 
 <p>El comando <code>git rm</code> acepta archivos, directorios, y patrones glob. Es decir, que podrías hacer algo así:</p>
 
-<blockquote>
-<p>You can pass files, directories, and file-glob patterns to the <code>git rm</code> command. That means you can do things such as</p>
-</blockquote>
-
 <pre><code>$ git rm log/\*.log</code></pre>
 
 <p>Fíjate en la barra hacia atrás (<code>\</code>) antes del <code>*</code>. Es necesaria debido a que Git hace su propia expansión de rutas, además de la expansión que hace tu shell. Este comando elimina todos los archivos con la extensión <code>.log</code> en el directorio <code>log/</code>. También puedes hacer algo así:</p>
-
-<blockquote>
-<p>Note the backslash (<code>\</code>) in front of the <code>*</code>. This is necessary because Git does its own filename expansion in addition to your shell’s filename expansion. This command removes all files that have the <code>.log</code> extension in the <code>log/</code> directory. Or, you can do something like this:</p>
-</blockquote>
 
 <pre><code>$ git rm \*~</code></pre>
 
 <p>Este comando elimina todos los archivos que terminan en <code>~</code>.</p>
 
-<blockquote>
-<p>This command removes all files that end with <code>~</code>.</p>
-</blockquote>
-
 <h3 id='moviendo_archivos'>Moviendo archivos</h3>
 
-<blockquote>
-<p>Moving Files</p>
-</blockquote>
-
-<p>A diferencia de muchos otros VCSs, Git no hace seguimiento del movimiento de archivos. Si renombras un archivo, en Git no se almacena ningún metadato que indique que lo has renombrado. Sin embargo, Git es suficientemente inteligente como para darse cuenta - trataremos el tema de la detección de movimiento de archivos un poco más adelante.</p>
-
-<blockquote>
-<p>Unlike many other VCS systems, Git doesn’t explicitly track file movement. If you rename a file in Git, no metadata is stored in Git that tells it you renamed the file. However, Git is pretty smart about figuring that out after the fact — we’ll deal with detecting file movement a bit later.</p>
-</blockquote>
+<p>A diferencia de muchos otros VCSs, Git no hace un seguimiento explicito del movimiento de archivos. Si renombras un archivo, en Git no se almacena ningún metadato que indique que lo has renombrado. Sin embargo, Git es suficientemente inteligente como para darse cuenta —trataremos el tema de la detección de movimiento de archivos un poco más adelante—.</p>
 
 <p>Por tanto, es un poco desconcertante que Git tenga un comando <code>mv</code>. Si quieres renombrar un archivo en Git, puedes ejecutar algo así:</p>
-
-<blockquote>
-<p>Thus it’s a bit confusing that Git has a <code>mv</code> command. If you want to rename a file in Git, you can run something like</p>
-</blockquote>
 
 <pre><code>$ git mv file_from file_to</code></pre>
 
 <p>Y funciona perfectamente. De hecho, cuando ejecutas algo así y miras la salida del comando <code>status</code>, verás que Git lo considera un archivo renombrado:</p>
-
-<blockquote>
-<p>and it works fine. In fact, if you run something like this and look at the status, you’ll see that Git considers it a renamed file:</p>
-</blockquote>
 
 <pre><code>$ git mv README.txt README
 $ git status
@@ -620,19 +372,11 @@ $ git status
 
 <p>Sin embargo, esto es equivalente a ejecutar algo así:</p>
 
-<blockquote>
-<p>However, this is equivalent to running something like this:</p>
-</blockquote>
-
 <pre><code>$ mv README.txt README
 $ git rm README.txt
 $ git add README</code></pre>
 
-<p>Git se da cuenta de que es un renombrado de manera implícita, así que no importa si renombras un archivo de este modo, o usando el comando <code>mv</code>. La única diferencia real es que <code>mv</code> es un comando en vez de tres - es más cómodo. Y lo que es más importante, puedes usar cualquier herramienta para renombrar un archivo, y preocuparte de los <code>add</code> y <code>rm</code> más tarde, antes de confirmar.</p>
-
-<blockquote>
-<p>Git figures out that it’s a rename implicitly, so it doesn’t matter if you rename a file that way or with the <code>mv</code> command. The only real difference is that <code>mv</code> is one command instead of three — it’s a convenience function. More important, you can use any tool you like to rename a file, and address the add/rm later, before you commit.</p>
-</blockquote>
+<p>Git se da cuenta de que es un renombrado de manera implícita, así que no importa si renombras un archivo de este modo, o usando el comando <code>mv</code>. La única diferencia real es que <code>mv</code> es un comando en vez de tres —es más cómodo—. Y lo que es más importante, puedes usar cualquier herramienta para renombrar un archivo, y preocuparte de los <code>add</code> y <code>rm</code> más tarde, antes de confirmar.</p>
 
 <div id='nav'>
 <a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>

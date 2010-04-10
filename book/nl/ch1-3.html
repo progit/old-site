@@ -16,57 +16,57 @@ title: Pro Git 1.3 Aan de Slag De Basis van Git
 
 <p><center><img src="/figures/ch1/18333fig0105-tn.png"></center><br/> Figuur 1-5. Git bewaart data als momentopnames van het project.</p>
 
-<p>Dat is een belangrijk verschil tussen Git en bijna alle VCSen. Hierdoor vindt Git bijna elk onderdeel van versiebeheer opnieuw uit, terwijl de meeste andere systemen het allemaal gewoon overnemen van de eerdere generaties. Hierdoor is Git meer een soort miniatuurbestandssysteem met een paar ongelooflijk krachtige gereedschappen, in plaats van niets meer dan een VCS. We zullen een paar van de voordelen die je krijgt als je op die manier over data denkt gaan onderzoeken, als we het gaan hebben over ‘branches’ (takken van ontwikkeling) gaan hebben in Hoofdstuk 3 .</p>
+<p>Dat is een belangrijk verschil tussen Git en bijna alle overige VCSen. Hierdoor vindt Git bijna elk onderdeel van versiebeheer opnieuw uit, terwijl de meeste andere systemen het allemaal gewoon overnemen van de eerdere generaties. Hierdoor is Git meer een soort miniatuurbestandssysteem met een paar ongelooflijk krachtige gereedschappen, in plaats van niets meer dan een VCS. We zullen een paar van de voordelen die je krijgt als je op die manier over data denkt gaan onderzoeken, als we ‘branching’ (gesplitste ontwikkeling) toelichten in Hoofdstuk 3.</p>
 
 <h3 id='bijna_alles_is_lokaal'>Bijna Alles Is Lokaal</h3>
 
-<p>De meeste handelingen in Git hebben alleen lokale bestanden en bronnen nodig om te werken – normaal gesproken is geen informatie nodig van een andere computer in je netwerk. Als je gewend bent aan een CVCS, waar de meeste handelingen vertraagd worden door het netwerk, lijkt Git een geschenk van de snelheidsgoden. Omdat je de hele geschiedenis van het project op je lokale harde schijf hebt staan, lijken de meeste acties geen tijd in beslag te nemen.</p>
+<p>De meeste handelingen in Git werken alleen op lokale bestanden en bronnen – normaal gesproken is geen informatie nodig van een andere computer in je netwerk. Als je gewend bent aan een CVCS, waar de meeste handelingen vertraagd worden door het netwerk, lijkt Git een geschenk van de snelheidsgoden. Omdat je de hele geschiedenis van het project op je lokale harde schijf hebt staan, lijken de meeste acties geen tijd in beslag te nemen.</p>
 
 <p>Een voorbeeld: Git hoeft niet aan een of andere server de geschiedenis van je project te vragen als je de die wilt doorbladeren – het leest simpelweg jouw lokale database. Dat betekent dat je de geschiedenis bijna direct te zien krijgt. Als je de veranderingen wilt zien tussen de huidige versie van een bestand en de versie van een maand geleden, kan Git het bestand van een maand geleden opzoeken, en de lokale verschillen berekenen, in plaats van aan een niet-lokale server te moeten vragen om het te doen, of de oudere versie van het bestand ophalen om het lokaal te doen.</p>
 
-<p>Dit betekent dat er maar heel weinig is dat je niet kan doen als je offline bent of zonder VPN zit. Als je in een vliegtuig of trein zit, en je wilt nog even een beetje werken, kan je vrolijk doorgaan met commits maken tot je een netwerkverbinding krijgt, zodat je je werk kan uploaden. Als je naar huis gaat, en je VPN client niet aan de praat kan krijgen, kan je nog steeds doorwerken. Bij veel andere systemen is dat of onmogelijk, of anders zeer onaangenaam. Als je bijvoorbeeld Perforce gebruikt, kan je niet zo veel doen als je niet verbonden bent met de server; en met Subversion en CVS kan je bestanden bewerken, maar je kan geen commits maken voor je database (omdat die offline is). Dat lijkt misschien niet zo belangrijk, maar je zal nog versteld staan wat een verschil het kan maken.</p>
+<p>Dit betekent dat er maar heel weinig is dat je niet kunt doen als je offline bent of zonder VPN zit. Als je in een vliegtuig of trein zit, en je wilt nog even een beetje werken, kun je vrolijk doorgaan met commits maken tot je een netwerkverbinding krijgt, zodat je je werk kunt uploaden. Als je naar huis gaat, en je VPN client niet aan de praat kunt krijgen, kun je nog steeds doorwerken. Bij veel andere systemen is dat of onmogelijk, of anders zeer onaangenaam. Als je bijvoorbeeld Perforce gebruikt, kun je niet zo veel doen als je niet verbonden bent met de server; en met Subversion en CVS kun je bestanden bewerken, maar je kunt geen commits maken voor je database (omdat die offline is). Dat lijkt misschien niet zo belangrijk, maar je zult nog versteld staan wat een verschil het kan maken.</p>
 
 <h3 id='git_is_integer'>Git Is Integer</h3>
 
-<p>Git maakt een controlegetal (‘checksum’) van alles voordat het wordt opgeslagen, en er wordt later naar die data verwezen met dit controlegetal. Dat betekent dat het onmogelijk is om de inhoud van een bestand of map te veranderen zonder dat Git er vanaf weet. Deze functionaliteit is ingebouwd in de diepste diepten van Git en staat centraal in zijn filosofie. Je kan geen informatie kwijtraken als het wordt verstuurd en bestanden kunnen niet corrupt raken zonder dat Git het doorheeft.</p>
+<p>Git maakt een controlegetal (‘checksum’) van alles voordat het wordt opgeslagen, en er wordt later naar die data verwezen met dit controlegetal. Dat betekent dat het onmogelijk is om de inhoud van een bestand of map te veranderen zonder dat Git er vanaf weet. Deze functionaliteit is ingebouwd in de diepste diepten van Git en staat centraal in zijn filosofie. Je kunt geen informatie kwijtraken als het wordt verstuurd en bestanden kunnen niet corrupt raken zonder dat Git het doorheeft.</p>
 
-<p>Het mechanisme dat Git gebruikt voor deze controlegetallen heet een SHA-1-hash. Dat is een tekenreeks van 40 karakters lang, bestaande uit hexadecimale tekens (0–9 en a–f) en wordt berekend met de inhoud van een bestand of mapstructuur in Git. Een SHA-1-hash ziet er ongeveer zo uit:</p>
+<p>Het mechanisme dat Git gebruikt voor deze controlegetallen heet een SHA-1-hash. Dat is een tekenreeks van 40 karakters lang, bestaande uit hexadecimale tekens (0–9 en a–f) en wordt berekend uit de inhoud van een bestand of mapstructuur in Git. Een SHA-1-hash ziet er ongeveer zo uit:</p>
 
 <pre><code>24b9da6552252987aa493b52f8696cd6d3b00373</code></pre>
 
-<p>Je zal deze hashtekenreeksen overal tegenkomen in Git, omdat het er zoveel gebruik van maakt. Sterker nog, Git bewaart data niet onder hun bestandsnaam maar in de database van Git, onder de hash van zijn inhoud.</p>
+<p>Je zult deze hashtekenreeksen overal tegenkomen in Git, omdat het er zoveel gebruik van maakt. Sterker nog, Git bewaart data niet onder hun bestandsnaam maar in de database van Git, onder de hash van zijn inhoud.</p>
 
 <h3 id='git_voegt_normaal_gesproken_alleen_data_toe'>Git Voegt Normaal Gesproken Alleen Data Toe</h3>
 
-<p>Wanneer je iets doet in Git, is de kans groot dat het alleen maar data aan de database van Git toevoegt. Het is erg moeilijk om het systeem iets te laten doen wat je niet ongedaan kan maken, of het data uit te laten wissen op wat voor manier dan ook. Zoals met elke VCS kan je veranderingen verliezen of verhaspelen waar je nog geen momentopname van hebt gemaakt; maar als je dat eenmaal hebt gedaan, is het erg moeilijk om die data te verliezen, zeker als je je lokale database regelmatig uploadt (‘push’) naar een andere repository.</p>
+<p>Wanneer je iets doet in Git, is de kans groot dat het alleen maar data aan de database van Git toevoegt. Het is erg moeilijk om het systeem iets te laten doen dat je niet ongedaan kan maken, of het data uit te laten wissen op wat voor manier dan ook. Zoals met elke VCS kun je veranderingen verliezen of verhaspelen waar je nog geen momentopname van hebt gemaakt; maar als je dat eenmaal hebt gedaan, is het erg moeilijk om die data te verliezen, zeker als je je lokale database regelmatig uploadt (‘push’) naar een andere repository.</p>
 
-<p>Je zult nog veel plezier van Git hebben, omdat je weet dat je kunt experimenteren zonder het gevaar te lopen jezelf behoorlijk in de nesten te werken. Zie Hoofdstuk 9 voor een iets diepgaandere uitleg over hoe Git zijn data bewaart en hoe je de data die verloren lijkt kan terughalen.</p>
+<p>Je zult nog veel plezier van Git hebben, omdat je weet dat je kunt experimenteren zonder het gevaar te lopen jezelf behoorlijk in de nesten te werken. Zie Hoofdstuk 9 voor een iets diepgaandere uitleg over hoe Git zijn data bewaart en hoe je de data die verloren lijkt kunt terughalen.</p>
 
 <h3 id='de_drie_toestanden'>De Drie Toestanden</h3>
 
-<p>Let nu goed op. Dit is het belangrijkste wat je over Git moet weten als je wilt dat de rest van het leerproces goed verloopt. Git heeft drie hoofdtoestanden waarin je bestanden kunnen zijn: gecommit (‘commited’), aangepast (‘modified’) en voorbereid voor een commit (‘staged’). Gecommit betekent dat alle data al veilig opgeslagen is in je lokale database. Aangepast betekent dat je je bestand hebt veranderd maar dat je nog geen nieuwe momentopname in je database hebt. Voorbereid betekent dat je al hebt aangegeven dat de huidige versie van het aangepaste bestand in je volgende momentopname toevoegt.</p>
+<p>Let nu goed op. Dit is het belangrijkste dat je over Git moet weten als je wilt dat de rest van het leerproces goed verloopt. Git heeft drie hoofdtoestanden waarin je bestanden zich kunnen bevinden: gecommit (‘commited’), aangepast (‘modified’) en voorbereid voor een commit (‘staged’). Gecommit betekent dat alle data al veilig opgeslagen is in je lokale database. Aangepast betekent dat je je bestand hebt veranderd maar dat je nog geen nieuwe momentopname in je database hebt. Voorbereid betekent dat je al hebt aangegeven dat je de huidige versie van het aangepaste bestand in je volgende momentopname toevoegt.</p>
 
 <p>Dit brengt ons tot de drie hoofdonderdelen van een Gitproject: de Gitmap, de werkmap, en de wachtrij voor een commit (‘staging area’)</p>
 
 <p><center><img src="/figures/ch1/18333fig0106-tn.png"></center><br/> Figuur 1-6. Werkmap, wachtrij en Gitmap</p>
 
-<p>De Gitmap is waar Git de metadata en objectdatabase van je project opslaat. Dit is het belangrijkste deel van Git, dit is hetgene wat gekopiëerd wordt als je een repository kloont vanaf een andere computer.</p>
+<p>De Gitmap is waar Git de metadata en objectdatabase van je project opslaat. Dit is het belangrijkste deel van Git, deze map wordt gekopiëerd wanneer je een repository kloont vanaf een andere computer.</p>
 
-<p>De werkmap is een kopie van een bepaalde versie van het project (een ‘checkout’). Deze bestanden worden uit de gecomprimeerde database in de Gitmap gehaald en op de harde schijf geplaatst waar jij het kan gebruiken of bewerken.</p>
+<p>De werkmap is een kopie van een bepaalde versie van het project (een ‘checkout’). Deze bestanden worden uit de gecomprimeerde database in de Gitmap gehaald en op de harde schijf geplaatst waar jij ze kunt gebruiken of bewerken.</p>
 
-<p>De wachtrij is een simpel bestand, dat zich in het algemeen in je Gitmap bevindt, dat informatie opslaat over wat in de volgende commit moet. Het wordt soms de index genoemd, maar tegenwoordig wordt het de wachtrij (staging area) genoemd.</p>
+<p>De wachtrij is een simpel bestand, dat zich in het algemeen in je Gitmap bevindt, waar informatie opgeslagen wordt over wat in de volgende commit meegaat. Het wordt soms de index genoemd, maar tegenwoordig wordt het de wachtrij (staging area) genoemd.</p>
 
 <p>De algemene manier van werken met Git gaat ongeveer zo:</p>
 
 <ol>
 <li>Je bewerkt bestanden in je werkmap.</li>
 
-<li>Je bereid de bestanden voor, momentopnames worden toegevoegd aan de wachtrij.</li>
+<li>Je bereidt de bestanden voor, waardoor momentopnames worden toegevoegd aan de wachtrij.</li>
 
 <li>Je maakt een commit, wat alle momentopnames van de wachtrij neemt en die permanent in je Gitmap opslaat.</li>
 </ol>
 
-<p>Als een bepaalde versie van een bestand in de Gitmap staat, wordt het beschouwd als gecommit. Als het aangepast, maar aan de wachtrij is toegevoegd, is het voorbereid. En als het veranderd is sinds het gekopiëerd was, maar niet voorbereid is, is het aangepast. In Hoofdstuk 2 leer je meer over deze toestanden en hoe er voordeel aan kan hebben, of de wachtrij over kan slaan.</p>
+<p>Als een bepaalde versie van een bestand in de Gitmap staat, wordt het beschouwd als gecommit. Als het is aangepast, maar wel aan de wachtrij is toegevoegd, is het voorbereid. En als het veranderd is sinds het gekopiëerd werd, maar niet voorbereid is, is het aangepast. In Hoofdstuk 2 leer je meer over deze toestanden en hoe je er voordeel van kunt hebben, maar ook hoe je de wachtrij compleet over kunt slaan.</p>
 
 <div id='nav'>
 <a href='ch1-2.html'>prev</a> | <a href='ch1-4.html'>next</a>

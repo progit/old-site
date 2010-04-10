@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 2.3 Dasar-dasar Git Viewing the Commit History
+title: Pro Git 2.3 Dasar-dasar Git Melihat Sejarah Commit
 ---
-<h2 id='viewing_the_commit_history'>Viewing the Commit History</h2>
+<h2 id='melihat_sejarah_commit'>Melihat Sejarah Commit</h2>
 
-<p>After you have created several commits, or if you have cloned a repository with an existing commit history, you’ll probably want to look back to see what has happened. The most basic and powerful tool to do this is the <code>git log</code> command.</p>
+<p>Setelah Anda membuat beberapa commit, atau jika Anda sudah menduplikasi sebuah repositori dengan sejumlah sejarah commit yang telah terjadi, Anda mungkin akan mau untuk melihat ke belakang untuk mengetahui apa yang sudah pernah terjadi. Alat paling dasar dan tepat untuk melakukan ini adalah perintah <code>git log</code>.</p>
 
-<p>These examples use a very simple project called simplegit that I often use for demonstrations. To get the project, run</p>
+<p>Contoh berikut menggunakan sebuah proyek sangat sederhana yang disebut simplegit yang sering saya gunakan untuk keperluan demonstrasi. Untuk mengambil proyek ini, lakukan</p>
 
 <pre><code>git clone git://github.com/schacon/simplegit-progit.git</code></pre>
 
-<p>When you run <code>git log</code> in this project, you should get output that looks something like this:</p>
+<p>Ketika Anda jalankan <code>git log</code> dalam proyek ini, Anda akan mendapat keluaran yang mirip seperti berikut:</p>
 
 <pre><code>$ git log
 commit ca82a6dff817ec66f44342007202690a93763949
@@ -31,11 +31,11 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
     first commit</code></pre>
 
-<p>By default, with no arguments, <code>git log</code> lists the commits made in that repository in reverse chronological order. That is, the most recent commits show up first. As you can see, this command lists each commit with its SHA-1 checksum, the author’s name and e-mail, the date written, and the commit message.</p>
+<p>Secara standar, dengan tanpa argumen, <code>git log</code> menampilkan daftar commit yang pernah dibuat di dalam repositori ini terurut secara kronologis terbalik. Yaitu, commit terbaru muncul paling atas. Seperti yang dapat Anda lihat, perintah ini menampilkan setiap commit dengan nlai checksum SHA-1, nama dan email dari pengubah, tanggal perubahan dilakukan, dan pesan commitnya.</p>
 
-<p>A huge number and variety of options to the <code>git log</code> command are available to show you exactly what you’re looking for. Here, we’ll show you some of the most-used options.</p>
+<p>Sebagian besar variasi opsi dari perintah <code>git log</code> tersedia untuk menunjukkan kepada Anda secara tepat apa yang Anda cari. Di sini, kami akan menunjukkan kepada Anda beberapa dari opsi yang paling sering digunakan.</p>
 
-<p>One of the more helpful options is <code>-p</code>, which shows the diff introduced in each commit. You can also use <code>-2</code>, which limits the output to only the last two entries:</p>
+<p>Salah satu dari opsi yang paling berguna adalah <code>-p</code>, karena menampilkan diff dari setiap commit. Anda juga dapat menggunakan <code>-2</code>, yang membantu membatasi keluarannya hingga 2 entri terakhir:</p>
 
 <pre><code>$ git log –p -2
 commit ca82a6dff817ec66f44342007202690a93763949
@@ -75,7 +75,7 @@ index a0a60ae..47c6340 100644
 -end
 \ No newline at end of file</code></pre>
 
-<p>This option displays the same information but with a diff directly following each entry. This is very helpful for code review or to quickly browse what happened during a series of commits that a collaborator has added. You can also use a series of summarizing options with <code>git log</code>. For example, if you want to see some abbreviated stats for each commit, you can use the <code>--stat</code> option:</p>
+<p>Opsi ini menampilkan informasi log yang sama, namun ditambah informasi diff dari setiap entri. Ini sangat membantu untuk proses tilik-ulang kode atau untuk secara cepat menelusuri apa yang telah terjadi dalam serangkaian commit yang telah ditambahkan oleh rekan kolaborasi. Anda juga dapat menggunakan serangkaian opsi simpulan menggunakan <code>git log</code>. Misalnya, jika Anda ingin melihat statistik dari setiap commit, Anda dapat menggunakan osi <code>--stat</code>:</p>
 
 <pre><code>$ git log --stat 
 commit ca82a6dff817ec66f44342007202690a93763949
@@ -107,42 +107,42 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
  lib/simplegit.rb |   25 +++++++++++++++++++++++++
  3 files changed, 54 insertions(+), 0 deletions(-)</code></pre>
 
-<p>As you can see, the <code>--stat</code> option prints below each commit entry a list of modified files, how many files were changed, and how many lines in those files were added and removed. It also puts a summary of the information at the end. Another really useful option is <code>--pretty</code>. This option changes the log output to formats other than the default. A few prebuilt options are available for you to use. The oneline option prints each commit on a single line, which is useful if you’re looking at a lot of commits. In addition, the <code>short</code>, <code>full</code>, and <code>fuller</code> options show the output in roughly the same format but with less or more information, respectively:</p>
+<p>Seperti Anda dapat lihat, opsi <code>--stat</code> menampilkan di bawah setiap entri commit sebuah daftar dari berkasi terubah, jumlah berkas yang diubah dan jumlah baris dalam berkas tersebut yang ditambah atau dihapus. Opsi ini juga menambahkan sebuah simpulan dari informasi tadi di bagian akhir. Opsi lain yang juga berguna adalah <code>--pretty</code>. Opsi ini mengubah keluaran log ke dalam bentuk selain dari bentuk standar. Beberapa pilihan bentuk yang telah dibuat sebelumnya dapat Anda gunakan. Pilihan bentuk <code>oneline</code> akan mencetak setiap commit dalam satu baris, yang berguna jika Anda melihat banyak sekali commit. Selain itu, ada pilihan bentuk <code>short</code>, <code>full</code>, dan <code>fuller</code> yang menampilkan keluaran dalam format yang kurang lebih sama tetapi dengan lebih sedikit atau lebih banyak informasi, seperti:</p>
 
 <pre><code>$ git log --pretty=oneline
 ca82a6dff817ec66f44342007202690a93763949 changed the version number
 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
 a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
 
-<p>The most interesting option is <code>format</code>, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:</p>
+<p>Yang lebih mearik adalah pilihan bentuk <code>format</code>, yang memungkinkan kita untuk menentukan format keluaran log yang kita inginkan. Ini secara khusus berguna jika Anda membuat keluaran untuk diolah oleh mesin - karena Anda menentukan format secara eksplisit, Anda tahu keluaran tidak akan berubah jika Git dimutakhirkan.</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
 ca82a6d - Scott Chacon, 11 months ago : changed the version number
 085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
 a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 
-<p>Table 2-1 lists some of the more useful options that format takes.</p>
+<p>Tabel 2-1 memperlihatkan beberapa opsi berguna yang dapat digunakan oleh format.</p>
 
-<pre><code>Option	Description of Output
-%H	Commit hash
-%h	Abbreviated commit hash
-%T	Tree hash
-%t	Abbreviated tree hash
-%P	Parent hashes
-%p	Abbreviated parent hashes
-%an	Author name
-%ae	Author e-mail
-%ad	Author date (format respects the –date= option)
-%ar	Author date, relative
-%cn	Committer name
-%ce	Committer email
-%cd	Committer date
-%cr	Committer date, relative
-%s	Subject</code></pre>
+<pre><code>Opsi	Penjabaran dari keluaran
+%H	Hash dari commit
+%h	Hash dari commit dalam versi pendek
+%T	Hash dari pohon
+%t	Hash dari pohon dalam versi pendek
+%P	Hash dari parent
+%p	Hash dari parent dalam versi pendek
+%an	Nama pembuat
+%ae	Email pembuat
+%ad	Tanggal pembuat (format juga memperhitungkan opsi -date=)
+%ar	Tanggal pembuat, relatif
+%cn	Name pelaku commit
+%ce	Email pelaku commit
+%cd	Tanggal pelaku commit
+%cr	Tanggal pelaku commit, relatif
+%s	Judul</code></pre>
 
-<p>You may be wondering what the difference is between <em>author</em> and <em>committer</em>. The author is the person who originally wrote the work, whereas the committer is the person who last applied the work. So, if you send in a patch to a project and one of the core members applies the patch, both of you get credit — you as the author and the core member as the committer. We’ll cover this distinction a bit more in Chapter 5.</p>
+<p>Anda mungkin bertanya-tanya apa perbedaan dari <em>pembuat</em> dan <em>pelaku</em>commit_. Pembuat adalah orang yang sebetulnya menulis perubahan, sedangkan pelaku commit adalah orang yang terakhir mengaplikasikan perubahan tersebut. Jadi, jika Anda mengirimkan sebuah patch ke sebuah proyek dan salah satu dari anggota inti mengaplikasikan patch tersebut, Anda berdua akan dihitung - Anda sebagai pembuat dan anggota inti sebagai pelaku commit. Perbedaan ini ini akan kita bahas lebih lanjut di Bab 5.</p>
 
-<p>The oneline and format options are particularly useful with another <code>log</code> option called <code>--graph</code>. This option adds a nice little ASCII graph showing your branch and merge history, which we can see our copy of the Grit project repository:</p>
+<p>Opsi <code>oneline</code> dan <code>format</code> secara khusus berguna dengan opsi <code>log</code> lainnya yang disebut <code>--graph</code>. Opsi ini menambah informasi gambar ASCII yang menunjukkan sejarah pencabangan dan penggabungan, yang kita dapat lihat dari salinan repositori proyek Grit:</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
 * 2d3acf9 ignore errors from SIGCHLD on trap
@@ -156,43 +156,43 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 * d6016bc require time for xmlschema
 *  11d191e Merge branch &#39;defunkt&#39; into local</code></pre>
 
-<p>Those are only some simple output-formatting options to <code>git log</code> — there are many more. Table 2-2 lists the options we’ve covered so far and some other common formatting options that may be useful, along with how they change the output of the log command.</p>
+<p>Itulah beberapa opsi dalam memformat keluaran dari <code>git log</code> secara sederhana - masih ada banyak lagi. Tabel 2-2 menjabarkan opsi-opsi yang sejauh ini telah kita bahas dan beberapa opsi format umum lainnya yang mungkin berguna, sejalan dengan bagaimana opsi tersebut mengubah keluaran dari perintah <code>log</code>.</p>
 
-<pre><code>Option	Description
--p	Show the patch introduced with each commit.
---stat	Show statistics for files modified in each commit.
---shortstat	Display only the changed/insertions/deletions line from the --stat command.
---name-only	Show the list of files modified after the commit information.
---name-status	Show the list of files affected with added/modified/deleted information as well.
---abbrev-commit	Show only the first few characters of the SHA-1 checksum instead of all 40.
---relative-date	Display the date in a relative format (for example, “2 weeks ago”) instead of using the full date format.
---graph	Display an ASCII graph of the branch and merge history beside the log output.
---pretty	Show commits in an alternate format. Options include oneline, short, full, fuller, and format (where you specify your own format).</code></pre>
+<pre><code>Opsi	Penjabaran
+-p	Tampilkan patch yang digunakan di setiap commit
+--stat	Tampilkan statistik dari berkas terubah di setiap commit
+--shortstat	Tampilkan opsi `--stat` dalam satu baris perubahan/penambahan/penghapusan 
+--name-only	Tampilkan daftar berkas yang terubah setelah setiap informasi commit
+--name-status	Tampilkan daftar berkas yang terubah dan informasi status tertambah/terubah/terhapus
+--abbrev-commit	Tampilkan beberapa karakter awal dari ceksum SHA-1
+--relative-date	Tampilkan tanggal dalam bentuk relatif (misalnya, &quot;2 weeks ago&quot;)
+--graph	Tampilkan gambar ASCII dari sejarah pencabangan dan penggabungan di samping keluaran log
+--pretty	Tampilkan commit dalam format alternatif. Opsi antara lain oneline, short, full, fuller dan format (dimana kita dapat merumuskan format yang kita inginkan).</code></pre>
 
-<h3 id='limiting_log_output'>Limiting Log Output</h3>
+<h3 id='membatasi_keluaran_log'>Membatasi Keluaran Log</h3>
 
-<p>In addition to output-formatting options, git log takes a number of useful limiting options — that is, options that let you show only a subset of commits. You’ve seen one such option already — the <code>-2</code> option, which show only the last two commits. In fact, you can do <code>-&lt;n&gt;</code>, where <code>n</code> is any integer to show the last <code>n</code> commits. In reality, you’re unlikely to use that often, because Git by default pipes all output through a pager so you see only one page of log output at a time.</p>
+<p>Sebagai tambahan dari opsi format-keluaran, <code>git log</code> juga memiliki opsi pembatasan yang berguna - yaitu opsi yang membuat kita dapat menampilkan sebagian dari commit. Anda telah melihat salah satu opsi pembatasan ini sebelumnya - opsi <code>-2</code> yang menampilkan 2 commit terakhir. Bahkan jika Anda melakukan <code>-&lt;n&gt;</code>, dengan <code>n</code> adalah integer apapun untuk menampilkan sejumlah <code>n</code> commit terakhir. Dalam kenyataannya, Anda mungkin tidak akan menggunakan opsi ini terlalu sering, karena Git secara standar melakukan pipe dari semua output lewat sebuah pager sehingga Anda melihat hanya sebuah halaman dari keluaran log setiap saat.</p>
 
-<p>However, the time-limiting options such as <code>--since</code> and <code>--until</code> are very useful. For example, this command gets the list of commits made in the last two weeks:</p>
+<p>Namun demikian, opsi pembatasan waktu seperti <code>--since</code> dan <code>--until</code> akan lebih berguna. Sebagai contoh, perintah berikut akan menampilkan sejumlah commit yang dilakukan dalam 2 minggu terakhir:</p>
 
 <pre><code>$ git log --since=2.weeks</code></pre>
 
-<p>This command works with lots of formats — you can specify a specific date (“2008-01-15”) or a relative date such as “2 years 1 day 3 minutes ago”.</p>
+<p>Perintah ini bekerja dengan format lainnya - Anda dapat mencantumkan tanggal tertentu (&#8220;2008-01-15&#8221;) atau tanggal relatif seperti &#8220;2 years 1 day 3 minutes ago&#8221;.</p>
 
-<p>You can also filter the list to commits that match some search criteria. The <code>--author</code> option allows you to filter on a specific author, and the <code>--grep</code> option lets you search for keywords in the commit messages. (Note that if you want to specify both author and grep options, you have to add <code>--all-match</code> or the command will match commits with either.)</p>
+<p>Anda juga dapat menyaring daftar untuk commit yang cocok dengan beberapa kriteria pencarian. Opsi <code>--author</code> membuat Anda dapat menyaring pembuat tertentu, dan opsi <code>--grep</code> membuat Anda dapat mencari keyword di dalam pesan commit. (Mohon diingat bahwa jika Anda ingin mencantumkan kedua opsi author dan grep, Anda harus menambahkan <code>--all-match</code> atau perintah akan mencocokkan yang berisi keduanya saja).</p>
 
-<p>The last really useful option to pass to <code>git log</code> as a filter is a path. If you specify a directory or file name, you can limit the log output to commits that introduced a change to those files. This is always the last option and is generally preceded by double dashes (<code>--</code>) to separate the paths from the options.</p>
+<p>Opsi terakhir yang sangat berguna untuk menyaring <code>git log</code> adalah path. Jika anda mencantumkan direktori atau nama berkas, Anda dapat membatasi keluaran log ke commit yang merubah berkas-berkas tersebut. Ini selalu menjadi opsi terakhir dan biasanya didahului dengan dua tanda hubung (<code>--</code>) untuk memisahkan path dari opsi lainnya.</p>
 
-<p>In Table 2-3 we’ll list these and a few other common options for your reference.</p>
+<p>Dalam tabel 2-3 kita daftarkan opsi pembatasan ini dan opsi umum lainnya untuk acuan Anda.</p>
 
-<pre><code>Option	Description
--(n)	Show only the last n commits
---since, --after	Limit the commits to those made after the specified date.
---until, --before	Limit the commits to those made before the specified date.
---author	Only show commits in which the author entry matches the specified string.
---committer	Only show commits in which the committer entry matches the specified string.</code></pre>
+<pre><code>Opsi	Penjabaran
+-(n)	Tampilkan hanya sejumlah n commit terakhir
+--since, --after	Batasi commit hanya yang dibuat setelah tanggal yang dicantumkan
+--until, --before	Batasi commit hanya yang dibuat sebelum tanggal yang dicantumkan
+--author	Hanya tampilkan commit yang entri pembuatnya cocok dengan string yang dicantumkan
+--committer	Hanya tampilkan commit yang entri pelaku commitnya cocok dengan string yang dicantumkan</code></pre>
 
-<p>For example, if you want to see which commits modifying test files in the Git source code history were committed by Junio Hamano and were not merges in the month of October 2008, you can run something like this:</p>
+<p>Sebagai contoh, jika Anda ingin melihat commit mana saja yang mengubah berkas test di sejarah kode sumber yang di-commit oleh Junio Hamano dan bukan merupakan penggabungan selama bulan October 2008, Anda dapat menjalankan seperti berikut:</p>
 
 <pre><code>$ git log --pretty=&quot;%h - %s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
    --before=&quot;2008-11-01&quot; --no-merges -- t/
@@ -203,15 +203,15 @@ d1a43f2 - reset --hard/read-tree --reset -u: remove un
 51a94af - Fix &quot;checkout --track -b newbranch&quot; on detac
 b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
-<p>Of the nearly 20,000 commits in the Git source code history, this command shows the 6 that match those criteria.</p>
+<p>Dari sekitar 20,000 commit dalam sejarah kode sumber Git, perintah ini menampilkan hanya 6 yang cocok dengan kriteria di atas.</p>
 
-<h3 id='using_a_gui_to_visualize_history'>Using a GUI to Visualize History</h3>
+<h3 id='menggunakan_gui_untuk_menggambarkan_sejarah'>Menggunakan GUI untuk Menggambarkan Sejarah</h3>
 
-<p>If you like to use a more graphical tool to visualize your commit history, you may want to take a look at a Tcl/Tk program called gitk that is distributed with Git. Gitk is basically a visual <code>git log</code> tool, and it accepts nearly all the filtering options that <code>git log</code> does. If you type gitk on the command line in your project, you should see something like Figure 2-2.</p>
+<p>Jika Anda ingin menggunakan alat yang lebih grafis untuk menggambarkan sejarah commit Anda, Anda dapat melihat program Tcl/Tk yang disebut gitk yang didistribusikan bersama dengan Git. Gitk sebelunya hanyalah alat visual dari <code>git log</code>, dan dia menerima hampir semua opsi pembatasan yang dapat dilakukan oleh <code>git log</code>. Jika Anda mengetikkan gitk di baris perintah dalam direktori proyek Anda, Anda akan melihat seperti Gambar 2-2.</p>
 
-<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Figure 2-2. The gitk history visualizer.</p>
+<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Gambar 2-2. Penggambaran sejarah oleh Gitk.</p>
 
-<p>You can see the commit history in the top half of the window along with a nice ancestry graph. The diff viewer in the bottom half of the window shows you the changes introduced at any commit you click.</p>
+<p>Anda dapat melihat sejarah commit di setengah bagian atas jendela dengan gambar pohon yang menarik. Tampilan diff di bagian bawah jendela memperlihatkan kepada Anda perubahan yang dilakukan di commit manapun yang Anda klik.</p>
 
 <div id='nav'>
 <a href='ch2-2.html'>prev</a> | <a href='ch2-4.html'>next</a>

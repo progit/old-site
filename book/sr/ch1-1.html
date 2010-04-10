@@ -1,0 +1,41 @@
+---
+layout: translation
+title: Pro Git 1.1 Почетак О контроли верзије
+---
+<h2 id='__'>О контроли верзије</h2>
+
+<p>Шта је контрола верзије и зашто би требало да знате за то? Контрола верзије је систем који снима промене над фајлом или скупом фајлова у времену да би се после могла вратити поједина верзија по потреби. У примерима у овој књизи користићете изворни код програма као фајлове чије верзије се контролишу, иако у реалности ово се може искористити за скоро било који тип фајла на компјутеру.</p>
+
+<p>Ако сте графички или веб дизанер и желите да чувате сваку верзију слике или шаблона (што сигурно желите), мудро је користити систем за контролу верзија (VCS). Он омогућава да се фајлови врате на претходна стања, да се цео пројекат врати на неко стање из прошлости, да се пореде промене током времена, да се види ко је последњи мењао и шта те се тако брже дође до узрока проблема, ко је направио проблем и када, и више. Коришћење VCS генерално значи да ако нешто зезнете или изгубите фајлове, лако се ствари могу поправити. Уз то, све ово долази уз врло мало додатног посла.</p>
+
+<h3 id='___'>Локални системи контроле верзије</h3>
+
+<p>Many people’s version-control method of choice is to copy files into another directory (perhaps a time-stamped directory, if they’re clever). This approach is very common because it is so simple, but it is also incredibly error prone. It is easy to forget which directory you’re in and accidentally write to the wrong file or copy over files you don’t mean to.</p>
+
+<p>To deal with this issue, programmers long ago developed local VCSs that had a simple database that kept all the changes to files under revision control (see Figure 1-1).</p>
+
+<p><center><img src="/figures/ch1/18333fig0101-tn.png"></center><br/> Figure 1-1. Local version control diagram</p>
+
+<p>One of the more popular VCS tools was a system called rcs, which is still distributed with many computers today. Even the popular Mac OS X operating system includes the rcs command when you install the Developer Tools. This tool basically works by keeping patch sets (that is, the differences between files) from one change to another in a special format on disk; it can then re-create what any file looked like at any point in time by adding up all the patches.</p>
+
+<h3 id='___'>Централизовани системи контроле верзије</h3>
+
+<p>The next major issue that people encounter is that they need to collaborate with developers on other systems. To deal with this problem, Centralized Version Control Systems (CVCSs) were developed. These systems, such as CVS, Subversion, and Perforce, have a single server that contains all the versioned files, and a number of clients that check out files from that central place. For many years, this has been the standard for version control (see Figure 1-2).</p>
+
+<p><center><img src="/figures/ch1/18333fig0102-tn.png"></center><br/> Figure 1-2. Centralized version control diagram</p>
+
+<p>This setup offers many advantages, especially over local VCSs. For example, everyone knows to a certain degree what everyone else on the project is doing. Administrators have fine-grained control over who can do what; and it’s far easier to administer a CVCS than it is to deal with local databases on every client.</p>
+
+<p>However, this setup also has some serious downsides. The most obvious is the single point of failure that the centralized server represents. If that server goes down for an hour, then during that hour nobody can collaborate at all or save versioned changes to anything they’re working on. If the hard disk the central database is on becomes corrupted, and proper backups haven’t been kept, you lose absolutely everything—the entire history of the project except whatever single snapshots people happen to have on their local machines. Local VCS systems suffer from this same problem—whenever you have the entire history of the project in a single place, you risk losing everything.</p>
+
+<h3 id='___'>Дистрибуирани системи контроле верзије</h3>
+
+<p>This is where Distributed Version Control Systems (DVCSs) step in. In a DVCS (such as Git, Mercurial, Bazaar or Darcs), clients don’t just check out the latest snapshot of the files: they fully mirror the repository. Thus if any server dies, and these systems were collaborating via it, any of the client repositories can be copied back up to the server to restore it. Every checkout is really a full backup of all the data (see Figure 1-3).</p>
+
+<p><center><img src="/figures/ch1/18333fig0103-tn.png"></center><br/> Figure 1-3. Distributed version control diagram</p>
+
+<p>Furthermore, many of these systems deal pretty well with having several remote repositories they can work with, so you can collaborate with different groups of people in different ways simultaneously within the same project. This allows you to set up several types of workflows that aren’t possible in centralized systems, such as hierarchical models.</p>
+
+<div id='nav'>
+<a href='ch1-0.html'>prev</a> | <a href='ch1-2.html'>next</a>
+</div>

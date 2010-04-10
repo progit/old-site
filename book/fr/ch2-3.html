@@ -1,0 +1,220 @@
+---
+layout: translation
+title: Pro Git 2.3 Les bases de Git Visualiser l&#8217;historique des validations
+---
+<h2 id='visualiser_lhistorique_des_validations'>Visualiser l&#8217;historique des validations</h2>
+
+<p>Après avoir créé plusieurs commits ou si vous avez cloné un dépôt ayant un historique de commits, vous souhaitez probablement revoir le fil des évènements. La commande <code>git log</code> est l&#8217;outil le plus basique et puissant pour cet objet.</p>
+
+<p>Les exemples qui suivent utilisent un projet très simple nommé simplegit utilisé pour les démonstrations. Pour récupérer le projet, lancez</p>
+
+<pre><code>git clone git://github.com/schacon/simplegit-progit.git</code></pre>
+
+<p>Lorsque vous lancez <code>git log</code> dans le répertoire de ce projet, vous devriez obtenir un résultat qui ressemble à ceci :</p>
+
+<pre><code>$ git log
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sat Mar 15 16:40:33 2008 -0700
+
+    removed unnecessary test code
+
+commit a11bef06a3f659402fe7563abf99ad00de2209e6
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sat Mar 15 10:31:28 2008 -0700
+
+    first commit</code></pre>
+
+<p>Par défaut, <code>git log</code> invoqué sans argument énumère en ordre chronologique inversé les commits réalisés. Cela signifie que les commits les plus récents apparaissent en premier. Comme vous le remarquez, cette commande indique chaque commit avec sa somme de contrôle SHA-1, le nom et l&#8217;e-mail de l&#8217;auteur, la date et le message du commit.</p>
+
+<p><code>git log</code> dispose d&#8217;un très grand nombre d&#8217;options permettant de paramétrer exactement ce que l&#8217;on cherche à voir. Nous allons détailler quelques unes des plus utilisées.</p>
+
+<p>Une des options les plus utiles est <code>-p</code>, qui montre les différences introduites entre chaque validation. Vous pouvez aussi utiliser <code>-2</code> qui limite la sortie de la commande aux deux entrées les plus récentes :</p>
+
+<pre><code>$ git log –p -2
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+diff --git a/Rakefile b/Rakefile
+index a874b73..8f94139 100644
+--- a/Rakefile
++++ b/Rakefile
+@@ -5,7 +5,7 @@ require &#39;rake/gempackagetask&#39;
+ spec = Gem::Specification.new do |s|
+-    s.version   =   &quot;0.1.0&quot;
++    s.version   =   &quot;0.1.1&quot;
+     s.author    =   &quot;Scott Chacon&quot;
+
+commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sat Mar 15 16:40:33 2008 -0700
+
+    removed unnecessary test code
+
+diff --git a/lib/simplegit.rb b/lib/simplegit.rb
+index a0a60ae..47c6340 100644
+--- a/lib/simplegit.rb
++++ b/lib/simplegit.rb
+@@ -18,8 +18,3 @@ class SimpleGit
+     end
+
+ end
+-
+-if $0 == __FILE__
+-  git = SimpleGit.new
+-  puts git.show
+-end
+\ No newline at end of file</code></pre>
+
+<p>Cette option affiche la même information mais avec un diff suivant directement chaque entrée. C&#8217;est très utile pour des revues de code ou pour naviguer rapidement à travers l&#8217;historique des modifications qu&#8217;un collaborateur a apportées.</p>
+
+<p>Vous pouvez aussi utiliser une liste d&#8217;options de résumé avec <code>git log</code>. Par exemple, si vous souhaitez visualiser des statistiques résumées pour chaque commit, vous pouvez utiliser l&#8217;option <code>--stat</code> :</p>
+
+<pre><code>$ git log --stat 
+commit ca82a6dff817ec66f44342007202690a93763949
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Mar 17 21:52:11 2008 -0700
+
+    changed the version number
+
+ Rakefile |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sat Mar 15 16:40:33 2008 -0700
+
+    removed unnecessary test code
+
+ lib/simplegit.rb |    5 -----
+ 1 files changed, 0 insertions(+), 5 deletions(-)
+
+commit a11bef06a3f659402fe7563abf99ad00de2209e6
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sat Mar 15 10:31:28 2008 -0700
+
+    first commit
+
+ LISEZMOI           |    6 ++++++
+ Rakefile         |   23 +++++++++++++++++++++++
+ lib/simplegit.rb |   25 +++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Comme vous pouvez le voir, l&#8217;option <code>--stat</code> affiche sous chaque entrée de validation une liste des fichiers modifiés, combien de fichiers ont été changés et combien de lignes ont été ajoutées ou retirées dans ces fichiers. Elle ajoute un résumé des information en fin de sortie. Une autre option utile est <code>--pretty</code>. Cette option modifie le journal vers un format différent. Quelques options incluses sont disponibles. L&#8217;option <code>oneline</code> affiche chaque commit sur une seule ligne, ce qui peut s&#8217;avérer utile lors de la revue d&#8217;un long journal. De plus, les options <code>short</code>, <code>full</code> et <code>fuller</code> montrent le résultat à peu de choses près dans le même format mais avec de plus en plus d&#8217;information :</p>
+
+<pre><code>$ git log --pretty=oneline
+ca82a6dff817ec66f44342007202690a93763949 changed the version number
+085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
+a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
+
+<p>L&#8217;option la plus intéressante est <code>format</code> qui permet de décrire précisément le format de sortie. C&#8217;est spécialement utile pour générer des sorties dans un format facile à analyser par une machine — lorsqu&#8217;on spécifie intégralement et explicitement le format, on s&#8217;assure qu&#8217;il ne changera pas au gré des mises à jour de Git :</p>
+
+<pre><code>$ git log --pretty=format:&quot;%h — %an, %ar : %s&quot;
+ca82a6d — Scott Chacon, 11 months ago : changed the version number
+085bb3b — Scott Chacon, 11 months ago : removed unnecessary test code
+a11bef0 — Scott Chacon, 11 months ago : first commit</code></pre>
+
+<p>Le tableau 2-1 liste les options de formattage les plus utiles.</p>
+
+<pre><code>Option	Description du formattage
+%H	Somme de contrôle du commit
+%h	Somme de contrôle abrégée du commit
+%T	Somme de contrôle de l&#39;arborescence
+%t	Somme de contrôle abrégée de l&#39;aborescence
+%P	Sommes de contrôle des parents
+%p	Sommes de contrôle abrégées des parents
+%an	Nom de l&#39;auteur
+%ae	e-mail de l&#39;auteur
+%ad	Date de l&#39;auteur (au format de l&#39;option -date=)
+%ar	Date relative de l&#39;auteur
+%cn	Nom du validateur
+%ce	e-mail du validateur
+%cd	Date du validateur
+%cr	Date relative du validateur
+%s	Sujet</code></pre>
+
+<p>Vous pourriez vous demander quelle est la différence entre <em>auteur</em> et <em>validateur</em>. L&#8217;auteur est la personne qui a réalisé initialement le travail, alors que le validateur est la personne qui a effectivement validé ce travail en gestion de version. Donc, si quelqu&#8217;un envoie patch à un projet et un des membres du projet l&#8217;applique, les deux personnes reçoivent le crédit — l&#8217;écrivain en tant qu&#8217;auteur, et le membre du projet en tant que validateur. Nous traiterons plus avant de cette distinction au chapitre 5.</p>
+
+<p>Les options oneline et format sont encore plus utiles avec une autre option <code>log</code> appelée <code>--graph</code>. Cette option ajoute un joli graphe en caractères ASCII pour décrire l&#8217;historique des branches et fusions, ce que nous pouvons visualiser pour notre copie du dépôt de Grit :</p>
+
+<pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
+* 2d3acf9 ignore errors from SIGCHLD on trap
+*  5e3ee11 Merge branch &#39;master&#39; of git://github.com/dustin/grit
+|\  
+| * 420eac9 Added a method for getting the current branch.
+* | 30e367c timeout code and tests
+* | 5a09431 add timeout protection to grit
+* | e1193f8 support for heads with slashes in them
+|/  
+* d6016bc require time for xmlschema
+*  11d191e Merge branch &#39;defunkt&#39; into local</code></pre>
+
+<p>Les options ci-dessus ne sont que des options simples de format de sortie de <code>git log</code> — il y en a de nombreuses autres. Le tableau 2-2 donne une liste des options que nous avons traitées ainsi que d&#8217;autres options communément utilisées accompagnées de la manière dont elles modifient le résultat de la commande log.</p>
+
+<pre><code>Option	Description
+-p	Affiche le patch appliqué par chaque commit
+--stat	Affiche les statistiques de chaque fichier pour chaque commit
+--shortstat	N&#39;affiche que la ligne des modifiées/insérées/effacées le l&#39;option --stat
+--name-only	Affiche la liste des fichiers modifiés après les informations du commit
+--name-status	Affiche la liste des fichiers affectés accompagnés des informations d&#39;ajout/modification/suppression
+--abbrev-commit	N&#39;affiche que les premiers caractères de la somme de contrôle SHA-1
+--relative-date	Affiche la date en format relatif (par exemple &quot;2 weeks ago&quot; : il y a deux semaines) au lieu du format de date complet
+--graph	Affiche en caractère ASCII le graphe de branches et fusions en vis-à-vis de l&#39;historique
+--pretty=&lt;format&gt;	Affiche les commits dans un format alternatif. Les formats incluent oneline, short, full, fuller, et format (où on peut spécifier son propre format)</code></pre>
+
+<h3 id='limiter_la_longueur_de_lhistorique'>Limiter la longueur de l&#8217;historique</h3>
+
+<p>En complément des options de formattage de sortie, git log est pourvu de certaines options de limitation utiles — des options qui permettent de restreindre la liste à un sous-ensemble de commits. Vous avez déjà vu une de ces options — l&#8217;option <code>-2</code> qui ne montre que le deux derniers commits. En fait, on peut utiliser <code>-&lt;n&gt;</code>, ou <code>n</code> correspond au nombre de commits que l&#8217;on cherche à visualiser en partant des plus récents. En vérité, il est peu probable que vous utilisiez cette option, parce que Git injecte par défaut sa sortie dans un outil de pagination qui permet de la visualiser page à page.</p>
+
+<p>Cependant, les options de limitation portant sur le temps, telles que <code>--since</code> (depuis) et <code>--until</code> (jusqu&#8217;à) sont très utiles. Par exemple, le commande suivante affiche la liste des commits des deux dernières semaines :</p>
+
+<pre><code>$ git log --since=2.weeks</code></pre>
+
+<p>Cette commande fonctionne avec de nombreux formats — vous pouvez indiquer une date spécifique (2008-01-05) ou une date relative au présent telle que &#8220;2 years 1 day 3 minutes ago&#8221;.</p>
+
+<p>Vous pouvez aussi restreindre la liste aux commits vérifiant certains critères de recherche. L&#8217;option <code>--author</code> permet de filtrer sur un auteur spécifique, et l&#8217;option <code>--grep</code> permet de chercher des mots clés dans les messages de validation. Notez que si vous cherchez seulement des commits correspondant simultanément aux deux critères, vous devez ajouter l&#8217;option <code>--all-match</code>, car par défaut ces commandes retournent les commits vérifiant au moins un critère lors de recherche de chaînes de caractères.</p>
+
+<p>La dernière option vraiment utile à <code>git log</code> est la spécification d&#8217;un chemin. Si un répertoire ou un nom de fichier est spécifié, le journal est limité aux commits qui ont introduit des modifications aux fichiers concernés. C&#8217;est toujours la dernière option de la commande, souvent précédée de deux tirets (<code>--</code>) pour séparer le chemin des options précédentes.</p>
+
+<p>Le tableau 2-3 récapitule les options que nous venons de voir ainsi que quelques autres pour référence.</p>
+
+<pre><code>Option	Description
+-(n)	N&#39;affiche que les n derniers commits
+--since, --after	Limite l&#39;affichage aux commits réalisés après la date spécifiée
+--until, --before	Limite l&#39;affichage aux commits réalisés avant la date spécifiée
+--author	Ne montre que les commits dont le champ auteur correspond à la chaîne passée en argument
+--committer	Ne montre que les commits dont le champ validateur correspond à la chaîne passée en argument</code></pre>
+
+<p>Par exemple, si vous souhaitez visualiser quels commits modifiant les fichiers de test dans l&#8217;historique du source de Git ont été validés par Junio Hamano et n&#8217;étaient pas des fusions durant le mois d&#8217;octobre 2008, vous pouvez lancer ce qui suit :</p>
+
+<pre><code>$ git log --pretty=&quot;%h — %s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
+   --before=&quot;2008-11-01&quot; --no-merges -- t/
+5610e3b — Fix testcase failure when extended attribute
+acd3b9e — Enhance hold_lock_file_for_{update,append}()
+f563754 — demonstrate breakage of detached checkout wi
+d1a43f2 — reset --hard/read-tree --reset -u: remove un
+51a94af — Fix &quot;checkout --track -b newbranch&quot; on detac
+b0ad11e — pull: allow &quot;git pull origin $something:$cur</code></pre>
+
+<p>A partir des 20 000 commits constituant l&#8217;historique des sources de Git, cette commande extrait les 6 qui correspondent aux critères.</p>
+
+<h3 id='utiliser_une_interface_graphique_pour_visualiser_lhistorique'>Utiliser une interface graphique pour visualiser l&#8217;historique</h3>
+
+<p>Si vous préférez utiliser un outil plus graphique pour visualiser l&#8217;historique d&#8217;un projet, vous pourriez jeter un œil à un programme distribué avec Git nommé gitk. Gitk est un outil graphique mimant les fonctionnalités de <code>git log</code>, et il donne accès à quasiment toutes les options de filtrage de <code>git log</code>. Si vous tapez gitk en ligne de commande, vous devriez voir une interface ressemblant à la figure 2-2.</p>
+
+<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Figure 2-2. Le visualiseur d&#8217;historique gitk</p>
+
+<p>Vous pouvez voir l&#8217;historique des commits dans la partie supérieure de la fenêtre avec un graphique d&#8217;enchaînement. Le visualisateur de diff dans la partie inférieure de la fenêtre affiche les modifications introduites par le commit sélectionné.</p>
+
+<div id='nav'>
+<a href='ch2-2.html'>prev</a> | <a href='ch2-4.html'>next</a>
+</div>

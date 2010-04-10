@@ -172,12 +172,12 @@ Dir.chdir(ARGV[0]) do
     end
   end
 end</code></pre>
-
-<p>You run <code>print_export</code> inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. &#8220;Mark&#8221; is the <code>fast-import</code> term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your <code>print_export</code> method is generate a mark from the directory name:</p>
+<!--You run `print_export` inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. "Mark" is the `fast-import` term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your `print_export` method is generate a mark from the directory name:-->
+<p>Du führst <code>print_export</code> für jedes Verzeichnis aus. Das nimmt das Manifest und die Markierung des letzten Snapshots entgegen und gibt das Manifest und die Markierung des aktuellen zurück; auf diese Weise kannst Du sie passend verlinken. &#8220;Mark&#8221; ist der <code>fast-import</code>-Begriff für eine ID, die Du einem Commit gibst. Während Du Commits anlegst, verpasst Du jedem einzelnen eine Markierung, die benutzen kannst, um von anderen Commits zu ihm zu linken. Daher ist das erste, was Deine <code>print_export</code>-Methode macht, eine Markierung aus dem Verzeichnisnamen zu erstellen:</p>
 
 <pre><code>mark = convert_dir_to_mark(dir)</code></pre>
-
-<p>You’ll do this by creating an array of directories and using the index value as the mark, because a mark must be an integer. Your method looks like this:</p>
+<!--You’ll do this by creating an array of directories and using the index value as the mark, because a mark must be an integer. Your method looks like this:-->
+<p>Das erreichst Du indem Du ein Array von Verzeichnissen anlegst und den Index-Wert als Markierung verwendest (eine Markierung muss vom Typ <code>integer</code> sein). Deine Methode sieht so aus:</p>
 
 <pre><code>$marks = []
 def convert_dir_to_mark(dir)
@@ -186,12 +186,12 @@ def convert_dir_to_mark(dir)
   end
   ($marks.index(dir) + 1).to_s
 end</code></pre>
-
-<p>Now that you have an integer representation of your commit, you need a date for the commit metadata. Because the date is expressed in the name of the directory, you’ll parse it out. The next line in your <code>print_export</code> file is</p>
+<!--Now that you have an integer representation of your commit, you need a date for the commit metadata. Because the date is expressed in the name of the directory, you’ll parse it out. The next line in your `print_export` file is-->
+<p>Jetzt hast Du eine <code>integer</code>-Repräsentation Deines Commits und brauchst nur noch ein Datum für die Commit-Metadaten. Da das Datum im Verzeichnisnamen enthalten ist, parsen wir es einfach daraus. Die nächste Zeile in Deiner <code>print_export</code>-Datei lautet</p>
 
 <pre><code>date = convert_dir_to_date(dir)</code></pre>
-
-<p>where <code>convert_dir_to_date</code> is defined as</p>
+<!--where `convert_dir_to_date` is defined as-->
+<p>wobei <code>convert_dir_to_date</code> so definiert ist:</p>
 
 <pre><code>def convert_dir_to_date(dir)
   if dir == &#39;current&#39;
@@ -202,12 +202,12 @@ end</code></pre>
     return Time.local(year, month, day).to_i
   end
 end</code></pre>
-
-<p>That returns an integer value for the date of each directory. The last piece of meta-information you need for each commit is the committer data, which you hardcode in a global variable:</p>
+<!--That returns an integer value for the date of each directory. The last piece of meta-information you need for each commit is the committer data, which you hardcode in a global variable:-->
+<p>Die Funktion gibt einen Integer-Wert für das Datum eines jeden Verzeichnisses zurück. Das letzte Stück Meta-Informationen, das wir noch für jeden Commit brauchen, sind die Commit-Daten des Autors, die wir in eine globale Variable packen:</p>
 
 <pre><code>$author = &#39;Scott Chacon &lt;schacon@example.com&gt;&#39;</code></pre>
-
-<p>Now you’re ready to begin printing out the commit data for your importer. The initial information states that you’re defining a commit object and what branch it’s on, followed by the mark you’ve generated, the committer information and commit message, and then the previous commit, if any. The code looks like this:</p>
+<!--Now you’re ready to begin printing out the commit data for your importer. The initial information states that you’re defining a commit object and what branch it’s on, followed by the mark you’ve generated, the committer information and commit message, and then the previous commit, if any. The code looks like this:-->
+<p>Jetzt können wir damit beginnen, die Commit-Daten für den Importer auszudrucken. Die ursprüngliche Information gibt an, dass Du ein Commit-Objekt definierst und zu welchem Branch es gehört, gefolgt von der Markierung, die Du angelegt hast, der Committer-Information und der Commit-Nachricht und schließlich der ID des vorhergehenden Commits, falls dieser existiert. Der Code sieht wie folgt aus:</p>
 
 <pre><code># print the import information
 puts &#39;commit refs/heads/master&#39;
@@ -225,38 +225,38 @@ puts &#39;from :&#39; + last_mark if last_mark</code></pre>
 <pre><code>def export_data(string)
   print &quot;data #{string.size}\n#{string}&quot;
 end</code></pre>
-
-<p>All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory — you can print out the <code>deleteall</code> command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:</p>
+<!--All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory — you can print out the `deleteall` command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:-->
+<p>Alles, was jetzt noch übrig bleibt, ist das Feststellen des Dateiinhalts eines jeden Snapshots. Das ist einfach, weil Du jeden davon in einem Verzeichnis hast — Du kannst das <code>deleteall</code>-Kommando ausgeben, gefolgt von den Inhalten einer jeden Datei in dem Verzeichnis. Git wird dann jeden Snapshot entsprechend aufzeichnen:</p>
 
 <pre><code>puts &#39;deleteall&#39;
 Dir.glob(&quot;**/*&quot;).each do |file|
   next if !File.file?(file)
   inline_data(file)
 end</code></pre>
-
-<p>Note: Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex — you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the <code>fast-import</code> man page for details about how to provide your data in this manner.</p>
-
-<p>The format for listing the new file contents or specifying a modified file with the new contents is as follows:</p>
+<!--Note:	Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex — you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the `fast-import` man page for details about how to provide your data in this manner.-->
+<p>Anmerkung: Da viele Systeme ihre Revisionen als Änderungen von einem Commit zu einem anderen betrachten, kann <code>fast-import</code> auch mit jedem Commit Kommandos entgegennehmen, die angeben, welche Dateien geändert, entfernt oder verändert wurden und was der neue Inhalt ist. Wir könnten die Unterschiede zwischen den Snapshots berechnen und nur diese Daten bereitstellen, aber das zu tun ist komplizierter — Du kannst Git auch einfach alle Daten füttern und es kümmert sich dann darum. Wenn dieses Vorgehen eher zu Deinen Daten passt, schau Dir die <code>fast-import</code> man-Seite an, um Details darüber zu erfahren, wie diese Daten dafür bereitgestellt werden müssen.</p>
+<!--The format for listing the new file contents or specifying a modified file with the new contents is as follows:-->
+<p>Das Format, in dem die Inhalte einer neuen Datei oder in eine geänderte Datei mit ihrem neuen Inhalt angegeben werden, sieht wie folgt aus:</p>
 
 <pre><code>M 644 inline path/to/file
 data (size)
 (file contents)</code></pre>
-
-<p>Here, 644 is the mode (if you have executable files, you need to detect and specify 755 instead), and inline says you’ll list the contents immediately after this line. Your <code>inline_data</code> method looks like this:</p>
+<!--Here, 644 is the mode (if you have executable files, you need to detect and specify 755 instead), and inline says you’ll list the contents immediately after this line. Your `inline_data` method looks like this:-->
+<p>In diesem Beispiel ist 644 der Datei-Modus (wenn Du ausführbare Dateien hast, wirst Du möglicherweise 755 sehen bzw. einstellen), und inline gibt an, dass Du die Inhalte direkt im Anschluss an diese Zeile aufführen wirst. Deine <code>inline_data</code>-Methode sieht so aus:</p>
 
 <pre><code>def inline_data(file, code = &#39;M&#39;, mode = &#39;644&#39;)
   content = File.read(file)
   puts &quot;#{code} #{mode} inline #{file}&quot;
   export_data(content)
 end</code></pre>
-
-<p>You reuse the <code>export_data</code> method you defined earlier, because it’s the same as the way you specified your commit message data.</p>
-
-<p>The last thing you need to do is to return the current mark so it can be passed to the next iteration:</p>
+<!--You reuse the `export_data` method you defined earlier, because it’s the same as the way you specified your commit message data.-->
+<p>Du kannst die <code>export_data</code>-Methode, die Du vorher definiert hast, wiederverwenden, da wir das auf die gleiche Weise lösen, wie wir die Daten für die Commit-Nachrichten aufbereitet haben.</p>
+<!--The last thing you need to do is to return the current mark so it can be passed to the next iteration:-->
+<p>Das letzte, das wir jetzt noch machen müssen, ist, die gegenwärtige Marke zurückzugeben, damit sie an den nächsten Durchlauf übergeben werden kann.</p>
 
 <pre><code>return mark</code></pre>
-
-<p>That’s it. If you run this script, you’ll get content that looks something like this:</p>
+<!--That’s it. If you run this script, you’ll get content that looks something like this:-->
+<p>Das ist alles. Wenn Du diese Skript laufen lässt, wirst Du eine Ausgabe erhalten, die etwa wie folgt aussieht:</p>
 
 <pre><code>$ ruby import.rb /opt/import_from
 commit refs/heads/master
@@ -280,8 +280,8 @@ M 644 inline new.rb
 data 16
 new version one
 (...)</code></pre>
-
-<p>To run the importer, pipe this output through <code>git fast-import</code> while in the Git directory you want to import into. You can create a new directory and then run <code>git init</code> in it for a starting point, and then run your script:</p>
+<!--To run the importer, pipe this output through `git fast-import` while in the Git directory you want to import into. You can create a new directory and then run `git init` in it for a starting point, and then run your script:-->
+<p>Du lässt den Importer laufen und leitest, während Du Dich in dem Verzeichnis befindest, das Du importieren willst, die Ausgabe durch eine Pipe zu <code>git fast-import</code> um. Als Anfang kannst Du ein neues Verzeichnis anlegen und darin <code>git init</code> laufen lassen und ans — chließend das Skript starten:</p>
 
 <pre><code>$ git init
 Initialized empty Git repository in /opt/import_to/.git/
@@ -309,8 +309,8 @@ pack_report: pack_mmap_calls          =          5
 pack_report: pack_open_windows        =          1 /          1
 pack_report: pack_mapped              =       1356 /       1356
 ---------------------------------------------------------------------</code></pre>
-
-<p>As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run <code>git log</code> to see your new history:</p>
+<!--As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run `git log` to see your new history:-->
+<p>Wie Du sehen kannst, gibt es Dir, sobald es erfolgreich durchgelaufen ist, eine ganze Menge Angaben darüber, was es durchgeführt hat. In diesem Beispiel, haben wir insgesamt 18 Objekte für 5 Commits in einen Zweig importiert. Jetzt kannst Du <code>git log</code> ausführen, um die neue History einzusehen:</p>
 
 <pre><code>$ git log -2
 commit 10bfe7d22ce15ee25b60a824c8982157ca593d41
@@ -324,16 +324,16 @@ Author: Scott Chacon &lt;schacon@example.com&gt;
 Date:   Tue Feb 3 01:00:00 2009 -0700
 
     imported from back_2009_02_03</code></pre>
-
-<p>There you go — a nice, clean Git repository. It’s important to note that nothing is checked out — you don’t have any files in your working directory at first. To get them, you must reset your branch to where <code>master</code> is now:</p>
+<!--There you go — a nice, clean Git repository. It’s important to note that nothing is checked out — you don’t have any files in your working directory at first. To get them, you must reset your branch to where `master` is now:-->
+<p>Na also — jetzt haben wir ein schickes, sauberes Git-Repository. Dabei ist es wichtig, dass noch nichts ausgecheckt ist — zu Beginn hast Du keinerlei Dateien in Deinem Arbeitsverzeichnis. Um an sie heran zu kommen, musst Du Deinen Zweig dahin zurücksetzen, wo sich <code>master</code> gerade befindet:</p>
 
 <pre><code>$ ls
 $ git reset --hard master
 HEAD is now at 10bfe7d imported from current
 $ ls
 file.rb  lib</code></pre>
-
-<p>You can do a lot more with the <code>fast-import</code> tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the <code>contrib/fast-import</code> directory of the Git source code; one of the better ones is the <code>git-p4</code> script I just covered.</p>
+<!--You can do a lot more with the `fast-import` tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the `contrib/fast-import` directory of the Git source code; one of the better ones is the `git-p4` script I just covered.-->
+<p>Du kannst noch ne ganze Menge mehr mit dem <code>fast-import</code>-Tool anstellen — es kann verschiedene Modi behandeln, Binärdaten, mehrere Zweige sowie Merges, Tags, Fortschrittsbalken und mehr. Eine Reihe von Beispielen komplexerer Szenarios werden im <code>contrib/fast-import</code>-Verzeichnis des Git-Quellcodes bereitgestellt; eines der besseren ist das <code>git-p4</code>-Skript, das ich gerade behandelt habe.</p>
 
 <div id='nav'>
 <a href='ch8-1.html'>prev</a> | <a href='ch8-3.html'>next</a>

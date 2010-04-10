@@ -1,0 +1,30 @@
+---
+layout: translation
+title: Pro Git 9.1 Les trippes de Git Plomberie et porcelaine
+---
+<h2 id='plomberie_et_porcelaine'>Plomberie et porcelaine</h2>
+
+<p>Ce livre couvre l&#8217;utilisation de Git avec une trentaine de verbes comme <code>checkout</code>, <code>branch</code>, <code>remote</code> &#8230; Mais, puisque Git était initialement une boîte à outils (N.d.T : Toolkit) pour VCS, plutôt d&#8217;un VCS complet et conviviale, il dispose de tout un ensemble d&#8217;action pour les tâches bas niveau qui étaient conçues pour être liées à la UNIX ou appelées depuis de scripts. Ces commandes sont dites commandes de &#8220;plomberie&#8221; (N.d.T &#8220;plumbing&#8221;), et les autres, plus conviviales sont appelées &#8220;porcelaines&#8221; (N.d.T : &#8220;porcelain&#8221;).</p>
+
+<p>Les huit premiers chapitres du livre concernent presque exclusivement les commandes porcelaine. Par contre, dans ce chapitre, vous serez principalement confrontés aux commandes de plomberie bas niveaux, car elles vous donnent accès au fonctionnement interne de Git et aident à montrer comment et pourquoi Git fonctionne comme il le fait. Ces commandes ne sont pas faites pour être utilisées à la main sur ligne de commandes, mais sont plutôt utilisées comme briques de bases pour écrire de nouveaux outils et scripts personnalisés.</p>
+
+<p>Quand vous exécutez <code>git init</code> dans un répertoire nouveau ou existant, Git crée un répertoire <code>.git</code> qui contient presque tout ce que Git stocke et manipule. Si vous voulez sauvegarder ou cloner votre dépôt, copier ce seul répertoire suffira presque. Ce chapitre traite principalement de ce que contient ce répertoire. Voici à quoi il ressemble :</p>
+
+<pre><code>$ ls 
+HEAD
+branches/
+config
+description
+hooks/
+index
+info/
+objects/
+refs/</code></pre>
+
+<p>Vous y verrez sans doute d&#8217;autres fichiers, mais ceci est un dépôt qui vient d&#8217;être crée avec <code>git init</code>, et c&#8217;est ce que vous verrez par défaut. Le répertoire <code>branches</code> n&#8217;est pas utilisé par les versions récentes de Git, et le fichier <code>description</code> est utilisé uniquement par le programme GitWeb, il ne faut donc pas s&#8217;en soucier. Le fichier <code>config</code> contient les options de configuration spécifiques à votre projet, et le répertoire <code>info</code> contient un fichier listant les motifs que vous souhaitez ignorer et que vous ne voulez pas mettre dans un fichier .gitignore. Le répertoire <code>hooks</code> contient les scripts hooks??? (point d&#8217;ancrage/) côté client ou serveur, Ils sont décrits en détail dans le chapitre 6.</p>
+
+<p>Il reste quatre éléments importants : les fichiers <code>HEAD</code> et <code>index</code>, ainsi que les répertoires <code>objects</code> et <code>refs</code>. Ce sont les parties centrales de Git. Le répertoire <code>objects</code> stocke le contenu de votre base de données, le répertoire <code>refs</code> stocke les pointeurs vers les objets commit de ces données (branches), le fichier <code>HEAD</code> pointe sur la branche qui est checked out???, et le fichier <code>index</code> est l&#8217;endroit où Git stocke les informations sur l&#8217;index???(staging area). Vous allez maintenant plonger en détail dans chacune de ces sections et voir comment Git fonctionne.</p>
+
+<div id='nav'>
+<a href='ch9-0.html'>prev</a> | <a href='ch9-2.html'>next</a>
+</div>

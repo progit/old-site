@@ -15,28 +15,52 @@ title: Pro Git 3.5 Git Branching Branching Workflows
 <p>Viele Git Entwickler verwenden einen Workflow, der den Ansatz unterstützt, der nur stabilen Code in der <code>master</code> Branch hält - möglicherweise nur Code, der released wurde oder werden kann. Sie führen parallel eine andere Branch zum Arbeiten oder Testen. Wenn diese einen stabilen Status erreicht, kann sie mit der <code>master</code> Branch zusammengeführt werden. Dies findet bei Themen bezogenen Branchen (kurzfristige Branches, wie die zuvor genante <code>iss53</code> Branch) Anwendung, um sicherzustellen, dass diese die Tests bestehen und keine Fehler verursachen. Many Git developers have a workflow that embraces this approach, such as having only code that is entirely stable in their <code>master</code> branch — possibly only code that has been or will be released. They have another parallel branch named develop or next that they work from or use to test stability — it isn’t necessarily always stable, but whenever it gets to a stable state, it can be merged into <code>master</code>. It’s used to pull in topic branches (short-lived branches, like your earlier <code>iss53</code> branch) when they’re ready, to make sure they pass all the tests and don’t introduce bugs.</p>
 
 <p>In Realität reden wir über sich bewegende Pointer, die die Commit Linie weiter wandern. The stabilen Branches liegen unten und die bleeding-edge Branches weiter oben in der Zeitlinie (siehe Abbildung 3-18). In reality, we’re talking about pointers moving up the line of commits you’re making. The stable branches are farther down the line in your commit history, and the bleeding-edge branches are farther up the history (see Figure 3-18).</p>
+<!--
+    TODO    progress-begin: 2010-03-25 - florianb
+-->
+<p><center><img src="/figures/ch3/18333fig0318-tn.png"></center><br/> Abbildung 3-18. Stabilere Branches sind generell weiter unten im Entwicklungsverlauf. Figure 3-18. More stable branches are generally farther down the commit history.</p>
 
-<p><center><img src="/figures/ch3/18333fig0318-tn.png"></center><br/> Figure 3-18. More stable branches are generally farther down the commit history.</p>
+<p>Es ist gemeinhin leichter sich die verschiedenen Branches als Arbeitsdepots vorzustellen, in denen Sätze von Commits in stabilere Depots aufsteigen, sobald sie ausreichend getestet wurden (siehe Abbildung 3-19).</p>
 
 <p>It’s generally easier to think about them as work silos, where sets of commits graduate to a more stable silo when they’re fully tested (see Figure 3-19).</p>
 
-<p><center><img src="/figures/ch3/18333fig0319-tn.png"></center><br/> Figure 3-19. It may be helpful to think of your branches as silos.</p>
+<p><center><img src="/figures/ch3/18333fig0319-tn.png"></center><br/> Abbildung 3-19. Es könnte hilfreich sein, sich die Branches als Depots vorzustellen. Figure 3-19. It may be helpful to think of your branches as silos.</p>
+
+<p>Das lässt sich für beliebig viele Stabilitätsabstufungen umsetzen. Manche größeren Projekte haben auch einen <code>proposed</code> (Vorgeschlagen) oder <code>pu</code> (vorgeschlagene Updates) Zweig mit Branches die vielleicht noch nicht bereit sind in den <code>next</code>- oder <code>master</code>-Branch integriert zu werden. Die Idee dahinter ist, dass deine Branches verschiedene Stabilitätsabstufungen repräsentieren. Sobald sie eine stabilere Stufe erreichen, werden sie in den nächsthöheren Branch vereinigt. Nochmal, langfristig verschiedene Branches paralell laufen zu lassen ist nicht notwendig, aber oft hilfreich. Insbesondere wenn man es mit sehr großen oder komplexen Projekten zu tun hat.</p>
 
 <p>You can keep doing this for several levels of stability. Some larger projects also have a <code>proposed</code> or <code>pu</code> (proposed updates) branch that has integrated branches that may not be ready to go into the <code>next</code> or <code>master</code> branch. The idea is that your branches are at various levels of stability; when they reach a more stable level, they’re merged into the branch above them. Again, having multiple long-running branches isn’t necessary, but it’s often helpful, especially when you’re dealing with very large or complex projects.</p>
 
+<h3 id='themenbranches'>Themen-Branches</h3>
+
 <h3 id='topic_branches'>Topic Branches</h3>
+
+<p>Themen-Branches sind in jedem Projekt nützlich, gleich welcher Größe. Ein Themen-Branch ist ein kurzlebiger Zweig den du für eine spezielle Aufgabe oder ähnliche Arbeiten erstellst und benutzt. Das ist vielleicht etwas was du noch nie zuvor mit einem Versionierungssystem gemacht hast, weil es normalerweise zu aufwändig und mühsam ist Branches zu erstellen und zusammenzuführen. Mit Git ist es allerdings vollkommen geläufig am mehrmals am Tag Branches zu erstellen, an ihnen zu arbeiten, sie zusammenzuführen und sie anschließend wieder zu löschen.</p>
 
 <p>Topic branches, however, are useful in projects of any size. A topic branch is a short-lived branch that you create and use for a single particular feature or related work. This is something you’ve likely never done with a VCS before because it’s generally too expensive to create and merge branches. But in Git it’s common to create, work on, merge, and delete branches several times a day.</p>
 
+<p>Du hast das im letzten Abschnitt an den von dir erstellten <code>iss53</code>- und <code>hotfix</code>-Branches gesehen. Du hast mehrere Commits auf sie angewendet und sie unmittelbar nach Zusammenführung mit deinem Hauptzweig gelöscht. Diese Technik erlaubt es dir schnell und vollständig den Kontext zu wechseln. Da deine Arbeit in verschiedene Depots aufgeteilt ist, in denen alle Änderungen unter die Thematik dieses Branches fallen, ist es leichter nachzuvollziehen was bei Code-Überprüfungen und ähnlichem geschehen ist.</p>
+
 <p>You saw this in the last section with the <code>iss53</code> and <code>hotfix</code> branches you created. You did a few commits on them and deleted them directly after merging them into your main branch. This technique allows you to context-switch quickly and completely — because your work is separated into silos where all the changes in that branch have to do with that topic, it’s easier to see what has happened during code review and such. You can keep the changes there for minutes, days, or months, and merge them in when they’re ready, regardless of the order in which they were created or worked on.</p>
 
-<p>Consider an example of doing some work (on <code>master</code>), branching off for an issue (<code>iss91</code>), working on it for a bit, branching off the second branch to try another way of handling the same thing (<code>iss91v2</code>), going back to your master branch and working there for a while, and then branching off there to do some work that you’re not sure is a good idea (<code>dumbidea</code> branch). Your commit history will look something like Figure 3-20.</p>
+<p>Stell dir du arbeitest ein bisschen (in <code>master</code>), erstellst mal eben einen Branch für einen Fehler (<code>iss91</code>), arbeitest an dem für eine Weile, erstellst einen zweiten Branch um eine andere Problemlösung für den selben Fehler auszuprobieren (<code>iss91v2</code>), wechselst zurück zu deinem MASTER-Branch, arbeitest dort ein bisschen und machst dann einen neuen Branch für etwas, wovon du nicht weißt ob&#8217;s eine gute Idee ist (<code>dumbidea</code>-Branch). Dein Commit-Verlauf wird wie in Abbildung 3-20 aussehen.</p>
 
-<p><center><img src="/figures/ch3/18333fig0320-tn.png"></center><br/> Figure 3-20. Your commit history with multiple topic branches</p>
+<p>Consider an example of doing some work (on <code>master</code>), branching off for an issue (<code>iss91</code>), working on it for a bit, branching off the second branch to try another way of handling the same thing (<code>iss91v2</code>), going back to your master branch and working there for a while, and then branching off there to do some work that you’re not sure is a good idea (<code>dumbidea</code> branch). Your commit history will look something like Figure 3-20. <!--
+    TODO    progress-end: 2010-03-25 - florianb
+--> <!--
+    TODO    progress-begin: 2010-03-31 - florianb
+--></p>
+
+<p><center><img src="/figures/ch3/18333fig0320-tn.png"></center><br/> Abbildung 3-20. Dein Commit-Verlauf mit verschiedenen Themen-Branches.</p>
+
+<p>Figure 3-20. Your commit history with multiple topic branches</p>
+
+<p>Nun, sagen wir du hast dich entschieden die zweite Lösung des Fehlers (<code>iss91v2</code>) zu bevorzugen, außerdem hast den <code>dumbidea</code>-Branch deinen Mitarbeitern gezeigt und es hat sich herausgestellt das er genial ist. Du kannst also den ursprünglichen <code>iss91</code>-Branch (unter Verlust der Commits C5 und C6) wegschmeißen und die anderen Beiden vereinen. Dein Verlauf sieht dann aus wie in Abbildung 3-21.</p>
 
 <p>Now, let’s say you decide you like the second solution to your issue best (<code>iss91v2</code>); and you showed the <code>dumbidea</code> branch to your coworkers, and it turns out to be genius. You can throw away the original <code>iss91</code> branch (losing commits C5 and C6) and merge in the other two. Your history then looks like Figure 3-21.</p>
 
-<p><center><img src="/figures/ch3/18333fig0321-tn.png"></center><br/> Figure 3-21. Your history after merging in dumbidea and iss91v2</p>
+<p><center><img src="/figures/ch3/18333fig0321-tn.png"></center><br/> Abbildung 3-21. Dein Verlauf nach Zusammenführung von <code>dumbidea</code> und <code>iss91v2</code>. Figure 3-21. Your history after merging in dumbidea and iss91v2</p>
+
+<p>Es ist wichtig sich daran zu erinnern, dass all diese Branches komplett lokal sind. Wenn du verzweigst (branchst) und zusammenführst (mergest), findet dies nur in deinem Git-Repository statt - es findet keine Server-Kommunikation statt.</p>
 
 <p>It’s important to remember when you’re doing all this that these branches are completely local. When you’re branching and merging, everything is being done only in your Git repository — no server communication is happening.</p>
 

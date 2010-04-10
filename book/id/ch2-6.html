@@ -1,22 +1,22 @@
 ---
 layout: translation
-title: Pro Git 2.6 Dasar-dasar Git Tagging
+title: Pro Git 2.6 Dasar-dasar Git Menandai
 ---
-<h2 id='tagging'>Tagging</h2>
+<h2 id='menandai'>Menandai</h2>
 
-<p>Like most VCSs, Git has the ability to tag specific points in history as being important. Generally, people use this functionality to mark release points (v1.0, and so on). In this section, you’ll learn how to list the available tags, how to create new tags, and what the different types of tags are.</p>
+<p>Seperti kebanyakan VCS, Git memiliki kemampuan untuk menandai titik tertentu dalam sejarah sebagai sesuatu yang penting. Biasanya, orang menggunakan fungsi ini untuk menandai titik-titik pelepasan (v1.0, dan seterusnya). Pada bagian ini, Anda akan belajar untuk melihat tanda-tanda yang telah ada, bagaimana membuat tanda baru, dan perbedaan dari beberapa tipe tanda.</p>
 
-<h3 id='listing_your_tags'>Listing Your Tags</h3>
+<h3 id='melihat_daftar_tanda_anda'>Melihat Daftar Tanda Anda</h3>
 
-<p>Listing the available tags in Git is straightforward. Just type <code>git tag</code>:</p>
+<p>Melihat daftar tanda yang sudah ada di GIT tidak berbelit-belit. Ketikkan <code>git tag</code>:</p>
 
 <pre><code>$ git tag
 v0.1
 v1.3</code></pre>
 
-<p>This command lists the tags in alphabetical order; the order in which they appear has no real importance.</p>
+<p>Perintah ini memperlihatkan tanda-tanda yang diurutkan secara alfabetis; urutan yang terlihat ini tidak memiliki kepentingan nyata tertentu.</p>
 
-<p>You can also search for tags with a particular pattern. The Git source repo, for instance, contains more than 240 tags. If you’re only interested in looking at the 1.4.2 series, you can run this:</p>
+<p>Anda dapat juga mencari tanda dengan pola tertentu. Repositori kode Git, sebagai contoh, mengandung lebih dari 240 tanda. Jika Anda hanya tertarik untuk melihat seri dari 1.4.2, Anda dapat menjalankan:</p>
 
 <pre><code>$ git tag -l &#39;v1.4.2.*&#39;
 v1.4.2.1
@@ -24,13 +24,13 @@ v1.4.2.2
 v1.4.2.3
 v1.4.2.4</code></pre>
 
-<h3 id='creating_tags'>Creating Tags</h3>
+<h3 id='membuat_tetanda'>Membuat Tetanda</h3>
 
-<p>Git uses two main types of tags: lightweight and annotated. A lightweight tag is very much like a branch that doesn’t change — it’s just a pointer to a specific commit. Annotated tags, however, are stored as full objects in the Git database. They’re checksummed; contain the tagger name, e-mail, and date; have a tagging message; and can be signed and verified with GNU Privacy Guard (GPG). It’s generally recommended that you create annotated tags so you can have all this information; but if you want a temporary tag or for some reason don’t want to keep the other information, lightweight tags are available too.</p>
+<p>Git membagi tetanda dalam 2 tipe utama: ringan dan bercatatan. Tipe tetanda ringan sangat mirip dengan sebuah cabang yang tidak pernah berubah - tetanda hanya sebagai penunjuk ke commit tertentu. Di lain pihak, tipe tetanda bercatatan disimpan sebagai obyek penuh di dalam basis data Git. Tetanda ini di-checksum; mengandung nama penanda, email dan tanggal; memiliki pesan penandaan; dan dapat ditandatangani dan diverifikasi menggunakan GNU Privacy Guard (GPG). Anda pada umumnya direkomendasikan untuk membuat tetanda bercatatan sehingga Anda dapat memiliki semua informasi ini; tetapi jika Anda hanya menginginkan tetanda sementara atau untuk alasan tertentu tidak ingin menyimpan informasi lain yang lebih detil, tetanda ringan juga tersedia.</p>
 
-<h3 id='annotated_tags'>Annotated Tags</h3>
+<h3 id='tetanda_bercatatan'>Tetanda Bercatatan</h3>
 
-<p>Creating an annotated tag in Git is simple. The easiest way is to specify <code>-a</code> when you run the <code>tag</code> command:</p>
+<p>Membuat sebuah tetanda bercatatan dalam Git adalah mudah. Cara termudah adalah dengan menggunakan parameter <code>-a</code> ketika Anda menjalankan perintah <code>tag</code>:</p>
 
 <pre><code>$ git tag -a v1.4 -m &#39;my version 1.4&#39;
 $ git tag
@@ -38,9 +38,9 @@ v0.1
 v1.3
 v1.4</code></pre>
 
-<p>The <code>-m</code> specifies a tagging message, which is stored with the tag. If you don’t specify a message for an annotated tag, Git launches your editor so you can type it in.</p>
+<p>Parameter <code>-m</code> untuk mendefinikasn pesan penandaan, yang disimpan bersamaan dengan tanda. Jika Anda tidak mencantumkan pesan untuk tanda bercatatan, Git akan menjalankan editor Anda sehingga Anda dapat mengetikkannya di sana.</p>
 
-<p>You can see the tag data along with the commit that was tagged by using the <code>git show</code> command:</p>
+<p>Anda dapat melihat data dari tanda tadi beserta commit yang ditandainya dengan menggunakan perintah <code>git show</code>:</p>
 
 <pre><code>$ git show v1.4
 tag v1.4
@@ -55,18 +55,18 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
     Merge branch &#39;experiment&#39;</code></pre>
 
-<p>That shows the tagger information, the date the commit was tagged, and the annotation message before showing the commit information.</p>
+<p>Terlihat informasi penanda, tanggal dilakukan penandaan terhadap commit, dan catatan sebelum Git menampilkan informasi commitnya.</p>
 
-<h3 id='signed_tags'>Signed Tags</h3>
+<h3 id='tetanda_tertandatangani'>Tetanda Tertandatangani</h3>
 
-<p>You can also sign your tags with GPG, assuming you have a private key. All you have to do is use <code>-s</code> instead of <code>-a</code>:</p>
+<p>Anda dapat juga menandatangani tetanda Anda menggunakan GPG, diasumsikan bahwa Anda telah memiliki kunci pribadi (private key). Yang perlu Anda lakukan adalah mengganti <code>a</code> dengan <code>-s</code>:</p>
 
 <pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
 You need a passphrase to unlock the secret key for
 user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
 1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
 
-<p>If you run <code>git show</code> on that tag, you can see your GPG signature attached to it:</p>
+<p>Jika Anda menjalankan <code>git show</code> terhadap tag tadi, Anda akan melihat tanda tangan GPG Anda terlampir di sana:</p>
 
 <pre><code>$ git show v1.5
 tag v1.5
@@ -88,11 +88,11 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
     Merge branch &#39;experiment&#39;</code></pre>
 
-<p>A bit later, you’ll learn how to verify signed tags.</p>
+<p>Sebentar lagi, Anda akan belajar untuk memverifikasi tanda tertandatangani.</p>
 
-<h3 id='lightweight_tags'>Lightweight Tags</h3>
+<h3 id='tetanda_ringan'>Tetanda Ringan</h3>
 
-<p>Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept. To create a lightweight tag, don’t supply the <code>-a</code>, <code>-s</code>, or <code>-m</code> option:</p>
+<p>Cara lain untuk menandai sebuah commit adalah dengan sebuah tanda ringan. Pada dasarnya tetanda ini adalah checksum dari commit yang disimpan di dalam berkas - tanpa informasi lain. Untuk membuat tetanda ringan ini, jangan cantumkan parameter <code>-a</code>, <code>-s</code> ataupun <code>-m</code>.</p>
 
 <pre><code>$ git tag v1.4-lw
 $ git tag
@@ -102,7 +102,7 @@ v1.4
 v1.4-lw
 v1.5</code></pre>
 
-<p>This time, if you run <code>git show</code> on the tag, you don’t see the extra tag information. The command just shows the commit:</p>
+<p>Pada saat ini, jika Anda menjalankan <code>git show</code> pada tag tersebut, Anda tidak akan melihat informasi lebih. Perinta tersebut hanya akan menampilkan commitnya.</p>
 
 <pre><code>$ git show v1.4-lw
 commit 15027957951b64cf874c3557a0f3547bd83b3ff6
@@ -112,9 +112,9 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
     Merge branch &#39;experiment&#39;</code></pre>
 
-<h3 id='verifying_tags'>Verifying Tags</h3>
+<h3 id='memverifikasi_tetanda'>Memverifikasi Tetanda</h3>
 
-<p>To verify a signed tag, you use <code>git tag -v [tag-name]</code>. This command uses GPG to verify the signature. You need the signer’s public key in your keyring for this to work properly:</p>
+<p>Untuk memverifikasi sebuah tag bertandatangan, Anda menggunakan <code>git tag -v [nama-tag]</code>. Perintah ini akan menggunakan GPG untuk memverifikasi tanda tangannya. Anda membutuhkan kunci umum dari penandatangan di dalam keyring Anda agar dapat bekerja dengan benar:</p>
 
 <pre><code>$ git tag -v v1.4.2.1
 object 883653babd8ee7ea23e6a5c392bb739348b1eb61
@@ -130,15 +130,15 @@ gpg: Good signature from &quot;Junio C Hamano &lt;junkio@cox.net&gt;&quot;
 gpg:                 aka &quot;[jpeg image of size 1513]&quot;
 Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A</code></pre>
 
-<p>If you don’t have the signer’s public key, you get something like this instead:</p>
+<p>Jika Anda tidak memiliki kunci umum dari penandatangan, Anda akan melihat serupa ini:</p>
 
 <pre><code>gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
 gpg: Can&#39;t check signature: public key not found
 error: could not verify the tag &#39;v1.4.2.1&#39;</code></pre>
 
-<h3 id='tagging_later'>Tagging Later</h3>
+<h3 id='mengakhirkan_penandaan'>Mengakhirkan Penandaan</h3>
 
-<p>You can also tag commits after you’ve moved past them. Suppose your commit history looks like this:</p>
+<p>Anda dapat juga menandai commit walaupun Anda telah pindah melewatinya. Misalnya catatan sejarah commit Anda tampak seperti berikut:</p>
 
 <pre><code>$ git log --pretty=oneline
 15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch &#39;experiment&#39;
@@ -152,11 +152,11 @@ a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
 964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
 8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme</code></pre>
 
-<p>Now, suppose you forgot to tag the project at v1.2, which was at the &#8220;updated rakefile&#8221; commit. You can add it after the fact. To tag that commit, you specify the commit checksum (or part of it) at the end of the command:</p>
+<p>Sekarang, misalnya Anda lupa untuk menandai proyek di v1.2, yang sebetulnya terletak di commit &#8220;update rakefile&#8221;. Anda dapat menambahkannya. Untuk menandai commit tersebut, Anda mencantumkan checksum dari commit tersebut (atau bagian darinya) di bagian akhir dari perintah:</p>
 
 <pre><code>$ git tag -a v1.2 9fceb02</code></pre>
 
-<p>You can see that you’ve tagged the commit:</p>
+<p>Anda dapat melihat bahwa commit tersebut telah ditandai.</p>
 
 <pre><code>$ git tag 
 v0.1
@@ -179,9 +179,9 @@ Date:   Sun Apr 27 20:43:35 2008 -0700
     updated rakefile
 ...</code></pre>
 
-<h3 id='sharing_tags'>Sharing Tags</h3>
+<h3 id='membagi_tetanda'>Membagi Tetanda</h3>
 
-<p>By default, the <code>git push</code> command doesn’t transfer tags to remote servers. You will have to explicitly push tags to a shared server after you have created them. This process is just like sharing remote branches – you can run <code>git push origin [tagname]</code>.</p>
+<p>Secara default, perintah <code>git push</code> tidak memindahkan tetanda ke server berjarak. Anda harus secara eksplisit mendorong tetanda ke server bersama setelah Anda membuatnya. Proses ini sama seperti membagi cabang berjarak - Anda dapat menjalankan <code>git push origin [nama-tag]</code>.</p>
 
 <pre><code>$ git push origin v1.5
 Counting objects: 50, done.
@@ -191,7 +191,7 @@ Total 44 (delta 18), reused 8 (delta 1)
 To git@github.com:schacon/simplegit.git
 * [new tag]         v1.5 -&gt; v1.5</code></pre>
 
-<p>If you have a lot of tags that you want to push up at once, you can also use the <code>--tags</code> option to the <code>git push</code> command. This will transfer all of your tags to the remote server that are not already there.</p>
+<p>Jika Anda memiliki banyak tanda yang ingin Anda dorong sekaligus, Anda dapat juga menggunakan opsi <code>--tags</code> terhadap perintah <code>git push</code>. Hal ini akan memindahkan semua tetanda Anda yang belum terpindahkan ke server berjarak.</p>
 
 <pre><code>$ git push origin --tags
 Counting objects: 50, done.
@@ -205,7 +205,7 @@ To git@github.com:schacon/simplegit.git
  * [new tag]         v1.4-lw -&gt; v1.4-lw
  * [new tag]         v1.5 -&gt; v1.5</code></pre>
 
-<p>Now, when someone else clones or pulls from your repository, they will get all your tags as well.</p>
+<p>Saat ini, ketika orang lain menduplikasi atau menarik dari repositori Anda, Mereka akan mendapatkan semua tetanda Anda juga.</p>
 
 <div id='nav'>
 <a href='ch2-5.html'>prev</a> | <a href='ch2-7.html'>next</a>

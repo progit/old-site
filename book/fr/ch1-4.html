@@ -1,0 +1,70 @@
+---
+layout: translation
+title: Pro Git 1.4 Démarrage rapide Installation de Git
+---
+<h2 id='installation_de_git'>Installation de Git</h2>
+
+<p>Commençons donc à utiliser Git. La première chose à faire est de l&#8217;installer. Vous pouvez l&#8217;obtenir par de nombreuses manières ; les deux principales sont de l&#8217;installer à partir des sources ou d&#8217;installer un paquet existant sur votre plate-forme.</p>
+
+<h3 id='installation_depuis_les_sources'>Installation depuis les sources</h3>
+
+<p>Si vous le pouvez, il est généralement conseillé d&#8217;installer Git à partir des sources, car vous obtiendrez la version la plus récente. Chaque nouvelle version de Git tend à inclure des améliorations utiles de l&#8217;interface utilisateur, donc récupérer la toute dernière version est souvent la meilleure option si vous savez compiler des logiciels à partir des sources. Comme la plupart du temps les distributions contiennent des version très anciennes de logiciels, à moins que vous ne travailliez sur une distribution très récente ou que vous n&#8217;utilisiez des backports, une installation à partir des sources peut être le meilleur choix.</p>
+
+<p>Pour installer Git, vous avez besoin des bibliothèques suivantes : curl, zlib, openssl, expat, libiconv. Par exemple, si vous avez un système d&#8217;exploitation qui utilise yum (tel que Fedora) ou apt-get (tel qu&#8217;un système basé sur Debian), vous pouvez utiliser l&#8217;une des commandes suivantes pour installer les dépendances :</p>
+
+<pre><code>$ yum install curl-devel expat-devel gettext-devel \
+  openssl-devel zlib-devel
+
+$ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
+  libz-dev</code></pre>
+
+<p>Quand vous avez toutes les dépendances nécessaires, vous pouvez poursuivre et télécharger la dernière version de Git depuis le site :</p>
+
+<pre><code>http://git-scm.com/download</code></pre>
+
+<p>Puis, compiler et installer :</p>
+
+<pre><code>$ tar -zxf git-1.6.0.5.tar.gz
+$ cd git-1.6.0.5
+$ make prefix=/usr/local all
+$ sudo make prefix=/usr/local install</code></pre>
+
+<p>Après ceci, vous pouvez obtenir Git par Git lui-même pour les mises à jour :</p>
+
+<pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
+
+<h3 id='installation_sur_linux'>Installation sur Linux</h3>
+
+<p>Si vous souhaitez installer Git sur Linux via un installateur d&#8217;application, vous pouvez généralement le faire via le système de gestion de paquet de base fourni avec votre distribution. Si vous êtes sur Fedora, vous pouvez utiliser yum :</p>
+
+<pre><code>$ yum install git-core</code></pre>
+
+<p>Si vous êtes sur un système basé sur Debian, tel qu&#8217;Ubuntu, essayez apt-get :</p>
+
+<pre><code>$ apt-get install git-core</code></pre>
+
+<h3 id='installation_sur_mac'>Installation sur Mac</h3>
+
+<p>Il y a deux moyens simples d&#8217;installer Git sur Mac. Le plus simple et d&#8217;utiliser l&#8217;installateur graphique de Git que vous pouvez télécharger depuis les pages Google Code (voir figure 1-7) :</p>
+
+<pre><code>http://code.google.com/p/git-osx-installer</code></pre>
+
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Installateur OS X de Git.</p>
+
+<p>L&#8217;autre méthode consiste à installer Git par les MacPorts (<code>http://www.macports.org</code>). Si vous avez installé MacPorts, installez Git par :</p>
+
+<pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
+
+<p>Vous n&#8217;avez pas à ajouter tous les extras, mais vous souhaiterez sûrement inclure +svn si vous êtes amené à utiliser Git avec des dépôts Subversion (voir chapitre 8).</p>
+
+<h3 id='installation_sur_windows'>Installation sur Windows</h3>
+
+<p>Installer Git sur Windows est très facile. Le projet msysGit fournit une des procédures d&#8217;installation les plus simples. Téléchargez simplement le fichier exe d&#8217;installateur depuis la page Google Code, et lancez-le :</p>
+
+<pre><code>http://code.google.com/p/msysgit</code></pre>
+
+<p>Après son installation, vous avez à la fois la version en ligne de commande (avec un client SSH utile pour la suite) ou l&#8217;interface graphique standard.</p>
+
+<div id='nav'>
+<a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>
+</div>

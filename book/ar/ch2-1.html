@@ -1,0 +1,43 @@
+---
+layout: translation
+title: Pro Git 2.1 مبادئ Git الحصول على repository لمشروعك بـ Git
+---
+<h2 id='__repository___git'>الحصول على repository لمشروعك بـ Git</h2>
+
+<p>يمكنك انشاء مشروع بـ git بإحدى طريقتين. الأولى تكمن في أن تبدأ بناء على مشروع أسبق أو مجلد على سبيل المثال يحوي ملفات وأن تستورد مافيه الى مشروعك الجديد. أو أن تستنسخ repository بـ git جاهزة من مخدم ما.</p>
+
+<h3 id='_repository____'>انشاء Repository في مجلد موجود مسبقاً</h3>
+
+<p>للبد بمتابعة تغيرات مشروع مسبق لديك بـ git، عليك الذهاب الى مجلد مشروعك ثم كتابة:</p>
+
+<pre><code>$ git init</code></pre>
+
+<p>يقوم هذا بانشاء مجلد فرعية جديد تحت اسم .git يحوي جميع المعلومات والملفات المطلوبة - هيكل repository بـ git. حتى الآن، لن يتم متابعة أي تغيرات تحصل على مشروعك (انظر الفصل التاسع لمعلومات أخرى عن الملفات الموجودة في مجلد <code>.git</code> الذي أنشأته قبل قليل).</p>
+
+<p>اذا أردت بمتابعة اصدارات الملفات الموجودة، يجب عليك البدء باخبار Git بهذه الملفات ومن ثم اجراء commit أولي. للقيام بهذا عليك استخدام أمر git add بالعدد الكافي بالملفات التي تريد، ومن ثم تتبعها أمر commit:</p>
+
+<pre><code>$ git add *.c
+$ git add README
+$ git commit –m &#39;initial project version&#39;</code></pre>
+
+<p>سنقوم بشرح هذه الأوامر في الفقرة القادمة، ولكن، الآن أصبحت التغيرات في مشروعك تتم متابعتها و commit أولي.</p>
+
+<h3 id='_repository__'>استنساخ repository موجودة مسبقاً</h3>
+
+<p>للقيام باستنساخ repository بـ git موجودة مسبقاً - مشروع تريد المساهمة فيه على سبيل المثال - الأمر الذي ستحتاجه هو git clone. اذا كنت قد استخدمت أحد أنظمة إدارة الإصدارات الأخرى مثل Subversion مثلاً، ستلاحظ الإختلاف بين الأمر clone في git وأمر checkout. هناك فرق مهم، عندما تقوم git بعملية clone فإنك ستحصل على نسخة من كامل المعلومات تقريباً الموجودة على مخدم الـ repository. جميع إصدارات الملفات كلها في تاريخ حياة المشروع. أي، وبمعنى آخر، اذا حدث عطل أو ضرر ما لملفات المشروع الموجودة على المخدم الأساسي يمكنك استخدام أي واحدة من النسخ لاسترجاع المشروع للحالة التي كان عليها عند استنساخه (من الممكن أن تخسر بعض الروابط من طرف المخدم، ولكن جميع معلومات الإصدارات ستكون موجودة- انظر الفصل الرابع لمعلومات اخرى).</p>
+
+<p>لاستنساخ repository يمكنك استخدام الأمر &#8216;git clone <span>url</span>&#8217; You clone a repository with <code>git clone [url]</code>. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
+
+<p>That creates a directory named &#8220;grit&#8221;, initializes a <code>.git</code> directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version. If you go into the new <code>grit</code> directory, you’ll see the project files in there, ready to be worked on or used. If you want to clone the repository into a directory named something other than grit, you can specify that as the next command-line option:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
+
+<p>That command does the same thing as the previous one, but the target directory is called mygrit.</p>
+
+<p>Git has a number of different transfer protocols you can use. The previous example uses the <code>git://</code> protocol, but you may also see <code>http(s)://</code> or <code>user@server:/path.git</code>, which uses the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can set up to access your Git repository and the pros and cons of each.</p>
+
+<div id='nav'>
+<a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>
+</div>

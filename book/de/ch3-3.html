@@ -43,12 +43,18 @@ title: Pro Git 3.3 Git Branching Basic Branching and Merging
 <h3 id='branching_grundlagen'>Branching Grundlagen</h3>
 
 <h3 id='basic_branching'>Basic Branching</h3>
-
-<p>Sagen wir, du hast an deinem Projekt gearbeitet und einige Commits bereits durchgeführt (siehe Abbildung 3-10). First, let’s say you’re working on your project and have a couple of commits already (see Figure 3-10).</p>
+<!--
+    TODO    progress-begin: 2010-03-25 - florianb
+-->
+<p>Sagen wir, du arbeitest an deinem Projekt und hast bereits einige Commits durchgeführt (siehe Abbildung 3-10). First, let’s say you’re working on your project and have a couple of commits already (see Figure 3-10).</p>
 
 <p><center><img src="/figures/ch3/18333fig0310-tn.png"></center><br/> Abbildung 3-10. Eine kurze, einfache Commit-Historie Figure 3-10. A short and simple commit history</p>
 
-<p>Du hast dich entschiden, am Issue #53 des Issue-Tracking-Systems XYZ deiner Firma zuarbeiten. Um es klarzustellen: Git ist an kein spezifisches Issue-Tracking-Systems gebunden, aber weil Issue #53 ein wichtiges Thema ist, willst du daran arbeiten und erstellst eine neue Branch , um daran zu arbeiten. Um die Branch zu erstellen und gleichzeitig zu ihr umzuschalten, kannst du das Kommando <code>git checkout</code> in Verbindung mitder Option <code>-b</code> verwenden: You’ve decided that you’re going to work on issue #53 in whatever issue-tracking system your company uses. To be clear, Git isn’t tied into any particular issue-tracking system; but because issue #53 is a focused topic that you want to work on, you’ll create a new branch in which to work. To create a branch and switch to it at the same time, you can run the <code>git checkout</code> command with the <code>-b</code> switch:</p>
+<p>Du hast dich dafür entschieden an dem Issue #53, des Issue-Trackers XY, zu arbeiten. Um eines klarzustellen, Git ist an kein Issue-Tracking-System gebunden. Da der Issue #53 allerdings ein Schwerpunktthema betrifft, wirst du einen neuen Branch erstellen um daran zu arbeiten. Um in einem Arbeitsschritt einen neuen Branch zu erstellen und zu aktivieren kannst du das Kommando <code>git checkout</code> mit der Option <code>-b</code> verwenden:</p>
+
+<p>Du hast dich entschiden, am Issue #53 des Issue-Tracking-Systems XYZ deiner Firma zuarbeiten. Um es klarzustellen: Git ist an kein spezifisches Issue-Tracking-Systems gebunden, aber weil Issue #53 ein wichtiges Thema ist, willst du daran arbeiten und erstellst eine neue Branch , um daran zu arbeiten. Um die Branch zu erstellen und gleichzeitig zu ihr umzuschalten, kannst du das Kommando <code>git checkout</code> in Verbindung mitder Option <code>-b</code> verwenden:</p>
+
+<p>You’ve decided that you’re going to work on issue #53 in whatever issue-tracking system your company uses. To be clear, Git isn’t tied into any particular issue-tracking system; but because issue #53 is a focused topic that you want to work on, you’ll create a new branch in which to work. To create a branch and switch to it at the same time, you can run the <code>git checkout</code> command with the <code>-b</code> switch:</p>
 
 <pre><code>$ git checkout -b iss53
 Switched to a new branch &quot;iss53&quot;</code></pre>
@@ -60,23 +66,35 @@ $ git checkout iss53</code></pre>
 
 <p>Abbildung 3-11 verdeutlicht das Ergebnis. Figure 3-11 illustrates the result.</p>
 
-<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> Abbildung 3-11. Erstellung eines neuen Branch-Pointers Figure 3-11. Creating a new branch pointer</p>
+<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> Abbildung 3-11. Erstellung eines neuen Branch-Zeigers Figure 3-11. Creating a new branch pointer</p>
 
-<p>Du arbeitest an deiner Web-Site und machst ein paar Commits. Dabei bewegt sich die <code>iss53</code> Branch vorwärts, da sie gerade deine aktuelle Branch ist (der HEAD Pointer verweist darauf, siehe Abbildung 3-12): You work on your web site and do some commits. Doing so moves the <code>iss53</code> branch forward, because you have it checked out (that is, your HEAD is pointing to it; see Figure 3-12):</p>
+<p>Du arbeitest an deiner Web-Seite und machst ein paar Commits. Das bewegt den <code>iss53</code>-Branch vorwärts, da du ihn ausgebucht hast (das heißt, dass dein HEAD-Zeiger darauf verweist; siehe Abbildung 3-12): Du arbeitest an deiner Web-Site und machst ein paar Commits. Dabei bewegt sich die <code>iss53</code> Branch vorwärts, da sie gerade deine aktuelle Branch ist (der HEAD Pointer verweist darauf, siehe Abbildung 3-12): You work on your web site and do some commits. Doing so moves the <code>iss53</code> branch forward, because you have it checked out (that is, your HEAD is pointing to it; see Figure 3-12):</p>
 
 <pre><code>$ vim index.html
 $ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0312-tn.png"></center><br/> Abbildung 3-12. Die iss53 Branch hat sich mit deiner Arbeit weiterentwickelt. Figure 3-12. The iss53 branch has moved forward with your work.</p>
+<p><center><img src="/figures/ch3/18333fig0312-tn.png"></center><br/> Abbildung 3-12. Der <code>iss53</code>-Branch hat mit deiner Arbeit Schritt gehalten. Figure 3-12. The iss53 branch has moved forward with your work.</p>
 
-<p>Jetzt bekommst du einen Anruf, dass es ein Problem mit der Website gibt, und du musst es umgehend beheben. Mit Git musst die Problembehebung nicht zusammen mit der Arbeit an <code>iss53</code> einspielen, und du musst auch keinen Aufwand in das Zurücksetzen der Änderungen stecken, bevor du die Problembehebung in die Produktion einspielen kannst. Alles was du machen musst, ist zurück zur master Branch schalten. Now you get the call that there is an issue with the web site, and you need to fix it immediately. With Git, you don’t have to deploy your fix along with the <code>iss53</code> changes you’ve made, and you don’t have to put a lot of effort into reverting those changes before you can work on applying your fix to what is in production. All you have to do is switch back to your master branch.</p>
+<p>Nun bekommst du einen Anruf in dem dir mitgeteilt wird, dass es ein Problem mit der Internet-Seite gibt, welches du umgehend beheben sollst. Mit Git musst du deine Fehlerkorrektur nicht zusammen mit den <code>iss53</code>-Änderungen einbringen. Und du musst keine Zeit damit verschwenden deine bisherigen Änderungen rückgängig zu machen, bevor du mit der Fehlerbehebung an der Produktionsumgebung beginnen kannst. Alles was du tun musst, ist zu deinem MASTER-Branch wechseln.</p>
+
+<p>Jetzt bekommst du einen Anruf, dass es ein Problem mit der Website gibt, und du musst es umgehend beheben. Mit Git musst die Problembehebung nicht zusammen mit der Arbeit an <code>iss53</code> einspielen, und du musst auch keinen Aufwand in das Zurücksetzen der Änderungen stecken, bevor du die Problembehebung in die Produktion einspielen kannst. Alles was du machen musst, ist zurück zur master Branch schalten. Now you get the call that there is an issue with the web site, and you need to fix it immediately. With Git, you don’t have to deploy your fix along with the <code>iss53</code> changes you’ve made, and you don’t have to put a lot of effort into reverting those changes before you can work on applying your fix to what is in production. All you have to do is switch back to your master branch. <!--
+    TODO    progress-end: 2010-03-25 - florianb
+--> <!--
+    TODO    progress-end: 2010-03-31 - florianb
+--></p>
+
+<p>Beachte jedoch, dass dich Git den Branch nur wechseln lässt wenn bisherige Änderungen in deinem Arbeitsverzeichnis oder deiner Staging Area nicht in Konflikt mit dem Zweig stehen zu dem du nun wechseln möchtest. Am besten es liegt ein sauberer Status vor wenn man den Branch wechselt. Wir werden uns später mit Wegen befassen, dieses Verhalten zu umgehen (namentlich Stashing und Commit Ammending). Vorerst hast du deine Änderungen bereits comitted, sodass du zu deinem MASTER-Branch zurückwechseln kannst.</p>
 
 <p>Wie auch immer, bevor du das machst, ein Hinweis, wenn du nicht committete Sachen in deinem Arbeits- oder Staging-Verzeichnis hast, die einen Konflikt mit der Branch, zu der du schalten willst, hat, lässt dich Git nicht dorthin schalten. Am besten man hat einen sauberen Arbeitsstand, wenn man die Branch wechseln will. Es gibt Wege, um das zu umgehen (stashing und commit amending). Aber dazu später mehr. Im Moment solltest du deine Änderungen committen und dann zur master Branch wechseln: However, before you do that, note that if your working directory or staging area has uncommitted changes that conflict with the branch you’re checking out, Git won’t let you switch branches. It’s best to have a clean working state when you switch branches. There are ways to get around this (namely, stashing and commit amending) that we’ll cover later. For now, you’ve committed all your changes, so you can switch back to your master branch:</p>
 
 <pre><code>$ git checkout master
 Switched to branch &quot;master&quot;</code></pre>
 
+<p>Zu diesem Zeitpunkt befindet sich das Arbeitsverzeichnis des Projektes in exakt dem gleichen Zustand, in dem es sich befand als du mit der Arbeit an Issue #53 begonnen hast und du kannst dich direkt auf deinen Hotfix konzentrieren. Dies ist ein wichtiger Moment um sich vor Augen zu halten, dass Git dein Arbeitsverzeichnis auf den Zustand des Commits, auf den dieser Branch zeigt, zurücksetzt. Es erstellt, entfernt und verändert Dateien automatisch, um sicherzustellen das deine Arbeitskopie haargenau so aussieht wie der Zweig nach deinem letzten Commit.</p>
+
 <p>An dieser Stelle befindet sich dein Projekt Arbeitsverzeichnis an exakt der gleichen Stelle, wie vor der Arbeit an <code>iss53</code>, und du kannst dich auf den Hotfix konzentrieren. Das ist ein wichtiger Aspekt, den man im Kopf behalten sollte: Git setzt dein Arbeitsverzeichnis immer auf den Stand, der dem Snapshot der aktuellen Branch entspricht. Es werden automatisch die entsprechenden Dateien hinzugefügt, gelöscht und modifiziert, damit die Arbeitskopie, wie nach deinem letzten Commit in dieser Branch aussieht. At this point, your project working directory is exactly the way it was before you started working on issue #53, and you can concentrate on your hotfix. This is an important point to remember: Git resets your working directory to look like the snapshot of the commit that the branch you check out points to. It adds, removes, and modifies files automatically to make sure your working copy is what the branch looked like on your last commit to it.</p>
+
+<p>Nun hast du einen Hotfix zu erstellen. Kass uns dazu einen Hotfix-Branch erstellen an dem du bis zu seiner Fertigstellung arbeitest (siehe Abbildung 3-13):</p>
 
 <p>Als nächstes hast du einen Hotfix zu machen. Lass uns eine &#8216;Hotfix&#8217; Branch erstellen, an der du bis zur Fertigstellung arbeitest (siehe Abbildung 3-13): Next, you have a hotfix to make. Let’s create a hotfix branch on which to work until it’s completed (see Figure 3-13):</p>
 
@@ -87,7 +105,11 @@ $ git commit -a -m &#39;fixed the broken email address&#39;
 [hotfix]: created 3a0874c: &quot;fixed the broken email address&quot;
  1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Abbildung 3-13. Hotfix Branch verweist auf die master Branch zurück Figure 3-13. hotfix branch based back at your master branch point</p>
+<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Abbildung 3-13. Der Hotfix-Branch basiert auf dem zurückliegenden Master-Branch.</p>
+
+<p>Abbildung 3-13. Hotfix Branch verweist auf die master Branch zurück Figure 3-13. hotfix branch based back at your master branch point</p>
+
+<p>Mach deine Tests, stell sicher, dass sich der Hotfix verhält wie gewünscht und führe ihn mit dem Master-Branch zusammen um ihn in die Produktionsumgebung zu integrieren. Das machst du mit dem <code>git merge</code>-Kommando:</p>
 
 <p>Mach deine Tests, stell sicher, dass der Hotfix das macht, was du willst und führe ihn mit der master Branch zusammen, um diese wieder in die Produktion zu bringen. Du machst das mit dem Kommando <code>git merge</code>: You can run your tests, make sure the hotfix is what you want, and merge it back into your master branch to deploy to production. You do this with the <code>git merge</code> command:</p>
 
@@ -97,17 +119,31 @@ Updating f42c576..3a0874c
 Fast forward
  README |    1 -
  1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+<!--
+    TODO    progress-end:   2010-03-31 - florianb
+--><!--
+    TODO    progress-begin: 2010-04-07 - florianb
+-->
+<p>Du wirst die Mitteilung &#8220;Fast Forward&#8221; während des Zusammenführens bemerken. Da der neue Commit direkt von dem ursprünglichen Commit, auf den sich der nun eingebrachte Zweig bezieht, abstammt, bewegt Git einfach den Zeiger weiter. Mit anderen Worten, kann Git den neuen Commit, durch verfolgen der Commitabfolge, direkt erreichen, dann bewegt es ausschließlich den Branch-Zeiger. Zu einer tatsächlichen Kombination der Commits besteht ja kein Anlass. Dieses Vorgehen wird &#8220;Fast Forward&#8221; genannt.</p>
 
 <p>Hast du die Nachricht &#8220;Fast forward&#8221; beim Zusammenführen gesehen? Da du auf die aktuelle Branch aufgesetzt hast und die Änderung eine direkte Weiterführung dieser war, hat Git den Pointer weitergestellt. Anders ausgedrückt, wenn zwischen zwei Branches kein Unterschied besteht oder nur eine davon eine Weiterentwicklung darstellt, bringt Git diese beiden wieder auf &#8216;Linie&#8217; - das wird dann &#8220;fast forward&#8221; genannt. You’ll notice the phrase &#8220;Fast forward&#8221; in that merge. Because the commit pointed to by the branch you merged in was directly upstream of the commit you’re on, Git moves the pointer forward. To phrase that another way, when you try to merge one commit with a commit that can be reached by following the first commit’s history, Git simplifies things by moving the pointer forward because there is no divergent work to merge together — this is called a &#8220;fast forward&#8221;.</p>
 
+<p>Deine Modifikationen befinden sich nun als Schnappschuss in dem Commit, auf den der <code>master</code>-Branch zeigt, diese lassen sich nun veröffentlichen (siehe Abbildung 3-14).</p>
+
 <p>Deine Änderung befindet sich nun in dem commit-Snapshot der auf die <code>master</code> Branch zeigt und du kannst ein deploy deiner Änderungen durchführen (siehe Abbildung 3-14). Your change is now in the snapshot of the commit pointed to by the <code>master</code> branch, and you can deploy your change (see Figure 3-14).</p>
 
-<p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> Abbildung 3-14. Dein Master-Branch zeigt, nach dem Merge, auf den gleichen Commit, wie der Hotfix-Branch. Figure 3-14. Your master branch points to the same place as your hotfix branch after the merge.</p>
+<p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> Abbildung 3-14. Der Master-Branch zeigt nach der Zusammenführung auf den gleichen Commit wie der Hotfix-Branch.</p>
+
+<p>Abbildung 3-14. Dein Master-Branch zeigt, nach dem Merge, auf den gleichen Commit, wie der Hotfix-Branch. Figure 3-14. Your master branch points to the same place as your hotfix branch after the merge.</p>
+
+<p>Nachdem dein superwichtiger Hotfix veröffentlicht wurde kannst du dich wieder deiner ursprünglichen Arbeit zuwenden. Vorher wird sich allerdings des nun nutzlosen Hotfix-Zweiges entledigt, schließlich zeigt der Master-Branch ebenfalls auf die aktuelle Version. Du kannst ihn mit der <code>-d</code>-Option von <code>git branch</code> entfernen:</p>
 
 <p>Nachdem du den super wichtigen Fix erstellt hast, kannst du mit der Arbeit weiter zu machen, die du zuvor angefangen hast. Als erstes kannst du den <code>hotfix</code>-Branch löschen, da er nicht länger benötigt wird - der <code>master</code>-Branch zeigt auf die gleiche Version. Den Branch kannst du mit der <code>-d</code>-Option, angehängen an <code>git branch</code>, löschen: After that your super-important fix is deployed, you’re ready to switch back to the work you were doing before you were interrupted. However, first you’ll delete the <code>hotfix</code> branch, because you no longer need it — the <code>master</code> branch points at the same place. You can delete it with the <code>-d</code> option to <code>git branch</code>:</p>
 
 <pre><code>$ git branch -d hotfix
 Deleted branch hotfix (3a0874c).</code></pre>
+
+<p>Nun kannst du zu deinem Issue #53-Branch zurückwechseln und mit deiner Arbeit fortfahren (Abbildung 3-15):</p>
 
 <p>Nun kannst du zurück auf deinen &#8220;Work-In-Progress&#8221;-Branch, Issue #53, wechseln und mit deiner Arbeit weiter machen (Abbildung 3-15): Now you can switch back to your work-in-progress branch on issue #53 and continue working on it (see Figure 3-15):</p>
 
@@ -118,10 +154,16 @@ $ git commit -a -m &#39;finished the new footer [issue 53]&#39;
 [iss53]: created ad82d7a: &quot;finished the new footer [issue 53]&quot;
  1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
 
-<p><center><img src="/figures/ch3/18333fig0315-tn.png"></center><br/> Abbildung 3-15. Deine &#8220;iss53&#8221; Branch kann sich unabhängig weiter entwickeln. Figure 3-15. Your iss53 branch can move forward independently.</p>
+<p><center><img src="/figures/ch3/18333fig0315-tn.png"></center><br/> Dein <code>iss53</code>-Branch kann sich unabhängig weiterentwickeln.</p>
+
+<p>Abbildung 3-15. Deine &#8220;iss53&#8221; Branch kann sich unabhängig weiter entwickeln. Figure 3-15. Your iss53 branch can move forward independently.</p>
+
+<p>An dieser Stelle ist anzumerken, dass die Änderungen an dem <code>hotfix</code>-Branch nicht in deinen <code>iss53</code>-Zweig eingeflossen sind. Falls nötig kannst du den <code>master</code>-Branch allerdings mit dem Kommando <code>git merge master</code> mit deinem Zweig kombinieren. Oder du wartest bis du den <code>iss53</code>-Branch später in den Master-Zweig zurückführst.</p>
 
 <p><code>It’s worth noting here that the work you did in your </code>hotfix<code> branch is not contained in the files in your </code>iss53<code> branch. If you need to pull it in, you can merge your </code>master<code> branch into your </code>iss53<code> branch by running </code>git merge master<code>, or you can wait to integrate those changes until you decide to pull the </code>iss53<code> branch back into </code>master<code> later.</code></p>
-
+<!--
+    TODO    progress-end:   2010-04-07 - florianb
+-->
 <h3 id='die_grundlagen_des_zusammenfhrens_mergen'>Die Grundlagen des Zusammenführens (Mergen)</h3>
 
 <h3 id='basic_merging'>Basic Merging</h3>
@@ -152,7 +194,7 @@ Merge made by recursive.
 
 <h3 id='basic_merge_conflicts'>Basic Merge Conflicts</h3>
 
-<p>Gelegentlich verläuft der Prozess nicht ganz so gatt. Wenn du an den selben Stellen in den selben Dateien unterschiedlicher Branches etwas geändert hast, kann Git diese nicht sauber zusammenführen. Wenn dein Fix an &#8216;issue #53&#8217; die selbe Stelle in einer Datei verändert hat, die du auch mit <code>hotfix</code> angefasst hast, wirst du einen &#8216;merge&#8217; Konflikt erhalten, der ungefähr so aussehen könnte: Occasionally, this process doesn’t go smoothly. If you changed the same part of the same file differently in the two branches you’re merging together, Git won’t be able to merge them cleanly. If your fix for issue #53 modified the same part of a file as the <code>hotfix</code>, you’ll get a merge conflict that looks something like this:</p>
+<p>Gelegentlich verläuft der Prozess nicht ganz so glatt. Wenn du an den selben Stellen in den selben Dateien unterschiedlicher Branches etwas geändert hast, kann Git diese nicht sauber zusammenführen. Wenn dein Fix an &#8216;issue #53&#8217; die selbe Stelle in einer Datei verändert hat, die du auch mit <code>hotfix</code> angefasst hast, wirst du einen &#8216;merge&#8217; Konflikt erhalten, der ungefähr so aussehen könnte: Occasionally, this process doesn’t go smoothly. If you changed the same part of the same file differently in the two branches you’re merging together, Git won’t be able to merge them cleanly. If your fix for issue #53 modified the same part of a file as the <code>hotfix</code>, you’ll get a merge conflict that looks something like this:</p>
 
 <pre><code>$ git merge iss53
 Auto-merging index.html

@@ -1,0 +1,43 @@
+---
+layout: translation
+title: Pro Git 4.1 Git sul server I protocolli
+---
+<h2 id='i_protocolli'>I protocolli</h2>
+
+<p>Git può utilizzare quattro importanti protocolli di rete per trasferire i dati: locale, Secure Shell (SSH), Git, e HTTP. Qui vedremo cosa sono e in quali circostanze di base si vuole (o non si vuole) usarli.</p>
+
+<p>E&#8217; importante notare che, ad eccezione dei protocolli HTTP, tutti questi richiedono che Git sia installato e funzionante sul server.</p>
+
+<h3 id='il_protocollo_locale'>Il protocollo locale</h3>
+
+<p>Quello più semplice è il <em>protocollo locale</em>, in cui il repository remoto è in un&#8217;altra cartella sul disco. Questo è spesso utilizzato se ciascuno nel team ha accesso a un file system condiviso come l&#8217;NFS, o, nel caso meno probabile tutti accedano allo stesso computer. Quest&#8217;ultimo caso non è l&#8217;ideale, perché tutte le istanze del codice nel repository risiederebbero sullo stesso computer, facendo diventare molto più probabile una perdita catastrofica dei dati.</p>
+
+<p>Se si dispone di un filesystem montato in comune, allora si può clonare, fare un push, e un pull da un repository locale basato su file. Per clonare un repository come questo o per aggiungerne uno da remoto per un progetto esistente, utilizzare il percorso al repository come URL. Ad esempio, per clonare un repository locale, è possibile eseguire qualcosa di simile a questo:</p>
+
+<pre><code>$ git clone /opt/git/project.git</code></pre>
+
+<p>O questo:</p>
+
+<pre><code>$ git clone file:///opt/git/project.git</code></pre>
+
+<p>Git funziona in modo leggermente diverso se si specifica esplicitamente <code>file://</code> all&#8217;inizio dell&#8217;URL. Se si specifica il percorso, Git tenta di utilizzare hardlink o copia direttamente i file necessari. Se si specifica file://<code>, Git abilita i processi che utilizza normalmente per trasferire i dati su una rete, il che è generalmente un metodo molto meno efficace per il trasferimento dei dati. La ragione principale per specificare il prefisso </code>file://<code>  è quella in cui si desidera una copia pulita del repository, lasciando fuori riferimenti estranei o oggetti - in genere dopo l&#39;importazione da un altro sistema di controllo della versione o qualcosa di simile (si veda il Capitolo 9 relativo ai task per la manutenzione). Qui verrà usato il percorso normale, perché così facendo è quasi sempre più veloce.</code></p>
+
+<p>Per aggiungere un repository locale a un progetto Git esistente, è possibile eseguire qualcosa di simile a questo:</p>
+
+<pre><code>$ git remote add local_proj /opt/git/project.git</code></pre>
+
+<p>Quindi, si possono eseguire push e pull da remoto come se si stesse lavorando su una rete.</p>
+
+<h4 id='i_pro'>I Pro</h4>
+
+<p>I pro dei repository basati su file sono che sono semplici e che utilizzano i permessi sui file e l&#8217;accesso alla rete già esistenti. Se si ha già un filesystem condiviso a cui l&#8217;intero team ha accesso, la creazione di un repository è molto facile. Si mette la copia nuda del repository da qualche parte dove tutti hanno un accesso condiviso e si impostano i permessi di lettura / scrittura, come si farebbe per qualsiasi altra cartella condivisa. Si vedrà proprio per questo scopo come esportare una copia nuda del repository nella sezione successiva, &#8220;Installare Git su un server.&#8221;</p>
+
+<p>Questa è anche una interessante possibilità per recuperare rapidamente il lavoro dal repository di qualcun altro. Se una persona e un collega stanno lavorando allo stesso progetto e vogliono recuperare qualcosa da fuori, lanciare un comando tipo <code>git pull /home/john/project</code> è spesso più facile che fare push su un server remoto e poi fare pull per scaricarlo.</p>
+
+<h4 id='i_contro'>I Contro</h4>
+
+<p>Il contro di questo metodo è che l&#8217;accesso condiviso è generalmente più difficile da impostare e raggiungere da più postazioni, che un normale accesso di rete. Se si vuole fare push dal computer portatile quando si è a casa, bisogna montare il disco remoto, che può essere difficoltoso e lento rispetto ad un accesso si rete.</p>
+
+<p>E&#8217; anche importante ricordare che questa non è necessariamente l&#8217;opzione più veloce, se si utilizzando un mount condiviso di qualche tipo. Un repository locale è veloce solo se si dispone di un accesso veloce ai dati. Un repository su NFS è spesso più lento di un repository su SSH sullo stesso server, permettendo a Git di andare con dischi locali su ogni sistema.</p><div id='nav'>
+<a href='ch4-0.html'>prev</a> | <a href='ch5-0.html'>next</a>
+</div>

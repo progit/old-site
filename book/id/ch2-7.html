@@ -1,60 +1,60 @@
 ---
 layout: translation
-title: Pro Git 2.7 Dasar-dasar Git Tips and Tricks
+title: Pro Git 2.7 Dasar-dasar Git Tips dan Tricks
 ---
-<h2 id='tips_and_tricks'>Tips and Tricks</h2>
+<h2 id='tips_dan_tricks'>Tips dan Tricks</h2>
 
-<p>Before we finish this chapter on basic Git, a few little tips and tricks may make your Git experience a bit simpler, easier, or more familiar. Many people use Git without using any of these tips, and we won’t refer to them or assume you’ve used them later in the book; but you should probably know how to do them.</p>
+<p>Sebelum kita menyelesaikan bab tentang dasar-dasar Git ini, beberapa tips dan triks dapat membuat pengalaman Git Anda lebih sederhana, mudah, atau bahkan akrab. Banyak orang menggunakan Git tanpa menggunakan tip-tip berikut ini, dan kami tidak akan merujuk kepada mereka atau mengasumsikan bahwa Anda telah menggunakannya nanti dalam buku ini; tetapi Anda mungkin sebaiknya mengetahui bagaimana menggunakannya.</p>
 
 <h3 id='autocompletion'>Auto-Completion</h3>
 
-<p>If you use the Bash shell, Git comes with a nice auto-completion script you can enable. Download the Git source code, and look in the <code>contrib/completion</code> directory; there should be a file called <code>git-completion.bash</code>. Copy this file to your home directory, and add this to your <code>.bashrc</code> file:</p>
+<p>Jika Anda menggunakan Bash shell, Git tersedia dengan sebuah script auto-completion yang dapat Anda hidupkan. Unduh source-code Git, dan cari direktori <code>contrib/completion</code>; di sana Anda akan menemukan berkas bernama <code>git-completion.bash</code>. Salin berkas ini ke direktori home Anda, dan tambahakn ini ke dalam berkas <code>.bashrc</code>:</p>
 
 <pre><code>source ~/.git-completion.bash</code></pre>
 
-<p>If you want to set up Git to automatically have Bash shell completion for all users, copy this script to the <code>/opt/local/etc/bash_completion.d</code> directory on Mac systems or to the <code>/etc/bash_completion.d/</code> directory on Linux systems. This is a directory of scripts that Bash will automatically load to provide shell completions.</p>
+<p>Jika Anda ingin memasang Git agar secara otomatis menggunakan fitur ini bagi semua pengguna, salin script tadi ke direktori <code>/opt/local/etc/bash_completion.d</code> di sistem Mac atau ke direktori <code>/etc/bash_completion.d/</code> di sistem Linux. Ini adalah direktori tempat script yang akan secara otomatis dibaca oleh Bash untuk menyediakan fitur auto-complete nya.</p>
 
-<p>If you’re using Windows with Git Bash, which is the default when installing Git on Windows with msysGit, auto-completion should be preconfigured.</p>
+<p>Jika Anda menggunakan Windows dengan Git Bash, yang sebetulnya adalah setting default ketika instalasi Git di Windows menggunakan msysGit, fitur ini seharusnya sudah terkonfigurasi.</p>
 
-<p>Press the Tab key when you’re writing a Git command, and it should return a set of suggestions for you to pick from:</p>
+<p>Pencet huruf Tab ketika Anda menuliskan perintah Git, dan Bash akan menampilkan beberapa kemungkinan yang Anda dapat pilih:</p>
 
 <pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
 commit config</code></pre>
 
-<p>In this case, typing git co and then pressing the Tab key twice suggests commit and config. Adding <code>m&lt;tab&gt;</code> completes <code>git commit</code> automatically.</p>
+<p>Dalam hal ini, mengetikkan <code>git co</code> dan memencet kunci Tab 2x akan menampilkan pilihan commit dan config. Dengan menambahkan <code>m&lt;tab&gt;</code> akan melengkapi <code>git commit</code> secara otomatis.</p>
 
-<p>This also works with options, which is probably more useful. For instance, if you’re running a <code>git log</code> command and can’t remember one of the options, you can start typing it and press Tab to see what matches:</p>
+<p>Hal ini juga bekerja terhadap opsi, yang mungkin lebih berguna. Sebagai contoh, jika Anda menjalankan perintah <code>git log</code> dan tidak ingat salah satu dari opsi yang tersedia, Anda dapat mulai mengetikkannya dan memencet Tab untuk melihat apa yang cocok:</p>
 
 <pre><code>$ git log --s&lt;tab&gt;
 --shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
 
-<p>That’s a pretty nice trick and may save you some time and documentation reading.</p>
+<p>Ini adalah trick yang cukup menarik dan dapat menghemat waktu Anda dan waktu membaca dokumentasi.</p>
 
-<h3 id='git_aliases'>Git Aliases</h3>
+<h3 id='git_alias'>Git Alias</h3>
 
-<p>Git doesn’t infer your command if you type it in partially. If you don’t want to type the entire text of each of the Git commands, you can easily set up an alias for each command using <code>git config</code>. Here are a couple of examples you may want to set up:</p>
+<p>Git tidak mengasumsikan perintah Anda jika Anda mengetikkannya sebagian. Jika Anda tidak ingin mengetikkan seluruh text dari setiap perintah Git, Anda dapat dengan mudah memasang alias dari setiap perintah menggunakan perintah <code>git config</code>. Berikut adalah beberapa contoh yang Anda mungkin ingin tata:</p>
 
 <pre><code>$ git config --global alias.co checkout
 $ git config --global alias.br branch
 $ git config --global alias.ci commit
 $ git config --global alias.st status</code></pre>
 
-<p>This means that, for example, instead of typing <code>git commit</code>, you just need to type <code>git ci</code>. As you go on using Git, you’ll probably use other commands frequently as well; in this case, don’t hesitate to create new aliases.</p>
+<p>Ini berarti bahwa, sebagai contoh, daripada mengetikkan <code>git commit</code>, Anda hanya butuh untuk mengetikkan <code>git ci</code>. Sejalan dengan Anda menggunakan Git, Anda akan mungkin menggunakan perintah lain sama seringnya; dalam hal ini, jangan ragu untuk membuat alias-alias baru.</p>
 
-<p>This technique can also be very useful in creating commands that you think should exist. For example, to correct the usability problem you encountered with unstaging a file, you can add your own unstage alias to Git:</p>
+<p>Teknik ini juga akan berguna dalam pembuatan perintah yang Anda pikir harus ada. Sebagai contoh, untuk mengkoreksi masalah kemudahan penggunaan (usability) yang Anda temukan dalam pengeluaran berkas dari area stage, Anda dapat menambahkan alias ini ke dalam Git:</p>
 
 <pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
 
-<p>This makes the following two commands equivalent:</p>
+<p>Hal ini akan membuat kedua perintah berikut sama:</p>
 
 <pre><code>$ git unstage fileA
 $ git reset HEAD fileA</code></pre>
 
-<p>This seems a bit clearer. It’s also common to add a <code>last</code> command, like this:</p>
+<p>Tampak lebih terbaca. Biasa juga untuk menambahkan perintah <code>last</code> sebagai berikut:</p>
 
 <pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
 
-<p>This way, you can see the last commit easily:</p>
+<p>Dengan demikian, Anda dapat melihat commit terakhir dengan lebih mudah:</p>
 
 <pre><code>$ git last
 commit 66938dae3329c7aebe598c2246a8e6af90d04646
@@ -65,7 +65,7 @@ Date:   Tue Aug 26 19:48:51 2008 +0800
 
     Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
 
-<p>As you can tell, Git simply replaces the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a <code>!</code> character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing <code>git visual</code> to run <code>gitk</code>:</p>
+<p>Sebagaimana yang dapat Anda katakan, Git secara sederhana menggantikan perintah-perintah baru dengan apapun yang Anda alias kan. Namun demikian, mungkin Anda ingin menjalankan perintah eksternal, dan bukannya Git subcommand. Dalam kasus ini, Anda dapat mulai perintahnya dengan karakter <code>!</code>. Hal ini berguna jika Anda ingin membuat alat Anda sendiri yang bekerja terhadap repositori Git. Kita dapat mendemokannya dengan membuat alias <code>git visual</code> untuk menjalankan <code>gitk</code>:</p>
 
 <pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
 

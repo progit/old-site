@@ -1,0 +1,86 @@
+---
+layout: translation
+title: Pro Git 3.1 Les branches avec Git Ce qu&#8217;est une branche
+---
+<h2 id='ce_quest_une_branche'>Ce qu&#8217;est une branche</h2>
+
+<p>Pour réellement comprendre comment Git gère les branches, nous devons revenir en arrière et examiner de plus près comment Git stocke ses données. Comme vous pouvez vous en souvenir du chapitre 1, Git ne stocke pas ses données comme une série de changesets ou deltas, mais comme une série d&#8217;instantanés.</p>
+
+<p>Lors qu&#8217;on valide dans Git, Git stock un objet commit qui contient un pointeur vers l&#8217;instantané du contenu qui a été indexé, les méta-données d&#8217;auteur et de message, et zéro ou plusieurs pointeurs vers le ou les commits qui sont les parents directs de ce commit : zéro parent pour la première validation, un parent pour un commit normal, et des parents multiples pour des commits qui sont le résultat de la fusion d&#8217;une ou plusieurs branches.</p>
+
+<p>Pour visualiser ce concept, supposons un répertoire contenant trois fichiers, ces trois fichiers étant indexés puis validés. Indexer les fichiers signifie calculer la somme de contrôle pour chacun (la fonction de hachage SHA-1 mentionnée au chapitre 1), stocker cette version du fichier dans le dépôt Git (Git les nomme blobs), et ajouter la somme de contrôle à la zone d&#8217;index :</p>
+
+<pre><code>$ git add LISEZMOI test.rb LICENSE
+$ git commit -m &#39;commit initial de mon projet&#39;</code></pre>
+
+<p>Lorsque vous créez le commit en lançant la commande <code>git commit</code>, Git calcule la somme de contrôle de chaque répertoire (ici, seulement pour le répertoire racine) et stocke ces objets arbres dans le dépôt Git. Git crée alors un objet commit qui contient les méta-données et un pointeur vers l&#8217;arbre projet d&#8217;origine de manière à pouvoir recréer l&#8217;instantané si besoin.</p>
+
+<p>Votre dépôt Git contient à présent cinq objets : un blob pour le contenu de chacun des trois fichiers, un arbre qui liste les contenus des répertoires et spécifie quels noms de fichier sont attachés à quels blobs, et un objet commit avec le pointeur vers l&#8217;arbre d&#8217;origine et toutes les méta-données attachées au commit. Conceptuellement, les données contenues dans votre dépôt git ressemblent à la Figure 3-1.</p>
+
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figure 3-1. Données d&#8217;un unique commit.</p>
+
+<p>Si vous réalisez des modifications et validez à nouveau, le prochain commit stocke un pointeur vers le commit immédiatement précédent. Après deux autres validations, l&#8217;historique pourrait ressembler à la figure 3-2.</p>
+
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Figure 3-2. Données et objets Git pour des validations multiples.</p>
+
+<p>Une branche dans Git est tout simplement un pointeur mobile léger vers un de ces objets commit. La branche par défaut dans Git s&#8217;appelle master. Au fur et à mesure des validations, la branche master pointe vers le dernier des commits réalisés. À chaque validation, le pointeur de la branche master avance automatiquement.</p>
+
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Figure 3-3. Branche pointant dans l&#8217;historique des données de commit.</p>
+
+<p>Que se passe-t-il si vous créez une nouvelle branche ? Et bien, cela crée un nouveau pointeur à déplacer. Supposons que vous créez une nouvelle branche nommée testing. Vous utilisez la commande <code>git branch</code> :</p>
+
+<pre><code>$ git branch testing</code></pre>
+
+<p>Cela crée un nouveau pointeur vers le commit actuel (Cf. figure 3-4).</p>
+
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figure 3-4. Branches multiples pointant dans l&#8217;historique des données de commit.</p>
+
+<p>Comment Git connaît-il la branche sur laquelle vous vous trouvez ? Il conserve un pointeur spécial appelé HEAD. Remarquez que sous cette appellation se cache un concept très différent de celui utilisé dans les autres VCSs tels que Subversion ou CVS. Dans Git, c&#8217;est un pointeur sur la branche locale où vous vous trouvez. Dans notre cas, vous vous trouvez toujours sur master. La commande git branch n&#8217;a fait que créer une nouvelle branche — elle n&#8217;a pas fait basculer la copie de travail vers cette branche (Cf. figure 3-5).</p>
+
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. fichier HEAD pointant sur la branche active</p>
+
+<p>Pour basculer vers une branche existant, il suffit de lancer la commande <code>git checkout</code>. Basculons vers la nouvelle branche testing :</p>
+
+<pre><code>$ git checkout testing</code></pre>
+
+<p>Cela déplace HEAD pour le faire pointer vers la branche testing (voir figure 3-6)</p>
+
+<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> Figure 3-6. HEAD pointe vers une autre branche quand on bascule de branche</p>
+
+<p>Qu&#8217;est-ce que cela signifie ? Et bien, faisons une autre validation :</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;petite modification&#39;</code></pre>
+
+<p>La figure 3-7 illustre le résultat.</p>
+
+<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> Figure 3-7. La branche sur laquelle HEAD pointe avance avec chaque nouveau commit.</p>
+
+<p>C&#8217;est intéressant parce qu&#8217;à présent, votre branche testing a avancé, tandis que la branche master pointe toujours sur le commit sur lequel vous étiez lorsque vous avez lancé <code>git checkout</code> pour basculer de branche. Retournons sur la branche master :</p>
+
+<pre><code>$ git checkout master</code></pre>
+
+<p>La figure 3-8 montre le résultat.</p>
+
+<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> Figure 3-8. HEAD se déplace sur une autre branche lors d&#8217;un checkout.</p>
+
+<p>Cette commande a réalisé deux actions. Elle a remis le pointeur HEAD sur la branche master et elle a replacé les fichiers de la copie de travail dans l&#8217;état pointé par master. Cela signifie aussi que les modifications que vous réalisez à partir de maintenant divergeront de l&#8217;ancienne version du projet. Cette commande retire les modifications réalisées dans la branche testing pour vous permettre de repartir dans une autre direction de développement.</p>
+
+<p>Réalisons quelques autres modifications et validons à nouveau :</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;autres modifications&#39;</code></pre>
+
+<p>Maintenant, l&#8217;historique du projet a divergé (voir figure 3-9). Vous avez créé une branche et basculé dessus, avez réalisé des modifications, puis avez rebasculé sur la branche principale et réalisé d&#8217;autre modifications. Ces deux modifications sont isolées dans des branches séparées. Vous pouvez basculer d&#8217;une branche à l&#8217;autre et les fusionner quand vous êtes prêt. Vous avez fait tout ceci avec de simples commandes <code>branch</code> et <code>checkout</code>.</p>
+
+<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Figure 3-9. Les historiques de branche ont divergé.</p>
+
+<p>Parce que dans Git, une branche n&#8217;est en fait qu&#8217;un simple fichier contenant les 40 caractères de la somme de contrôle SHA-1 du commit sur lequel elle pointe, les branches ne coûtent rien à créer et détruire. Créer une branche est aussi rapide qu&#8217;écrire un fichier de 41 caractères (40 caractères plus un retour chariot).</p>
+
+<p>C&#8217;est une différence de taille avec la manière dont la plupart des VCSs gèrent les branches, qui implique de copier tous les fichiers du projet dans un second répertoire. Cela peut durer plusieurs secondes ou même quelques minutes selon la taille du projet, alors que pour Git, le processus est toujours instantané. De plus, comme nous enregistrons les parents quand nous validons les modifications, la détermination de l&#8217;ancêtre commun pour la fusion est réalisée automatiquement, et de manière très facile. Ces fonctionnalités encouragent naturellement les développeurs à créer et utiliser souvent des branches.</p>
+
+<p>Voyons pourquoi vous devriez en faire autant.</p>
+
+<div id='nav'>
+<a href='ch3-0.html'>prev</a> | <a href='ch3-2.html'>next</a>
+</div>

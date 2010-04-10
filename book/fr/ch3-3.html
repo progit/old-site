@@ -1,0 +1,46 @@
+---
+layout: translation
+title: Pro Git 3.3 Les branches avec Git Gestion de branches
+---
+<h2 id='gestion_de_branches'>Gestion de branches</h2>
+
+<p>Après avoir créé, fusionné et effacé des branches, regardons de plus près les outils de gestion de branche qui s&#8217;avèreront utiles lors d&#8217;une utilisation intensive des branches.</p>
+
+<p>La commande <code>git branch</code> fait plus que créer et effacer des branches. Si vous la lancez sans argument, vous obtenez la liste des branches courantes :</p>
+
+<pre><code>$ git branch
+  prob53
+* master
+  testing</code></pre>
+
+<p>Notez le caractère <code>*</code> qui préfixe la branche <code>master</code>. Ce caractère indique la branche qui a été extraite. Ceci signifie que si vous validez des modifications, la branche <code>master</code> avancera avec votre travail. Pour visualiser les dernière validations sur chaque branche, vous pouvez lancer le commande <code>git branch -v</code> :</p>
+
+<pre><code>$ git branch -v
+  prob53   93b412c fix javascript issue
+* master  7a98805 Merge branch &#39;prob53&#39;
+  testing 782fd34 add scott to the author list in the readmes</code></pre>
+
+<p>Une autre option permettant de voir l&#8217;état des branches permet de filtrer cette liste par les branches qui ont ou n&#8217;ont pas encore été fusionnées dans la branche courante. Les options <code>--merged</code> et <code>--no-merge</code> sont disponibles depuis la version 1.5.6 de Git. Pour voir quelles branches ont déjà été fusionnées dans votre branche actuelle, lancez <code>git branch --merged</code> :</p>
+
+<pre><code>$ git branch --merged
+  prob53
+* master</code></pre>
+
+<p>Comme vous avez déjà fusionné <code>prob53</code> auparavant, vous le voyez dans votre liste. Les branches de cette liste qui ne comportent pas l&#8217;étoile en préfixe peuvent généralement être effacées sans risque au moyen de <code>git branch -d</code> ; vous avez déjà incorporé leurs modifications dans une autre branche, et n&#8217;allez donc rien perdre.</p>
+
+<p>Lancez <code>git branch --no-merged</code> pour visualiser les branches qui contiennent des travaux qui n&#8217;ont pas encore été fusionnés :</p>
+
+<pre><code>$ git branch --no-merged
+  testing</code></pre>
+
+<p>Ceci montre votre autre branche. Comme elle contient des modifications qui n&#8217;ont pas encore été fusionnées, un essai d&#8217;effacement par <code>git branch -d</code> se solde par un échec :</p>
+
+<pre><code>$ git branch -d testing
+error: The branch &#39;testing&#39; is not an ancestor of your current HEAD.
+If you are sure you want to delete it, run &#39;git branch -D testing&#39;.</code></pre>
+
+<p>Si vous souhaitez réellement effacer cette branche et perdre ainsi le travail réalisé, vous pouvez forcer l&#8217;effacement avec l&#8217;option <code>-D</code>, comme l&#8217;indique justement le message.</p>
+
+<div id='nav'>
+<a href='ch3-2.html'>prev</a> | <a href='ch3-4.html'>next</a>
+</div>

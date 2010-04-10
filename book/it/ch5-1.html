@@ -1,0 +1,63 @@
+---
+layout: translation
+title: Pro Git 5.1 Git distribuito Workflows distribuiti
+---
+<h2 id='workflows_distribuiti'>Workflows distribuiti</h2>
+
+<p>A differenza dei gestori di versione centralizzati (CVCSs), la natura distrubuita di Git render possibile una maggiore flessibilità nel modo in cui gli sviluppatori collaborano nei progetti. Nel sistemi centralizzati, ogni sviluppatore è un nodo che lavora appoggiandosi più o meno ad un fulcro centrale. Con Git invece, ogni sviluppatore è potenzialmente sia un nodo che il fulcro stesso - infatti ogni sviluppatore può fornire del codice agli altri repository e mantenere un pubblico repository sul quale gli altri basano il proprio lavoro e verso il quale contribuiscono. Questo apre ad una vasta gamma di possibilità di workflow per il vostro progetto e/o il vostro team, quindi coprirò alcuni paradigmi che si avvantaggiano di questa flessibilità. Discuterò dei punti di forza e quelli deboli di ogni possibilità; potete usarne una sola, oppure prendere pezzi da diverse ed adattarle alle vostre necessità.</p>
+
+<h3 id='workflow_centralizzato'>Workflow centralizzato</h3>
+
+<p>Nei sistemi centralizzati, generalmente c&#8217;è un modo solo di collarare. Un fulcro centrale, o repository, può accettare il codice e tutti sincronizzano il lavoro con questo. Un numero di sviluppatori sono nodi - rispetto al fulcro - e restano sincronizzati rispetto ad un luogo centrale (vedi Figura 5-1).</p>
+
+<p><center><img src="/figures/ch5/18333fig0501-tn.png"></center><br/> Figura 5-1. Worlflow centralizzato</p>
+
+<p>Questo significa che se due sviluppatori clonano dal fulcro ed entrambi fanno dei cambiamenti, il primo sviluppatore che eseguirà un push verso il fulcro non avrà problemi. Il secondo invece, dovrà unire al proprio il lavoro effettuato dal primo, prima di fare un push dei cambiamenti, per non sovrascrivere il lavoro del primo. Questo accade in Git come in Subversion (o un altro CVCS), e funziona tranquillamente in Git.</p>
+
+<p>Se hai un piccolo team, o nella tua azienda sono già abituati ad un workflow centralizzato, puoi facilmente continuare ad utilizzare questo metodo con Git. Semplicemente crea un singolo repository, e dai ad ognuno la possibilità di effettuare un push; Git non lascerà agli utenti la possibilità di sovrascriversi l&#8217;un l&#8217;altro. Se uno sviluppatore clona, esegue dei cambiamenti, e poi prova a fare un push delle proprie modifiche dopo che un altro utente ha cambiato qualcosa, il server si rifiuterà di consentire l&#8217;operazione. L&#8217;utente sarà avvisato che sta cercando di fare un push di una copia non aggiornata, e non sarà capace di caricare le proprie modifiche finché non le unirà con quelle effettuate dagli altri. Questo metodo è utilizzato da tanti dato che è il paradigma che molti conoscono e a cui sono abituati.</p>
+
+<h3 id='workflow_con_manager_dintegrazione'>Workflow con manager d&#8217;integrazione</h3>
+
+<p>Dato che Git ti consente di avere multipli repositories, è possibile avere un workflow dove ogni sviluppatore ha accesso in scrittura al proprio pubblico respository, e accesso il lettura a quello degli altri. Questo scenario spesso un repository &#8220;standard&#8221; che rappresenta il progetto &#8220;ufficiale&#8221;. Per contribuire a quel progetto, devi creare il tuo clone pubblico del progetto stesso e fare un push delle modifiche verso esso. In seguito, si invia una richiesta al manager del progetto di eseguire un pull dei vostri cambiamenti. Possono aggiungere il vostro repository come remoto, testarlo localmente, unirlo al proprio ramo e fare un push verso il proprio repository. Il processo funziona così (vedi Figura 5-2):</p>
+
+<ol>
+<li>Il mantenitore del progetto fa un push del proprio repository pubblico.</li>
+
+<li>Un contributore clona il reposiory ed esegue dei cambiamenti.</li>
+
+<li>Il contributore fa un push dei propri cambiamenti.</li>
+
+<li>Il contributore invia al mantenitore una e-mail chiedendo di fare un pull dei cambiamenti.</li>
+
+<li>Il mantenitore aggiunge il repository del contributore come remoto e fa un merge in locale dei cambiamenti.</li>
+
+<li>Il mantenitore fa un push dei cambiamenti (compresi quelli aggiunti dal contributore) verso il repository principale.</li>
+</ol>
+
+<p><center><img src="/figures/ch5/18333fig0502-tn.png"></center><br/> Figura 5-2. Workflow con manager d&#8217;integrazione</p>
+
+<p>Questo è un workflow comune con siti come GitHub, dove è facile eseguire un fork di un progetto e fare un push dei propri cambiamenti dentro al proprio fork, in modo che tutti possano accedere. Uno dei maggiori vantaggi di questo approccio è che puoi continuare il tuo lavoro, ed il mantenitore del repository principale può eseguire un pull dei tuoi cambiamenti in qualsiasi momento. I contributori non devono aspettare che il progetto incorpori i propri camiamenti, ed ognuno può lavorare per conto suo.</p>
+
+<h3 id='workflow_con_dittatori_e_tenenti'>Workflow con Dittatori e Tenenti</h3>
+
+<p>Questa è una variante del workflow con multipli repository. E&#8217; generalmente usata da grandi progetti con centinaia di collaboratori; un esempio famoso è il Kernel Linux. Molti manager d&#8217;integrazione sono in carica di certe parti del repository; sono chiamati tenenti. Tutti i tenenti hanno un manager d&#8217;integrazione conosciuto come &#8220;dittatore benevolo&#8221;. Il repository del dittatore benevolo funziona come repository di riferimento dal quale tutti i collaboratori eseguono un pull. Il flusso di lavoro è il seguente (vedi Figura 5-3):</p>
+
+<ol>
+<li>Normali sviluppatori lavorano nel loro ramo ed eseguono un rebase del proprio lavoro sul master. Il ramo master è quello del dittatore.</li>
+
+<li>I tenenti eseguono l&#8217;unione del lavoro degli sviluppatori nel ramo master.</li>
+
+<li>Il dittatore esegue l&#8217;unione dei rami master dei tenenti nel proprio ramo master.</li>
+
+<li>Il dittatore esegue un push del proprio ramo master nel repository di riferimento, cosicché gli sviluppatori possano accedervi.</li>
+</ol>
+
+<p><center><img src="/figures/ch5/18333fig0503-tn.png"></center><br/><br />Figura 5.3. Workflow con dittatore benevolo.</p>
+
+<p>Questo tipo di workflow non è comune ma può essere utile in progetti davvero grandi, o in ambienti con una stretta gerarchia, perché consente al leader del progetto (il dittatore) di delegare molto del lavoro e raccogliere vasti sottoinsiemi di codice in momenti diversi prima di integrarli.</p>
+
+<p>Ci sono alcuni workflow comunemente utilizzati che sono possibili con un sistema distribuito come Git, ma puoi vedere che esistono molte variazioni attuabili per farlo adattare al tuo caso specifico. Ora che hai (spero) determinato quale workflow può funzionare per te, coprirò alcuni specifici esempi su come determinare i ruoli principali per realizzare differenti workflows.</p>
+
+<div id='nav'>
+<a href='ch5-0.html'>prev</a> | <a href='ch5-2.html'>next</a>
+</div>

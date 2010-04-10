@@ -1,0 +1,109 @@
+---
+layout: translation
+title: Pro Git 4.1 Git sur le serveur Les protocoles
+---
+<h2 id='les_protocoles'>Les protocoles</h2>
+
+<p>Git peut utiliser quatre protocoles réseau majeurs pour transporter des données : Local, Secure Shell (SSH), Git et HTTP. Nous allons voir leur nature et dans quelles circonstances ils peuvent (ou ne peuvent pas) être utilisés.</p>
+
+<p>Il est à noter que mis à part HTTP, tous le protocoles nécessite l&#8217;installation de Git sur le serveur.</p>
+
+<h3 id='le_protocole_local'>Le protocole local</h3>
+
+<p>Le protocole de base est le <em>protocole local</em> pour lequel le dépot distant est un autre répertoire dans le système de fichier. Il est souvent utilisé si tous les membres de l&#8217;équipe ont accès à un répertoirepartagé via NFS par exemple ou dans le cas moins probable où tous les développeurs travaille sur le même ordinateur. Ce dernier cas n&#8217;est pas optimum car tous les dépôts seraient hébergés de fait sur le même ordinateur, rendant ainsi tout défaillance catastrophique.</p>
+
+<p>Si vous disposez d&#8217;un système de fichier partagé, vous pouvez cloner, pousser et tirer avec un dépôt local. Pour cloner un dépôt ou pour l&#8217;utiliser comme dépôt distant à un projet existant, utilisez le chemin vers le dépôt comme URL. Par exemple, pour cloner un dépôt local, vous pouvez lancer ceci :</p>
+
+<pre><code>$ git clone /opt/git/project.git</code></pre>
+
+<p>Ou bien celà :</p>
+
+<pre><code>$ git clone file:///opt/git/project.git</code></pre>
+
+<p>Git opère légèrement différemment si vous spécifiez explicitement le protocole <code>file://</code> au début de l&#8217;URL/ Si vous spécifiez simplement le chemin, Git tente d&#8217;utiliser des liens durs ou une copie des fichiers nécessaires. Si vous spécifiez le protocole <code>file://</code>, Git lancer un processus d&#8217;accès au travers du réseau, ce qui généralement moins efficace. La raison d&#8217;utiliser spécifiquement le préfixe <code>file://</code> est la volonté d&#8217;obtenir une copie propre du dépôt, sans aucune référence ou aucun objet supplémentaire qui pourraient résulter d&#8217;un import depuis un autre système de gestion de version ou d&#8217;un action similaire (voir chapitre 9 pour les tâches de maintenance). Nous utiliserons les chemins normaux par la suite car c&#8217;est la méthode la plus efficace.</p>
+
+<p>Pour ajouter un dépôt local à un projet Git existant, vous pouvez lancer ceci :</p>
+
+<pre><code>$ git remote add local_proj /opt/git/project.git</code></pre>
+
+<p>Ensuite, vous pouvez pousser vers et tirer depuis ce dépôt distant de la même manière que vous le feriez pour un dépôt accessible sur le réseau.</p>
+
+<h4 id='les_avantages'>Les avantages</h4>
+
+<p>Les avantages des dépôts accessibles sur le sytème de fichier sont qu&#8217;ils sont simples et qu&#8217;ils utilisent les permissions du système de fichier. Si vous avez déjà un montage partagé auquel toute votre équipe a accès, déployer un dépôt est extrêment facile. Vous placer la copie du dépôt nu à un endroit accessible de tous et positionnez correctement les droits de lecture/écriture de la même manière que pour tout autre partage. Nous aborderons la méthode pour exporter une copie de dépôt nu à cette fin dans la section suivante &#8220;Déployer Git sur un serveur&#8221;.</p>
+
+<p>C&#8217;est un choix satisfaisant pour partager rapidement le travail. Si vous et votre coéquipier travaillez sur le même projet et qu&#8217;il souhaite partager son travail, lancer une commande telle que <code>git pull /home/john/project</code> est certainement plus simple que de passer par un serveur intermédiaire.</p>
+
+<h4 id='les_inconvnients'>Les inconvénients</h4>
+
+<p>les inconvénients de cette méthodes sont qu&#8217;il est généralement plus difficile de rendre disponible un partage réseau depuis de nombreux endroits que de simplement gérer des accès réseau. Si vous souhaitez pousser depuis votre portable à la maison, vous devez monter le partage distant, ce qui peut s&#8217;avérer plus difficile et lent que d&#8217;accèder directement par un protocole réseau.</p>
+
+<p>Il est aussi à mentionner que ce n&#8217;est pas nécessairement l&#8217;option la plus rapide à l&#8217;utilisation si un partage réseau est utilisé. Un dépôt local n&#8217;est rapide que si l&#8217;accès aux fichiers est rapide. Un dépôt accessible sur un montage NFS est souvent plus lent qu&#8217;un dépôt accessible via SSH sur le même serveur qui ferait tourner Git avec un accès au disques locaux.</p>
+
+<h3 id='le_protocole_ssh'>Le protocole SSH</h3>
+
+<p>Le protocole SSH est probablement le protocole de transport de Git le plus utilisé. Cela est du au fait que l&#8217;accès SSH est déjà mis en place à de nombreux endroits et que ce n&#8217;est pas le cas, celà reste très facile à faire. Cela est aussi du au fait que SSH est le seul protocole permettant facilement de lire et d&#8217;écrire à distance. Les deux autres protocoles réseau (HTTP et Git) sont généralement en lecture seule et s&#8217;ils peuvent être utiles pour la publication, le protocole SSH est nécessaire pour les mises à jour de par ce qu&#8217;il permet l&#8217;écriture. SSH est un protocole authentifié suffisamment répandu que sa mise œuvre est simplifiée.</p>
+
+<p>Pour cloner une dépôt Git à travers SSH, vous pouvez spécifier le préfix <code>ssh://</code> dans l&#8217;URL comme ceci :</p>
+
+<pre><code>$ git clone ssh://user@server:project.git</code></pre>
+
+<p>ou vous pouvez ne pas spécifier de protocole du tout — Git choisit SSH par défaut si vous n&#8217;êtes pas explicite :</p>
+
+<pre><code>$ git clone user@server:project.git</code></pre>
+
+<p>Vous pouvez aussi ne pas spécifier de nom d&#8217;utilisateur et Git utilisera par défaut le nom de login.</p>
+
+<h4 id='les_avantages'>Les avantages</h4>
+
+<p>Les avantages liés à l&#8217;utilisation de SSH sont nombreux. Primo, vous ne pourrez pas vous faire autrement si vous souhaitez gérer un accès authentifié en écriture à votre dépôt au travers du réseau. Secundo, SSH est relativement simple à mettre en place, les daemons SSH sont facilement disponibles, les adminstrateurs réseaux sont habitués à les gérer et de nombreuses distributions de systèmes d&#8217;exploitation en disposent et proposent des outils de gestion. Ensuite, l&#8217;accès distant à travers SSH est sécurisé, toutes les données sont chiffrées et authentifiées. Enfin, comme les protocoles Git et local, SSH est efficace et permet de comprimer autant que possible les données avant de les transférer.</p>
+
+<h4 id='les_inconvnients'>Les inconvénients</h4>
+
+<p>Le point négatif avec SSH est qu&#8217;il est impossible de proposer un accès anonyme au dépôt. Les accès sont régis par les permission SSH, même pour un accès en lecture seule, ce qui s&#8217;oppose à une optique open-source. Si vous souhaitez utiliser Git dans un environnement d&#8217;entreprise, SSH peut bien être le seul protocole nécessaire. Si vous souhaitez proposer de l&#8217;accès anonyme en lecture seule à vos projets, vous aurez besoin de SSH pour vous permettre de pousser mais un autre protocole sera nécessaire pour permettre à d&#8217;autre de tirer.</p>
+
+<h3 id='le_protocole_git'>Le protocole Git</h3>
+
+<p>Vient ensuite le protocole Git. Celui-ci est géré par un daemon spécial qui est livré avec Git ; ce démon écoute sur un port dédié (9418) qui propose en service similaire au protocole SSH, mais sans aucune sécurisation. Pour qu&#8217;un dépôt soit publié via le protocole Git, le fichier <code>git-export-daemon-ok</code> doit exister mais mise à part cette condition sans laquelle le deamon refuse de publier un projet, il n&#8217;y a aucune sécurité. Soit le dépôt Git est disponible sans restriction en lecture, soit il n&#8217;est pas publié. Cela signifie qu&#8217;il ne permet de pousser des modifications. Vous pouvez activer la capacité à pousser mais étant donné l&#8217;absence d&#8217;authentification, n&#8217;importe qui sur internet peut pousser sur le dépôt. Autant dire que ce mode est rarement recherché.</p>
+
+<h4 id='les_avantages'>Les avantages</h4>
+
+<p>The Git protocol is the fastest transfer protocol available. If you’re serving a lot of traffic for a public project or serving a very large project that doesn’t require user authentication for read access, it’s likely that you’ll want to set up a Git daemon to serve your project. It uses the same data-transfer mechanism as the SSH protocol but without the encryption and authentication overhead.</p>
+
+<h4 id='the_cons'>The Cons</h4>
+
+<p>The downside of the Git protocol is the lack of authentication. It’s generally undesirable for the Git protocol to be the only access to your project. Generally, you’ll pair it with SSH access for the few developers who have push (write) access and have everyone else use <code>git://</code> for read-only access. It’s also probably the most difficult protocol to set up. It must run its own daemon, which is custom — we’ll look at setting one up in the “Gitosis” section of this chapter — it requires <code>xinetd</code> configuration or the like, which isn’t always a walk in the park. It also requires firewall access to port 9418, which isn’t a standard port that corporate firewalls always allow. Behind big corporate firewalls, this obscure port is commonly blocked.</p>
+
+<h3 id='the_https_protocol'>The HTTP/S Protocol</h3>
+
+<p>Last we have the HTTP protocol. The beauty of the HTTP or HTTPS protocol is the simplicity of setting it up. Basically, all you have to do is put the bare Git repository under your HTTP document root and set up a specific <code>post-update</code> hook, and you’re done (See Chapter 7 for details on Git hooks). At that point, anyone who can access the web server under which you put the repository can also clone your repository. To allow read access to your repository over HTTP, do something like this:</p>
+
+<pre><code>$ cd /var/www/htdocs/
+$ git clone --bare /path/to/git_project gitproject.git
+$ cd gitproject.git
+$ mv hooks/post-update.sample hooks/post-update
+$ chmod a+x hooks/post-update</code></pre>
+
+<p>That’s all. The <code>post-update</code> hook that comes with Git by default runs the appropriate command (<code>git update-server-info</code>) to make HTTP fetching and cloning work properly. This command is run when you push to this repository over SSH; then, other people can clone via something like</p>
+
+<pre><code>$ git clone http://example.com/gitproject.git</code></pre>
+
+<p>In this particular case, we’re using the <code>/var/www/htdocs</code> path that is common for Apache setups, but you can use any static web server — just put the bare repository in its path. The Git data is served as basic static files (see Chapter 9 for details about exactly how it’s served).</p>
+
+<p>It’s possible to make Git push over HTTP as well, although that technique isn’t as widely used and requires you to set up complex WebDAV requirements. Because it’s rarely used, we won’t cover it in this book. If you’re interested in using the HTTP-push protocols, you can read about preparing a repository for this purpose at <code>http://www.kernel.org/pub/software/scm/git/docs/howto/setup-git-server-over-http.txt</code>. One nice thing about making Git push over HTTP is that you can use any WebDAV server, without specific Git features; so, you can use this functionality if your web-hosting provider supports WebDAV for writing updates to your web site.</p>
+
+<h4 id='the_pros'>The Pros</h4>
+
+<p>The upside of using the HTTP protocol is that it’s easy to set up. Running the handful of required commands gives you a simple way to give the world read access to your Git repository. It takes only a few minutes to do. The HTTP protocol also isn’t very resource intensive on your server. Because it generally uses a static HTTP server to serve all the data, a normal Apache server can serve thousands of files per second on average — it’s difficult to overload even a small server.</p>
+
+<p>You can also serve your repositories read-only over HTTPS, which means you can encrypt the content transfer; or you can go so far as to make the clients use specific signed SSL certificates. Generally, if you’re going to these lengths, it’s easier to use SSH public keys; but it may be a better solution in your specific case to use signed SSL certificates or other HTTP-based authentication methods for read-only access over HTTPS.</p>
+
+<p>Another nice thing is that HTTP is such a commonly used protocol that corporate firewalls are often set up to allow traffic through this port.</p>
+
+<h4 id='the_cons'>The Cons</h4>
+
+<p>The downside of serving your repository over HTTP is that it’s relatively inefficient for the client. It generally takes a lot longer to clone or fetch from the repository, and you often have a lot more network overhead and transfer volume over HTTP than with any of the other network protocols. Because it’s not as intelligent about transferring only the data you need — there is no dynamic work on the part of the server in these transactions — the HTTP protocol is often referred to as a <em>dumb</em> protocol. For more information about the differences in efficiency between the HTTP protocol and the other protocols, see Chapter 9.</p>
+
+<div id='nav'>
+<a href='ch4-0.html'>prev</a> | <a href='ch4-2.html'>next</a>
+</div>

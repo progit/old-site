@@ -1,0 +1,134 @@
+---
+layout: translation
+title: Pro Git 9.3 Git Internals I riferimenti di Git
+---
+<h2 id='i_riferimenti_di_git'>I riferimenti di Git</h2>
+
+<p>Potete lanciare qualcosa tipo <code>git log 1a410e</code> per vedere tutta la vostra intera history, ma dovete comunque ricordare che quel <code>1a410e</code> è l&#8217;ultima commit per poter essere in grado di percorrere la history stessa per trovare tutti quegli oggetti. Avete bisogno di un file nel quale potete salvare il valore dello SHA-1 attribuendogli un semplice nome in modo da poter usare quel nome al posto del valore SHA-1 grezzo.</p>
+
+<p>In Git, questi sono chiamati &#8220;riferimenti&#8221; o &#8220;refs&#8221;; potete trovare i file che contengono i valori SHA-1 nella directory <code>.git/refs</code>. Nel progetto corrente, questa directory non contiene files ma una semplice struttura:</p>
+
+<pre><code>$ find .git/refs
+.git/refs
+.git/refs/heads
+.git/refs/tags
+$ find .git/refs -type f
+$</code></pre>
+
+<p>Per creare un nuovo riferimento che vi aiuterà a ricordare dov&#8217;è la vostra ultima commit, potete tecnicamente fare qualcosa di semplice come questo:</p>
+
+<pre><code>$ echo &quot;1a410efbd13591db07496601ebc7a059dd55cfe9&quot; &gt; .git/refs/heads/master</code></pre>
+
+<p>Ora potete usare il riferimento appena creato al posto del valore SHA-1 nei vostri comandi Git:</p>
+
+<pre><code>$ git log --pretty=oneline  master
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
+
+<p>Non siete incoraggiati ad editare direttamente i file riferimento. Git fornisce un comando sicuro per fare questo se volete agiornare un riferimento, chiamato <code>update-ref</code>:</p>
+
+<pre><code>$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
+
+<p>Questo è di base cos&#8217;è un branch in Git: un semplice puntetore o riferimento alla head di una linea di lavoro. Per creare un branch indietro alla seconda commit, potete fare questo:</p>
+
+<pre><code>$ git update-ref refs/heads/test cac0ca</code></pre>
+
+<p>Il vostro branch conterrà solo il lavoro da quella commit in poi:</p>
+
+<pre><code>$ git log --pretty=oneline test
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
+
+<p>Ora, il vostro database Git assomiglia concettualmente all Figura 9-4.</p>
+
+<p><center><img src="/figures/ch9/18333fig0904-tn.png"></center><br/> Figura 9-4. La direcotyr degli oggetti Git directory con incluse i riferimenti branch e head.</p>
+
+<p>Quando lanciate comandi come <code>git branch (branchname)</code>, Git in pratic lancia il comando <code>update-ref</code> per aggiungere lo SHA-1 dell&#8217;ultima commit del branch nel quale siete in qualsiasi nuovo riferimento vogliate creare.</p>
+
+<h3 id='head'>HEAD</h3>
+
+<p>La domanda ora è, quando lanciate <code>git branch (branchname)</code>, come fà Git a conoscere lo SHA-1 dell&#8217;ultima commit? La risposta è il file HEAD. Il file HEAD è un riferimento simbolico al branch corrente. Con riferimento simbolico intendo che, a differenze di un normale riferimento, non contiente in generale un valore SHA-1 ma piuttosto un puntatore ad unl&#8217;altro riferimento. Se esaminate il file, vedrete qualcosa come:</p>
+
+<pre><code>$ cat .git/HEAD 
+ref: refs/heads/master</code></pre>
+
+<p>Se lanciate <code>git checkout test</code>, Git aggiorna il file in questo modo:</p>
+
+<pre><code>$ cat .git/HEAD 
+ref: refs/heads/test</code></pre>
+
+<p>Quando lanciate <code>git commit</code>, crea l&#8217;oggetto commit, specificando che il padre dell&#8217;oggetto commit stesso sia il valore SHA-1 al quale punta il riferimento in HEAD.</p>
+
+<p>Potete anche editare manualmente questo file, ma ancora una volta esiste un comando più sicuro per farlo: <code>symbolic-ref</code>. Potete anche leggere il valore della vostra HEAD tramite questo comando:</p>
+
+<pre><code>$ git symbolic-ref HEAD
+refs/heads/master</code></pre>
+
+<p>Potet anche impostare il valore di HEAD:</p>
+
+<pre><code>$ git symbolic-ref HEAD refs/heads/test
+$ cat .git/HEAD 
+ref: refs/heads/test</code></pre>
+
+<p>Non potete impostare un riferimento simbolico al di fuori di refs:</p>
+
+<pre><code>$ git symbolic-ref HEAD test
+fatal: Refusing to point HEAD outside of refs/</code></pre>
+
+<h3 id='tags'>Tags</h3>
+
+<p>Avete appena visto i tre principali tipi di oggetti di Git, ma ce n&#8217;è un quarto. L&#8217;oggetto tag è molto simile ad un oggetto commit - contiene un tag. una data, un messaggio ed un puntatore. La differenza principale sta nel fatto che un oggetto tag punta ad un oggetto commit piuttosto che ad un albero. E&#8217; come un riferimento ad un branch, ma non si muove - punta sempre alla stessa commit ma gli da un nome più amichevole.</p>
+
+<p>Come discusso nel Capitolo 2, ci sono due tipi di tag: annotated e lightweight. Potete creare un tag lightweight lanciando un comando tipo questo:</p>
+
+<pre><code>$ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d</code></pre>
+
+<p>Questo è tutto quello che è un tag lightweight - un branch che non si muove mai. Un tag annotated però è più complesso. Se create un tag annotated, Git crea un oggetto tag e scrive un riferimento al quale puntare, invece di puntare direttamente alla commit. Potete vedere tutto questo creando un tag annotated (<code>-a</code> specifica che si tratta di un tag annotated):</p>
+
+<pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m &#39;test tag&#39;</code></pre>
+
+<p>Questo è il valore SHA-1 dell&#8217;oggetto creato:</p>
+
+<pre><code>$ cat .git/refs/tags/v1.1 
+9585191f37f7b0fb9444f35a9bf50de191beadc2</code></pre>
+
+<p>Ora, lanciando il comando <code>cat-file</code> su questo SHA-1:</p>
+
+<pre><code>$ git cat-file -p 9585191f37f7b0fb9444f35a9bf50de191beadc2
+object 1a410efbd13591db07496601ebc7a059dd55cfe9
+type commit
+tag v1.1
+tagger Scott Chacon &lt;schacon@gmail.com&gt; Sat May 23 16:48:58 2009 -0700
+
+test tag</code></pre>
+
+<p>Notate che l&#8217;oggetto punta al valore SHA-1 della commit che avete taggato. Notate anche che non è importante che punti ad un oggetto commit; potete taggare ogni oggetto di Git. Nel codice sorgente di Git, ad esempio, il mantainer ha aggiunto la sua chiave pubblica GPG come oggetto blob e lo ha taggato. Potete vedere la chiave pubblica lanciando</p>
+
+<pre><code>$ git cat-file blob junio-gpg-pub</code></pre>
+
+<p>nel codice sorgente di Git. Anche il kernel di Linux ha un oggetto tag che non punta ad una commit - il primo tag creato punta all&#8217;albero iniziale dell&#8217;import del codice sorgente.</p>
+
+<h3 id='remotes'>Remotes</h3>
+
+<p>Il terzo tipo di riferimento che vedrete è il riferimento remoto. Se aggiungete un remote e poi fate un push, Git salva il valore del quale avete fatto la push per ogni branch nella directory <code>refs/remotes</code>. Ad esempio potete aggiungere un remote di nome <code>origin</code>e fare push del vostro branch <code>master</code> in esso:</p>
+
+<pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git
+$ git push origin master
+Counting objects: 11, done.
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (7/7), 716 bytes, done.
+Total 7 (delta 2), reused 4 (delta 1)
+To git@github.com:schacon/simplegit-progit.git
+   a11bef0..ca82a6d  master -&gt; master</code></pre>
+
+<p>Poi, potete vedere quale era il branch <code>master</code> del remote <code>origin</code> l&#8217;ultima volta che avete comunicato con il server, esaminando il file <code>refs/remotes/origin/master</code>:</p>
+
+<pre><code>$ cat .git/refs/remotes/origin/master 
+ca82a6dff817ec66f44342007202690a93763949</code></pre>
+
+<p>I riferimenti remoti differiscono dai branch (riferimenti in <code>refs/heads</code>) principalmente per il fatto che non è possibile fare il checkout di quest&#8217;ultimi. Git li sposta come segnalibri fino all&#8217;ultimo stato conosciuto di quei branch avevano sul server.</p>
+
+<div id='nav'>
+<a href='ch9-2.html'>prev</a> | <a href='ch9-4.html'>next</a>
+</div>

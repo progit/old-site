@@ -1,0 +1,66 @@
+---
+layout: translation
+title: Pro Git 1.5 Démarrage rapide Paramétrage à la première utilisation de Git
+---
+<h2 id='paramtrage__la_premire_utilisation_de_git'>Paramétrage à la première utilisation de Git</h2>
+
+<p>Maintenant que vous avez installé Git sur votre système, vous voudrez personnaliser votre environnement Git. Vous ne devriez avoir à réaliser ces réglages qu&#8217;une seule fois ; ils persisteront lors des mises à jour. Vous pouvez aussi les changer à tout instant en relançant les mêmes commandes.</p>
+
+<p>Git contient un outil appelé git config pour vous permettre de voir et modifier les variables de configuration qui contrôlent tous les aspects de l&#8217;apparence et du comportement de Git. Ces variables peuvent être stockées dans trois endroits différents :</p>
+
+<ul>
+<li>Fichier <code>/etc/gitconfig</code> : Contient les valeurs pour tous les utilisateurs et tous les dépôts du système. Si vous passez l&#8217;option <code>--system</code> à <code>git config</code>, il lit et écrit ce fichier spécifiquement.</li>
+
+<li>Fichier <code>~/.gitconfig</code> : Spécifique à votre utilisateur. Vous pouvez forcer Git à lire et écrire ce fichier en passant l&#8217;option <code>--global</code>.</li>
+
+<li>Fichier <code>config</code> dans le répertoire Git (c&#8217;est à dire <code>.git/config</code>) du dépôt en cours d&#8217;utilisation : spécifique au seul dépôt en cours. Chaque niveau surcharge le niveau précédent, donc les valeurs dans <code>.git/config</code> surchargent celles de <code>/etc/gitconfig</code>.</li>
+</ul>
+
+<p>Sur les systèmes Windows, Git recherche le fichier <code>.gitconfig</code> dans le répertoire <code>$HOME</code> (<code>C:\Documents and Settings\$USER</code> la plupart du temps). Il recherche tout de même <code>/etc/gitconfig</code>, bien qu&#8217;il soit relatif à la racine MSys, qui se trouve où vous aurez décidé d&#8217;installer Git sur votre système Windows.</p>
+
+<h3 id='votre_identit'>Votre identité</h3>
+
+<p>La première chose à faire après l&#8217;installation de Git est de renseigner votre nom et votre adresse e-mail. C&#8217;est important car tous les commits Git utilisent cette information et elle est indélébile dans tous les commits que vous pourrez manipuler :</p>
+
+<pre><code>$ git config --global user.name &quot;John Doe&quot;
+$ git config --global user.email johndoe@example.com</code></pre>
+
+<p>Encore une fois, cette étape n&#8217;est nécessaire qu&#8217;une fois si vous passez l&#8217;option <code>--global</code>, parce que Git utilisera toujours cette information pour tout ce que votre utilisateur fera sur ce système. Si vous souhaitez surcharger ces valeurs avec un nom ou une adresse e-mail différents pour un projet spécifique, vous pouvez lancer ces commandes sans option <code>--global</code> lorsque vous êtes dans ce projet.</p>
+
+<h3 id='votre_diteur_de_texte'>Votre éditeur de texte</h3>
+
+<p>À présent que votre identité est renseignée, vous pouvez configurer l&#8217;éditeur de texte qui sera utilisé par défaut quand Git vous demande de saisir un message. Par défaut, Git utilise l&#8217;éditeur par défaut au niveau système, qui est généralement Vi ou Vim. Si vous souhaitez utiliser un éditeur de texte différent, comme Emacs, vous pouvez entrer ce qui suit :</p>
+
+<pre><code>$ git config --global core.editor emacs</code></pre>
+
+<h3 id='votre_outil_de_diffrences'>Votre outil de différences</h3>
+
+<p>Une autre option utile est le paramétrage de l&#8217;outil de différences à utiliser pour la résolution des conflits de fusion. Supposons que vous souhaitiez utiliser vimdiff :</p>
+
+<pre><code>$ git config --global merge.tool vimdiff</code></pre>
+
+<p>Git accepte kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, et opendiff comme outils valides de fusion. Vous pouvez aussi paramétrer un outil personnalisé ; référez-vous au chapitre 7 pour plus d&#8217;information sur cette procédure.</p>
+
+<h3 id='vrifier_vos_paramtres'>Vérifier vos paramètres</h3>
+
+<p>Si vous souhaitez vérifier vos réglages, vous pouvez utiliser la commande <code>git config --list</code> pour lister tous les réglages que Git a pu trouver jusqu&#8217;ici :</p>
+
+<pre><code>$ git config --list
+user.name=Scott Chacon
+user.email=schacon@gmail.com
+color.status=auto
+color.branch=auto
+color.interactive=auto
+color.diff=auto
+...</code></pre>
+
+<p>Vous pourrez voir certains paramètres apparaître plusieurs fois, car Git lit les mêmes paramètres depuis plusieurs fichiers (<code>/etc/gitconfig</code> et <code>~/.gitconfig</code>, par exemple). Git utilise la dernière valeur pour chaque paramètre.</p>
+
+<p>Vous pouvez aussi vérifier la valeur effective d&#8217;un paramètre particulier en tapant <code>git config &lt;paramètre&gt;</code> :</p>
+
+<pre><code>$ git config user.name
+Scott Chacon</code></pre>
+
+<div id='nav'>
+<a href='ch1-4.html'>prev</a> | <a href='ch1-6.html'>next</a>
+</div>

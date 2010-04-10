@@ -124,7 +124,7 @@ d921970... HEAD@{1}: merge phedders/rdocs: Merge made by recursive.
 
 <pre><code>$ git show HEAD@{5}</code></pre>
 
-<p>You can also use this syntax to see where a branch was some specific amount of time ago. For instance, to see where your <code>master</code> branch was yesterday, you can type</p>
+<p>Вы также можете использовать эту команду, чтобы увидетль ветку, которая была в прошлом. Например, чтобы увидеть состояние вашей <code>master</code>-ветки вчера, наберите команду You can also use this syntax to see where a branch was some specific amount of time ago. For instance, to see where your <code>master</code> branch was yesterday, you can type</p>
 
 <pre><code>$ git show master@{yesterday}</code></pre>
 
@@ -215,6 +215,8 @@ Date:   Fri Nov 7 13:47:59 2008 -0500
 
 <p>Now that you can specify individual commits, let’s see how to specify ranges of commits. This is particularly useful for managing your branches — if you have a lot of branches, you can use range specifications to answer questions such as, &#8220;What work is on this branch that I haven’t yet merged into my main branch?&#8221;</p>
 
+<h4 id='_'>Две точки</h4>
+
 <h4 id='double_dot'>Double Dot</h4>
 
 <p>The most common range specification is the double-dot syntax. This basically asks Git to resolve a range of commits that are reachable from one commit but aren’t reachable from another. For example, say you have a commit history that looks like Figure 6-1.</p>
@@ -239,6 +241,8 @@ E</code></pre>
 
 <p>This command shows you any commits in your current branch that aren’t in the <code>master</code> branch on your <code>origin</code> remote. If you run a <code>git push</code> and your current branch is tracking <code>origin/master</code>, the commits listed by <code>git log origin/master..HEAD</code> are the commits that will be transferred to the server. You can also leave off one side of the syntax to have Git assume HEAD. For example, you can get the same results as in the previous example by typing <code>git log origin/master..</code> — Git substitutes HEAD if one side is missing.</p>
 
+<h4 id='_'>Множество точек</h4>
+
 <h4 id='multiple_points'>Multiple Points</h4>
 
 <p>The double-dot syntax is useful as a shorthand; but perhaps you want to specify more than two branches to indicate your revision, such as seeing what commits are in any of several branches that aren’t in the branch you’re currently on. Git allows you to do this by using either the <code>^</code> character or <code>--not</code> before any reference from which you don’t want to see reachable commits. Thus these three commands are equivalent:</p>
@@ -253,6 +257,8 @@ $ git log refB --not refA</code></pre>
 $ git log refA refB --not refC</code></pre>
 
 <p>This makes for a very powerful revision query system that should help you figure out what is in your branches.</p>
+
+<h4 id='_'>Три точки</h4>
 
 <h4 id='triple_dot'>Triple Dot</h4>
 
