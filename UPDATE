@@ -1,13 +1,20 @@
 git fetch gitbook
 git rm -r translations
+git read-tree --prefix=translations/ar -u gitbook/master:ar
 git read-tree --prefix=translations/cs -u gitbook/master:cs
+git read-tree --prefix=translations/de -u gitbook/master:de
 git read-tree --prefix=translations/en -u gitbook/master:en
 git read-tree --prefix=translations/es -u gitbook/master:es
-git read-tree --prefix=translations/de -u gitbook/master:de
+git read-tree --prefix=translations/fr -u gitbook/master:fr
 git read-tree --prefix=translations/id -u gitbook/master:id
+git read-tree --prefix=translations/it -u gitbook/master:it
 git read-tree --prefix=translations/ja -u gitbook/master:ja
+git read-tree --prefix=translations/mk -u gitbook/master:mk
 git read-tree --prefix=translations/nl -u gitbook/master:nl
+git read-tree --prefix=translations/pl -u gitbook/master:pl
 git read-tree --prefix=translations/ru -u gitbook/master:ru
+git read-tree --prefix=translations/sr -u gitbook/master:sr
+git read-tree --prefix=translations/th -u gitbook/master:th
 git read-tree --prefix=translations/zh -u gitbook/master:zh
 git add book
 rake

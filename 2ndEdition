@@ -15,7 +15,6 @@
 * git cat-file --batch
 * difftool
 * merge conflicts and the index
-* checkout -m / --ours / --thiers
 * HTTP push / WebDAV
 
 tricks:
