@@ -4,6 +4,7 @@
 * notes
 - bundles
 - grafts / replace mechanism
+* git new-work-tree
 * custom merge strategy (git-merge-foo, git merge -s foo)
 * for-each-ref
 * git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
