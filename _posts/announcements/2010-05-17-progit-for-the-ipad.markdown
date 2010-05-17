@@ -14,7 +14,7 @@ look good on that platform.
 
 Check it out - here is Pro Git in your bookshelf:
 
-<img src="http://img.skitch.com/20100517-ffetwhw5yg5jwa42mjrji4iktx.png"/>
+<img src="http://img.skitch.com/20100517-bn9jr7ax9k13ef2697srtjndyk.png"/>
 
 The title page:
 
