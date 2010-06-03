@@ -37,7 +37,7 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
 <p>One of the more helpful options is <code>-p</code>, which shows the diff introduced in each commit. You can also use <code>-2</code>, which limits the output to only the last two entries:</p>
 
-<pre><code>$ git log –p -2
+<pre><code>$ git log -p -2
 commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
@@ -77,7 +77,7 @@ index a0a60ae..47c6340 100644
 
 <p>This option displays the same information but with a diff directly following each entry. This is very helpful for code review or to quickly browse what happened during a series of commits that a collaborator has added. You can also use a series of summarizing options with <code>git log</code>. For example, if you want to see some abbreviated stats for each commit, you can use the <code>--stat</code> option:</p>
 
-<pre><code>$ git log --stat 
+<pre><code>$ git log --stat
 commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
@@ -132,7 +132,7 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 %p	Abbreviated parent hashes
 %an	Author name
 %ae	Author e-mail
-%ad	Author date (format respects the –date= option)
+%ad	Author date (format respects the --date= option)
 %ar	Author date, relative
 %cn	Committer name
 %ce	Committer email
@@ -147,12 +147,12 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 <pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
 * 2d3acf9 ignore errors from SIGCHLD on trap
 *  5e3ee11 Merge branch &#39;master&#39; of git://github.com/dustin/grit
-|\  
+|\
 | * 420eac9 Added a method for getting the current branch.
 * | 30e367c timeout code and tests
 * | 5a09431 add timeout protection to grit
 * | e1193f8 support for heads with slashes in them
-|/  
+|/
 * d6016bc require time for xmlschema
 *  11d191e Merge branch &#39;defunkt&#39; into local</code></pre>
 

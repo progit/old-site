@@ -26,17 +26,17 @@ $ git commit –m &#39;initial project version&#39;</code></pre>
 
 <p>للقيام باستنساخ repository بـ git موجودة مسبقاً - مشروع تريد المساهمة فيه على سبيل المثال - الأمر الذي ستحتاجه هو git clone. اذا كنت قد استخدمت أحد أنظمة إدارة الإصدارات الأخرى مثل Subversion مثلاً، ستلاحظ الإختلاف بين الأمر clone في git وأمر checkout. هناك فرق مهم، عندما تقوم git بعملية clone فإنك ستحصل على نسخة من كامل المعلومات تقريباً الموجودة على مخدم الـ repository. جميع إصدارات الملفات كلها في تاريخ حياة المشروع. أي، وبمعنى آخر، اذا حدث عطل أو ضرر ما لملفات المشروع الموجودة على المخدم الأساسي يمكنك استخدام أي واحدة من النسخ لاسترجاع المشروع للحالة التي كان عليها عند استنساخه (من الممكن أن تخسر بعض الروابط من طرف المخدم، ولكن جميع معلومات الإصدارات ستكون موجودة- انظر الفصل الرابع لمعلومات اخرى).</p>
 
-<p>لاستنساخ repository يمكنك استخدام الأمر &#8216;git clone <span>url</span>&#8217; You clone a repository with <code>git clone [url]</code>. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:</p>
+<p>لاستنساخ repository يمكنك استخدام الأمر &#8216;git clone <span>url</span>&#8217;. فعلى سبيل المثال، لكي تقوم باستنساخ مكتبة Git للغة Ruby والتي تدعى Grit، يمكنك القيام بالتالي:</p>
 
 <pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
 
-<p>That creates a directory named &#8220;grit&#8221;, initializes a <code>.git</code> directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version. If you go into the new <code>grit</code> directory, you’ll see the project files in there, ready to be worked on or used. If you want to clone the repository into a directory named something other than grit, you can specify that as the next command-line option:</p>
+<p>سيقوم هذا بانشاء مجلد جديد باسم &#8220;grit&#8221;، وتجهيز مجلد &#8216;.git&#8217; في داخله، سيقوم أيضاً بسحب جميع المعلومات من الـ repository، ويجهز نسخة جاهزة لكي تعمل عليها لآخر نسخة. اذا دخلت على مجلد &#8216;grit&#8217; الجديد ستجد جميع ملفات المشروع. يمكنك بالطبع استنساخ المشروع لمجلد بإسم آخر، إليك مثال لكيفية القيام بهذا:</p>
 
 <pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
 
-<p>That command does the same thing as the previous one, but the target directory is called mygrit.</p>
+<p>سيقوم هذا الأمر بذات الأمر ولكن سيتم وضع المشروع بمجلد جديد باسم mygrit.</p>
 
-<p>Git has a number of different transfer protocols you can use. The previous example uses the <code>git://</code> protocol, but you may also see <code>http(s)://</code> or <code>user@server:/path.git</code>, which uses the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can set up to access your Git repository and the pros and cons of each.</p>
+<p>هناك عدد من البروتوكولات المختلفة التي يمكنك اسستعمالها لنقل المعلومات في git. المثال السابق يستعمل بروتوكول &#8216;git://&#8217;، ولكن من الممكن أن تجد أيضاً استخداماً لـ &#8216;http(s)://&#8217; أو &#8216;user@server:/path.git&#8217;، والتي تستعمل بروتوكول SSH في النقل. في الفصل الرابع من الكتاب ستتعرف على الخيارات المتوفرة للتواصل مع الـ repository الخاصة بك وميزات ومساوئ كل منها.</p>
 
 <div id='nav'>
 <a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>

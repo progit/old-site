@@ -14,7 +14,7 @@ title: Pro Git 7.3 Customizing Git Git Hooks
 
 <h3 id='clientside_hooks'>Client-Side Hooks</h3>
 
-<p>There are a lot of client-side hooks. This section splits them into committing-workflow hooks, e-mail–workflow scripts, and the rest of the client-side scripts.</p>
+<p>There are a lot of client-side hooks. This section splits them into committing-workflow hooks, e-mail-workflow scripts, and the rest of the client-side scripts.</p>
 
 <h4 id='committingworkflow_hooks'>Committing-Workflow Hooks</h4>
 
@@ -30,7 +30,7 @@ title: Pro Git 7.3 Customizing Git Git Hooks
 
 <h4 id='email_workflow_hooks'>E-mail Workflow Hooks</h4>
 
-<p>You can set up three client-side hooks for an e-mail–based workflow. They’re all invoked by the <code>git am</code> command, so if you aren’t using that command in your workflow, you can safely skip to the next section. If you’re taking patches over e-mail prepared by <code>git format-patch</code>, then some of these may be helpful to you.</p>
+<p>You can set up three client-side hooks for an e-mail-based workflow. They’re all invoked by the <code>git am</code> command, so if you aren’t using that command in your workflow, you can safely skip to the next section. If you’re taking patches over e-mail prepared by <code>git format-patch</code>, then some of these may be helpful to you.</p>
 
 <p>The first hook that is run is <code>applypatch-msg</code>. It takes a single argument: the name of the temporary file that contains the proposed commit message. Git aborts the patch if this script exits non-zero. You can use this to make sure a commit message is properly formatted or to normalize the message by having the script edit it in place.</p>
 

@@ -380,13 +380,13 @@ $ git fetch origin</code></pre>
 
 <pre><code>$ git checkout featureA
 $ git rebase origin/master
-$ git push –f myfork featureA</code></pre>
+$ git push -f myfork featureA</code></pre>
 
 <p>This rewrites your history to now look like Figure 5-17.</p>
 
 <p><center><img src="/figures/ch5/18333fig0517-tn.png"></center><br/> Figure 5-17. Commit history after featureA work.</p>
 
-<p>Because you rebased the branch, you have to specify the <code>–f</code> to your push command in order to be able to replace the <code>featureA</code> branch on the server with a commit that isn’t a descendant of it. An alternative would be to push this new work to a different branch on the server (perhaps called <code>featureAv2</code>).</p>
+<p>Because you rebased the branch, you have to specify the <code>-f</code> to your push command in order to be able to replace the <code>featureA</code> branch on the server with a commit that isn’t a descendant of it. An alternative would be to push this new work to a different branch on the server (perhaps called <code>featureAv2</code>).</p>
 
 <p>Let’s look at one more possible scenario: the maintainer has looked at work in your second branch and likes the concept but would like you to change an implementation detail. You’ll also take this opportunity to move the work to be based off the project’s current <code>master</code> branch. You start a new branch based off the current <code>origin/master</code> branch, squash the <code>featureB</code> changes there, resolve any conflicts, make the implementation change, and then push that up as a new branch:</p>
 

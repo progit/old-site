@@ -20,7 +20,7 @@ title: Pro Git 2.2 Git Basics Recording Changes to the Repository
 # On branch master
 nothing to commit (working directory clean)</code></pre>
 
-<p>This means you have a clean working directory—in other words, there are no tracked and modified files. Git also doesn’t see any untracked files, or they would be listed here. Finally, the command tells you which branch you’re on. For now, that is always master, which is the default; you won’t worry about it here. The next chapter will go over branches and references in detail.</p>
+<p>This means you have a clean working directory — in other words, there are no tracked and modified files. Git also doesn’t see any untracked files, or they would be listed here. Finally, the command tells you which branch you’re on. For now, that is always master, which is the default; you won’t worry about it here. The next chapter will go over branches and references in detail.</p>
 
 <p>Let’s say you add a new file to your project, a simple README file. If the file didn’t exist before, and you run <code>git status</code>, you see your untracked file like so:</p>
 
@@ -84,7 +84,7 @@ $ git status
 
 <p>Both files are staged and will go into your next commit. At this point, suppose you remember one little change that you want to make in benchmarks.rb before you commit it. You open it again and make that change, and you’re ready to commit. However, let’s run <code>git status</code> one more time:</p>
 
-<pre><code>$ vim benchmarks.rb 
+<pre><code>$ vim benchmarks.rb
 $ git status
 # On branch master
 # Changes to be committed:
@@ -137,7 +137,7 @@ $ git status
 
 <p>Here is another example .gitignore file:</p>
 
-<pre><code># a comment – this is ignored
+<pre><code># a comment - this is ignored
 *.a       # no .a files
 !lib.a    # but do track lib.a, even though you&#39;re ignoring .a files above
 /TODO     # only ignore the root TODO file, not subdir/TODO
@@ -184,7 +184,7 @@ index 3cb747f..da65585 100644
 
 <p>That command compares what is in your working directory with what is in your staging area. The result tells you the changes you’ve made that you haven’t yet staged.</p>
 
-<p>If you want to see what you’ve staged that will go into your next commit, you can use <code>git diff –-cached</code>. (In Git versions 1.6.1 and later, you can also use <code>git diff –-staged</code>, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
+<p>If you want to see what you’ve staged that will go into your next commit, you can use <code>git diff --cached</code>. (In Git versions 1.6.1 and later, you can also use <code>git diff --staged</code>, which may be easier to remember.) This command compares your staged changes to your last commit:</p>
 
 <pre><code>$ git diff --cached
 diff --git a/README b/README
@@ -219,7 +219,7 @@ $ git status
 
 <p>Now you can use <code>git diff</code> to see what is still unstaged</p>
 
-<pre><code>$ git diff 
+<pre><code>$ git diff
 diff --git a/benchmarks.rb b/benchmarks.rb
 index e445e28..86b2f7c 100644
 --- a/benchmarks.rb
@@ -227,7 +227,7 @@ index e445e28..86b2f7c 100644
 @@ -127,3 +127,4 @@ end
  main()
 
- ##pp Grit::GitRuby.cache_client.stats 
+ ##pp Grit::GitRuby.cache_client.stats
 +# test line</code></pre>
 
 <p>and <code>git diff --cached</code> to see what you’ve staged so far:</p>
@@ -244,7 +244,7 @@ index 3cb747f..e445e28 100644
 +        run_code(x, &#39;commits 1&#39;) do
 +          git.commits.size
 +        end
-+              
++
         run_code(x, &#39;commits 2&#39;) do
           log = git.commits(&#39;master&#39;, 15)
           log.size</code></pre>
@@ -266,7 +266,7 @@ index 3cb747f..e445e28 100644
 #   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
 #
 #       new file:   README
-#       modified:   benchmarks.rb 
+#       modified:   benchmarks.rb
 ~
 ~
 ~

@@ -1,0 +1,74 @@
+---
+layout: translation
+title: Pro Git 2.7 Podstawy Gita Sztuczki i kruczki
+---
+<h2 id='sztuczki_i_kruczki'>Sztuczki i kruczki</h2>
+
+<p>Zanim zamkniemy ten rozdział, pokażemy kilka sztuczek, które uczynią twoją pracę prostszą, łatwiejszą i przyjemniejszą. Wielu ludzi używa Gita nie korzystając z przytoczonych tutaj porad, ty też nie musisz, ale przynajmniej powinieneś o nich wiedzieć.</p>
+
+<h3 id='autouzupenianie'>Auto-uzupełnianie</h3>
+
+<p>Jeśli używasz powłoki Bash, Git jest wyposażony w poręczny skrypt auto-uzupełniania. Pobierz kod źródłowy Gita i zajrzyj do katalogu <code>contrib/completion</code>. Powinieneś znaleźć tam plik o nazwie <code>git-completion.bash</code>. Skopiuj go do swojego katalogu domowego i dodaj do <code>.bashrc</code> następującą linijkę:</p>
+
+<pre><code>source ~/.git-completion.bash</code></pre>
+
+<p>Jeśli chcesz ustawić Gita tak, żeby automatycznie pozwalał na auto-uzupełnianie wszystkim użytkownikom, skopiuj wymieniony skrypt do katalogu <code>/opt/local/etc/bash_completion.d</code> na systamach Mac, lub do <code>/etc/bash_completion.d/</code> w Linuxie. Jest to katalog skryptów ładowanych automatycznie przez Basha, dzięki czemu opcja zostanie włączona wszystkim użytkownikom.</p>
+
+<p>Jeśli używasz Windows wraz z narzędziem Git Bash, które jest domyślnie instalowane wraz wraz z msysGit, auto-uzupełnianie powinno być pre-konfigurowane i dostępne od razu.</p>
+
+<p>Wciśnij klawisz Tab podczas wpisywania komendy Gita, a powinieneś ujrzeć zestaw podpowiedzi do wyboru:</p>
+
+<pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
+commit config</code></pre>
+
+<p>W tym wypadku wpisanie git co i wciśnięcie Tab dwukrotnie podpowiada operacje commit oraz config. Dodanie kolejnej literki m i wciśnięcie Tab uzupełni automatycznie polecenie do <code>git commit</code>.</p>
+
+<p>Podobnie jest z opcjami, co pewnie przyda ci się znacznie częściej. Na przykład jeżeli chcesz uruchomić polecenie <code>git log</code> i nie pamiętasz jednej z opcji, zacznij ją wpisywać i wciśnij Tab aby zobaczyć sugestie:</p>
+
+<pre><code>$ git log --s&lt;tab&gt;
+--shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
+
+<p>Jest to bardzo przydatna możliwość pozwalająca na zaoszczędzenie mnóstwa czasu spędzonego na czytaniu dokumentacji.</p>
+
+<h3 id='aliasy'>Aliasy</h3>
+
+<p>Git nie wydedukuje sam polecenia jeśli wpiszesz je częściowo i wciśniesz Enter. Jeśli nie chcesz w całości wpisywać całego tekstu polecenia możesz łatwo stworzyć dla niego alias używając <code>git config</code>. Oto kilka przykładów, które mogą ci się przydać:</p>
+
+<pre><code>$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status</code></pre>
+
+<p>Oznacza to, że na przykład, zamiast wpisywać <code>git commit</code>, wystarczy, że wpiszesz <code>git ci</code>. Z czasem zaczniesz też stosować także inne komendy regularnie, nie wahaj się wówczas tworzyć sobie dla nich nowych aliasów.</p>
+
+<p>Technika ta jest także bardzo przydatna do tworzenia poleceń, które uważasz, że powinny istnieć a których brakuje ci w zwięzłej formie. Na przykład, aby skorygować problem z intuicyjnością obsługi usuwania plików z poczekalni, możesz dodać do Gita własny, ułatwiający to alias:</p>
+
+<pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
+
+<p>W ten sposób dwie poniższe komendy są sobie równoważne:</p>
+
+<pre><code>$ git unstage fileA
+$ git reset HEAD fileA</code></pre>
+
+<p>Od razu polecenie wygląda lepiej. Dość częstą praktyką jest także dodawanie komendy <code>last</code>:</p>
+
+<pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
+
+<p>Możesz dzięki niemu łatwo zobaczyć ostatnią rewizję:</p>
+
+<pre><code>$ git last
+commit 66938dae3329c7aebe598c2246a8e6af90d04646
+Author: Josh Goebel &lt;dreamer3@example.com&gt;
+Date:   Tue Aug 26 19:48:51 2008 +0800
+
+    test for current head
+
+    Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
+
+<p>Jak można zauważyć, Git zastępuje nową komendę czymkolwiek co do niej przypiszesz. Jednakże, możesz chcieć także uruchomić zewnętrzne polecenie zamiast komendy Gita. Rozpocznij je wówczas znakiem wykrzyknika <code>!</code>. Przydaje się to podczas tworzenia własnego narzędzia, które współpracuje z repozytorium Gita. Możemy pokazać to na przykładzie aliasu <code>git visual</code> uruchamiającego <code>gitk</code>:</p>
+
+<pre><code>$ git config --global alias.visual &quot;!gitzk&quot;</code></pre>
+
+<div id='nav'>
+<a href='ch2-6.html'>prev</a> | <a href='ch2-8.html'>next</a>
+</div>

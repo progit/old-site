@@ -99,7 +99,7 @@ fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
 <p>Cool — now you have a branch named <code>recover-branch</code> that is where your <code>master</code> branch used to be, making the first two commits reachable again. Next, suppose your loss was for some reason not in the reflog — you can simulate that by removing <code>recover-branch</code> and deleting the reflog. Now the first two commits aren’t reachable by anything:</p>
 
-<pre><code>$ git branch –D recover-branch
+<pre><code>$ git branch -D recover-branch
 $ rm -Rf .git/logs/</code></pre>
 
 <p>Because the reflog data is kept in the <code>.git/logs/</code> directory, you effectively have no reflog. How can you recover that commit at this point? One way is to use the <code>git fsck</code> utility, which checks your database for integrity. If you run it with the <code>--full</code> option, it shows you all objects that aren’t pointed to by another object:</p>

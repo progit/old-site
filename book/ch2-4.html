@@ -20,7 +20,7 @@ title: Pro Git 2.4 Git Basics Undoing Things
 
 <pre><code>$ git commit -m &#39;initial commit&#39;
 $ git add forgotten_file
-$ git commit --amend </code></pre>
+$ git commit --amend</code></pre>
 
 <p>All three of these commands end up with a single commit — the second commit replaces the results of the first.</p>
 
@@ -40,7 +40,7 @@ $ git status
 
 <p>Right below the “Changes to be committed” text, it says use <code>git reset HEAD &lt;file&gt;...</code> to unstage. So, let’s use that advice to unstage the benchmarks.rb file:</p>
 
-<pre><code>$ git reset HEAD benchmarks.rb 
+<pre><code>$ git reset HEAD benchmarks.rb
 benchmarks.rb: locally modified
 $ git status
 # On branch master

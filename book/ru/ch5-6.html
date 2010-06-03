@@ -184,15 +184,17 @@ Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
 <p>You’ll be able to watch Git rewriting trees and commits and then move the branch pointer at the end. It’s generally a good idea to do this in a testing branch and then hard-reset your master branch after you’ve determined the outcome is what you really want. To run <code>filter-branch</code> on all your branches, you can pass <code>--all</code> to the command.</p>
 
+<h4 id='___'>Создание новой корневой поддириктории</h4>
+
 <h4 id='making_a_subdirectory_the_new_root'>Making a Subdirectory the New Root</h4>
 
-<p>Suppose you’ve done an import from another source control system and have subdirectories that make no sense (trunk, tags, and so on). If you want to make the <code>trunk</code> subdirectory be the new project root for every commit, <code>filter-branch</code> can help you do that, too:</p>
+<p>Предположим, вы импортировали репозиторий из другой системы контроля версий и в нем есть бессмысленные каталоги (trunk, tags, и др.). Если вы захотите сделать <code>trunk</code> новым корнем проекта, команда <code>filter-branch</code> тоже может помочь вам это сделать: Suppose you’ve done an import from another source control system and have subdirectories that make no sense (trunk, tags, and so on). If you want to make the <code>trunk</code> subdirectory be the new project root for every commit, <code>filter-branch</code> can help you do that, too:</p>
 
 <pre><code>$ git filter-branch --subdirectory-filter trunk HEAD
 Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>Now your new project root is what was in the <code>trunk</code> subdirectory each time. Git will also automatically remove commits that did not affect the subdirectory.</p>
+<p>Теперь корневая директория будет в папке <code>trunk</code>. Git также автоматом удалит все коммиты, которые не затронули эту папку. Now your new project root is what was in the <code>trunk</code> subdirectory each time. Git will also automatically remove commits that did not affect the subdirectory.</p>
 
 <h4 id='changing_email_addresses_globally'>Changing E-Mail Addresses Globally</h4>
 

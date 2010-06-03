@@ -37,18 +37,38 @@ title: Pro Git 3.7 Git Branching Remote Branches
 <p>Figure 3-24. The git fetch command updates your remote references.</p>
 <!--
     TODO    process-end: 2010-03-31 - florianb
+--><!--
+    TODO    process-begin: 2010-04-17 - florianb
 -->
+<p>Um zu demonstrieren wie Branches auf verschiedenen Remote-Servern aussehen, stellen wir uns vor, dass du einen weiteren internen Git-Server besitzt, welcher nur von einem deiner Sprint-Teams zur Entwicklung genutzt wird. Diesen Server erreichen wir unter <code>git.team1.ourcompany.com</code>. Du kannst ihn, mit dem Git-Kommando <code>git remote add</code> - wie in Kapitel 2 beschrieben, deinem derzeitigen Arbeitsprojekt als weiteren Quell-Server hinzufügen. Gib dem Remote-Server den Namen <code>teamone</code>, welcher nun als Synonym für die ausgeschriebene Internetadresse dient (siehe Abbildung 3-25).</p>
+
 <p>To demonstrate having multiple remote servers and what remote branches for those remote projects look like, let’s assume you have another internal Git server that is used only for development by one of your sprint teams. This server is at <code>git.team1.ourcompany.com</code>. You can add it as a new remote reference to the project you’re currently working on by running the <code>git remote add</code> command as we covered in Chapter 2. Name this remote <code>teamone</code>, which will be your shortname for that whole URL (see Figure 3-25).</p>
 
-<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Figure 3-25. Adding another server as a remote</p>
+<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Abbildung 3-25. Einen weiteren Server als Quelle hinzufügen.</p>
+
+<p>Figure 3-25. Adding another server as a remote</p>
+
+<p>Nun kannst du einfach <code>git fetch teamone</code> ausführen um alles vom Server zu holen was du noch nicht hast. Da der Datenbestand auf dem Teamserver einen Teil der Informationen auf deinem <code>origin</code>-Server ist, holt Git keine Daten, erstellt allerdings einen Remote-Branch namens <code>teamone/master</code>, der auf den gleichen Commit wie <code>teamone</code>s <code>master</code>-Branch zeigt (siehe Abbildung 3-26).</p>
 
 <p>Now, you can run <code>git fetch teamone</code> to fetch everything server has that you don’t have yet. Because that server is a subset of the data your <code>origin</code> server has right now, Git fetches no data but sets a remote branch called <code>teamone/master</code> to point to the commit that <code>teamone</code> has as its <code>master</code> branch (see Figure 3-26).</p>
 
-<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> Figure 3-26. You get a reference to teamone’s master branch position locally.</p>
+<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> Abbildung 3-26. Du bekommst eine lokale Referenz auf <code>teamone</code>s <code>master</code>-Branch.</p>
+
+<p>Figure 3-26. You get a reference to teamone’s master branch position locally.</p>
+<!--
+    TODO    process-end: 2010-04-18 - florianb
+--><!--
+    TODO    process-begin: 2010-05-13 florianb
+-->
+<h3 id='hochladen'>Hochladen</h3>
 
 <h3 id='pushing'>Pushing</h3>
 
+<p>Wenn du einen Branch mit der Welt teilen möchtest, musst du ihn auf einen externen Server laden, auf dem du Schreibrechte besitzt. Deine lokalen Zweige werden nicht automatisch mit den Remote-Servern synchronisiert wenn du etwas änderst - du musst die zu veröffentlichenden Branches explizit hochladen. Auf diesem Weg kannst du an privaten Zweigen arbeiten die du nicht veröffentlichen möchtest, und nur die Themen-Branches replizieren an denen du gemeinsam mit anderen entwickeln möchtest.</p>
+
 <p>When you want to share a branch with the world, you need to push it up to a remote that you have write access to. Your local branches aren’t automatically synchronized to the remotes you write to — you have to explicitly push the branches you want to share. That way, you can use private branches do work you don’t want to share, and push up only the topic branches you want to collaborate on.</p>
+
+<p>Wenn du einen Zweig namens <code>serverfix</code> besitzt, an dem du mit anderen arbeiten möchtest, dann kannst du diesen auf dieselbe Weise hochladen wie deinen ersten Branch. Führe <code>git push (remote) (branch)</code> aus:</p>
 
 <p>If you have a branch named <code>serverfix</code> that you want to work on with others, you can push it up the same way you pushed your first branch. Run <code>git push (remote) (branch)</code>:</p>
 
@@ -60,7 +80,11 @@ Total 15 (delta 5), reused 0 (delta 0)
 To git@github.com:schacon/simplegit.git
  * [new branch]      serverfix -&gt; serverfix</code></pre>
 
+<p>Hierbei handelt es sich um eine Abkürzung. Git erweitert die <code>serverfix</code>-Branchbezeichnung automatisch zu <code>refs/heads/serverfix:refs/heads/serverfix</code>, was soviel bedeutet wie “Nimm meinen lokalen <code>serverfix</code>-Branch und aktualisiere damit den <code>serverfix</code>-Branch auf meinem externen Server”. Wir werden den <code>refs/heads/</code>-Teil in Kapitel 9 noch näher beleuchten, du kannst ihn aber in der Regel weglassen. Du kannst auch <code>git push origin serverfix:serverfix</code> ausführen, was das gleiche bewirkt - es bedeutet “Nimm meinen <code>serverfix</code> und mach ihn zum externen <code>serverfix</code>”. Du kannst dieses Format auch benutzen um einen lokalen Zweig in einen externen Branch mit anderem Namen zu laden. Wenn du ihn auf dem externen Server nicht <code>serverfix</code> nennen möchtest, könntest du stattdessen <code>git push origin serverfix:awesomebranch</code> ausführen um deinen lokalen <code>serverfix</code>-Branch in den <code>awesomebranch</code>-Zweig in deinem externen Projekt zu laden.</p>
+
 <p>This is a bit of a shortcut. Git automatically expands the <code>serverfix</code> branchname out to <code>refs/heads/serverfix:refs/heads/serverfix</code>, which means, “Take my serverfix local branch and push it to update the remote’s serverfix branch.” We’ll go over the <code>refs/heads/</code> part in detail in Chapter 9, but you can generally leave it off. You can also do <code>git push origin serverfix:serverfix</code>, which does the same thing — it says, “Take my serverfix and make it the remote’s serverfix.” You can use this format to push a local branch into a remote branch that is named differently. If you didn’t want it to be called <code>serverfix</code> on the remote, you could instead run <code>git push origin serverfix:awesomebranch</code> to push your local <code>serverfix</code> branch to the <code>awesomebranch</code> branch on the remote project.</p>
+
+<p>Das nächste Mal wenn einer deiner Mitarbeiter den aktuellen Status des Git-Projektes vom Server abruft, wird er eine Referenz, auf den externen Branch <code>origin/serverfix</code>, unter dem Namen <code>serverfix</code> erhalten:</p>
 
 <p>The next time one of your collaborators fetches from the server, they will get a reference to where the server’s version of <code>serverfix</code> is under the remote branch <code>origin/serverfix</code>:</p>
 
@@ -72,7 +96,11 @@ Unpacking objects: 100% (15/15), done.
 From git@github.com:schacon/simplegit
  * [new branch]      serverfix    -&gt; origin/serverfix</code></pre>
 
+<p>Es ist wichtig festzuhalten, dass du mit Abrufen eines neuen externen Branches nicht automatisch eine lokale, bearbeitbare Kopie derselben erhältst. Mit anderen Worten, in diesem Fall bekommst du keinen neuen <code>serverfix</code>-Branch - sondern nur einen <code>origin/serverfix</code>-Zeiger den du nicht verändern kannst.</p>
+
 <p>It’s important to note that when you do a fetch that brings down new remote branches, you don’t automatically have local, editable copies of them. In other words, in this case, you don’t have a new <code>serverfix</code> branch — you only have an <code>origin/serverfix</code> pointer that you can’t modify.</p>
+
+<p>Um diese referenzierte Arbeit mit deinem derzeitigen Arbeitsbranch zusammenzuführen kannst du <code>git merge origin/serverfix</code> ausführen. Wenn du allerdings deine eigene Arbeitskopie des <code>serverfix</code>-Branches erstellen möchtest, dann kannst du diesen auf Grundlage des externen Zweiges erstellen:</p>
 
 <p>To merge this work into your current working branch, you can run <code>git merge origin/serverfix</code>. If you want your own <code>serverfix</code> branch that you can work on, you can base it off your remote branch:</p>
 
@@ -80,8 +108,12 @@ From git@github.com:schacon/simplegit
 Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
 Switched to a new branch &quot;serverfix&quot;</code></pre>
 
-<p>This gives you a local branch that you can work on that starts where <code>origin/serverfix</code> is.</p>
+<p>Dies erstellt dir einen lokalen bearbeitbaren Branch mit der Grundlage des <code>origin/serverfix</code>-Zweiges.</p>
 
+<p>This gives you a local branch that you can work on that starts where <code>origin/serverfix</code> is.</p>
+<!--
+    TODO process-end:   2010-05-13 florianb
+-->
 <h3 id='tracking_branches'>Tracking Branches</h3>
 
 <p>Checking out a local branch from a remote branch automatically creates what is called a <em>tracking branch</em>. Tracking branches are local branches that have a direct relationship to a remote branch. If you’re on a tracking branch and type git push, Git automatically knows which server and branch to push to. Also, running <code>git pull</code> while on one of these branches fetches all the remote references and then automatically merges in the corresponding remote branch.</p>

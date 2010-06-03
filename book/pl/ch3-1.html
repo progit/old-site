@@ -1,0 +1,86 @@
+---
+layout: translation
+title: Pro Git 3.1 Gałęzie Gita Czym jest gałąź
+---
+<h2 id='czym_jest_ga'>Czym jest gałąź</h2>
+
+<p>Żeby naprawdę zrozumieć sposób, w jaki Git obsługuje gałęzie, trzeba cofnąć się o krok i przyjrzeć temu, w jaki sposób Git przechowuje dane. Jak może pamiętasz z Rozdziału 1., Git nie przechowuje danych jako serii zmian i różnic, ale jako zestaw migawek.</p>
+
+<p>Kiedy zatwierdzasz zmiany w Gicie, ten zapisuje obiekt zmian, który z kolei zawiera wskaźnik na migawkę umieszczonej w poczekalni zawartości, metadane autora i opisu oraz zero lub więcej wskaźników na zmiany, które były bezpośrednimi rodzicami właśnie zatwierdzanej: brak rodziców w przypadki pierwszej, jeden w przypadku zwykłej, oraz kilka w przypadku zmiany powstałej wskutek scalenia dwóch lub więcej gałęzi.</p>
+
+<p>Aby pokazać to lepiej, załóżmy, że posiadasz katalog zawierający trzy pliki, które umieszczasz w poczekalni, a następnie zatwierdzasz zmiany. Umieszczenie w poczekalni plików powoduje wyliczenie sumy kontrolnej każdego z nich (skrótu SHA-1 wspomnianego w Rozdziale 1.), zapisanie wersji plików w repozytorium (Git nazywa je blobami) i dodanie sumy kontrolnej do poczekalni:</p>
+
+<pre><code>$ git add README test.rb LICENSE
+$ git commit -m &#39;initial commit of my project&#39;</code></pre>
+
+<p>Kiedy zatwierdzasz zmiany przez uruchomienie polecenia <code>git commit</code>, Git liczy sumę kontrolną każdego podkatalogu (w tym wypadku tylko głównego katalogu projektu) i zapisuje te trzy obiekty w repozytorium. Następnie tworzy obiekt zestawu zmian, zawierający metadane oraz wskaźnik na główne drzewo projektu, co w razie potrzeby umożliwi odtworzenie całej migawki.</p>
+
+<p>Teraz repozytorium Gita zawiera już 5 obiektów: jeden blob dla zawartości każdego z trzech plików, jedno drzewo opisujące zawartość katalogu i określające, które pliki przechowywane są w których blobach, oraz jeden zestaw zmian ze wskaźnikiem na owo drzewo i wszystkimi metadanymi. Jeśli chodzi o ideę, dane w repozytorium Gita wyglądają jak na Rycinie 3-1.</p>
+
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Rycina 3-1. Dane repozytorium z jedną zatwierdzoną zmianą.</p>
+
+<p>Jeśli dokonasz zmian i je również zatwierdzisz, kolejne zatwierdzenie zachowa wskaźnik do zestawu zmian, który został utworzony bezpośrednio przed właśnie dodawanym. Po dwóch kolejnych zatwierdzeniach, twoja historia może wyglądać podobnie do przedstawionej na Rycinie 3-2:</p>
+
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Rycina 3-2. Dane Gita dla wielu zestawów zmian.</p>
+
+<p>Gałąź w Gicie jest po prostu lekkim, przesuwalnym wskaźnikiem na któryś z owych zestawów zmian. Domyślna nazwa gałęzi Gita to master. Kiedy zatwierdzasz pierwsze zmiany, otrzymujesz gałąź master, która wskazuje na ostatni zatwierdzony przez ciebie zestaw. Z każdym zatwierdzeniem automatycznie przesuwa się ona do przodu.</p>
+
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Rycina 3-3. Gałąź wskazująca na dane zestawu zmian w historii.</p>
+
+<p>Co się stanie, jeśli utworzysz nową gałąź? Cóż, utworzony zostanie nowy wskaźnik, który następnie będziesz mógł przesuwać. Powiedzmy, że tworzysz nową gałąź o nazwie testing. Zrobisz to za pomocą polecenia <code>git branch</code>:</p>
+
+<pre><code>$ git branch testing</code></pre>
+
+<p>Polecenie to tworzy nowy wskaźnik na ten sam zestaw zmian, w którym aktualnie się znajdujesz (zobacz Rycinę 3-4).</p>
+
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Rycina 3-4. Wiele gałęzi wskazujących na dane zestawów zmian w historii.</p>
+
+<p>Skąd Git wie, na której gałęzi się aktualnie znajdujesz? Utrzymuje on specjalny wskaźnik o nazwie HEAD. Istotnym jest, że bardzo różni się on od koncepcji HEADa w innych systemach kontroli wersji, do jakich mogłeś się już przyzwyczaić, na przykład Subversion czy CVS. W Gicie jest to wskaźnik na lokalną gałąź, na której właśnie się znajdujesz. W tym wypadku, wciąż jesteś na gałęzi master. Polecenie <code>git branch</code> utworzyło jedynie nową gałąź, nie przełączyło cię na nią (porównaj z Ryciną 3-5).</p>
+
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. HEAD wskazuje na gałąź, na której jesteś.</p>
+
+<p>Aby przełączyć się na istniejącą gałąź, używasz polecenia <code>git checkout</code>. Przełączmy się zatem do nowoutworzonej gałęzi testing:</p>
+
+<pre><code>$ git checkout testing</code></pre>
+
+<p>HEAD zostaje przesunięty tak, by wskazywać na gałąź testing (zobacz Rycinę 3-6).</p>
+
+<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> Figure 3-6. Po przełączaniu gałęzi HEAD wskazuje inną gałąź.</p>
+
+<p>Jakie ma to znaczenie? Zatwierdźmy zmiany raz jeszcze:</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;made a change&#39;</code></pre>
+
+<p>Rycina 3-7 ilustruje wynik operacji.</p>
+
+<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> Rycina 3-7. Gałąź wskazywana przez HEAD przesuwa się naprzód po każdym zatwierdzeniu zmian.</p>
+
+<p>To interesujące, bo teraz twoja gałąź testing przesunęła się do przodu, jednak gałąź master ciągle wskazuje ten sam zestaw zmian, co w momencie użycia <code>git checkout</code> do zmiany aktywnej gałęzi. Przełączmy się zatem z powrotem na gałąź master:</p>
+
+<pre><code>$ git checkout master</code></pre>
+
+<p>Rycina 3-8 pokazuje wynik.</p>
+
+<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> Rycina 3-8. Po wykonaniu <code>checkout</code>, HEAD przesuwa się na inną gałąź.</p>
+
+<p>Polecenie dokonało dwóch rzeczy. Przesunęło wskaźnik HEAD z powrotem na gałąź master i przywróciło pliki w katalogu roboczym do stanu z migawki, na którą wskazuje master. Oznacza to również, że zmiany, które od tej pory wprowadzisz, będą rozwidlały się od starszej wersji projektu. W gruncie rzeczy cofa to tymczasowo pracę, jaką wykonałeś na gałęzi testing, byś mógł z dalszymi zmianami pójść w innym kierunku.</p>
+
+<p>Wykonajmy teraz kilka zmian i zatwierdźmy je:</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;made other changes&#39;</code></pre>
+
+<p>Teraz historia twojego projektu została rozszczepiona (porównaj Rycinę 3-9). Stworzyłeś i przełączyłeś się na gałąź, wykonałeś na niej pracę, a następnie powróciłeś na gałąź główną i wykonałeś inną pracę. Oba zestawy zmian są od siebie odizolowane w odrębnych gałęziach: możesz przełączać się pomiędzy nimi oraz scalić je razem, kiedy będziesz na to gotowy. A wszystko to wykonałeś za pomocą dwóch prostych poleceń <code>branch</code> i <code>checkout</code>.</p>
+
+<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Rycina 3-9. Rozwidlona historia gałęzi.</p>
+
+<p>Ponieważ gałęzie w Gicie są tak naprawdę prostymi plikami, zawierającymi 40 znaków sumy kontrolnej SHA-1 zestawu zmian, na który wskazują, są one bardzo tanie w tworzeniu i usuwaniu. Stworzenie nowej gałęzi zajmuje dokładnie tyle czasu, co zapisanie 41 bajtów w pliku (40 znaków + znak nowej linii).</p>
+
+<p>Wyraźnie kontrastuje to ze sposobem, w jaki gałęzie obsługuje większość narzędzi do kontroli wersji, gdzie z reguły w grę wchodzi kopiowanie wszystkich plików projektu do osobnego katalogu. Może to trwać kilkanaście sekund czy nawet minut, w zależności od rozmiarów projektu, podczas gdy w Gicie jest zawsze natychmiastowe. Co więcej, ponieważ wraz z każdym zestawem zmian zapamiętujemy jego rodziców, odnalezienie wspólnej bazy przed scaleniem jest automatycznie wykonywane za nas i samo w sobie jest niezwykle proste. Możliwości te pomagają zachęcić deweloperów do częstego tworzenia i używania gałęzi.</p>
+
+<p>Zobaczmy, dlaczego ty też powinieneś.</p>
+
+<div id='nav'>
+<a href='ch3-0.html'>prev</a> | <a href='ch3-2.html'>next</a>
+</div>

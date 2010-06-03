@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 7.4 自定义 Git An Example Git-Enforced Policy
+title: Pro Git 7.4 自定义 Git Git 强制策略实例
 ---
-<h2 id='an_example_gitenforced_policy'>An Example Git-Enforced Policy</h2>
+<h2 id='git_'>Git 强制策略实例</h2>
 
-<p>In this section, you’ll use what you’ve learned to establish a Git workflow that checks for a custom commit message format, enforces fast-forward-only pushes, and allows only certain users to modify certain subdirectories in a project. You’ll build client scripts that help the developer know if their push will be rejected and server scripts that actually enforce the policies.</p>
+<p>在本节中，我们应用前面学到的知识建立这样一个Git 工作流程：检查提交信息的格式，只接受纯fast-forward内容的推送，并且指定用户只能修改项目中的特定子目录。我们将写一个客户端角本来提示开发人员他们推送的内容是否会被拒绝，以及一个服务端脚本来实际执行这些策略。</p>
 
-<p>I used Ruby to write these, both because it’s my preferred scripting language and because I feel it’s the most pseudocode-looking of the scripting languages; thus you should be able to roughly follow the code even if you don’t use Ruby. However, any language will work fine. All the sample hook scripts distributed with Git are in either Perl or Bash scripting, so you can also see plenty of examples of hooks in those languages by looking at the samples.</p>
+<p>这些脚本使用 Ruby 写成，一半由于它是作者倾向的脚本语言，另外作者觉得它是最接近伪代码的脚本语言；因而即便你不使用 Ruby 也能大致看懂。不过任何其他语言也一样适用。所有 Git 自带的样例脚本都是用 Perl 或 Bash 写的。所以从这些脚本中能找到相当多的这两种语言的挂钩样例。</p>
 
-<h3 id='serverside_hook'>Server-Side Hook</h3>
+<h3 id='id349'>服务端挂钩</h3>
 
-<p>All the server-side work will go into the update file in your hooks directory. The update file runs once per branch being pushed and takes the reference being pushed to, the old revision where that branch was, and the new revision being pushed. You also have access to the user doing the pushing if the push is being run over SSH. If you’ve allowed everyone to connect with a single user (like &#8220;git&#8221;) via public-key authentication, you may have to give that user a shell wrapper that determines which user is connecting based on the public key, and set an environment variable specifying that user. Here I assume the connecting user is in the <code>$USER</code> environment variable, so your update script begins by gathering all the information you need:</p>
+<p>所有服务端的工作都在hooks（挂钩）目录的 update（更新）脚本中制定。update 脚本为每一个得到推送的分支运行一次；它接受推送目标的索引，该分支原来指向的位置，以及被推送的新内容。如果推送是通过 SSH 进行的，还可以获取发出此次操作的用户。如果设定所有操作都通过公匙授权的单一帐号（比如＂git＂）进行，就有必要通过一个 shell 包装依据公匙来判断用户的身份，并且设定环境变量来表示该用户的身份。下面假设尝试连接的用户储存在 <code>$USER</code> 环境变量里，我们的 update 脚本首先搜集一切需要的信息：</p>
 
 <pre><code>#!/usr/bin/env ruby
 
@@ -21,13 +21,13 @@ $user    = ENV[&#39;USER&#39;]
 
 puts &quot;Enforcing Policies... \n(#{$refname}) (#{$oldrev[0,6]}) (#{$newrev[0,6]})&quot;</code></pre>
 
-<p>Yes, I’m using global variables. Don’t judge me — it’s easier to demonstrate in this manner.</p>
+<p>没错，我在用全局变量。别鄙视我——这样比较利于演示过程。</p>
 
-<h4 id='enforcing_a_specific_commitmessage_format'>Enforcing a Specific Commit-Message Format</h4>
+<h4 id='id350'>指定特殊的提交信息格式</h4>
 
-<p>Your first challenge is to enforce that each commit message must adhere to a particular format. Just to have a target, assume that each message has to include a string that looks like &#8220;ref: 1234&#8221; because you want each commit to link to a work item in your ticketing system. You must look at each commit being pushed up, see if that string is in the commit message, and, if the string is absent from any of the commits, exit non-zero so the push is rejected.</p>
+<p>我们的第一项任务是指定每一条提交信息都必须遵循某种特殊的格式。作为演示，假定每一条信息必须包含一条形似 &#8220;ref: 1234&#8221; 这样的字符串，因为我们需要把每一次提交和项目的问题追踪系统。我们要逐一检查每一条推送上来的提交内容，看看提交信息是否包含这么一个字符串，然后，如果该提交里不包含这个字符串，以非零返回值退出从而拒绝此次推送。</p>
 
-<p>You can get a list of the SHA-1 values of all the commits that are being pushed by taking the <code>$newrev</code> and <code>$oldrev</code> values and passing them to a Git plumbing command called <code>git rev-list</code>. This is basically the <code>git log</code> command, but by default it prints out only the SHA-1 values and no other information. So, to get a list of all the commit SHAs introduced between one commit SHA and another, you can run something like this:</p>
+<p>把 <code>$newrev</code> 和 <code>$oldrev</code> 变量的值传给一个叫做 <code>git rev-list</code> 的 Git plumbing 命令可以获取所有提交内容的 SHA-1 值列表。<code>git rev-list</code> 基本类似 <code>git log</code> 命令，但它默认只输出 SHA-1 值而已，没有其他信息。所以要获取由 SHA 值表示的从一次提交到另一次提交之间的所有 SHA 值，可以运行：</p>
 
 <pre><code>$ git rev-list 538c33..d14fc7
 d14fc7c847ab946ec39590d87783c69b031bdfb7
@@ -36,9 +36,9 @@ d14fc7c847ab946ec39590d87783c69b031bdfb7
 dfa04c9ef3d5197182f13fb5b9b1fb7717d2222a
 17716ec0f1ff5c77eff40b7fe912f9f6cfd0e475</code></pre>
 
-<p>You can take that output, loop through each of those commit SHAs, grab the message for it, and test that message against a regular expression that looks for a pattern.</p>
+<p>截取这些输出内容，循环遍历其中每一个 SHA 值，找出与之对应的提交信息，然后用正则表达式来测试该信息包含的格式话的内容。</p>
 
-<p>You have to figure out how to get the commit message from each of these commits to test. To get the raw commit data, you can use another plumbing command called <code>git cat-file</code>. I’ll go over all these plumbing commands in detail in Chapter 9; but for now, here’s what that command gives you:</p>
+<p>下面要搞定如何从所有的提交内容中提取出提交信息。使用另一个叫做 <code>git cat-file</code> 的 Git plumbing 工具可以获得原始的提交数据。我们将在第九章了解到这些 plumbing 工具的细节；现在暂时先看一下这条命令的输出：</p>
 
 <pre><code>$ git cat-file commit ca82a6
 tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
@@ -48,16 +48,16 @@ committer Scott Chacon &lt;schacon@gmail.com&gt; 1240030591 -0700
 
 changed the version number</code></pre>
 
-<p>A simple way to get the commit message from a commit when you have the SHA-1 value is to go to the first blank line and take everything after that. You can do so with the <code>sed</code> command on Unix systems:</p>
+<p>通过 SHA-1 值获得提交内容中的提交信息的一个简单办法是找到提交的第一行，然后取从它往后的所有内容。可以使用 Unix 系统的 <code>sed</code> 命令来实现该效果：</p>
 
 <pre><code>$ git cat-file commit ca82a6 | sed &#39;1,/^$/d&#39;
 changed the version number</code></pre>
 
-<p>You can use that incantation to grab the commit message from each commit that is trying to be pushed and exit if you see anything that doesn’t match. To exit the script and reject the push, exit non-zero. The whole method looks like this:</p>
+<p>这条咒语从每一个待提交内容里提取提交信息，并且会在提取信息不符合要求的情况下退出。为了退出脚本和拒绝此次推送，返回一个非零值。整个脚本大致如下：</p>
 
 <pre><code>$regex = /\[ref: (\d+)\]/
 
-# enforced custom commit message format
+# 指定提交信息格式
 def check_message_format
   missed_revs = `git rev-list #{$oldrev}..#{$newrev}`.split(&quot;\n&quot;)
   missed_revs.each do |rev|
@@ -70,22 +70,22 @@ def check_message_format
 end
 check_message_format</code></pre>
 
-<p>Putting that in your <code>update</code> script will reject updates that contain commits that have messages that don’t adhere to your rule.</p>
+<p>把这一段放在 <code>update</code> 脚本里，所有包含不符合指定规则的提交都会遭到拒绝。</p>
 
-<h4 id='enforcing_a_userbased_acl_system'>Enforcing a User-Based ACL System</h4>
+<h4 id='acl'>实现基于用户的访问权限控制列表（ACL）系统</h4>
 
-<p>Suppose you want to add a mechanism that uses an access control list (ACL) that specifies which users are allowed to push changes to which parts of your projects. Some people have full access, and others only have access to push changes to certain subdirectories or specific files. To enforce this, you’ll write those rules to a file named <code>acl</code> that lives in your bare Git repository on the server. You’ll have the <code>update</code> hook look at those rules, see what files are being introduced for all the commits being pushed, and determine whether the user doing the push has access to update all those files.</p>
+<p>假设你需要添加一个使用访问权限控制列表的机制来指定哪些用户对项目的哪些部分有推送权限。某些用户具有全部的访问权，其他人只对某些子目录或者特定的文件具有推送权限。要搞定这一点，所有的规则将被写入一个位于服务器的原始 Git 仓库的 <code>acl</code> 文件。我们让 <code>update</code> 挂钩检阅这些规则，审视推送的提交内容中需要修改的所有文件，然后决定执行推送的用户是否对所有这些文件都有权限。</p>
 
-<p>The first thing you’ll do is write your ACL. Here you’ll use a format very much like the CVS ACL mechanism: it uses a series of lines, where the first field is <code>avail</code> or <code>unavail</code>, the next field is a comma-delimited list of the users to which the rule applies, and the last field is the path to which the rule applies (blank meaning open access). All of these fields are delimited by a pipe (<code>|</code>) character.</p>
+<p>我们首先要创建这个列表。这里使用的格式和 CVS 的 ACL 机制十分类似：它由若干行构成，第一项内容是 <code>avail</code> 或者 <code>unavail</code>，接着是逗号分隔的规则生效用户列表，最后一项是规则生效的目录（空白表示开放访问）。这些项目由 <code>|</code> 字符隔开。</p>
 
-<p>In this case, you have a couple of administrators, some documentation writers with access to the <code>doc</code> directory, and one developer who only has access to the <code>lib</code> and <code>tests</code> directories, and your ACL file looks like this:</p>
+<p>下例中，我们指定几个管理员，几个对 <code>doc</code> 目录具有权限的文档作者，以及一个对 <code>lib</code> 和 <code>tests</code> 目录具有权限的开发人员，相应的 ACL 文件如下：</p>
 
 <pre><code>avail|nickh,pjhyett,defunkt,tpw
 avail|usinclair,cdickens,ebronte|doc
 avail|schacon|lib
 avail|schacon|tests</code></pre>
 
-<p>You begin by reading this data into a structure that you can use. In this case, to keep the example simple, you’ll only enforce the <code>avail</code> directives. Here is a method that gives you an associative array where the key is the user name and the value is an array of paths to which the user has write access:</p>
+<p>首先把这些数据读入你编写的数据结构。本例中，为保持简洁，我们暂时只实现 <code>avail</code> 的规则（译注：也就是省略了 <code>unavail</code> 部分）。下面这个方法生成一个关联数组，它的主键是用户名，值是一个该用户有写权限的所有目录组成的数组：</p>
 
 <pre><code>def get_acl_access_data(acl_file)
   # read in ACL data
@@ -102,7 +102,7 @@ avail|schacon|tests</code></pre>
   access
 end</code></pre>
 
-<p>On the ACL file you looked at earlier, this <code>get_acl_access_data</code> method returns a data structure that looks like this:</p>
+<p>针对之前给出的 ACL 规则文件，这个 <code>get_acl_access_data</code> 方法返回的数据结构如下：</p>
 
 <pre><code>{&quot;defunkt&quot;=&gt;[nil],
  &quot;tpw&quot;=&gt;[nil],
@@ -113,22 +113,22 @@ end</code></pre>
  &quot;usinclair&quot;=&gt;[&quot;doc&quot;],
  &quot;ebronte&quot;=&gt;[&quot;doc&quot;]}</code></pre>
 
-<p>Now that you have the permissions sorted out, you need to determine what paths the commits being pushed have modified, so you can make sure the user who’s pushing has access to all of them.</p>
+<p>搞定了用户权限的数据，下面需要找出哪些位置将要被提交的内容修改，从而确保试图推送的用户对这些位置有全部的权限。</p>
 
-<p>You can pretty easily see what files have been modified in a single commit with the <code>--name-only</code> option to the <code>git log</code> command (mentioned briefly in Chapter 2):</p>
+<p>使用 <code>git log</code> 的 <code>--name-only</code> 选项（在第二章里简单的提过）我们可以轻而易举的找出一次提交里修改的文件：</p>
 
 <pre><code>$ git log -1 --name-only --pretty=format:&#39;&#39; 9f585d
 
 README
 lib/test.rb</code></pre>
 
-<p>If you use the ACL structure returned from the <code>get_acl_access_data</code> method and check it against the listed files in each of the commits, you can determine whether the user has access to push all of their commits:</p>
+<p>使用 <code>get_acl_access_data</code> 返回的 ACL 结构来一一核对每一次提交修改的文件列表，就能找出该用户是否有权限推送所有的提交内容:</p>
 
-<pre><code># only allows certain users to modify certain subdirectories in a project
+<pre><code># 仅允许特定用户修改项目中的特定子目录
 def check_directory_perms
   access = get_acl_access_data(&#39;acl&#39;)
 
-  # see if anyone is trying to push something they can&#39;t
+  # 检查是否有人在向他没有权限的地方推送内容
   new_commits = `git rev-list #{$oldrev}..#{$newrev}`.split(&quot;\n&quot;)
   new_commits.each do |rev|
     files_modified = `git log -1 --name-only --pretty=format:&#39;&#39; #{rev}`.split(&quot;\n&quot;)
@@ -136,8 +136,8 @@ def check_directory_perms
       next if path.size == 0
       has_file_access = false
       access[$user].each do |access_path|
-        if !access_path  # user has access to everything
-          || (path.index(access_path) == 0) # access to this path
+        if !access_path  # 用户拥有完全访问权限
+          || (path.index(access_path) == 0) # 或者对此位置有访问权限
           has_file_access = true 
         end
       end
@@ -151,17 +151,17 @@ end
 
 check_directory_perms</code></pre>
 
-<p>Most of that should be easy to follow. You get a list of new commits being pushed to your server with <code>git rev-list</code>. Then, for each of those, you find which files are modified and make sure the user who’s pushing has access to all the paths being modified. One Rubyism that may not be clear is <code>path.index(access_path) == 0</code>, which is true if path begins with <code>access_path</code> — this ensures that <code>access_path</code> is not just in one of the allowed paths, but an allowed path begins with each accessed path.</p>
+<p>以上的大部分内容应该都比较容易理解。通过 <code>git rev-list</code> 获取推送到服务器内容的提交列表。然后，针对其中每一项，找出它试图修改的文件然后确保执行推送的用户对这些文件具有权限。一个不太容易理解的 Ruby 技巧石 <code>path.index(access_path) ==0</code> 这句，它的返回真值如果路径以 <code>access_path</code> 开头——这是为了确保 <code>access_path  </code> 并不是只在允许的路径之一，而是所有准许全选的目录都在该目录之下。</p>
 
-<p>Now your users can’t push any commits with badly formed messages or with modified files outside of their designated paths.</p>
+<p>现在你的用户没法推送带有不正确的提交信息的内容，也不能在准许他们访问范围之外的位置做出修改。</p>
 
-<h4 id='enforcing_fastforwardonly_pushes'>Enforcing Fast-Forward-Only Pushes</h4>
+<h4 id='_fastforward_'>只允许 Fast-Forward 类型的推送</h4>
 
-<p>The only thing left is to enforce fast-forward-only pushes. In Git versions 1.6 or newer, you can set the <code>receive.denyDeletes</code> and <code>receive.denyNonFastForwards</code> settings. But enforcing this with a hook will work in older versions of Git, and you can modify it to do so only for certain users or whatever else you come up with later.</p>
+<p>剩下的最后一项任务是指定只接受 fast-forward 的推送。在 Git 1.6 或者更新版本里，只需要设定 <code>receive.denyDeletes</code> 和 <code>receive.denyNonFastForwards</code> 选项就可以了。但是通过挂钩的实现可以在旧版本的 Git 上工作，并且通过一定的修改它它可以做到只针对某些用户执行，或者更多以后可能用的到的规则。</p>
 
-<p>The logic for checking this is to see if any commits are reachable from the older revision that aren’t reachable from the newer one. If there are none, then it was a fast-forward push; otherwise, you deny it:</p>
+<p>检查这一项的逻辑是看看提交里是否包含从旧版本里能找到但在新版本里却找不到的内容。如果没有，那这是一次纯 fast-forward 的推送；如果有，那我们拒绝此次推送：</p>
 
-<pre><code># enforces fast-forward only pushes 
+<pre><code># 只允许纯 fast-forward 推送
 def check_fast_forward
   missed_refs = `git rev-list #{$newrev}..#{$oldrev}`
   missed_ref_count = missed_refs.split(&quot;\n&quot;).size
@@ -173,7 +173,7 @@ end
 
 check_fast_forward</code></pre>
 
-<p>Everything is set up. If you run <code>chmod u+x .git/hooks/update</code>, which is the file you into which you should have put all this code, and then try to push a non-fast-forwarded reference, you get something like this:</p>
+<p>一切都设定好了。如果现在运行 <code>chmod u+x .git/hooks/update</code> —— 修改包含以上内容文件的权限，然后尝试推送一个包含非 fast-forward 类型的索引，会得到一下提示：</p>
 
 <pre><code>$ git push -f origin master
 Counting objects: 5, done.
@@ -190,36 +190,36 @@ To git@gitserver:project.git
  ! [remote rejected] master -&gt; master (hook declined)
 error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
 
-<p>There are a couple of interesting things here. First, you see this where the hook starts running.</p>
+<p>这里有几个有趣的信息。首先，我们可以看到挂钩运行的起点：</p>
 
 <pre><code>Enforcing Policies... 
 (refs/heads/master) (fb8c72) (c56860)</code></pre>
 
-<p>Notice that you printed that out to stdout at the very beginning of your update script. It’s important to note that anything your script prints to stdout will be transferred to the client.</p>
+<p>注意这是从 update 脚本开头输出到标准你输出的。所有从脚本输出的提示都会发送到客户端，这点很重要。</p>
 
-<p>The next thing you’ll notice is the error message.</p>
+<p>下一个值得注意的部分是错误信息。</p>
 
 <pre><code>[POLICY] Cannot push a non fast-forward reference
 error: hooks/update exited with error code 1
 error: hook declined to update refs/heads/master</code></pre>
 
-<p>The first line was printed out by you, the other two were Git telling you that the update script exited non-zero and that is what is declining your push. Lastly, you have this:</p>
+<p>第一行是我们的脚本输出的，在往下是 Git 在告诉我们 update 脚本退出时返回了非零值因而推送遭到了拒绝。最后一点：</p>
 
 <pre><code>To git@gitserver:project.git
  ! [remote rejected] master -&gt; master (hook declined)
 error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
 
-<p>You’ll see a remote rejected message for each reference that your hook declined, and it tells you that it was declined specifically because of a hook failure.</p>
+<p>我们将为每一个被挂钩拒之门外的索引受到一条远程信息，解释它被拒绝是因为一个挂钩的原因。</p>
 
-<p>Furthermore, if the ref marker isn’t there in any of your commits, you’ll see the error message you’re printing out for that.</p>
+<p>而且，如果那个 ref 字符串没有包含在任何的提交里，我们将看到前面脚本里输出的错误信息：</p>
 
 <pre><code>[POLICY] Your message is not formatted correctly</code></pre>
 
-<p>Or if someone tries to edit a file they don’t have access to and push a commit containing it, they will see something similar. For instance, if a documentation author tries to push a commit modifying something in the <code>lib</code> directory, they see</p>
+<p>又或者某人想修改一个自己不具备权限的文件然后推送了一个包含它的提交，他将看到类似的提示。比如，一个文档作者尝试推送一个修改到 <code>lib</code> 目录的提交，他会看到</p>
 
 <pre><code>[POLICY] You do not have access to push to lib/test.rb</code></pre>
 
-<p>That’s all. From now on, as long as that <code>update</code> script is there and executable, your repository will never be rewound and will never have a commit message without your pattern in it, and your users will be sandboxed.</p>
+<p>全在这了。从这里开始，只要 <code>update</code> 脚本存在并且可执行，我们的仓库永远都不会遭到回转或者包含不符合要求信息的提交内容，并且用户都被锁在了沙箱里面。</p>
 
 <h3 id='clientside_hooks'>Client-Side Hooks</h3>
 

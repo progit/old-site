@@ -1,0 +1,43 @@
+---
+layout: translation
+title: Pro Git 2.1 Podstawy Gita Pierwsze repozytorium Gita
+---
+<h2 id='pierwsze_repozytorium_gita'>Pierwsze repozytorium Gita</h2>
+
+<p>Projekt Gita możesz rozpocząć w dwojaki sposób. Pierwsza metoda używa istniejącego projektu lub katalogu i importuje go do Gita. Druga polega na sklonowaniu istniejącego repozytorium z innego serwera.</p>
+
+<h3 id='inicjalizacja_gita_w_istniejcym_katalogu'>Inicjalizacja Gita w istniejącym katalogu</h3>
+
+<p>Jeśli chcesz rozpocząć śledzenie zmian w plikach istniejącego projektu, musisz przejść do katalogu projektu i wykonać</p>
+
+<pre><code>$ git init</code></pre>
+
+<p>Powyższa komenda stworzy nowy podkatalog o nazwie .git, zawierający wszystkie niezbędne pliki — szkielet repozytorium Gita. W tym momencie żadna część twojego projektu nie jest jeszcze śledzona. (Zajrzyj do Rozdziału 9. aby dowiedzieć się, jakie dokładnie pliki są przechowywane w podkatalogu <code>.git</code>, który właśnie utworzyłeś).</p>
+
+<p>Aby rozpocząć kontrolę wersji istniejących plików (w przeciwieństwie do pustego katalogu), najprawdopodobniej powinieneś rozpocząć ich śledzenie i utworzyć początkową rewizję. Możesz tego dokonać kilkoma komendami add (dodaj) wybierając pojedyncze pliki, które chcesz śledzić, a następnie zatwierdzając zmiany poleceniem <code>commit</code>:</p>
+
+<pre><code>$ git add *.c
+$ git add README
+$ git commit -m &#39;initial project version&#39;</code></pre>
+
+<p>Za chwilę zobaczymy dokładnie, co wymienione polecenia robią. W tym jednak momencie masz już własne repozytorium Gita, śledzące wybrane pliki i zawierające pierwsze zatwierdzone zmiany (początkową rewizję).</p>
+
+<h3 id='klonowanie_istniejcego_repozytorium'>Klonowanie istniejącego repozytorium</h3>
+
+<p>Jeżeli chcesz uzyskać kopię istniejącego już repozytorium Gita — na przykład projektu, w którym chciałbyś zacząć się udzielać i wprowadzać własne zmiany — komenda, której potrzebujesz to <code>clone</code>. Jeżeli znasz już inne systemy kontroli wersji, jak np. Subversion, zauważysz z pewnością, że w przypadku Gita używana komenda to <code>clone</code> a nie <code>checkout</code>. Jest to istotne rozróżnienie — Git pobiera kopię niemalże wszystkich danych posiadanych przez serwer. Po wykonaniu polecenia <code>git clone</code> zostanie pobrana każda rewizja, każdego pliku w historii projektu. W praktyce nawet jeśli dysk serwera zostanie uszkodzony, możesz użyć któregokolwiek z dostępnych klonów aby przywrócić serwer do stanu w jakim był w momencie klonowania (możesz utracić pewne hooki skonfigurowane na serwerze i tym podobne, ale wszystkie poddane kontroli wersji pliki będą spójne — zajrzyj do Rozdziału 4. aby poznać więcej szczegółów).</p>
+
+<p>Repozytorium klonujesz używając polecenia <code>git clone [URL]</code>. Na przykład jeśli chcesz sklonować bibliotekę Rubiego do Gita o nazwie Grit, możesz to zrobić wywołując:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
+
+<p>Tworzony jest katalog o nazwie „grit”, następnie wewnątrz niego inicjowany jest podkatalog <code>.git</code>, pobierane są wszystkie dane z repozytorium, a kopia robocza przełączona zostaje na ostatnią wersję. Jeśli wejdziesz do świeżo utworzonego katalogu <code>grit</code>, zobaczysz wewnątrz pliki projektu, gotowe do użycia i pracy z nimi. Jeśli chcesz sklonować repozytorium do katalogu o nazwie innej niż <code>grit</code>, możesz to zrobić podając w wierszu poleceń kolejną opcję:</p>
+
+<pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
+
+<p>Powyższa komenda robi dokładnie to samo, co poprzednia, ale wszystkie pliki umieszcza w katalogu <code>mygrit</code>.</p>
+
+<p>Git oferuje do wyboru zestaw różnych protokołów transmisji. Poprzedni przykład używa protokołu <code>git://</code>, ale możesz także spotkać <code>http(s)://</code> lub <code>uzytkownik@serwer:/sciezka.git</code>, używające protokołu SSH. W Rozdziale 4. omówimy wszystkie dostępne możliwości konfiguracji dostępu do repozytorium Gita na serwerze oraz zalety i wady każdej z nich.</p>
+
+<div id='nav'>
+<a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>
+</div>
