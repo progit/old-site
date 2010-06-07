@@ -4,7 +4,7 @@ title: Kindle and iBook Versions Available
 ---
 
 When Pro Git was first released, I asked about being able to get it on my Kindle.
-In fact, one of the very first people to read the book was @adelcambre with a 
+In fact, one of the very first people to read the book was <a href="http://twitter.com/adelcambre">@adelcambre</a> with a 
 mobi file I generated myself.  It was horrible looking, but it did work. My
 editor at Apress wanted to do it, but wasn't sure if it was going to get done.
 
