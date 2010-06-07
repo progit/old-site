@@ -19,7 +19,7 @@ and there it was:
 
 I assume it looks much, much better than the version I originally did for Andy.
 (I should probably get myself a copy).  So, if you feel like reading it on the 
-Kindle, have at it.  There have also been a number of people who have asked me 
-how they can support the book without 
-getting a dead-tree version, so here's your chance.  You can even get a Kindle
-reader for your computer, so you can search through it and whatnot.  Enjoy!
+Kindle, <a href="http://www.amazon.com/gp/product/B003NHRMXA?ie=UTF8&tag=prgi-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=B003NHRMXA">have at it</a>.  
+There have also been a number of people who have asked me how they can support 
+the book without getting a dead-tree version, so here's your chance.  
+You can even get a Kindle reader for your computer, so you can search through it and whatnot.  Enjoy!
