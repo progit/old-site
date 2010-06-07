@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Kindle and iBook Versions Available
+title: Kindle Version Available
 ---
 
 When Pro Git was first released, I asked about being able to get it on my Kindle.
