@@ -269,3 +269,11 @@ ul#toc ul  {
     font-size: 1.5em;
     text-decoration: none;
 }
+
+#buy-book-toc {
+  float: right;
+  width: 200px;
+}
+#buy-book-toc img {
+  width: 200px;
+}

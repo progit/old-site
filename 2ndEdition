@@ -1,18 +1,19 @@
 - reverting merge commits, unreverting the revert
 - smart http
 - rerere
-* notes
 - bundles
 - grafts / replace mechanism
+- environment - GIT_DIR, GIT_WORK_TREE, GIT_INDEX, GIT_TRACE
+* git remote (update groups, change url)
+* branches without shared history (--orphan)
 * git new-work-tree
-* custom merge strategy (git-merge-foo, git merge -s foo)
 * for-each-ref
 * git checkout (-p, -m, --ours, --theirs, -f, auto-tracking remotes)
+* notes
+* custom merge strategy (git-merge-foo, git merge -s foo)
 * "rebase --onto A...B" replays history on the merge base (A...B) 61dfa1
-* branches without shared history
 * friendlier submodules (1.7)
 * merge-recursive (http://gitster.livejournal.com/16077.html)
-* GIT_DIR, GIT_WORK_TREE, GIT_INDEX, GIT_TRACE
 * git cat-file --batch
 * difftool
 * merge conflicts and the index

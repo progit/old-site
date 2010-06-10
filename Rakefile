@@ -32,6 +32,16 @@ layout: #{layout}
 title: Table of Contents
 ---
 "
+
+  html += '
+<div id="buy-book-toc">
+  <center>
+    <a href="http://www.amazon.com/gp/product/1430218339?ie=UTF8&tag=prgi-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=1430218339"><img border="0" src="http://img.skitch.com/20100410-ksdhut3fethu63nu6n8bt898g7.png"></a><img src="http://www.assoc-amazon.com/e/ir?t=prgi-20&l=as2&o=1&a=1430218339" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+  </center>
+  <p>Support this site by buying a print version of
+  <a href="http://www.amazon.com/gp/product/1430218339?ie=UTF8&tag=prgi-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=1430218339">Pro Git</a><img src="http://www.assoc-amazon.com/e/ir?t=prgi-20&l=as2&o=1&a=1430218339" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+</div>
+'
   html += index
 
   if lang == 'en'
@@ -41,7 +51,7 @@ title: Table of Contents
     File.open("../book/#{lang}/index.html", 'w+') { |f| f.write(html) }
   end
 
-  
+
   i = 1
   while i < (pages.size - 1)
     filter = pages[i]
@@ -85,11 +95,11 @@ def generate_pages(lang, chapter, content)
       raw.gsub!("Insert #{img}.png", real)
     end
   end
-  
+
   sections = raw.split('<h2')
   section = 0
   sections.each do |sec|
-    
+
     section_title = ''
     if section_match = sec.match(/>(.*?)<\/h2>/)
       section_title = section_match[1]
@@ -97,8 +107,8 @@ def generate_pages(lang, chapter, content)
     else
       toc[:sections] << [section, nil]
     end
-    
-    if lang == 'en' 
+
+    if lang == 'en'
       pname = "../../../book/ch#{chapter}-#{section}.html"
     else
       FileUtils.mkdir("../../../book/#{lang}") rescue nil
@@ -117,9 +127,9 @@ title: Pro Git #{chapter}.#{section} #{full_title}
     else
       html += "<h1>Chapter #{chapter}</h1>"
     end
-    
+
     html += sec
-    
+
     nav = "<div id='nav'>
 <a href='[[nav-prev]]'>prev</a> | <a href='[[nav-next]]'>next</a>
 </div>"
@@ -134,11 +144,11 @@ end
 # generate the site
 desc "Generate the book html for the site"
 task :genbook do
-  
+
   # git read-tree --prefix=book-content/ -u gitbook/master
   # git rm -rf book-content/
 
-  Dir.chdir('translations') do 
+  Dir.chdir('translations') do
     Dir.glob("*").each do |lang|
       chapter_number = 0
       toc = []
@@ -155,10 +165,10 @@ task :genbook do
           end rescue nil
         end
       end
-      update_toc(lang, toc)  
+      update_toc(lang, toc)
     end
   end
-  
+
 end
 
 # generate the site
