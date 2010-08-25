@@ -1,17 +1,17 @@
 ---
 layout: translation
-title: Pro Git 4.3 Git on the Server Generating Your SSH Public Key
+title: Pro Git 4.3 Git en un servidor Generando tu clave pública SSH
 ---
-<h2 id='generating_your_ssh_public_key'>Generating Your SSH Public Key</h2>
+<h2 id='generando_tu_clave_pblica_ssh'>Generando tu clave pública SSH</h2>
 
-<p>That being said, many Git servers authenticate using SSH public keys. In order to provide a public key, each user in your system must generate one if they don’t already have one. This process is similar across all operating systems. First, you should check to make sure you don’t already have a key. By default, a user’s SSH keys are stored in that user’s <code>~/.ssh</code> directory. You can easily check to see if you have a key already by going to that directory and listing the contents:</p>
+<p>Tal y como se ha comentado, muchos servidores Git utilizan la autentificación a través de claves públicas SSH. Y, para ello, cada usuario del sistema ha de generarse una, si es que no la tiene ya. El proceso para hacerlo es similar en casi cualquier sistema operativo. Ante todo, asegurarte que no tengas ya una clave. Por defecto, las claves de cualquier usuario SSH se guardan en la carpeta <code>~/.ssh</code> de dicho usuario. Puedes verificar si tienes ya unas claves, simplemente situandote sobre dicha carpeta y viendo su contenido:</p>
 
 <pre><code>$ cd ~/.ssh
 $ ls
 authorized_keys2  id_dsa       known_hosts
 config            id_dsa.pub</code></pre>
 
-<p>You’re looking for a pair of files named something and something.pub, where the something is usually <code>id_dsa</code> or <code>id_rsa</code>. The <code>.pub</code> file is your public key, and the other file is your private key. If you don’t have these files (or you don’t even have a <code>.ssh</code> directory), you can create them by running a program called <code>ssh-keygen</code>, which is provided with the SSH package on Linux/Mac systems and comes with the MSysGit package on Windows:</p>
+<p>Has de buscar un par de archivos con nombres tales como &#8216;algo&#8217; y &#8216;algo.pub&#8217;; siendo ese &#8220;algo&#8221; normalmente &#8216;id_dsa&#8217; o &#8216;id_rsa&#8217;. El archivo terminado en &#8216;.pub&#8217; es tu clave pública, y el otro archivo es tu clave privada. Si no tienes esos archivos (o no tienes ni siquiera la carpeta &#8216;.ssh&#8217;), has de crearlos; utilizando un programa llamado &#8216;ssh-keygen&#8217;, que viene incluido en el paquete SSH de los sistemas Linux/Mac o en el paquete MSysGit en los sistemas Windows:</p>
 
 <pre><code>$ ssh-keygen 
 Generating public/private rsa key pair.
@@ -23,9 +23,9 @@ Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
 The key fingerprint is:
 43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a schacon@agadorlaptop.local</code></pre>
 
-<p>First it confirms where you want to save the key (<code>.ssh/id_rsa</code>), and then it asks twice for a passphrase, which you can leave empty if you don’t want to type a password when you use the key.</p>
+<p>Como se vé, este comando primero solicita confirmación de dónde van a a guardarse las claves (&#8216;.ssh/id_rsa&#8217;), y luego solicita, dos veces, una contraseña (passphrase), contraseña que puedes dejar en blanco si no deseas tener que teclearla cada vez que uses la clave.</p>
 
-<p>Now, each user that does this has to send their public key to you or whoever is administrating the Git server (assuming you’re using an SSH server setup that requires public keys). All they have to do is copy the contents of the <code>.pub</code> file and e-mail it. The public keys look something like this:</p>
+<p>Tras generarla, cada usuario ha de encargarse de enviar su clave pública a quienquiera que administre el servidor Git (en el caso de que este esté configurado con SSH y así lo requiera). Esto se puede realizar simplemente copiando los contenidos del archivo terminado en &#8216;.pub&#8217; y enviandoselos por correo electrónico. La clave pública será una serie de números, letras y signos, algo así como esto:</p>
 
 <pre><code>$ cat ~/.ssh/id_rsa.pub 
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
@@ -35,7 +35,7 @@ t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
 mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
 NrRFi9wrf+M7Q== schacon@agadorlaptop.local</code></pre>
 
-<p>For a more in-depth tutorial on creating an SSH key on multiple operating systems, see the GitHub guide on SSH keys at <code>http://github.com/guides/providing-your-ssh-key</code>.</p>
+<p>Para más detalles sobre cómo crear unas claves SSH en variados sistemas operativos, consultar la correspondiente guia en GitHub: <code>http://github.com/guides/providing-your-ssh-key</code>.</p>
 
 <div id='nav'>
 <a href='ch4-2.html'>prev</a> | <a href='ch4-4.html'>next</a>
