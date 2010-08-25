@@ -182,6 +182,52 @@ will push all your notes.  This is what Git does normally for something like
 tags.  When you run `git push origin --tags` it basically expands to 
 `git push origin refs/tags/*`.
 
+## Getting Notes ##
+
+Unfortunately, getting notes is even more difficult.  Not only is there no
+`git fetch --notes` or something, you have to specify both sides of the 
+refspec (as far as I can tell).
+
+    $ git fetch origin refs/notes/*:refs/notes/*
+    remote: Counting objects: 12, done.
+    remote: Compressing objects: 100% (8/8), done.
+    remote: Total 12 (delta 0), reused 0 (delta 0)
+    Unpacking objects: 100% (12/12), done.
+    From github.com:schacon/kidgloves
+     * [new branch]      refs/notes/bugzilla -> refs/notes/bugzilla
+
+That is basically the only way to get them into your repository from the server.
+Yay.  If you want to, you can setup your Git config file to automatically pull
+them down though.  If you look at your `.git/config` file you should have a 
+section that looks like this:
+
+    [remote "origin"]
+      fetch = +refs/heads/*:refs/remotes/origin/*
+      url = git@github.com:schacon/kidgloves.git
+
+The 'fetch' line is the refspec of what Git will try to do if you run just
+`git fetch origin`.  It contains the magic formula of what Git will fetch and
+store local references to.  For instance, in this case it will take every 
+branch on the server and give you a local branch under 'remotes/origin/' so 
+you can reference the 'master' branch on the server as 'remotes/origin/master'
+or just 'origin/master' (it will look under 'remotes' when it's trying to
+figure out what you're doing).  If you change that line to 
+`fetch = +refs/heads/*:refs/remotes/manamana/*` then even though your remote
+is named 'origin', the master branch from your 'origin' server will be under 
+'manamana/master'.  
+
+Anyhow, you can use this to make your notes fetching easier.  If you add 
+multiple `fetch` lines, it will do them all.  So in addition to the current
+`fetch` line, you can add a line that looks like this:
+
+      fetch = +refs/notes/*:refs/notes/*
+    
+Which says also get all the notes references on the server and store them 
+as though they were local notes.  Or you can namespace them if you want, but
+that can cause issues when you try to push them back again.
+
+## Collaborating on Notes ##
+
 Now, this is where the main problem is.  Merging notes is super difficult.
 This means that if you pull down someone's notes, you edit any note in a
 namespace locally and the other developer edits any note in that same namespace,
