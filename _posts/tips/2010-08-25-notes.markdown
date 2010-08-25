@@ -186,7 +186,7 @@ Now, this is where the main problem is.  Merging notes is super difficult.
 This means that if you pull down someone's notes, you edit any note in a
 namespace locally and the other developer edits any note in that same namespace,
 you're going to have a hard time getting them back in sync.  When the second
-person tries to push thier notes it will look like a non-fast-forward just 
+person tries to push their notes it will look like a non-fast-forward just 
 like a normal branch update, but unline a normal branch you can't just run
 `git pull` and then try again.  You have to check out your notes ref as if it
 were a normal branch, which will look ridiculously confusing and then do the 
@@ -199,7 +199,7 @@ artifacts).  If only one entity is updating your notes, you won't have merge
 issues.  However, if you want to use them to comment on commits within a team,
 it is going to be a bit painful.
 
-So far, I've heard of people using them to have thier ticketing system attach 
+So far, I've heard of people using them to have their ticketing system attach 
 metadata automatically or have
 <a href="http://article.gmane.org/gmane.comp.version-control.git/109074">a system</a>
 attach associated mailing list emails 
