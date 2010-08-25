@@ -224,11 +224,11 @@ notes namespaces, just leave out the 'scott/'.
 You can also have Git fetch notes by default, which it also will not do.  If
 you add this line to the same section:
 
-      fetch = +refs/notes/*:refs/notes/origin/*
+      fetch = +refs/notes/*:refs/remotes/notes/*
 
 Then Git will also get all the notes on the server, and in this case namespace 
 them with 'origin/'.  The issue here is that then you have the 'bugzilla' note
-you made locally also under 'origin/scott/bugzilla' after you push it up and 
+you made locally also under 'remotes/notes/scott/bugzilla' after you push it up and 
 pull it back down again.  This can get messy.  However, the issue is that you
 need to be careful with these notes because they're super difficult to merge,
 which means if you create a note and push it, then someone else fetches and 
