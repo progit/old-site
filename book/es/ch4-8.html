@@ -1,24 +1,24 @@
 ---
 layout: translation
-title: Pro Git 4.8 Git en un servidor Git Daemon
+title: Pro Git 4.8 Git en un servidor El demonio Git
 ---
-<h2 id='git_daemon'>Git Daemon</h2>
+<h2 id='el_demonio_git'>El demonio Git</h2>
 
-<p>For public, unauthenticated read access to your projects, you’ll want to move past the HTTP protocol and start using the Git protocol. The main reason is speed. The Git protocol is far more efficient and thus faster than the HTTP protocol, so using it will save your users time.</p>
+<p>Para dar a tus proyectos un acceso público, sin autentificar, de solo lectura, querrás ir más allá del protocolo HTTP y comenzar a utilizar el protocolo Git. Principalmente, por razones de velocidad. El protocolo Git es mucho más eficiente y, por tanto, más rápido que el protocolo HTTP. Utilizándolo, ahorrarás mucho tiempo a tus usuarios.</p>
 
-<p>Again, this is for unauthenticated read-only access. If you’re running this on a server outside your firewall, it should only be used for projects that are publicly visible to the world. If the server you’re running it on is inside your firewall, you might use it for projects that a large number of people or computers (continuous integration or build servers) have read-only access to, when you don’t want to have to add an SSH key for each.</p>
+<p>Aunque, sigue siendo solo para acceso unicamente de lectura y sin autentificar. Si lo estás utilizando en un servidor fuera del perímetro de tu cortafuegos, se debe utilizar exclusivamente para proyectos que han de ser públicos, visibles para todo el mundo. Si lo estás utilizando en un servidor dentro del perímetro de tu cortafuegos, puedes utilizarlo para proyectos donde un gran número de personas o de ordenadores (integración contínua o servidores de desarrollo) necesiten acceso de solo lectura. Y donde quieras evitar la gestión de claves SSH para cada una de ellas.</p>
 
-<p>In any case, the Git protocol is relatively easy to set up. Basically, you need to run this command in a daemonized manner:</p>
+<p>En cualquier caso, el protocolo Git es relativamente sencillo de configurar. Tan solo necesitas lanzar este comando de forma demonizada:</p>
 
 <pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
 
-<p><code>--reuseaddr</code> allows the server to restart without waiting for old connections to time out, the <code>--base-path</code> option allows people to clone projects without specifying the entire path, and the path at the end tells the Git daemon where to look for repositories to export. If you’re running a firewall, you’ll also need to punch a hole in it at port 9418 on the box you’re setting this up on.</p>
+<p>El parámetro &#8217;&#8211;reuseaddr&#8217; permite al servidor reiniciarse sin esperar a que se liberen viejas conexiones; el parámetro &#8217;&#8211;base-path&#8217; permite a los usuarios clonar proyectos sin necesidad de indicar su camino completo; y el camino indicado al final del comando mostrará al demonio Git dónde buscar los repositorios a exportar. Si tienes un cortafuegos activo, necesitarás abrir el puerto 9418 para la máquina donde estás configurando el demónio Git.</p>
 
-<p>You can daemonize this process a number of ways, depending on the operating system you’re running. On an Ubuntu machine, you use an Upstart script. So, in the following file</p>
+<p>Este proceso se puede demonizar de diferentes maneras, dependiendo del sistema operativo con el que trabajas. En una máquina Ubuntu, puedes usar un script de arranque. Poniendo en el siguiente archivo:</p>
 
 <pre><code>/etc/event.d/local-git-daemon</code></pre>
 
-<p>you put this script:</p>
+<p>un script tal como:</p>
 
 <pre><code>start on startup
 stop on shutdown
@@ -29,42 +29,42 @@ exec /usr/bin/git daemon \
     /opt/git/
 respawn</code></pre>
 
-<p>For security reasons, it is strongly encouraged to have this daemon run as a user with read-only permissions to the repositories – you can easily do this by creating a new user &#8216;git-ro&#8217; and running the daemon as them. For the sake of simplicity we’ll simply run it as the same &#8216;git&#8217; user that Gitosis is running as.</p>
+<p>Por razones de seguridad, es recomendable lanzar este demonio con un usuario que tenga unicamente permisos de lectura en los repositorios &#8211;lo puedes hacer creando un nuevo usuario &#8216;git-ro&#8217; y lanzando el demonio con él&#8211;. Para simplificar, en estos ejemplos vamos a lanzar el demonio Git bajo el mismo usuario &#8216;git&#8217; con el que hemos lanzado Gitosis.</p>
 
-<p>When you restart your machine, your Git daemon will start automatically and respawn if it goes down. To get it running without having to reboot, you can run this:</p>
+<p>Tras reiniciar tu máquina, el demonio Git arrancará automáticamente y se reiniciará cuando se caiga. Para arrancarlo sin necesidad de reiniciar la máquina, puedes utilizar el comando:</p>
 
 <pre><code>initctl start local-git-daemon</code></pre>
 
-<p>On other systems, you may want to use <code>xinetd</code>, a script in your <code>sysvinit</code> system, or something else — as long as you get that command daemonized and watched somehow.</p>
+<p>En otros sistemas operativos, puedes utilizar &#8216;xinetd&#8217;, un script en el sistema &#8216;sysvinit&#8217;, o alguna otra manera &#8211;siempre y cuando demonizes el comando y puedas monitorizarlo&#8211;.</p>
 
-<p>Next, you have to tell your Gitosis server which repositories to allow unauthenticated Git server-based access to. If you add a section for each repository, you can specify the ones from which you want your Git daemon to allow reading. If you want to allow Git protocol access for your iphone project, you add this to the end of the <code>gitosis.conf</code> file:</p>
+<p>A continuación, has de indicar en tu servidor Gitosis a cuales de tus repositorios ha de permitir acceso sin autentificar por parte del servidor Git. Añadiendo una sección por cada repositorio, puedes indicar a cuáles permitirá leer el demonio Git. Por ejemplo, si quieres permitir acceso a tu &#8216;proyecto iphone&#8217;, puedes añadir lo siguiente al archivo &#8216;gitosis.conf&#8217;:</p>
 
 <pre><code>[repo iphone_project]
 daemon = yes</code></pre>
 
-<p>When that is committed and pushed up, your running daemon should start serving requests for the project to anyone who has access to port 9418 on your server.</p>
+<p>Cuando confirmes (commit) y envies (push) estos cambios, el demonio que está en marcha en el servidor comenzará a responder a peticiones de cualquiera que solicite dicho proyecto a través del puerto 9418 de tu servidor.</p>
 
-<p>If you decide not to use Gitosis, but you want to set up a Git daemon, you’ll have to run this on each project you want the Git daemon to serve:</p>
+<p>Si decides no utilizar Gitosis, pero sigues queriendo utilizar un demonio Git, has de lanzar este comando en cada proyecto que desees servír vía el demonio Git:</p>
 
 <pre><code>$ cd /path/to/project.git
 $ touch git-daemon-export-ok</code></pre>
 
-<p>The presence of that file tells Git that it’s OK to serve this project without authentication.</p>
+<p>La presencia de este archivo, indica a Git que está permitido el servir este proyecto sin necesidad de autentificación.</p>
 
-<p>Gitosis can also control which projects GitWeb shows. First, you need to add something like the following to the <code>/etc/gitweb.conf</code> file:</p>
+<p>También podemos controlar a través de Gitosis los proyectos a ser mostrados por GitWeb. Previamente, has de añadir algo como esto al archivo &#8216;/etc/gitweb.conf&#8217;:</p>
 
 <pre><code>$projects_list = &quot;/home/git/gitosis/projects.list&quot;;
 $projectroot = &quot;/home/git/repositories&quot;;
 $export_ok = &quot;git-daemon-export-ok&quot;;
 @git_base_url_list = (&#39;git://gitserver&#39;);</code></pre>
 
-<p>You can control which projects GitWeb lets users browse by adding or removing a <code>gitweb</code> setting in the Gitosis configuration file. For instance, if you want the iphone project to show up on GitWeb, you make the <code>repo</code> setting look like this:</p>
+<p>Los proyectos a ser mostrados por GitWeb se controlarán añadiendo o quitando parámetros &#8216;gitweb&#8217; en el archivo de configuración de Gitosis. Por ejemplo, si quieres mostrar el proyecto iphone, has de poner algo así como:</p>
 
 <pre><code>[repo iphone_project]
 daemon = yes
 gitweb = yes</code></pre>
 
-<p>Now, if you commit and push the project, GitWeb will automatically start showing your iphone project.</p>
+<p>A partir de ese momento, cuando confirmes cambios (commit) y envies (push) el proyecto, GitWeb comenzará a mostrar tu proyecto iphone.</p>
 
 <div id='nav'>
 <a href='ch4-7.html'>prev</a> | <a href='ch4-9.html'>next</a>

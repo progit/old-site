@@ -1,59 +1,59 @@
 ---
 layout: translation
-title: Pro Git 4.2 Git sur le serveur Getting Git on a Server
+title: Pro Git 4.2 Git sur le serveur Installer Git sur un serveur
 ---
-<h2 id='getting_git_on_a_server'>Getting Git on a Server</h2>
+<h2 id='installer_git_sur_un_serveur'>Installer Git sur un serveur</h2>
 
-<p>In order to initially set up any Git server, you have to export an existing repository into a new bare repository — a repository that doesn’t contain a working directory. This is generally straightforward to do. In order to clone your repository to create a new bare repository, you run the clone command with the <code>--bare</code> option. By convention, bare repository directories end in <code>.git</code>, like so:</p>
+<p>Pour réaliser l&#8217;installation initiale d&#8217;un serveur Git, il faut exporter une dépôt existant dans un nouveau dépôt nu — un dépôt qui ne contient pas de copie de répertoire de travail. C&#8217;est généralement simple à faire. Pour cloner votre dépôt en créant un nouveau dépôt nu, lancez la commande clone avec l&#8217;option <code>--bare</code>. Par convention, les répertoires de dépôt nu finissent en <code>.git</code>, de cette manière :</p>
 
 <pre><code>$ git clone --bare my_project my_project.git
 Initialized empty Git repository in /opt/projects/my_project.git/</code></pre>
 
-<p>The output for this command is a little confusing. Since <code>clone</code> is basically a <code>git init</code> then a <code>git fetch</code>, we see some output from the <code>git init</code> part, which creates an empty directory. The actual object transfer gives no output, but it does happen. You should now have a copy of the Git directory data in your <code>my_project.git</code> directory.</p>
+<p>La sortie de cette commande est un peu déroutante. Comme <code>clone</code> est un <code>git init</code> de base, suivi d&#8217;un <code>git fetch</code>, nous voyons les messages du <code>git init</code> qui crée un répertoire vide. Le transfert effectif d&#8217;objet ne fournit aucune sortie, mais il a tout de même lieu. Vous devriez maintenant avoir une copie des données de Git dans votre répertoire <code>my_project.git</code>.</p>
 
-<p>This is roughly equivalent to something like</p>
+<p>C&#8217;est grossièrement équivalent à</p>
 
 <pre><code>$ cp -Rf my_project/.git my_project.git</code></pre>
 
-<p>There are a couple of minor differences in the configuration file; but for your purpose, this is close to the same thing. It takes the Git repository by itself, without a working directory, and creates a directory specifically for it alone.</p>
+<p>Il y a quelques légères différences dans le fichier de configuration mais pour l&#8217;utilisation envisagée, c&#8217;est très proche. La commande extrait le répertoire Git sans répertoire de travail et crée un répertoire spécifique pour l&#8217;accueillir.</p>
 
-<h3 id='putting_the_bare_repository_on_a_server'>Putting the Bare Repository on a Server</h3>
+<h3 id='placer_le_dpt_nu_sur_un_serveur'>Placer le dépôt nu sur un serveur</h3>
 
-<p>Now that you have a bare copy of your repository, all you need to do is put it on a server and set up your protocols. Let’s say you’ve set up a server called <code>git.example.com</code> that you have SSH access to, and you want to store all your Git repositories under the <code>/opt/git</code> directory. You can set up your new repository by copying your bare repository over:</p>
+<p>À présent que vous avez une copie nue de votre dépôt, il ne reste plus qu&#8217;à le placer sur un serveur et à régler les protocoles. Supposons que vous avez mis en place un serveur nommé <code>git.exemple.com</code> auquel vous avez accès par SSH et que vous souhaitez stocker vos dépôts Git dans le répertoire <code>/opt/git</code>. Vous pouvez mettre en place votre dépôt en copiant le dépôt nu :</p>
 
 <pre><code>$ scp -r my_project.git user@git.example.com:/opt/git</code></pre>
 
-<p>At this point, other users who have SSH access to the same server which has read-access to the <code>/opt/git</code> directory can clone your repository by running</p>
+<p>A partir de maintenant, tous les autres utilisateurs disposant d&#8217;un accès SSH au serveur et ayant un accès en lecture seule au répertoire <code>/opt/git</code> peut cloner votre dépôt en lançant la commande</p>
 
 <pre><code>$ git clone user@git.example.com:/opt/git/my_project.git</code></pre>
 
-<p>If a user SSHs into a server and has write access to the <code>/opt/git/my_project.git</code> directory, they will also automatically have push access. Git will automatically add group write permissions to a repository properly if you run the <code>git init</code> command with the <code>--shared</code> option.</p>
+<p>Si un utilisateur se connecte par SSH au serveur et a accès en lecture au répertoire <code>/opt/git/my_project.git</code>, il aura automatiquement accès en pull. Git ajoutera automatiquement les droits de groupe en écriture à un dépôt si vous lancez la commande <code>git init</code> avec l&#8217;option <code>--shared</code>.</p>
 
 <pre><code>$ ssh user@git.example.com
 $ cd /opt/git/my_project.git
 $ git init --bare --shared</code></pre>
 
-<p>You see how easy it is to take a Git repository, create a bare version, and place it on a server to which you and your collaborators have SSH access. Now you’re ready to collaborate on the same project.</p>
+<p>Vous voyez comme il est simple de prendre un dépôt Git, créer une version nue et de la placer sur un serveur auquel vous et vos collaborateurs avez accès en SSH. Vous voilà prêts à collaborer sur le même projet.</p>
 
-<p>It’s important to note that this is literally all you need to do to run a useful Git server to which several people have access — just add SSH-able accounts on a server, and stick a bare repository somewhere that all those users have read and write access to. You’re ready to go — nothing else needed.</p>
+<p>Il faut noter que c&#8217;est littéralement tout ce dont vous avez besoin pour démarrer un serveur Git utile auquel plusieurs personnes ont accès — ajoutez des coptes SSH sur un serveur, et collez un dépôt nu quelque part où tous les utilisateurs ont accès en lecture et écriture. Vous êtes prêts à travailler, vous n&#8217;avez besoin de rien d&#8217;autre.</p>
 
-<p>In the next few sections, you’ll see how to expand to more sophisticated setups. This discussion will include not having to create user accounts for each user, adding public read access to repositories, setting up web UIs, using the Gitosis tool, and more. However, keep in mind that to collaborate with a couple of people on a private project, all you <em>need</em> is an SSH server and a bare repository.</p>
+<p>Dans les chapitres à venir, nous traiterons de mises en places plus sophistiquées. Ces sujets incluront l&#8217;élimination du besoin de créer un compte système pour chaque utilisateur, l&#8217;accès public aux dépôts, la mise en place d&#8217;interfaces utilisateurs web, l&#8217;utilisation de l&#8217;outil Gitosis, etc. Néanmoins, gardez à l&#8217;esprit que pour collaborer avec quelques personnes sur un projet privé, tout ce qu&#8217;il faut, c&#8217;est un serveur SSH et un dépôt nu.</p>
 
-<h3 id='small_setups'>Small Setups</h3>
+<h3 id='les_petites_installations'>Les petites installations</h3>
 
-<p>If you’re a small outfit or are just trying out Git in your organization and have only a few developers, things can be simple for you. One of the most complicated aspects of setting up a Git server is user management. If you want some repositories to be read-only to certain users and read/write to others, access and permissions can be a bit difficult to arrange.</p>
+<p>Si vous travaillez dans un petit groupe ou si vous n&#8217;êtes qu&#8217;en phase d&#8217;essai de Git au sein de votre société avec peu de développeurs, les choses peuvent rester simples. Un des aspects les plus compliqués de la mise en place d&#8217;un serveur Git est la gestion des utilisateurs. Si vous souhaitez que certains dépôts ne soient accessibles à certains utilisateurs qu&#8217;en lecture seule et en lecture/écriture pour d&#8217;autres, la gestion des accès et des permissions peut devenir difficile à régler.</p>
 
-<h4 id='ssh_access'>SSH Access</h4>
+<h4 id='laccs_ssh'>L&#8217;accès SSH</h4>
 
-<p>If you already have a server to which all your developers have SSH access, it’s generally easiest to set up your first repository there, because you have to do almost no work (as we covered in the last section). If you want more complex access control type permissions on your repositories, you can handle them with the normal filesystem permissions of the operating system your server runs.</p>
+<p>Si vous disposez déjà d&#8217;un serveur auquel tous vos développeurs ont un accès SSH, il est généralement plus facile d&#8217;y mettre en place votre premier dépôt car vous n&#8217;aurez quasiment aucun réglage supplémentaire à faire (comme nous l&#8217;avons expliqué dans le chapitre précédent). Si vous souhaitez des permissions d&#8217;accès plus complexes, vous pouvez les mettre en place par le jeu des permissions standards sur le système de fichier du système d&#8217;exploitation de votre serveur.</p>
 
-<p>If you want to place your repositories on a server that doesn’t have accounts for everyone on your team whom you want to have write access, then you must set up SSH access for them. We assume that if you have a server with which to do this, you already have an SSH server installed, and that’s how you’re accessing the server.</p>
+<p>Si vous souhaitez placer vos dépôts sur un serveur qui ne dispose pas déjà de comptes pour chacun des membres de votre équipe qui aurait accès en écriture, alors vous devrez mettre en place un accès SSH pour eux. En supposant que pour vos dépôts, vous disposez déjà d&#8217;un serveur SSH installé et sur lequel vous avez accès.</p>
 
-<p>There are a few ways you can give access to everyone on your team. The first is to set up accounts for everybody, which is straightforward but can be cumbersome. You may not want to run <code>adduser</code> and set temporary passwords for every user.</p>
+<p>Il y a quelques moyens de donner un accès à tout le monde dans l&#8217;équipe. Le premier est de créer des comptes pour tout le monde, ce qui est logique mais peut s&#8217;avérer lourd. Vous ne souhaiteriez sûrement pas lancer <code>adduser</code> et entrer un mot de passe temporaire pour chaque utilisateur.</p>
 
-<p>A second method is to create a single &#8216;git&#8217; user on the machine, ask every user who is to have write access to send you an SSH public key, and add that key to the <code>~/.ssh/authorized_keys</code> file of your new &#8216;git&#8217; user. At that point, everyone will be able to access that machine via the &#8216;git&#8217; user. This doesn’t affect the commit data in any way — the SSH user you connect as doesn’t affect the commits you’ve recorded.</p>
+<p>Une seconde méthode consiste à créer un seul utilisateur git sur la machine, demander à chaque développeur nécessitant un accès en écriture de vous envoyer une clef publique SSH et d&#8217;ajouter la dite clef au fichier <code>~/.ssh/authorized_keys</code> de votre utilisateur git. À partir de là, tout le monde sera capable d&#8217;accéder à la machine via l&#8217;utilisateur git. Cela n&#8217;affecte en rien les données de commit — les informations de l&#8217;utilisateur SSH par lequel on se connecte n&#8217;affectent pas les données de commit enregistrées.</p>
 
-<p>Another way to do it is to have your SSH server authenticate from an LDAP server or some other centralized authentication source that you may already have set up. As long as each user can get shell access on the machine, any SSH authentication mechanism you can think of should work.</p>
+<p>Une dernière méthode consiste à faire une authentification SSH auprès d&#8217;un serveur LDAP ou tout autre système d&#8217;authentification centralisé que vous utiliseriez déjà. Tant que chaque utilisateur peut accéder à un shell sur la machine, n&#8217;importe quel schéma d&#8217;authentification SSH devrait fonctionner.</p>
 
 <div id='nav'>
 <a href='ch4-1.html'>prev</a> | <a href='ch4-3.html'>next</a>

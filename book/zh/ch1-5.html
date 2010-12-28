@@ -18,7 +18,7 @@ title: Pro Git 1.5 起步 初次运行 Git 前的配置
 
 <p>在 Windows 系统上，Git 会找寻用户主目录下的 <code>.gitconfig</code> 文件。主目录即 <code>$HOME</code> 变量指定的目录，一般都是 <code>C:\Documents and Settings\$USER</code>。此外，Git 还会尝试找寻 /etc/gitconfig 文件，只不过看当初 Git 装在什么目录，就以此作为根目录来定位。</p>
 
-<h3 id='id198'>用户信息</h3>
+<h3 id='id216'>用户信息</h3>
 
 <p>第一个要配置的是你个人的用户名称和电子邮件地址。这两条配置很重要，每次 Git 提交时都会引用这两条信息，说明是谁提交了更新，所以会随更新内容一起被永久纳入历史记录：</p>
 
@@ -27,13 +27,13 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>如果用了 <code>--global</code> 选项，那么更改的配置文件就是位于你用户主目录下的那个，以后你所有的项目都会默认使用这里配置的用户信息。如果要在某个特定的项目中使用其他名字或者电邮，只要去掉 <code>--global</code> 选项重新配置即可，新的设定保存在当前项目的 <code>.git/config</code> 文件里。</p>
 
-<h3 id='id199'>文本编辑器</h3>
+<h3 id='id217'>文本编辑器</h3>
 
 <p>接下来要设置的是默认使用的文本编辑器。Git 需要你输入一些额外消息的时候，会自动调用一个外部文本编辑器给你用。默认会使用操作系统指定的默认编辑器，一般可能会是 Vi 或者 Vim。如果你有其他偏好，比如 Emacs 的话，可以重新设置：</p>
 
 <pre><code>$ git config --global core.editor emacs</code></pre>
 
-<h3 id='id200'>差异分析工具</h3>
+<h3 id='id218'>差异分析工具</h3>
 
 <p>还有一个比较常用的是，在解决合并冲突时使用哪种差异分析工具。比如要改用 vimdiff 的话：</p>
 
@@ -41,7 +41,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>Git 可以理解 kdiff3，tkdiff，meld，xxdiff，emerge，vimdiff，gvimdiff，ecmerge，和 opendiff 等合并工具的输出信息。当然，你也可以指定使用自己开发的工具，具体怎么做可以参阅第七章。</p>
 
-<h3 id='id201'>查看配置信息</h3>
+<h3 id='id219'>查看配置信息</h3>
 
 <p>要检查已有的配置信息，可以使用 <code>git config --list</code> 命令：</p>
 

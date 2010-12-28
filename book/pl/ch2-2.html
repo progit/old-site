@@ -308,7 +308,7 @@ $ git commit -a -m &#39;added new benchmarks&#39;
 
 <p>Aby usunąć plik z Gita, należy go najpierw wyrzucić ze zbioru plików śledzonych, a następnie zatwierdzić zmiany. Służy do tego polecenie <code>git -rm</code>, które dodatkowo usuwa plik z katalogu roboczego. Nie zobaczysz go już zatem w sekcji plików nieśledzonych przy następnej okazji.</p>
 
-<p>Jeżeli po prostu usuniesz plik z katalogu roboczego i uruchomisz komendę <code>git status</code> zobaczysz go w sekcji &#8220;Zmienione ale nie zaktualizowane&#8221; (Changed but not updated) (czyli, poza poczekalnią):</p>
+<p>Jeżeli po prostu usuniesz plik z katalogu roboczego i wykonasz polecenie <code>git status</code> zobaczysz go w sekcji &#8220;Zmienione ale nie zaktualizowane&#8221; (Changed but not updated) (czyli, poza poczekalnią):</p>
 
 <pre><code>$ rm grit.gemspec
 $ git status
@@ -339,11 +339,11 @@ $ git status
 
 <pre><code>$ git rm --cached readme.txt</code></pre>
 
-<p>Do komendy <code>git -rm</code> możesz przekazywać pliki, katalogi lub wyrażenia glob - możesz na przykład napisać coś takiego:</p>
+<p>Do polecenia <code>git -rm</code> możesz przekazywać pliki, katalogi lub wyrażenia glob - możesz na przykład napisać coś takiego:</p>
 
 <pre><code>$ git rm log/\*.log</code></pre>
 
-<p>Zwróć uwagę na odwrotny ukośnik (<code>\</code>) na początku <code>*</code>. Jest on niezbędny gdyż Git dodatkowo do tego co robi powłoka, sam ewaluuje sobie nazwy plików. Przywołane polecenie usuwa wszystkie pliki z rozszerzeniem <code>.log</code>, znajdujące się w katalogu <code>log/</code>. Możesz także wywołać następującą komendę:</p>
+<p>Zwróć uwagę na odwrotny ukośnik (<code>\</code>) na początku <code>*</code>. Jest on niezbędny gdyż Git dodatkowo do tego co robi powłoka, sam ewaluuje sobie nazwy plików. Przywołane polecenie usuwa wszystkie pliki z rozszerzeniem <code>.log</code>, znajdujące się w katalogu <code>log/</code>. Możesz także wywołać następujące polecenie:</p>
 
 <pre><code>$ git rm \*~</code></pre>
 

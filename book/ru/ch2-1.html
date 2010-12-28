@@ -10,53 +10,33 @@ title: Pro Git 2.1 Основы Git Создание репозитория Git
 
 <p>Если вы собираетесь начать использовать Git для существующего проекта, то вам необходимо перейти в проектный каталог и в командной строке ввести</p>
 
-<p>If you’re starting to track an existing project in Git, you need to go to the project’s directory and type</p>
-
 <pre><code>$ git init</code></pre>
 
 <p>Эта команда создает в текущем каталоге новый подкаталог с именем .git содержащий все необходимые файлы репозитория — основу репозитория Git. На этом этапе ваш проект еще не находится под версионным контролем. (В Главе 9 приведено подробное описание файлов содержащихся в только что созданном вами каталоге &#8220;.git&#8221;)</p>
 
-<p>This creates a new subdirectory named .git that contains all of your necessary repository files — a Git repository skeleton. At this point, nothing in your project is tracked yet. (See Chapter 9 for more information about exactly what files are contained in the <code>.git</code> directory you just created.)</p>
-
-<p>Если вы хотите добавить под версионный контроль существующие файлы (в отличие от пустого каталога), вам стоит проиндексировать эти файлы и осуществить первую фиксацию изменений. Осуществить это вы можете с помощью нескольких команд git add указывающих индексируемые файлы и последующего коммита:</p>
-
-<p>If you want to start version-controlling existing files (as opposed to an empty directory), you should probably begin tracking those files and do an initial commit. You can accomplish that with a few git add commands that specify the files you want to track, followed by a commit:</p>
+<p>Если вы хотите добавить под версионный контроль существующие файлы (в отличие от пустого каталога), вам стоит проиндексировать эти файлы и осуществить первую фиксацию изменений. Осуществить это вы можете с помощью нескольких команд git add указывающих индексируемые файлы, а затем commit:</p>
 
 <pre><code>$ git add *.c
 $ git add README
-$ git commit –m &#39;initial project version&#39;</code></pre>
+$ git commit -m &#39;initial project version&#39;</code></pre>
 
-<p>Мы разберем что делают эти команды чуть позже. На данном этапе, у вас есть репозиторий Git с добавленными файлами и начальным коммитом.</p>
+<p>Мы разберём, что делают эти команды чуть позже. На данном этапе, у вас есть репозиторий Git с добавленными файлами и начальным коммитом.</p>
 
-<p>We’ll go over what these commands do in just a minute. At this point, you have a Git repository with tracked files and an initial commit.</p>
+<h3 id='__'>Клонирование существующего репозитория</h3>
 
-<h3 id='__'>Клонирование Существующего Репозитория</h3>
-
-<h3 id='cloning_an_existing_repository'>Cloning an Existing Repository</h3>
-
-<p>Если вы желаете получить копию существующего репозитория Git, например проекта в котором вы хотите поучаствовать, то вам нужна команда git clone. Если вы знакомы с другими системами контроля версий, такими как Subversion, то заметите что команда называется clone, а не checkout. Это важное отличие — Git получает копию практически всех данных, что есть на сервере. Каждая версия каждого файла из истории проекта забирается (pulled) с сервера когда вы выполняете <code>git clone</code>. Фактически, если серверный диск выйдет из строя, вы можете использовать любой из клонов на любом из клиентов, для того чтобы вернуть сервер в то состояние, в котором он находился в момент клонирования (вы можете потерять часть серверных правил (server-side hooks) и т.п., но все данные помещенные под версионный контроль будут сохранены, подробнее см. в Главе 4).</p>
-
-<p>If you want to get a copy of an existing Git repository — for example, a project you’d like to contribute to — the command you need is git clone. If you’re familiar with other VCS systems such as Subversion, you’ll notice that the command is clone and not checkout. This is an important distinction — Git receives a copy of nearly all data that the server has. Every version of every file for the history of the project is pulled down when you run <code>git clone</code>. In fact, if your server disk gets corrupted, you can use any of the clones on any client to set the server back to the state it was in when it was cloned (you may lose some server-side hooks and such, but all the versioned data would be there—see Chapter 4 for more details).</p>
+<p>Если вы желаете получить копию существующего репозитория Git, например, проекта, в котором вы хотите поучаствовать, то вам нужна команда git clone. Если вы знакомы с другими системами контроля версий, такими как Subversion, то заметите, что команда называется clone, а не checkout. Это важное отличие — Git получает копию практически всех данных, что есть на сервере. Каждая версия каждого файла из истории проекта забирается (pulled) с сервера, когда вы выполняете <code>git clone</code>. Фактически, если серверный диск выйдет из строя, вы можете использовать любой из клонов на любом из клиентов, для того чтобы вернуть сервер в то состояние, в котором он находился в момент клонирования (вы можете потерять часть серверных правил (server-side hooks) и т.п., но все данные помещенные под версионный контроль будут сохранены, подробнее см. в Главе 4).</p>
 
 <p>Клонирование репозитория осуществляется командой <code>git clone [url]</code>. Например, если вы хотите клонировать библиотеку Ruby Git известную как Grit, вы можете сделать это следующим образом:</p>
 
-<p>You clone a repository with <code>git clone [url]</code>. For example, if you want to clone the Ruby Git library called Grit, you can do so like this:</p>
-
 <pre><code>$ git clone git://github.com/schacon/grit.git</code></pre>
 
-<p>Эта команда создает каталог с именем &#8220;grit&#8221;, в нем инициализирует каталог <code>.git</code>, скачивает все данные для этого репозитория и создает (checks out) рабочую копию последней версии. Если вы зайдете в новый каталог <code>grit</code>, вы увидите в нем проектные файлы пригодные для изменения и/или использования. Если вы хотите клонировать репозиторий в каталог отличный от <code>grit</code>, вы можете указать это следующим параметром командной строки:</p>
-
-<p>That creates a directory named &#8220;grit&#8221;, initializes a <code>.git</code> directory inside it, pulls down all the data for that repository, and checks out a working copy of the latest version. If you go into the new <code>grit</code> directory, you’ll see the project files in there, ready to be worked on or used. If you want to clone the repository into a directory named something other than grit, you can specify that as the next command-line option:</p>
+<p>Эта команда создает каталог с именем &#8220;grit&#8221;, инициализирует в нем каталог <code>.git</code>, скачивает все данные для этого репозитория и создает (checks out) рабочую копию последней версии. Если вы зайдете в новый каталог <code>grit</code>, вы увидите в нем проектные файлы пригодные для работы и использования. Если вы хотите клонировать репозиторий в каталог отличный от <code>grit</code>, можно это указать в следующем параметре командной строки:</p>
 
 <pre><code>$ git clone git://github.com/schacon/grit.git mygrit</code></pre>
 
 <p>Эта команда делает все то же самое что и предыдущая, только результирующий каталог будет назван mygrit.</p>
 
-<p>That command does the same thing as the previous one, but the target directory is called mygrit.</p>
-
-<p>Git реализует несколько транспортных протоколов, которые вы можете использовать. В предыдущем примере использовался <code>git://</code> протокол, вы также можете встретить <code>http(s)://</code> или <code>user@server:/path.git</code>, использующий транспортный протокол SSH. В Главе 4 представлены все доступные варианты конфигурации сервера для доступа в вашему репозиторию Git, а также их достоинства и недостатки.</p>
-
-<p>Git has a number of different transfer protocols you can use. The previous example uses the <code>git://</code> protocol, but you may also see <code>http(s)://</code> or <code>user@server:/path.git</code>, which uses the SSH transfer protocol. Chapter 4 will introduce all of the available options the server can set up to access your Git repository and the pros and cons of each.</p>
+<p>Git реализует несколько транспортных протоколов, которые вы можете использовать. В предыдущем примере использовался протокол <code>git://</code>, вы также можете встретить <code>http(s)://</code> или <code>user@server:/path.git</code>, использующий протокол передачи SSH. В Главе 4 представлены все доступные варианты конфигурации сервера для доступа к вашему репозиторию Git, а также их достоинства и недостатки.</p>
 
 <div id='nav'>
 <a href='ch2-0.html'>prev</a> | <a href='ch2-2.html'>next</a>

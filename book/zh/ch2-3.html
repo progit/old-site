@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 2.3 Git 基础 查看提交历史
 ---
-<h2 id='id216'>查看提交历史</h2>
+<h2 id='id234'>查看提交历史</h2>
 
 <p>在提交了若干更新之后，又或者克隆了某个项目，想回顾下提交历史，可以使用 <code>git log</code> 命令。</p>
 
@@ -171,7 +171,7 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 --graph 显示 ASCII 图形表示的分支合并历史。
 --pretty 使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。</code></pre>
 
-<h3 id='id217'>限制输出长度</h3>
+<h3 id='id235'>限制输出长度</h3>
 
 <p>除了定制输出格式的选项之外，<code>git log</code> 还有许多非常实用的限制输出长度的选项，也就是只输出部分提交信息。之前我们已经看到过 <code>-2</code> 了，它只显示最近的两条提交，实际上，这是 <code>-&lt;n&gt;</code> 选项的写法，其中的 <code>n</code> 可以是任何自然数，表示仅显示最近的若干条提交。不过实践中我们是不太用这个选项的，Git 在输出所有提交时会自动调用分页程序（pager），要看更早的更新只需翻到下页即可。</p>
 
@@ -207,7 +207,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>Git 项目有 20,000 多条提交，但我们给出搜索选项后，仅列出了其中满足条件的 6 条。</p>
 
-<h3 id='id218'>使用图形化工具查阅提交历史</h3>
+<h3 id='id236'>使用图形化工具查阅提交历史</h3>
 
 <p>有时候图形化工具更容易展示历史提交的变化，随 Git 一同发布的 gitk 就是这样一种工具。它是用 Tcl/Tk 写成的，基本上相当于 <code>git log</code> 命令的可视化版本，凡是 <code>git log</code> 可以用的选项也都能用在 gitk 上。在项目工作目录中输入 gitk 命令后，就会启动图 2-2 所示的界面。</p>
 

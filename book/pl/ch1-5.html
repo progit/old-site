@@ -1,49 +1,49 @@
 ---
 layout: translation
-title: Pro Git 1.5 Pierwsze kroki First-Time Git Setup
+title: Pro Git 1.5 Pierwsze kroki Wstępna konfiguracja Git
 ---
-<h2 id='firsttime_git_setup'>First-Time Git Setup</h2>
+<h2 id='wstpna_konfiguracja_git'>Wstępna konfiguracja Git</h2>
 
-<p>Now that you have Git on your system, you’ll want to do a few things to customize your Git environment. You should have to do these things only once; they’ll stick around between upgrades. You can also change them at any time by running through the commands again.</p>
+<p>Teraz, gdy Git jest już zainstalowany w Twoim systemie, istotne jest wykonanie pewnych czynności konfiguracyjnych. Wystarczy to zrobić raz; konfiguracja będzie obowiązywać także po aktualizacji Git. Ustawienia można zmienić w dowolnym momencie jeszcze raz wykonując odpowiednie polecenia.</p>
 
-<p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
+<p>Git posiada narzędzie zwane <code>git config</code>, które pozwala odczytać, bądź zmodyfikować zmienne, które kontrolują wszystkie aspekty działania i zachowania Git. Zmienne te mogą być przechowywane w trzech różnych miejscach:</p>
 
 <ul>
-<li><code>/etc/gitconfig</code> file: Contains values for every user on the system and all their repositories. If you pass the option<code> --system</code> to <code>git config</code>, it reads and writes from this file specifically.</li>
+<li>plik <code>/etc/gitconfig</code>: Zawiera wartości zmiennych widoczne dla każdego użytkownika w systemie oraz dla każdego z ich repozytoriów. Jeśli dodasz opcję <code> --system</code> do polecenia <code>git config</code>, odczytane bądź zapisane zostaną zmienne z tej właśnie lokalizacji.</li>
 
-<li><code>~/.gitconfig</code> file: Specific to your user. You can make Git read and write to this file specifically by passing the <code>--global</code> option.</li>
+<li>plik <code>~/.gitconfig</code>: Lokalizacja specyficzna dla danego użytkownika. Za pomocą opcji <code>--global</code> można uzyskać dostęp do tych właśnie zmiennych.</li>
 
-<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/gitconfig</code>.</li>
+<li>plik konfiguracyjny w katalogu git (tzn. <code>.git/config</code>) bieżącego repozytorium: zawiera konfigurację charakterystyczną dla tego konkretnego repozytorium. Każdy poziom ma priorytet wyższy niż poziom poprzedni, zatem wartości zmiennych z pliku <code>.git/config</code> przesłaniają wartości zmiennych z pliku <code>/etc/gitconfig</code>.</li>
 </ul>
 
-<p>On Windows systems, Git looks for the <code>.gitconfig</code> file in the <code>$HOME</code> directory (<code>C:\Documents and Settings\$USER</code> for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
+<p>W systemie Windows, Git poszukuje pliku <code>.gitconfig</code> w katalogu <code>%HOME%</code> (<code>C:\Documents and Settings\%USERNAME%</code> w większości przypadków). Sprawdza również istnienie pliku <code>/etc/gitconfig</code>, choć w tym wypadku katalog ten jest katalogiem względnym do katalogu instalacji MSysGit.</p>
 
-<h3 id='your_identity'>Your Identity</h3>
+<h3 id='twoja_tosamo'>Twoja tożsamość</h3>
 
-<p>The first thing you should do when you install Git is to set your user name and e-mail address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you pass around:</p>
+<p>Pierwszą rzeczą, którą warto wykonać po instalacji Git jest konfiguracja własnej nazwy użytkownika oraz adresu e-mail. Jest to ważne, ponieważ każda operacja zatwierdzenia w Git korzysta z tych informacji, które stają się integralną częścią zatwierdzeń przesyłanych i pobieranych później do i z serwera:</p>
 
-<pre><code>$ git config --global user.name &quot;John Doe&quot;
-$ git config --global user.email johndoe@example.com</code></pre>
+<pre><code>$ git config --global user.name &quot;Jan Nowak&quot;
+$ git config --global user.email jannowak@example.com</code></pre>
 
-<p>Again, you need to do this only once if you pass the <code>--global</code> option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the <code>--global</code> option when you’re in that project.</p>
+<p>Jeśli skorzystasz z opcji <code>--global</code> wystarczy, że taka konfiguracja zostanie dokonana jednorazowo. Git skorzysta z niej podczas każdej operacji wykonywanej przez Ciebie w danym systemie. Jeśli zaistnieje potrzeba zmiany tych informacji dla konkretnego projektu, można skorzystać z <code>git config</code> bez opcji <code>--global</code>.</p>
 
-<h3 id='your_editor'>Your Editor</h3>
+<h3 id='edytor'>Edytor</h3>
 
-<p>Now that your identity is set up, you can configure the default text editor that will be used when Git needs you to type in a message. By default, Git uses your system’s default editor, which is generally Vi or Vim. If you want to use a different text editor, such as Emacs, you can do the following:</p>
+<p>Teraz, gdy ustaliłeś swą tożsamość, możesz skonfigurować domyślny edytor tekstu, który zostanie uruchomiony, gdy Git będzie wymagał wprowadzenia jakiejś informacji tekstowej. Domyślnie Git skorzysta z domyślnego edytora systemowego, którym zazwyczaj jest Vi lub Vim. Jeśli wolisz korzystać z innego edytora, np. z Emacsa, uruchom następujące polecenie:</p>
 
 <pre><code>$ git config --global core.editor emacs</code></pre>
 
-<h3 id='your_diff_tool'>Your Diff Tool</h3>
+<h3 id='narzdzie_obsugi_rnic'>Narzędzie obsługi różnic</h3>
 
-<p>Another useful option you may want to configure is the default diff tool to use to resolve merge conflicts. Say you want to use vimdiff:</p>
+<p>Warto również skonfigurować domyślne narzędzie do rozstrzygania różnic i problemów podczas edycji konfliktów powstałych w czasie operacji łączenia (ang. merge). Jeśli chcesz wykorzystywać w tym celu narzędzie vimdiff, użyj polecenia:</p>
 
 <pre><code>$ git config --global merge.tool vimdiff</code></pre>
 
-<p>Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff as valid merge tools. You can also set up a custom tool; see Chapter 7 for more information about doing that.</p>
+<p>Git zna narzędzia kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, oraz opendiff. Możesz również użyć własnego narzędzia; rozdział 7 zawiera więcej informacji na ten temat.</p>
 
-<h3 id='checking_your_settings'>Checking Your Settings</h3>
+<h3 id='sprawdzanie_ustawie'>Sprawdzanie ustawień</h3>
 
-<p>If you want to check your settings, you can use the <code>git config --list</code> command to list all the settings Git can find at that point:</p>
+<p>Jeśli chcesz sprawdzić bieżące ustawienia, wykonaj polecenie <code>git config --list</code>. Git wyświetli pełną konfigurację:</p>
 
 <pre><code>$ git config --list
 user.name=Scott Chacon
@@ -54,9 +54,9 @@ color.interactive=auto
 color.diff=auto
 ...</code></pre>
 
-<p>You may see keys more than once, because Git reads the same key from different files (<code>/etc/gitconfig</code> and <code>~/.gitconfig</code>, for example). In this case, Git uses the last value for each unique key it sees.</p>
+<p>Niektóre zmienne mogą pojawić się wiele razy, ponieważ Git odczytuje konfigurację z różnych plików (choćby z <code>/etc/gitconfig</code> oraz <code>~/.gitconfig</code>). W takim wypadku Git korzysta z ostatniej wartości dla każdej unikalnej zmiennej, którą znajdzie.</p>
 
-<p>You can also check what Git thinks a specific key’s value is by typing <code>git config {key}</code>:</p>
+<p>Można również sprawdzić jaka jest rzeczywista wartość zmiennej o konkretnej nazwie za pomocą polecenia <code>git config {zmienna}</code>:</p>
 
 <pre><code>$ git config user.name
 Scott Chacon</code></pre>

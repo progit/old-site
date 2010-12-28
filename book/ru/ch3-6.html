@@ -1,42 +1,114 @@
 ---
 layout: translation
-title: Pro Git 3.6 Ветвление в Git Branching Workflows
+title: Pro Git 3.6 Ветвление в Git Перемещение
 ---
-<h2 id='branching_workflows'>Branching Workflows</h2>
+<h2 id='id180'>Перемещение</h2>
 
-<p>Now that you have the basics of branching and merging down, what can or should you do with them? In this section, we’ll cover some common workflows that this lightweight branching makes possible, so you can decide if you would like to incorporate it into your own development cycle.</p>
+<p>В Git есть два способа включить изменения из одной ветки в другую: <code>merge</code> (слияние) и <code>rebase</code> (перемещение). В этом разделе вы узнаете, что такое перемещение, как его осуществлять, почему это удивительный инструмент и в каких случаях вам не следует его использовать.</p>
 
-<h3 id='longrunning_branches'>Long-Running Branches</h3>
+<h3 id='_'>Основы перемещения</h3>
 
-<p>Because Git uses a simple three-way merge, merging from one branch into another multiple times over a long period is generally easy to do. This means you can have several branches that are always open and that you use for different stages of your development cycle; you can merge regularly from some of them into others.</p>
+<p>Если вы вернетесь назад к примеру из раздела Слияние (смотри Рисунок 3-27), вы увидите, что вы разделили вашу работу на два направления и выполняли коммиты на двух разных ветках.</p>
 
-<p>Many Git developers have a workflow that embraces this approach, such as having only code that is entirely stable in their <code>master</code> branch — possibly only code that has been or will be released. They have another parallel branch named develop or next that they work from or use to test stability — it isn’t necessarily always stable, but whenever it gets to a stable state, it can be merged into <code>master</code>. It’s used to pull in topic branches (short-lived branches, like your earlier <code>iss53</code> branch) when they’re ready, to make sure they pass all the tests and don’t introduce bugs.</p>
+<p><center><img src="/figures/ch3/18333fig0327-tn.png"></center><br/> Рисунок 3-27. Впервые разделенная история коммитов.</p>
 
-<p>In reality, we’re talking about pointers moving up the line of commits you’re making. The stable branches are farther down the line in your commit history, and the bleeding-edge branches are farther up the history (see Figure 3-18).</p>
+<p>Наиболее простое решение для объединения веток, как мы уже выяснили, команда <code>merge</code>. Эта команда выполняет трехходовое слияние между двумя последними снимками состояний из веток (C3 и C4) и последним общим предком этих двух веток (C2), создавая новый снимок состояния (и коммит), как показано на Рисунке 3-28.</p>
 
-<p><center><img src="/figures/ch3/18333fig0318-tn.png"></center><br/> Figure 3-18. More stable branches are generally farther down the commit history.</p>
+<p><center><img src="/figures/ch3/18333fig0328-tn.png"></center><br/> Рисунок 3-28. Слияние ветки для объединения разделившейся истории разработки.</p>
 
-<p>It’s generally easier to think about them as work silos, where sets of commits graduate to a more stable silo when they’re fully tested (see Figure 3-19).</p>
+<p>Однако, есть и другой путь: вы можете взять изменения, представленные в C3, и применить их сверху C4. В Git это называется <em>перемещение</em> (rebasing). При помощи команды <code>rebase</code> вы можете взять все изменения, которые попали в коммиты на одной из веток, и повторить их на другой.</p>
 
-<p><center><img src="/figures/ch3/18333fig0319-tn.png"></center><br/> Figure 3-19. It may be helpful to think of your branches as silos.</p>
+<p>В этом примере вы выполните следующее:</p>
 
-<p>You can keep doing this for several levels of stability. Some larger projects also have a <code>proposed</code> or <code>pu</code> (proposed updates) branch that has integrated branches that may not be ready to go into the <code>next</code> or <code>master</code> branch. The idea is that your branches are at various levels of stability; when they reach a more stable level, they’re merged into the branch above them. Again, having multiple long-running branches isn’t necessary, but it’s often helpful, especially when you’re dealing with very large or complex projects.</p>
+<pre><code>$ git checkout experiment
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: added staged command</code></pre>
 
-<h3 id='topic_branches'>Topic Branches</h3>
+<p>Это работает следующим образом: находится общий предок для двух веток (на которой вы находитесь сейчас и на которую вы выполняете перемещение); берётся разница, представленная в каждом из коммитов на текущей ветке, и сохраняется во временные файлы; текущая ветка устанавливается на такой же коммит, что и ветка, на которую вы выполняете перемещение; и, наконец, последовательно применяются все изменения. Рисунок 3-29 иллюстрирует этот процесс.</p>
 
-<p>Topic branches, however, are useful in projects of any size. A topic branch is a short-lived branch that you create and use for a single particular feature or related work. This is something you’ve likely never done with a VCS before because it’s generally too expensive to create and merge branches. But in Git it’s common to create, work on, merge, and delete branches several times a day.</p>
+<p><center><img src="/figures/ch3/18333fig0329-tn.png"></center><br/> Рисунок 3-29. Перемещение изменений, сделанных в C3, на C4.</p>
 
-<p>You saw this in the last section with the <code>iss53</code> and <code>hotfix</code> branches you created. You did a few commits on them and deleted them directly after merging them into your main branch. This technique allows you to context-switch quickly and completely — because your work is separated into silos where all the changes in that branch have to do with that topic, it’s easier to see what has happened during code review and such. You can keep the changes there for minutes, days, or months, and merge them in when they’re ready, regardless of the order in which they were created or worked on.</p>
+<p>На этом этапе можно переключиться на ветку master и выполнить слияние-перемотку (fast-forward merge) (смотри Рисунок 3-30).</p>
 
-<p>Consider an example of doing some work (on <code>master</code>), branching off for an issue (<code>iss91</code>), working on it for a bit, branching off the second branch to try another way of handling the same thing (<code>iss91v2</code>), going back to your master branch and working there for a while, and then branching off there to do some work that you’re not sure is a good idea (<code>dumbidea</code> branch). Your commit history will look something like Figure 3-20.</p>
+<p><center><img src="/figures/ch3/18333fig0330-tn.png"></center><br/> Рисунок 3-30. Перемотка ветки master.</p>
 
-<p><center><img src="/figures/ch3/18333fig0320-tn.png"></center><br/> Figure 3-20. Your commit history with multiple topic branches.</p>
+<p>Теперь снимок состояния, на который указывает C3, точно такой же, что тот, на который указывал C5 в примере со слиянием. Нет никакой разницы в конечном результате объединения, но перемещение выполняется для того, чтобы история была более аккуратной. Если вы посмотрите лог (log) перемещенной ветки, то увидите, что он выглядит как линейная история работы: выходит, что вся работа выполнялась последовательно, когда в действительности она выполнялась параллельно.</p>
 
-<p>Now, let’s say you decide you like the second solution to your issue best (<code>iss91v2</code>); and you showed the <code>dumbidea</code> branch to your coworkers, and it turns out to be genius. You can throw away the original <code>iss91</code> branch (losing commits C5 and C6) and merge in the other two. Your history then looks like Figure 3-21.</p>
+<p>Часто вы будете делать это, чтобы удостовериться, что ваши коммиты правильно применяются для удаленных веток — возможно для проекта, владельцем которого вы не являетесь, но в который вы хотите внести свой вклад. В этом случае вы будете выполнять работу в ветке, а затем, когда будете готовы внести свои изменения в основной проект, выполните перемещение вашей работы на <code>origin/master</code>. Таким образом, владельцу проекта не придется делать никаких действий по объединению — просто перемотка (fast-forward) или чистое применение патчей.</p>
 
-<p><center><img src="/figures/ch3/18333fig0321-tn.png"></center><br/> Figure 3-21. Your history after merging in dumbidea and iss91v2.</p>
+<p>Заметьте, что снимок состояния, на который указывает последний коммит, который у вас получился, является ли этот коммит последним перемещенным коммитом (для случая выполнения перемещения) или итоговым коммитом слияния (для случая выполнения слияния), есть один и тот же снимок — разной будет только история. Перемещение применяет изменения из одной линии разработки в другую в том порядке, в котором они были представлены, тогда как слияние объединяет вместе конечные точки двух веток.</p>
 
-<p>It’s important to remember when you’re doing all this that these branches are completely local. When you’re branching and merging, everything is being done only in your Git repository — no server communication is happening.</p>
+<h3 id='__'>Более интересные перемещения</h3>
+
+<p>Вы также можете выполнять перемещение не только для перемещения ветки. Возьмём, например, историю разработки как на Рисунке 3-31. Вы создали тематическую ветку (<code>server</code>), чтобы добавить в проект некоторый функционал для серверной части, и сделали коммит. Затем вы выполнили ответвление, чтобы сделать изменения для клиентской части, и несколько раз выполнили коммиты. Наконец, вы вернулись на ветку server и сделали ещё несколько коммитов.</p>
+
+<p><center><img src="/figures/ch3/18333fig0331-tn.png"></center><br/> Рисунок 3-31. История разработки с тематической веткой, ответвленной от другой тематической ветки.</p>
+
+<p>Предположим, вы решили, что хотите внести ваши изменения для клиентской части в основную линию разработки для релиза, но при этом хотите оставить в стороне изменения для серверной части, пока они не будут полностью протестированы. Вы можете взять изменения из ветки client, которых нет на server (C8 и C9), и применить их на ветке master при помощи опции <code>--onto</code> команды <code>git rebase</code>:</p>
+
+<pre><code>$ git rebase --onto master server client</code></pre>
+
+<p>По сути, это указание “переключиться на ветку client, взять изменения от общего предка веток <code>client</code> и <code>server</code> и повторить их на <code>master</code>”. Это немного сложно; но результат, показанный на Рисунке 3-32, достаточно классный.</p>
+
+<p><center><img src="/figures/ch3/18333fig0332-tn.png"></center><br/> Рисунок 3-32. Перемещение тематической ветки, ответвленной от другой тематической ветки.</p>
+
+<p>Теперь вы можете выполнить перемотку (fast-forward) для вашей ветки master (смотри Рисунок 3-33):</p>
+
+<pre><code>$ git checkout master
+$ git merge client</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0333-tn.png"></center><br/> Рисунок 3-33. Перемотка ветки master, чтобы включить изменения из ветки client.</p>
+
+<p>Представим, что вы также решили включить ветку server в основную ветку. Вы можете выполнить перемещение ветки server на ветку master без предварительного переключения на эту ветку при помощи команды <code>git rebase [осн. ветка] [тем. ветка]</code> — которая устанавливает тематическую ветку (в данном случае <code>server</code>) как текущую и применяет её изменения на основной ветке (<code>master</code>):</p>
+
+<pre><code>$ git rebase master server</code></pre>
+
+<p>Эта команда применит изменения из вашей работы над веткой <code>server</code> на вершину ветки <code>master</code>, как показано на Рисунке 3-34.</p>
+
+<p><center><img src="/figures/ch3/18333fig0334-tn.png"></center><br/> Рисунок 3-34. Перемещение вашей ветки server на вершину ветки master.</p>
+
+<p>Затем вы можете выполнить перемотку (fast-forward) основной ветки (<code>master</code>):</p>
+
+<pre><code>$ git checkout master
+$ git merge server</code></pre>
+
+<p>Вы можете удалить ветки <code>client</code> и <code>server</code>, так как вся работа из них включена в основную линию разработки и они вам больше не нужны. При этом полная история вашего рабочего процесса выглядит как на Рисунке 3-35:</p>
+
+<pre><code>$ git branch -d client
+$ git branch -d server</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0335-tn.png"></center><br/> Рисунок 3-35. Финальная история коммитов.</p>
+
+<h3 id='__'>Возможные риски перемещения</h3>
+
+<p>Все бы хорошо, но кое-что омрачает всю прелесть использования перемещения. Это выражается одной строчкой:</p>
+
+<p><strong>Не перемещайте коммиты, которые вы выложили в публичный репозиторий.</strong></p>
+
+<p>Если вы будете следовать этому указанию, все будет хорошо. Если нет — люди возненавидят вас, вас будут презирать ваши друзья и семья.</p>
+
+<p>Когда вы что-то перемещаете, вы отменяете существующие коммиты и создаете новые, которые являются похожими на старые, но в чем-то другими. Если вы выкладываете ваши коммиты куда-нибудь, и другие забирают их себе и в дальнейшем основывают на них свою работу, а затем вы переделываете эти коммиты командой <code>git rebase</code> и выкладываете их снова, ваши коллеги будут вынуждены заново выполнять слияние для своих наработок. Все запутается, когда вы в очередной раз попытаетесь включить их работу в свою.</p>
+
+<p>Давайте рассмотрим пример того, как выполненное вами перемещение наработок, представленных для общего доступа, может вызвать проблемы. Представьте себе, что вы клонировали себе репозиторий с центрального сервера и поработали в нем. Ваша история коммитов выглядит как на Рисунке 3-36.</p>
+
+<p><center><img src="/figures/ch3/18333fig0336-tn.png"></center><br/> Рисунок 3-36. Клонирование репозитория и выполнение в нём какой-то работы.</p>
+
+<p>Теперь кто-то ещё выполняет работу, причём работа включает в себя и слияние, и отправляет свои изменения на центральный сервер. Вы извлекаете их и сливаете новую удалённую ветку со своей работой. Тогда ваша история выглядит как на Рисунке 3-37.</p>
+
+<p><center><img src="/figures/ch3/18333fig0337-tn.png"></center><br/> Рисунок 3-37. Извлечение коммитов и слияние их со своей работой.</p>
+
+<p>Далее, человек, выложивший изменения содержащие слияние, решает вернуться и вместо слияния (merge) переместить (rebase) свою работу; он выполняет <code>git push --force</code>, чтобы переписать историю на сервере. Затем вы извлекаете изменения с этого сервера, включая и новые коммиты.</p>
+
+<p><center><img src="/figures/ch3/18333fig0338-tn.png"></center><br/> Рисунок 3-38. Кто-то выложил перемещённые коммиты, отменяя коммиты, на которых вы основывали свою работу.</p>
+
+<p>На этом этапе вы вынуждены объединить эту работу со своей снова, даже если вы уже сделали это ранее. Перемещение изменяет у этих коммитов хэши SHA-1, так что для Git они выглядят как новые коммиты, тогда как на самом деле вы уже располагаете наработками C4 в вашей истории (смотри Рисунок 3-39).</p>
+
+<p><center><img src="/figures/ch3/18333fig0339-tn.png"></center><br/> Рисунок 3-39. Вы снова выполняете слияние для той же самой работы в новый коммит слияния.</p>
+
+<p>Вы вынуждены объединить эту работу со своей на каком-либо этапе, чтобы иметь возможность продолжать работать с другими разработчиками в будущем. После того, как вы сделаете это, ваша история коммитов будет содержать оба коммита — C4 и C4&#8217;, которые имеют разные хэши SHA-1, но представляют собой одинаковые изменения и имеют одинаковые сообщения. Если вы выполните команду <code>git log</code> когда ваша история выглядит таким образом, вы увидите два коммита, которые имеют одинакового автора и одни и те же сообщения. Это сбивает с толку. Более того, если вы отправите такую историю обратно на сервер, вы добавите все эти перемещенные коммиты в репозиторий центрального сервера, что может ещё больше запутать людей.</p>
+
+<p>Если вы рассматриваете перемещение как возможность наведения порядка и работы с коммитами до того, как выложили их, и если вы перемещаете только коммиты, которые никогда не находились в публичном доступе — всё нормально. Если вы перемещаете коммиты, которые уже были представлены для общего доступа, и люди, возможно, основывали свою работу на этих коммитах, тогда вы можете получить наказание за разные неприятные проблемы.</p>
 
 <div id='nav'>
 <a href='ch3-5.html'>prev</a> | <a href='ch3-7.html'>next</a>

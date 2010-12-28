@@ -6,16 +6,12 @@ title: Pro Git 4.4 Git на сервере Настраиваем сервер
 
 <p>Давайте рассмотрим настройку доступа по SSH на стороне сервера. В этом примере мы будем использовать метод <code>authorized_keys</code> для аутентификации пользователей. Мы подразумеваем, что вы используете стандартный дистрибутив Linux типа Ubuntu. Для начала, создадим пользователя &#8216;git&#8217; и каталог <code>.ssh</code> для этого пользователя:</p>
 
-<p>Let’s walk through setting up SSH access on the server side. In this example, you’ll use the <code>authorized_keys</code> method for authenticating your users. We also assume you’re running a standard Linux distribution like Ubuntu. First, you create a &#8216;git&#8217; user and a <code>.ssh</code> directory for that user.</p>
-
 <pre><code>$ sudo adduser git
 $ su git
 $ cd
 $ mkdir .ssh</code></pre>
 
-<p>Затем, вам нужно добавить открытые ключи SSH нескольких разработчиков в файл <code>authorized_keys</code> этого пользователя. Предположим, вы уже получили несколько ключей по электронной почте и сохранили их во временные файлы. Напомню, открытый ключ выглядит как то так:</p>
-
-<p>Next, you need to add some developer SSH public keys to the <code>authorized_keys</code> file for that user. Let’s assume you’ve received a few keys by e-mail and saved them to temporary files. Again, the public keys look something like this:</p>
+<p>Затем, вам нужно добавить открытый SSH-ключ некоторого разработчика в файл <code>authorized_keys</code> этого пользователя. Предположим, вы уже получили несколько ключей по электронной почте и сохранили их во временные файлы. Напомню, открытый ключ выглядит как-то так:</p>
 
 <pre><code>$ cat /tmp/id_rsa.john.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
@@ -25,26 +21,20 @@ Sdfd8AcCIicTDWbqLAcU4UpkaX8KyGlLwsNuuGztobF8m72ALC/nLF6JLtPofwFBlgc+myiv
 O7TCUSBdLQlgMVOFq1I2uPWQOkOWQAHukEOmfjy2jctxSDBQ220ymjaNsHT4kgtZg2AYYgPq
 dAv8JggJICUvax2T9va5 gsg-keypair</code></pre>
 
-<p>Вы просто добавляете их к вашему файлу <code>authorized_keys</code>:</p>
-
-<p>You just append them to your <code>authorized_keys</code> file:</p>
+<p>Вы просто добавляете их в ваш файл <code>authorized_keys</code>:</p>
 
 <pre><code>$ cat /tmp/id_rsa.john.pub &gt;&gt; ~/.ssh/authorized_keys
 $ cat /tmp/id_rsa.josie.pub &gt;&gt; ~/.ssh/authorized_keys
 $ cat /tmp/id_rsa.jessica.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
 
-<p>Теперь, вы можете создать пустой репозиторий для них, запустив <code>git init</code> с параметром <code>--bare</code>, которая инициализирует репозиторий без рабочего каталога:</p>
-
-<p>Now, you can set up an empty repository for them by running <code>git init</code> with the <code>--bare</code> option, which initializes the repository without a working directory:</p>
+<p>Теперь, вы можете создать пустой репозиторий для них, запустив <code>git init</code> с параметром <code>--bare</code>, что инициализирует репозиторий без рабочего каталога:</p>
 
 <pre><code>$ cd /opt/git
 $ mkdir project.git
 $ cd project.git
 $ git --bare init</code></pre>
 
-<p>Затем Джон, Жоси или Джессика могут положить первую версию их проекта в этот репозиторий добавив его как удаленный и отправив бранч. Заметьте, что кто то всегда должен заходить на сервер и создавать голый репозиторий каждый раз, когда вы хотите добавить проект. Пусть <code>gitserver</code> ― имя хоста сервера, на котором вы создали пользователя &#8216;git&#8217; и репозиторий. Если он находится в вашей внутренней сети, вы можете настроить запись DNS для <code>gitserver</code>, ссылающуюся на этот сервер, и использовать эти команды:</p>
-
-<p>Then, John, Josie, or Jessica can push the first version of their project into that repository by adding it as a remote and pushing up a branch. Note that someone must shell onto the machine and create a bare repository every time you want to add a project. Let’s use <code>gitserver</code> as the hostname of the server on which you’ve set up your &#8216;git&#8217; user and repository. If you’re running it internally, and you set up DNS for <code>gitserver</code> to point to that server, then you can use the commands pretty much as is:</p>
+<p>Затем Джон, Джози или Джессика могут отправить первую версию их проекта в этот репозиторий добавив его как удаленный и отправив ветку. Заметьте, что кто-то всегда должен заходить на сервер и создавать голый репозиторий каждый раз, когда вы хотите добавить проект. Пусть <code>gitserver</code> ― имя хоста сервера, на котором вы создали пользователя &#8216;git&#8217; и репозиторий. Если он находится в вашей внутренней сети, вы можете настроить запись DNS для <code>gitserver</code>, ссылающуюся на этот сервер, и использовать эти команды:</p>
 
 <pre><code># на компьютере Джона 
 $ cd myproject
@@ -54,40 +44,28 @@ $ git commit -m &#39;initial commit&#39;
 $ git remote add origin git@gitserver:/opt/git/project.git
 $ git push origin master</code></pre>
 
-<p>Теперь остальные легко могут клонировать его и выкладывать изменения:</p>
-
-<p>At this point, the others can clone it down and push changes back up just as easily:</p>
+<p>Теперь остальные могут склонировать его и отправлять (push) туда изменения также легко:</p>
 
 <pre><code>$ git clone git@gitserver:/opt/git/project.git
 $ vim README
 $ git commit -am &#39;fix for the README file&#39;
 $ git push origin master</code></pre>
 
-<p>Этим способом вы можете быстро получить с сервер Git с доступом на чтение/запись для небольшой группы разработчиков.</p>
-
-<p>With this method, you can quickly get a read/write Git server up and running for a handful of developers.</p>
+<p>Этим способом вы можете быстро получить Git-сервер с доступом на чтение/запись для небольшой группы разработчиков.</p>
 
 <p>В качестве дополнительной меры предосторожности вы можете ограничить возможности пользователя &#8216;git&#8217; только действиями связанными с Git с помощью ограниченной оболочки <code>git-shell</code> поставляемой вместе с Git. Если вы выставите ее в качестве командного интерпретатора пользователя &#8216;git&#8217;, то этот пользователь не сможет получить доступ к обычной командной оболочке на вашем сервере. Чтобы её использовать, укажите <code>git-shell</code>, вместо bash или csh в качестве командной оболочки пользователя. Для этого вы должны отредактировать файл <code>/etc/passwd</code>:</p>
-
-<p>As an extra precaution, you can easily restrict the &#8216;git&#8217; user to only doing Git activities with a limited shell tool called <code>git-shell</code> that comes with Git. If you set this as your &#8216;git&#8217; user’s login shell, then the &#8216;git&#8217; user can’t have normal shell access to your server. To use this, specify <code>git-shell</code> instead of bash or csh for your user’s login shell. To do so, you’ll likely have to edit your <code>/etc/passwd</code> file:</p>
 
 <pre><code>$ sudo vim /etc/passwd</code></pre>
 
 <p>В конце вы должны найти строку, похожую на эту:</p>
 
-<p>At the bottom, you should find a line that looks something like this:</p>
-
 <pre><code>git:x:1000:1000::/home/git:/bin/sh</code></pre>
 
-<p>Замените <code>/bin/sh</code> на <code>/usr/bin/git-shell</code> (или запустите <code>which git-shell</code>, чтобы проверить куда она инсталирована). Отредактированная строка должна выглядеть как то так:</p>
-
-<p>Change <code>/bin/sh</code> to <code>/usr/bin/git-shell</code> (or run <code>which git-shell</code> to see where it’s installed). The line should look something like this:</p>
+<p>Замените <code>/bin/sh</code> на <code>/usr/bin/git-shell</code> (или запустите <code>which git-shell</code>, чтобы проверить, куда он установлен). Отредактированная строка должна выглядеть следующим образом:</p>
 
 <pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
 <p>Теперь, пользователь &#8216;git&#8217; может использовать SSH соединение только для работы с репозиториями Git, и не может зайти на машину. Вы можете попробовать и увидите, что вход в систему отклонен:</p>
-
-<p>Now, the &#8216;git&#8217; user can only use the SSH connection to push and pull Git repositories and can’t shell onto the machine. If you try, you’ll see a login rejection like this:</p>
 
 <pre><code>$ ssh git@gitserver
 fatal: What do you think I am? A shell?

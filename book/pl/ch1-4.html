@@ -1,69 +1,69 @@
 ---
 layout: translation
-title: Pro Git 1.4 Pierwsze kroki Installing Git
+title: Pro Git 1.4 Pierwsze kroki Instalacja Git
 ---
-<h2 id='installing_git'>Installing Git</h2>
+<h2 id='instalacja_git'>Instalacja Git</h2>
 
-<p>Let’s get into using some Git. First things first—you have to install it. You can get it a number of ways; the two major ones are to install it from source or to install an existing package for your platform.</p>
+<p>Czas rozpocząć pracę z Git. Pierwszym krokiem jest instalacja. Można ją przeprowadzić na różne sposoby; po pierwsze można zainstalować Git ze źródeł, po drugie - można skorzystać z pakietu binarnego dla konkretnej platformy.</p>
 
-<h3 id='installing_from_source'>Installing from Source</h3>
+<h3 id='instalacja_ze_rde'>Instalacja ze źródeł</h3>
 
-<p>If you can, it’s generally useful to install Git from source, because you’ll get the most recent version. Each version of Git tends to include useful UI enhancements, so getting the latest version is often the best route if you feel comfortable compiling software from source. It is also the case that many Linux distributions contain very old packages; so unless you’re on a very up-to-date distro or are using backports, installing from source may be the best bet.</p>
+<p>Jeśli masz taką możliwość, korzystne jest zainstalowanie Git ze źródeł, ponieważ w ten sposób dostajesz najnowszą wersję. Każda wersja Git zawiera zwykle użyteczne zmiany w interfejsie, zatem chęć skorzystania z najnowszych funkcji stanowi zwykle najlepszy powód by skompilować samodzielnie własną wersję Git. Jest to istotne także z tego powodu, że wiele dystrybucji Linuksa posiada stare wersje pakietów; zatem jeśli nie korzystasz z najświeższej dystrybucji, albo nie aktualizujesz jej nowszymi pakietami, instalacja ze źródeł to najlepsza metoda.</p>
 
-<p>To install Git, you need to have the following libraries that Git depends on: curl, zlib, openssl, expat, and libiconv. For example, if you’re on a system that has yum (such as Fedora) or apt-get (such as a Debian based system), you can use one of these commands to install all of the dependencies:</p>
+<p>Aby zainstalować Git, potrzebne są następujące biblioteki: curl, zlib, openssl, expat oraz libiconv. Przykładowo, jeśli korzystasz z systemu, który posiada narzędzie yum (np. Fedora) lub apt-get (np. system oparty na Debianie), możesz skorzystać z następujących poleceń w celu instalacji zależności:</p>
 
 <pre><code>$ yum install curl-devel expat-devel gettext-devel \
   openssl-devel zlib-devel
 
 $ apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \
-  libz-dev</code></pre>
+  libz-dev libssl-dev</code></pre>
 
-<p>When you have all the necessary dependencies, you can go ahead and grab the latest snapshot from the Git web site:</p>
+<p>Gdy wszystkie wymagane zależności zostaną zainstalowane, możesz pobrać najnowszą wersję Git ze strony:</p>
 
 <pre><code>http://git-scm.com/download</code></pre>
 
-<p>Then, compile and install:</p>
+<p>A następnie skompilować i zainstalować Git:</p>
 
 <pre><code>$ tar -zxf git-1.6.0.5.tar.gz
 $ cd git-1.6.0.5
 $ make prefix=/usr/local all
 $ sudo make prefix=/usr/local install</code></pre>
 
-<p>After this is done, you can also get Git via Git itself for updates:</p>
+<p>Po instalacji masz również możliwość pobrania Git za pomocą samego Git:</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git</code></pre>
 
-<h3 id='installing_on_linux'>Installing on Linux</h3>
+<h3 id='instalacja_w_systemie_linux'>Instalacja w systemie Linux</h3>
 
-<p>If you want to install Git on Linux via a binary installer, you can generally do so through the basic package-management tool that comes with your distribution. If you’re on Fedora, you can use yum:</p>
+<p>Jeśli chcesz zainstalować Git w systemie Linux z wykorzystaniem pakietów binarnych, możesz to zrobić w standardowy sposób przy użyciu narzędzi zarządzania pakietami, specyficznych dla danej dystrybucji. Jeśli korzystasz z Fedory, możesz użyć narzędzia yum:</p>
 
 <pre><code>$ yum install git-core</code></pre>
 
-<p>Or if you’re on a Debian-based distribution like Ubuntu, try apt-get:</p>
+<p>Jeśli korzystasz z dystrybucji opartej na Debianie (np. Ubuntu), użyj apt-get:</p>
 
 <pre><code>$ apt-get install git-core</code></pre>
 
-<h3 id='installing_on_mac'>Installing on Mac</h3>
+<h3 id='instalacja_na_komputerze_mac'>Instalacja na komputerze Mac</h3>
 
-<p>There are two easy ways to install Git on a Mac. The easiest is to use the graphical Git installer, which you can download from the Google Code page (see Figure 1-7):</p>
+<p>Istnieją dwa proste sposoby instalacji Git na komputerze Mac. Najprostszym z nich jest użycie graficznego instalatora, którego można pobrać z witryny Google Code (patrz Ekran 1-7):</p>
 
 <pre><code>http://code.google.com/p/git-osx-installer</code></pre>
 
-<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Figure 1-7. Git OS X installer.</p>
+<p><center><img src="/figures/ch1/18333fig0107-tn.png"></center><br/> Ekran 1-7. Instalator Git dla OS X.</p>
 
-<p>The other major way is to install Git via MacPorts (<code>http://www.macports.org</code>). If you have MacPorts installed, install Git via</p>
+<p>Innym prostym sposobem jest instalacja Git z wykorzystaniem MacPorts (<code>http://www.macports.org</code>). Jeśli masz zainstalowane MacPorts, zainstaluj Git za pomocą</p>
 
 <pre><code>$ sudo port install git-core +svn +doc +bash_completion +gitweb</code></pre>
 
-<p>You don’t have to add all the extras, but you’ll probably want to include +svn in case you ever have to use Git with Subversion repositories (see Chapter 8).</p>
+<p>Nie musisz instalować wszystkich dodatków, ale dobrym pomysłem jest dołączenie +svn w razie konieczności skorzystania z Git podczas pracy z repozytoriami Subversion (patrz Rozdział 8).</p>
 
-<h3 id='installing_on_windows'>Installing on Windows</h3>
+<h3 id='instalacja_w_systemie_windows'>Instalacja w systemie Windows</h3>
 
-<p>Installing Git on Windows is very easy. The msysGit project has one of the easier installation procedures. Simply download the installer exe file from the Google Code page, and run it:</p>
+<p>Instalacja Git w systemie Windows jest bardzo prosta. Projekt msysGit posiada jedną z najprostszych procedur instalacji. Po prostu pobierz program instalatora z witryny Google Code i uruchom go:</p>
 
 <pre><code>http://code.google.com/p/msysgit</code></pre>
 
-<p>After it’s installed, you have both a command-line version (including an SSH client that will come in handy later) and the standard GUI.</p>
+<p>Po instalacji masz dostęp zarówno do wersji konsolowej, uruchamianej z linii poleceń (w tym do klienta SSH, który przyda się jeszcze później) oraz do standardowego GUI.</p>
 
 <div id='nav'>
 <a href='ch1-3.html'>prev</a> | <a href='ch1-5.html'>next</a>

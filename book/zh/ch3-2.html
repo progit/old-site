@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 3.2 Git 分支 基本的分支与合并
 ---
-<h2 id='id243'>基本的分支与合并</h2>
+<h2 id='id261'>基本的分支与合并</h2>
 
 <p>现在让我们来看一个简单的分支与合并的例子，实际工作中大体也会用到这样的工作流程：</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 3.2 Git 分支 基本的分支与合并
 
 <p>1. 返回到原先已经发布到生产服务器上的分支。 2. 为这次紧急修补建立一个新分支。 3. 测试通过后，将此修补分支合并，再推送到生产服务器上。 4. 切换到之前实现新需求的分支，继续工作。</p>
 
-<h3 id='id244'>基本分支</h3>
+<h3 id='id262'>基本分支</h3>
 
 <p>首先，我们假设你正在项目中愉快地工作，并且已经提交了几次更新（见图 3-10）。</p>
 
@@ -92,7 +92,7 @@ $ git commit -a -m &#39;finished the new footer [issue 53]&#39;
 
 <p>不用担心 <code>hotfix</code> 分支的内容还没包含在 <code>iss53</code> 中。如果确实需要纳入此次修补，可以用 <code>git merge master</code> 把 master 分支合并到 <code>iss53</code>，或者等完成后，再将 <code>iss53</code> 分支中的更新并入 <code>master</code>。</p>
 
-<h3 id='id245'>基本合并</h3>
+<h3 id='id263'>基本合并</h3>
 
 <p>在问题 #53 相关的工作完成之后，可以合并回 <code>master</code> 分支，实际操作同前面合并 <code>hotfix</code> 分支差不多，只需检出想要更新的分支（master），并运行 <code>git merge</code> 命令指定来源：</p>
 
@@ -116,7 +116,7 @@ Merge made by recursive.
 
 <pre><code>$ git branch -d iss53</code></pre>
 
-<h3 id='id246'>冲突的合并</h3>
+<h3 id='id264'>冲突的合并</h3>
 
 <p>有时候合并操作并不会如此顺利。如果你修改了两个待合并分支里同一个文件的同一部分，Git 就无法干净地把两者合到一起（译注：逻辑上说，这种问题只能由人来解决）。如果你在解决问题 #53 的过程中修改了 <code>hotfix</code> 中修改的部分，将得到类似下面的结果：</p>
 

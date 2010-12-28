@@ -1,45 +1,96 @@
 ---
 layout: translation
-title: Pro Git 3.5 Ветвление в Git Branch Management
+title: Pro Git 3.5 Ветвление в Git Удалённые ветки
 ---
-<h2 id='branch_management'>Branch Management</h2>
+<h2 id='_'>Удалённые ветки</h2>
 
-<p>Now that you’ve created, merged, and deleted some branches, let’s look at some branch-management tools that will come in handy when you begin using branches all the time.</p>
+<p>Удалённые ветки ― это ссылки на состояние веток в ваших удалённых репозиториях. Это локальные ветки, которые нельзя перемещать; они двигаются автоматически всякий раз, когда вы осуществляете связь по сети. Удалённые ветки действуют как закладки для напоминания о том, где ветки в удалённых репозиториях находились во время последнего подключения к ним.</p>
 
-<p>The <code>git branch</code> command does more than just create and delete branches. If you run it with no arguments, you get a simple listing of your current branches:</p>
+<p>Они выглядят как <code>(имя удал. репоз.)/(ветка)</code>. Например, если вы хотите посмотреть, как выглядела ветка <code>master</code> на сервере <code>origin</code> во время последнего соединения с ним, проверьте ветку <code>origin/master</code>. Если вы с партнёром работали над одной проблемой, и он выложил ветку <code>iss53</code>, у вас может быть своя локальная ветка <code>iss53</code>; но та ветка на сервере будет указывать на коммит в <code>origin/iss53</code>.</p>
 
-<pre><code>$ git branch
-  iss53
-* master
-  testing</code></pre>
+<p>Всё это возможно сбивает с толку, поэтому давайте рассмотрим пример. Скажем, у вас есть Git-сервер в сети на <code>git.ourcompany.com</code>. Если вы склонируете (clone) с него, Git автоматически назовёт его для вас <code>origin</code>, заберёт с него все данные, создаст указатель на его ветку <code>master</code> и назовёт его локально <code>origin/master</code> (но вы не можете его двигать). Git также сделает вам вашу собственную ветку <code>master</code>, которая будет начинаться там же, где и ветка <code>master</code> в origin, так что вам будет с чем начать работать (смотри Рис. 3-22).</p>
 
-<p>Notice the <code>*</code> character that prefixes the <code>master</code> branch: it indicates the branch that you currently have checked out. This means that if you commit at this point, the <code>master</code> branch will be moved forward with your new work. To see the last commit on each branch, you can run <code>git branch –v</code>:</p>
+<p><center><img src="/figures/ch3/18333fig0322-tn.png"></center><br/> Рисунок 3-22. Клонирование Git-проекта даёт вам собственную ветку master и origin/master указывающий на ветку master в origin.</p>
 
-<pre><code>$ git branch -v
-  iss53   93b412c fix javascript issue
-* master  7a98805 Merge branch &#39;iss53&#39;
-  testing 782fd34 add scott to the author list in the readmes</code></pre>
+<p>Если вы сделаете что-то в вашей локальной ветке <code>master</code>, а тем временем кто-то ещё отправит (push) изменения на <code>git.ourcompany.com</code> и обновит там ветку master, то ваши истории продолжатся по-разному. К тому же, до тех пор, пока вы не свяжитесь с сервером origin, ваш указатель <code>origin/master</code> не будет сдвигаться (смотри Рисунок 3-23).</p>
 
-<p>Another useful option to figure out what state your branches are in is to filter this list to branches that you have or have not yet merged into the branch you’re currently on. The useful <code>--merged</code> and <code>--no-merged</code> options have been available in Git since version 1.5.6 for this purpose. To see which branches are already merged into the branch you’re on, you can run <code>git branch –merged</code>:</p>
+<p><center><img src="/figures/ch3/18333fig0323-tn.png"></center><br/> Рисунок 3-23. При выполнении локальной работы и отправке кем-то изменений на удалённый сервер, каждая история продолжается по-разному.</p>
 
-<pre><code>$ git branch --merged
-  iss53
-* master</code></pre>
+<p>Для синхронизации вашей работы, выполняется команда <code>git fetch origin</code>. Эта команда ищет какому серверу соответствует origin (в нашем случае это <code>git.ourcompany.com</code>); извлекает оттуда все данные, которых у вас ещё нет, и обновляет ваше локальное хранилище данных; сдвигает указатель <code>origin/master</code> на новую позицию (смотри Рисунок 3-24).</p>
 
-<p>Because you already merged in <code>iss53</code> earlier, you see it in your list. Branches on this list without the <code>*</code> in front of them are generally fine to delete with <code>git branch -d</code>; you’ve already incorporated their work into another branch, so you’re not going to lose anything.</p>
+<p><center><img src="/figures/ch3/18333fig0324-tn.png"></center><br/> Рисунок 3-24. Команда git fetch обновляет ваши удалённые ссылки.</p>
 
-<p>To see all the branches that contain work you haven’t yet merged in, you can run <code>git branch --no-merged</code>:</p>
+<p>Чтобы продемонстрировать то, как будут выглядеть удалённые ветки в ситуации с несколькими удалёнными серверами, предположим, что у вас есть ещё один внутренний Git-сервер, который используется для разработки только одной из ваших команд разработчиков. Этот сервер находится на <code>git.team1.ourcompany.com</code>. Вы можете добавить его в качестве новой удалённой ссылки на проект, над которым вы сейчас работаете с помощью команды <code>git remote add</code> так же как было описано в Главе 2. Дайте этому удалённому серверу имя <code>teamone</code>, которое будет сокращением для полного URL (смотри Рисунок 3-25).</p>
 
-<pre><code>$ git branch --no-merged
-  testing</code></pre>
+<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Рисунок 3-25. Добавление дополнительного удалённого сервера.</p>
 
-<p>This shows your other branch. Because it contains work that isn’t merged in yet, trying to delete it with <code>git branch -d</code> will fail:</p>
+<p>Теперь можете выполнить <code>git fetch teamone</code>, чтобы извлечь всё, что есть на сервере и нет у вас. Так как в данный момент на этом сервер есть только часть данных, которые есть на сервере <code>origin</code>, Git не получает никаких данных, но выставляет удалённую ветку с именем <code>teamone/master</code>, которая указывает на тот же коммит, что и ветка <code>master</code> на сервере <code>teamone</code> (смотри Рисунок 3-26).</p>
 
-<pre><code>$ git branch -d testing
-error: The branch &#39;testing&#39; is not an ancestor of your current HEAD.
-If you are sure you want to delete it, run &#39;git branch -D testing&#39;.</code></pre>
+<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> Рисунок 3-26. У вас появилась локальная ссылка на ветку master на teamone-е.</p>
 
-<p>If you really do want to delete the branch and lose that work, you can force it with <code>-D</code>, as the helpful message points out.</p>
+<h3 id='_'>Отправка изменений</h3>
+
+<p>Когда вы хотите поделиться веткой с окружающими, вам необходимо отправить (push) её на удалённый сервер, на котором у вас есть права на запись. Ваши локальные ветки автоматически не синхронизируются с удалёнными серверами — вам нужно явно отправить те ветки, которыми вы хотите поделиться. Таким образом, вы можете использовать свои личные ветки для работы, которую вы не хотите показывать, и отправлять только те тематические ветки, над которыми вы хотите работать с кем-то совместно.</p>
+
+<p>Если у вас есть ветка <code>serverfix</code>, над которой вы хотите работать с кем-то ещё, вы можете отправить её точно так же как вы отправляли вашу первую ветку. Выполните <code>git push (удал. сервер) (ветка)</code>:</p>
+
+<pre><code>$ git push origin serverfix
+Counting objects: 20, done.
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (15/15), 1.74 KiB, done.
+Total 15 (delta 5), reused 0 (delta 0)
+To git@github.com:schacon/simplegit.git
+ * [new branch]      serverfix -&gt; serverfix</code></pre>
+
+<p>Это в некотором роде сокращение. Git автоматически разворачивает имя ветки <code>serverfix</code> до <code>refs/heads/serverfix:refs/heads/serverfix</code>, что означает “возьми мою локальную ветку serverfix и обнови из неё удалённую ветку serverfix”. Мы подробно обсудим часть с <code>refs/heads/</code> в Главе 9, но обычно можно её опустить. Вы можете сделать также <code>git push origin serverfix:serverfix</code>, что означает то же самое — здесь говорится “возьми мой serverfix и сделай его удалённым serverfix”. Можно использовать этот формат для отправки локальной ветки в удалённую ветку, которая называется по-другому. Если вы не хотите, чтобы ветка называлась <code>serverfix</code> на удалённом сервере, то вместо предыдущей команды выполните <code>git push origin serverfix:awesomebranch</code>. Так ваша локальная ветка <code>serverfix</code> отправится в ветку <code>awesomebranch</code> удалённого проекта.</p>
+
+<p>В следующий раз, когда один из ваших соавторов будет получать обновления с сервера, он получит ссылку на то, на что указывает <code>serverfix</code> на сервере, как удалённую ветку <code>origin/serverfix</code>:</p>
+
+<pre><code>$ git fetch origin
+remote: Counting objects: 20, done.
+remote: Compressing objects: 100% (14/14), done.
+remote: Total 15 (delta 5), reused 0 (delta 0)
+Unpacking objects: 100% (15/15), done.
+From git@github.com:schacon/simplegit
+ * [new branch]      serverfix    -&gt; origin/serverfix</code></pre>
+
+<p>Важно отметить, что когда при получении данных у вас появляются новые удалённые ветки, вы не получаете автоматически для них локальных редактируемых копий. Другими словами, в нашем случае вы не получите новую ветку <code>serverfix</code> — только указатель <code>origin/serverfix</code>, который вы не можете менять.</p>
+
+<p>Чтобы слить эти наработки в вашу текущую рабочую ветку, можете выполнить <code>git merge origin/serverfix</code>. Если вы хотите иметь собственную ветку <code>serverfix</code>, над которой вы сможете работать, можете создать её на основе удалённой ветки:</p>
+
+<pre><code>$ git checkout -b serverfix origin/serverfix
+Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;serverfix&quot;</code></pre>
+
+<p>Это даст вам локальную ветку, на которой можно работать. Она будет начинаться там, где и <code>origin/serverfix</code>.</p>
+
+<h3 id='_'>Отслеживание веток</h3>
+
+<p>Получение локальной ветки с помощью <code>git checkout</code> из удалённой ветки автоматически создаёт то, что называется <em>отслеживаемой веткой</em>. Отслеживаемые ветки это локальные ветки, которые напрямую связаны с удалённой веткой. Если находясь на отслеживаемой ветке, вы наберёте <code>git push</code>, Git автоматически знает на какой сервер и в какую ветку отправлять изменения. Аналогично, выполнение <code>git pull</code> на одной из таких веток сначала получает все удалённые ссылки, а затем автоматически делает слияние с соответствующей удалённой веткой.</p>
+
+<p>При клонировании репозитория, как правило, автоматически создаётся ветка <code>master</code>, которая отслеживает <code>origin/master</code>. Вот почему <code>git push</code> и <code>git pull</code> работают &#8220;из коробки&#8221; и не требуют других аргументов. Однако, если хотите, можете настроить другие отслеживаемые ветки — те, которые не отслеживают ветки в <code>origin</code>, и те, которые не отслеживают ветку <code>master</code>. Простой случай это тот пример, который вы только что видели — выполнение <code>git checkout -b [ветка] [удал. сервер]/[ветка]</code>. Если вы используете Git версии 1.6.2 или более позднюю, можете также воспользоваться сокращением <code>--track</code>:</p>
+
+<pre><code>$ git checkout --track origin/serverfix
+Branch serverfix set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;serverfix&quot;</code></pre>
+
+<p>Чтобы настроить локальную ветку с именем отличным от имени удалённой ветки, вы можете легко использовать первую версию с другим именем локальной ветки:</p>
+
+<pre><code>$ git checkout -b sf origin/serverfix
+Branch sf set up to track remote branch refs/remotes/origin/serverfix.
+Switched to a new branch &quot;sf&quot;</code></pre>
+
+<p>Теперь ваша локальная ветка sf будет автоматически отправлять (push) и получать (pull) изменения из origin/serverfix.</p>
+
+<h3 id='____'>Удаление веток на удалённом сервере</h3>
+
+<p>Предположим, что вы закончили с удалённой веткой. Скажем, вы и ваши соавторы закончили с нововведением и слили его в ветку <code>master</code> на вашем удалённом сервере (или какую-то другую ветку, где у вас находится стабильный код). Вы можете удалить ветку на удалённом сервере используя весьма глупый синтаксис <code>git push [удал. сервер] :[ветка]</code>. Если вы хотите удалить ветку <code>serverfix</code> на сервере, выполните следующее:</p>
+
+<pre><code>$ git push origin :serverfix
+To git@github.com:schacon/simplegit.git
+ - [deleted]         serverfix</code></pre>
+
+<p>Хлоп. Нету больше ветки на вашем сервере. Вам может захотеться сделать закладку на текущей странице, так как эта команда вам понадобится, а синтаксис вы, скорее всего, забудете. Можно запомнить эту команду вернувшись к синтаксису <code>git push [удал. сервер] [лок. ветка]:[удал. ветка]</code>, который мы рассматривали немного раньше. Опуская часть <code>[лок. ветка]</code>, вы по сути говорите “возьми ничего у меня и сделай это <code>[удал. ветка]</code>”.</p>
 
 <div id='nav'>
 <a href='ch3-4.html'>prev</a> | <a href='ch3-6.html'>next</a>

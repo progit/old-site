@@ -1,20 +1,14 @@
 ---
 layout: translation
-title: Pro Git 2.9 Основы Git Working with Remotes
+title: Pro Git 2.9 Основы Git Работа с удалёнными репозиторями
 ---
-<h2 id='working_with_remotes'>Working with Remotes</h2>
+<h2 id='___'>Работа с удалёнными репозиторями</h2>
 
-<p>Чтобы иметь возможность работать вместе над каким-либо Git-проектом, необходимо знать как управлять удалёнными репозиториями. Удалённые репозитории — это модификации проекта, которые хранятся в интернете или ещё где-то в сети. Их может быть несколько, каждый из которых как правило доступен для вас либо только на чтение, либо на чтение и запись. Совместная работа включает в себя управление удалёнными репозиториями и помещение (push) и получение (pull) данных в и из них, когда нужно обменяться результатами работы. Управление удалёнными репозиториями включает умение добавлять удалённые репозитории, удалять те из них, которые больше не действуют, умение управлять различными удалёнными ветками и определять их как ослеживаемые (tracked) или нет и прочее. Данный раздел охватывает все перечисленные навыки по управлению удалёнными репозиториями.</p>
-
-<p>To be able to collaborate on any Git project, you need to know how to manage your remote repositories. Remote repositories are versions of your project that are hosted on the Internet or network somewhere. You can have several of them, each of which generally is either read-only or read/write for you. Collaborating with others involves managing these remote repositories and pushing and pulling data to and from them when you need to share work. Managing remote repositories includes knowing how to add remote repositories, remove remotes that are no longer valid, manage various remote branches and define them as being tracked or not, and more. In this section, we’ll cover these remote-management skills.</p>
+<p>Чтобы иметь возможность совместной работы над каким-либо Git-проектом, необходимо знать как управлять удалёнными репозиториями. Удалённые репозитории — это модификации проекта, которые хранятся в интернете или ещё где-то в сети. Их может быть несколько, каждый из которых как правило доступен для вас либо только на чтение, либо на чтение и запись. Совместная работа включает в себя управление удалёнными репозиториями и помещение (push) и получение (pull) данных в и из них тогда, когда нужно обменяться результатами работы. Управление удалёнными репозиториями включает умение добавлять удалённые репозитории, удалять те из них, которые больше не действуют, умение управлять различными удалёнными ветками и определять их как ослеживаемые (tracked) или нет и прочее. Данный раздел охватывает все перечисленные навыки по управлению удалёнными репозиториями.</p>
 
 <h3 id='__'>Отображение удалённых репозиториев</h3>
 
-<h3 id='showing_your_remotes'>Showing Your Remotes</h3>
-
-<p>Чтобы просмотреть какие у вас в настройках есть удалённые серверы, следует выполнить команду git remote. Она выдаёт список имён-сокращений для каждого указанного удалённого объекта. Если вы склонировали ваш репозиторий, у вас должен отобразиться по крайней мере origin — это имя по умолчанию, которое Git присваивает серверу, с которого вы склонировали:</p>
-
-<p>To see which remote servers you have configured, you can run the git remote command. It lists the shortnames of each remote handle you’ve specified. If you’ve cloned your repository, you should at least see origin — that is the default name Git gives to the server you cloned from:</p>
+<p>Чтобы просмотреть какие удалённые серверы у вас уже настроены, следует выполнить команду git remote. Она перечисляет список имён-сокращений для всех уже указанных удалённых дескрипторов. Если вы склонировали ваш репозиторий, у вас должен отобразиться по крайней мере origin — это имя по умолчанию, которое Git присваивает серверу, с которого вы склонировали:</p>
 
 <pre><code>$ git clone git://github.com/schacon/ticgit.git
 Initialized empty Git repository in /private/tmp/ticgit/.git/
@@ -24,19 +18,15 @@ remote: Total 595 (delta 255), reused 589 (delta 253)
 Receiving objects: 100% (595/595), 73.31 KiB | 1 KiB/s, done.
 Resolving deltas: 100% (255/255), done.
 $ cd ticgit
-$ git remote 
+$ git remote
 origin</code></pre>
 
-<p>Чтобы посмотреть какой полный URL записан в Git для сокращённого имени, можно указать команде опцию <code>-v</code>:</p>
-
-<p>You can also specify <code>-v</code>, which shows you the URL that Git has stored for the shortname to be expanded to:</p>
+<p>Чтобы посмотреть какому URL соответствует сокращённое именя в Git, можно указать команде опцию <code>-v</code>:</p>
 
 <pre><code>$ git remote -v
 origin	git://github.com/schacon/ticgit.git</code></pre>
 
 <p>Если у вас больше одного удалённого репозитория, команда покажет их все. Например, мой репозиторий Grit выглядит следующим образом.</p>
-
-<p>If you have more than one remote, the command lists them all. For example, my Grit repository looks something like this.</p>
 
 <pre><code>$ cd grit
 $ git remote -v
@@ -46,17 +36,11 @@ defunkt   git://github.com/defunkt/grit.git
 koke      git://github.com/koke/grit.git
 origin    git@github.com:mojombo/grit.git</code></pre>
 
-<p>Это означает, что мы легко можем получить изменения от любого из этих пользователей. Но, заметьте, что origin — это единственный удалённый сервер прописанный как SSH ссылка, поэтому он единственный, в который я могу помещать изменения (это будет рассмотрено в Главе 4).</p>
-
-<p>This means we can pull contributions from any of these users pretty easily. But notice that only the origin remote is an SSH URL, so it’s the only one I can push to (we’ll cover why this is in Chapter 4).</p>
+<p>Это означает, что мы легко можем получить изменения от любого из этих пользователей. Но, заметьте, что origin — это единственный удалённый сервер прописанный как SSH ссылка, поэтому он единственный, в который я могу помещать свои изменения (это будет рассмотрено в Главе 4).</p>
 
 <h3 id='__'>Добавление удалённых репозиториев</h3>
 
-<h3 id='adding_remote_repositories'>Adding Remote Repositories</h3>
-
 <p>В предыдущих разделах мы упомянули и немного продемонстрировали добавление удалённых репозиториев, сейчас мы рассмотрим это более детально. Чтобы добавить новый удалённый Git-репозиторий под именем-сокращением, к которому будет проще обращаться, выполните <code>git remote add [сокращение] [url]</code>:</p>
-
-<p>I’ve mentioned and given some demonstrations of adding remote repositories in previous sections, but here is how to do it explicitly. To add a new remote Git repository as a shortname you can reference easily, run <code>git remote add [shortname] [url]</code>:</p>
 
 <pre><code>$ git remote
 origin
@@ -65,9 +49,7 @@ $ git remote -v
 origin	git://github.com/schacon/ticgit.git
 pb	git://github.com/paulboone/ticgit.git</code></pre>
 
-<p>Теперь вы можете использовать в командной строке строку pb вместо полного URL. Например, если вы хотите извлечь (fetch) всю информацию, которая есть в репозитории Павла, но нет в вашем, вы можете выполнить git fetch pb:</p>
-
-<p>Now you can use the string pb on the command line in lieu of the whole URL. For example, if you want to fetch all the information that Paul has but that you don’t yet have in your repository, you can run git fetch pb:</p>
+<p>Теперь вы можете использовать в командной строке имя pb вместо полного URL. Например, если вы хотите извлечь (fetch) всю информацию, которая есть в репозитории Павла, но нет в вашем, вы можете выполнить git fetch pb:</p>
 
 <pre><code>$ git fetch pb
 remote: Counting objects: 58, done.
@@ -78,53 +60,31 @@ From git://github.com/paulboone/ticgit
  * [new branch]      master     -&gt; pb/master
  * [new branch]      ticgit     -&gt; pb/ticgit</code></pre>
 
-<p>Ветка master Павла теперь доступна локально как <code>pb/master</code>. Вы можете слить (merge) её в одну из ваших веток, или сейчас вы можете перейти на эту ветку если вы хотите её просмотреть.</p>
-
-<p>Paul’s master branch is accessible locally as <code>pb/master</code> — you can merge it into one of your branches, or you can check out a local branch at that point if you want to inspect it.</p>
+<p>Ветка master Павла теперь доступна локально как <code>pb/master</code>. Вы можете слить (merge) её в одну из ваших веток, или теперь вы можете перейти на эту ветку если вы хотите её просмотреть.</p>
 
 <h3 id='fetch__pull'>Fetch и Pull</h3>
 
-<h3 id='fetching_and_pulling_from_your_remotes'>Fetching and Pulling from Your Remotes</h3>
-
 <p>Как вы только что узнали, для получения данных из удалённых проектов, следует выполнить:</p>
-
-<p>As you just saw, to get data from your remote projects, you can run:</p>
 
 <pre><code>$ git fetch [remote-name]</code></pre>
 
-<p>Данная команда посылается указанному удалённому проекту и забирает все те данные из этого удалённого проекта, которых у вас ещё нет. После того как вы выполнили команду, у вас должны появиться ссылки на все ветки из этого удалённого проекта. Теперь эти ветки в любой момент могут быть просмотрены или слиты. (В 3 Главе мы перейдём к более детальному рассмотрению, что такое ветки и как их использовать.)</p>
+<p>Данная команда связывается с указанным удалённым проектом и забирает все те данные проекта, которых у вас ещё нет. После того как вы выполнили команду, у вас должны появиться ссылки на все ветки из этого удалённого проекта. Теперь эти ветки в любой момент могут быть просмотрены или слиты. (В 3 Главе мы перейдём к более детальному рассмотрению, что такое ветки и как их использовать.)</p>
 
-<p>The command goes out to that remote project and pulls down all the data from that remote project that you don’t have yet. After you do this, you should have references to all the branches from that remote, which you can merge in or inspect at any time. (We’ll go over what branches are and how to use them in much more detail in Chapter 3.)</p>
+<p>Когда вы клонируете репозиторий, команда clone автоматически добавляет этот удалённый репозиторий под именем origin. Таким образом <code>git fetch origin</code> извлекает все наработки, отправленные (push) на этот сервер после того, как вы склонировали его (или получили изменения с помощью fetch). Важно отметить, что команда fetch забирает данные в ваш локальный репозиторий, но не сливает их с какими-либо вашими наработками, и не модифицирует то, над чем вы работаете в данный момент. Вам необходимо вручную слить эти данные с вашими, когда вы будете готовы.</p>
 
-<p>Когда вы клонируете (clone) репозиторий, команда автоматически добавляет этот удалённый репозиторий под именем origin. Таким образом <code>git fetch origin</code> извлекает все наработки, отправленные (push) на этот сервер после того, как вы склонировали его (или получили изменения с помощью fetch). Важно отметить, что команда fetch забирает данные в ваш локальный репозиторий, но не сливает их с какой-либо вашей работой, и не модифицирует то, над чем вы в данный момент работаете. Необходимо вручную слить эти данные с вашими наработками, когда вы будете готовы.</p>
-
-<p>If you clone a repository, the command automatically adds that remote repository under the name origin. So, <code>git fetch origin</code> fetches any new work that has been pushed to that server since you cloned (or last fetched from) it. It’s important to note that the fetch command pulls the data to your local repository — it doesn’t automatically merge it with any of your work or modify what you’re currently working on. You have to merge it manually into your work when you’re ready.</p>
-
-<p>Если у вас есть ветка настроенная на отслеживание удалённой ветки (для дополнительной информации смотри следующий раздел и Главу 3), то вы можете использовать команду <code>git pull</code>. Она автоматичеси извлекает и затем сливает данные из удалённой ветки в вашу текущую ветку. Этот способ для вас может оказаться более простым или более удобным. К тому же по умолчанию команда <code>git clone</code> автоматически настраивает вашу локальную ветку master на отслеживание удалённой ветки master на сервере, с которого вы клонировали (подразумевается, что на удалённом сервере есть ветка master). Выполнение <code>git pull</code> как правило извлекает (fetch) данные с сервера, с которого вы изначально склонировали, и автоматически пытается слить (merge) их с кодом, над которым вы в данный момент работаете.</p>
-
-<p>If you have a branch set up to track a remote branch (see the next section and Chapter 3 for more information), you can use the <code>git pull</code> command to automatically fetch and then merge a remote branch into your current branch. This may be an easier or more comfortable workflow for you; and by default, the <code>git clone</code> command automatically sets up your local master branch to track the remote master branch on the server you cloned from (assuming the remote has a master branch). Running <code>git pull</code> generally fetches data from the server you originally cloned from and automatically tries to merge it into the code you’re currently working on.</p>
+<p>Если у вас есть ветка настроенная на отслеживание удалённой ветки (для дополнительной информации смотри следующий раздел и Главу 3), то вы можете использовать команду <code>git pull</code>. Она автоматичеси извлекает и затем сливает данные из удалённой ветки в вашу текущую ветку. Этот способ может для вас оказаться более простым или более удобным. К тому же по умолчанию команда <code>git clone</code> автоматически настраивает вашу локальную ветку master на отслеживание удалённой ветки master на сервере, с которого вы клонировали (подразумевается, что на удалённом сервере есть ветка master). Выполнение <code>git pull</code> как правило извлекает (fetch) данные с сервера, с которого вы изначально склонировали, и автоматически пытается слить (merge) их с кодом, над которым вы в данный момент работаете.</p>
 
 <h3 id='push'>Push</h3>
 
-<h3 id='pushing_to_your_remotes'>Pushing to Your Remotes</h3>
-
 <p>Когда ваш проект достигает момента, когда вы хотите поделиться наработками, вам необходимо отправить (push) их в главный репозиторий. Команда для этого действия простая: <code>git push [удал. сервер] [ветка]</code>. Чтобы отправить вашу ветку master на сервер <code>origin</code> (повторимся, что клонирование как правило настраивает оба этих имени автоматически), вы можете выполнить следующую команду для отправки наработок обратно на сервер:</p>
-
-<p>When you have your project at a point that you want to share, you have to push it upstream. The command for this is simple: <code>git push [remote-name] [branch-name]</code>. If you want to push your master branch to your <code>origin</code> server (again, cloning generally sets up both of those names for you automatically), then you can run this to push your work back up to the server:</p>
 
 <pre><code>$ git push origin master</code></pre>
 
-<p>Эта команда срабатывает только в случае, если вы клонировали с сервера, на котором у вас есть права на запись, и если никто другой с тех пор не выполнял команду push. Если вы и кто-то ещё одновременно клонируете, затем они выполняют команду push, а затем команду push выполняете вы, то ваш push точно будет отклонён. Вам придётся сначала вытянуть (pull) их изменения и объединить с вашими. Только после этого вам будет позволено выполнить push. Смотри Главу 3 для более подробного описания как отправлять (push) данные на удалённый сервер.</p>
+<p>Эта команда срабатывает только в случае, если вы клонировали с сервера, на котором у вас есть права на запись, и если никто другой с тех пор не выполнял команду push. Если вы и кто-то ещё одновременно клонируете, затем он выполняет команду push, а затем команду push выполняете вы, то ваш push точно будет отклонён. Вам придётся сначала вытянуть (pull) их изменения и объединить с вашими. Только после этого вам будет позволено выполнить push. Смотри Главу 3 для более подробного описания как отправлять (push) данные на удалённый сервер.</p>
 
-<p>This command works only if you cloned from a server to which you have write access and if nobody has pushed in the meantime. If you and someone else clone at the same time and they push upstream and then you push upstream, your push will rightly be rejected. You’ll have to pull down their work first and incorporate it into yours before you’ll be allowed to push. See Chapter 3 for more detailed information on how to push to remote servers.</p>
-
-<h3 id='__'>Проверка удалённого репозитория</h3>
-
-<h3 id='inspecting_a_remote'>Inspecting a Remote</h3>
+<h3 id='__'>Инспекция удалённого репозитория</h3>
 
 <p>Если хотите получить побольше информации об одном из удалённых репозиториев, вы можете использовать команду <code>git remote show [удал. сервер]</code>. Если вы выполните эту команду с некоторым именем, например, <code>origin</code>, вы получите что-то подобное:</p>
-
-<p>If you want to see more information about a particular remote, you can use the <code>git remote show [remote-name]</code> command. If you run this command with a particular shortname, such as <code>origin</code>, you get something like this:</p>
 
 <pre><code>$ git remote show origin
 * remote origin
@@ -137,11 +97,7 @@ From git://github.com/paulboone/ticgit
 
 <p>Она выдаёт URL удалённого репозитория, а также информацию об отслеживаемых ветках. Эта команда любезно сообщает вам, что, если вы находясь на ветке master, выполните <code>git pull</code>, ветка master с удалённого сервера будет автоматически влита в вашу сразу после получения всех необходимых данных. Она также выдаёт список всех полученных ею ссылок.</p>
 
-<p>It lists the URL for the remote repository as well as the tracking branch information. The command helpfully tells you that if you’re on the master branch and you run <code>git pull</code>, it will automatically merge in the master branch on the remote after it fetches all the remote references. It also lists all the remote references it has pulled down.</p>
-
 <p>Это был пример для простой ситуации, и наверняка вы встретились с чем-то подобным. Однако, если вы используете Git более интенсивно, вы можете увидеть гораздо большее количество информации от <code>git remote show</code>:</p>
-
-<p>That is a simple example you’re likely to encounter. When you’re using Git more heavily, however, you may see much more information from <code>git remote show</code>:</p>
 
 <pre><code>$ git remote show origin
 * remote origin
@@ -167,28 +123,18 @@ From git://github.com/paulboone/ticgit
 
 <p>Данная команда показывает какая именно локальная ветка будет отправлена на удалённый сервер по умолчанию при выполнении <code>git push</code>. Она также показывает каких веток с удалённого сервера у вас ещё нет, какие ветки всё ещё есть у вас, но уже удалены на сервере. И для нескольких веток показано какие удалённые ветки будут в них влиты при выполнении <code>git pull</code>.</p>
 
-<p>This command shows which branch is automatically pushed when you run <code>git push</code> on certain branches. It also shows you which remote branches on the server you don’t yet have, which remote branches you have that have been removed from the server, and multiple branches that are automatically merged when you run <code>git pull</code>.</p>
-
 <h3 id='____'>Удаление и переименование удалённых репозиториев</h3>
 
-<h3 id='removing_and_renaming_remotes'>Removing and Renaming Remotes</h3>
-
 <p>Для переименования ссылок в новых версиях Git можно вылолнить <code>git remote rename</code>, это изменит сокращённое имя, используемое для удалённого репозитория. Например, если вы хотите переименовать <code>pb</code> в <code>paul</code>, вы можете сделать это следующим образом:</p>
-
-<p>If you want to rename a reference, in newer versions of Git you can run <code>git remote rename</code> to change a remote’s shortname. For instance, if you want to rename <code>pb</code> to <code>paul</code>, you can do so with <code>git remote rename</code>:</p>
 
 <pre><code>$ git remote rename pb paul
 $ git remote
 origin
 paul</code></pre>
 
-<p>Стоит упомянуть, что это также изменяет для вас имена удалённых веток. То, к чему вы обращались как <code>pb/master</code>, стало <code>paul/master</code>.</p>
-
-<p>It’s worth mentioning that this changes your remote branch names, too. What used to be referenced at <code>pb/master</code> is now at <code>paul/master</code>.</p>
+<p>Стоит упомянуть, что это также меняет для вас имена удалённых веток. То, к чему вы обращались как <code>pb/master</code>, стало <code>paul/master</code>.</p>
 
 <p>Если по какой-то причине вы хотите удалить ссылку (вы сменили сервер или больше не используете определённое зеркало, или, возможно, контрибьютор перестал быть активным), вы можете использовать <code>git remote rm</code>:</p>
-
-<p>If you want to remove a reference for some reason — you’ve moved the server or are no longer using a particular mirror, or perhaps a contributor isn’t contributing anymore — you can use <code>git remote rm</code>:</p>
 
 <pre><code>$ git remote rm paul
 $ git remote

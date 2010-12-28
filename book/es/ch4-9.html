@@ -1,125 +1,125 @@
 ---
 layout: translation
-title: Pro Git 4.9 Git en un servidor Hosted Git
+title: Pro Git 4.9 Git en un servidor Git en un alojamiento externo
 ---
-<h2 id='hosted_git'>Hosted Git</h2>
+<h2 id='git_en_un_alojamiento_externo'>Git en un alojamiento externo</h2>
 
-<p>If you don’t want to go through all of the work involved in setting up your own Git server, you have several options for hosting your Git projects on an external dedicated hosting site. Doing so offers a number of advantages: a hosting site is generally quick to set up and easy to start projects on, and no server maintenance or monitoring is involved. Even if you set up and run your own server internally, you may still want to use a public hosting site for your open source code — it’s generally easier for the open source community to find and help you with.</p>
+<p>Si no quieres realizar todo el trabajo de preparar tu propio servidor Git, tienes varias opciones para alojar tus proyectos Git en una ubicación externa dedicada. Esta forma de trabajar tiene varias ventajas: un alberge externo suele ser rápido de configurar y sencillo de iniciar proyectos en él; además de no ser necesario preocuparte de su mantenimiento ni de su monitorización. Incluso en el caso de que tengas tu propio servidor interno, puede resultar interesante utilizar también un lugar público; para albergar tu código abierto &#8211;normalmente, ahí suele ser más sencillo de localizar por parte de la comunidad&#8211;</p>
 
-<p>These days, you have a huge number of hosting options to choose from, each with different advantages and disadvantages. To see an up-to-date list, check out the GitHosting page on the main Git wiki:</p>
+<p>Actualmente tienes un gran número de opciones del alojamiento, cada una con sus ventajas y desventajas. Para obtener una lista actualizada, puedes mirar en la página GitHosting del wiki principal de Git:</p>
 
 <pre><code>http://git.or.cz/gitwiki/GitHosting</code></pre>
 
-<p>Because we can’t cover all of them, and because I happen to work at one of them, we’ll use this section to walk through setting up an account and creating a new project at GitHub. This will give you an idea of what is involved.</p>
+<p>Por ser imposible el cubrir todos ellos, y porque da la casualidad de que trabajo en uno de ellos, concretamente, en esta sección veremos cómo crear una cuenta y nuevos proyectos albergados en &#8216;GitHub&#8217;. Así podrás hacerte una idea de cómo suelen funcionar estos alberges externos.</p>
 
-<p>GitHub is by far the largest open source Git hosting site and it’s also one of the very few that offers both public and private hosting options so you can keep your open source and private commercial code in the same place. In fact, we used GitHub to privately collaborate on this book.</p>
+<p>GitHub es, de lejos, el mayor sitio de alberge público de proyectos Git de código abierto. Y es también uno de los pocos que ofrece asimismo opciones de alberge privado; de tal forma que puedes tener tanto tus proyectos de código abierto y como los de código comercial cerrado en un mismo emplazamiento. De hecho, nosotros utilizamos también GitHub para colaborar privadamente en este libro.</p>
 
 <h3 id='github'>GitHub</h3>
 
-<p>GitHub is slightly different than most code-hosting sites in the way that it namespaces projects. Instead of being primarily based on the project, GitHub is user centric. That means when I host my <code>grit</code> project on GitHub, you won’t find it at <code>github.com/grit</code> but instead at <code>github.com/schacon/grit</code>. There is no canonical version of any project, which allows a project to move from one user to another seamlessly if the first author abandons the project.</p>
+<p>GitHub es ligeramente distinto a otros sitios de alberge, en tanto en cuanto que contempla espacios de nombres para los proyectos. En lugar de estar focalizado en los proyectos, GitHub gira en torno a los usuarios. Esto significa que, cuando alojo mi proyecto &#8216;grit&#8217; en GitHub, no lo encontraras bajo &#8216;github.com/grit&#8217;, sino bajo &#8216;github.com/schacon/grit&#8217;. No existe una versión canónica de ningún proyecto, lo que permite a cualquiera de ellos ser movido facilmente de un usuario a otro en el caso de que el primer autor lo abandone.</p>
 
-<p>GitHub is also a commercial company that charges for accounts that maintain private repositories, but anyone can quickly get a free account to host as many open source projects as they want. We’ll quickly go over how that is done.</p>
+<p>GitHub es también una compañia comercial, que cobra por las cuentas que tienen repositorios privados. Pero, para albergar proyectos públicos de código abierto, cualquiera puede crear una cuenta gratuita. Vamos a ver cómo hacerlo.</p>
 
-<h3 id='setting_up_a_user_account'>Setting Up a User Account</h3>
+<h3 id='configurando_una_cuenta_de_usuario'>Configurando una cuenta de usuario</h3>
 
-<p>The first thing you need to do is set up a free user account. If you visit the Pricing and Signup page at <code>http://github.com/plans</code> and click the &#8220;Sign Up&#8221; button on the Free account (see figure 4-2), you’re taken to the signup page.</p>
+<p>El primer paso es dar de alta una cuenta gratuita. Si visitas la página de Precios e Inicio de Sesión, en &#8216;http://github.com/plans&#8217;, y clicas sobre el botón &#8220;Registro&#8221; (&#8220;Sign Up&#8221;) de las cuentas gratuitas, verás una página de registro:</p>
 
-<p><center><img src="/figures/ch4/18333fig0402-tn.png"></center><br/> Figure 4-2. The GitHub plan page.</p>
+<p><center><img src="/figures/ch4/18333fig0402-tn.png"></center><br/> Figura 4-2. La página de planes GitHub.</p>
 
-<p>Here you must choose a username that isn’t yet taken in the system and enter an e-mail address that will be associated with the account and a password (see Figure 4-3).</p>
+<p>En ella, has de elegir un nombre de usuario que esté libre, indicar una cuenta de correo electrónico y poner una contraseña.</p>
 
-<p><center><img src="/figures/ch4/18333fig0403-tn.png"></center><br/> Figure 4-3. The GitHub user signup form.</p>
+<p><center><img src="/figures/ch4/18333fig0403-tn.png"></center><br/> Figura 4-3. El formulario de registro en GitHub.</p>
 
-<p>If you have it available, this is a good time to add your public SSH key as well. We covered how to generate a new key earlier, in the &#8220;Simple Setups&#8221; section. Take the contents of the public key of that pair, and paste it into the SSH Public Key text box. Clicking the &#8220;explain ssh keys&#8221; link takes you to detailed instructions on how to do so on all major operating systems. Clicking the &#8220;I agree, sign me up&#8221; button takes you to your new user dashboard (see Figure 4-4).</p>
+<p>Si la tuvieras, es también un buen momento para añadir tu clave pública SSH. Veremos cómo generar una de estas claves, más adelante, en la sección &#8220;Ajustes Simples&#8221;. Pero, si ya tienes un par de claves SSH, puedes coger el contenido correspondiente a la clave pública y pegarlo en la caja de texto preparada para tal fin. El enlace &#8220;explicar claves ssh&#8221; (&#8220;explain ssh keys&#8221;) te llevará a unas detalladas instrucciones de cómo generarlas en la mayor parte de los principales sistemas operativos. Clicando sobre el botón de &#8220;Estoy de acuerdo, registramé&#8221; (&#8220;I agree, sign me up&#8221;), irás al panel de control de tu recién creado usuario.</p>
 
-<p><center><img src="/figures/ch4/18333fig0404-tn.png"></center><br/> Figure 4-4. The GitHub user dashboard.</p>
+<p><center><img src="/figures/ch4/18333fig0404-tn.png"></center><br/> Figura 4-4. El panel de control del usuario GitHub.</p>
 
-<p>Next you can create a new repository.</p>
+<p>A continuación, puedes crear nuevos repositorios.</p>
 
-<h3 id='creating_a_new_repository'>Creating a New Repository</h3>
+<h3 id='creando_un_nuevo_repositrio'>Creando un nuevo repositório</h3>
 
-<p>Start by clicking the &#8220;create a new one&#8221; link next to Your Repositories on the user dashboard. You’re taken to the Create a New Repository form (see Figure 4-5).</p>
+<p>Puedes empezar clicando sobre el enlace &#8220;crear uno nuevo&#8221; (&#8220;create a new one&#8221;), en la zona &#8216;Tus repositorios&#8217; (&#8216;Your Repositories&#8217;) del panel de control. Irás al formulario de Crear un Nuevo Repositório (ver Figura 4-5).</p>
 
-<p><center><img src="/figures/ch4/18333fig0405-tn.png"></center><br/> Figure 4-5. Creating a new repository on GitHub.</p>
+<p><center><img src="/figures/ch4/18333fig0405-tn.png"></center><br/> Figura 4-5. Creando un nuevo repositório en GitHub.</p>
 
-<p>All you really have to do is provide a project name, but you can also add a description. When that is done, click the &#8220;Create Repository&#8221; button. Now you have a new repository on GitHub (see Figure 4-6).</p>
+<p>Es suficiente con dar un nombre al proyecto, pero también puedes añadirle una descripción. Cuando lo hayas escrito, clica sobre el botón &#8220;Crear Repositório&#8221; (&#8220;Create Repository&#8221;). Y ya tienes un nuevo repositório en GitHub (ver Figura 4-6)</p>
 
-<p><center><img src="/figures/ch4/18333fig0406-tn.png"></center><br/> Figure 4-6. GitHub project header information.</p>
+<p><center><img src="/figures/ch4/18333fig0406-tn.png"></center><br/> Figura 4-6. Información de cabecera de un proyecto GitHub.</p>
 
-<p>Since you have no code there yet, GitHub will show you instructions for how create a brand-new project, push an existing Git project up, or import a project from a public Subversion repository (see Figure 4-7).</p>
+<p>Como aún no tienes código, GitHub mostrará instrucciones sobre cómo iniciar un nuevo proyecto, cómo enviar (push) un proyecto Git preexistente, o cómo importar un proyecto desde un repositório público Subversion (ver Figura 4-7).</p>
 
-<p><center><img src="/figures/ch4/18333fig0407-tn.png"></center><br/> Figure 4-7. Instructions for a new repository.</p>
+<p><center><img src="/figures/ch4/18333fig0407-tn.png"></center><br/> Figura 4-7. Instrucciones para un nuevo repositório.</p>
 
-<p>These instructions are similar to what we’ve already gone over. To initialize a project if it isn’t already a Git project, you use</p>
+<p>Estas instrucciones son similares a las que ya hemos visto. Para inicializar un proyecto, no siendo aún un proyecto Git, sueles utilizar:</p>
 
 <pre><code>$ git init
 $ git add .
 $ git commit -m &#39;initial commit&#39;</code></pre>
 
-<p>When you have a Git repository locally, add GitHub as a remote and push up your master branch:</p>
+<p>Una vez tengas un repositorio local Git, añadele el sitio GitHub como un remoto y envia (push) allí tu rama principal:</p>
 
 <pre><code>$ git remote add origin git@github.com:testinguser/iphone_project.git
 $ git push origin master</code></pre>
 
-<p>Now your project is hosted on GitHub, and you can give the URL to anyone you want to share your project with. In this case, it’s <code>http://github.com/testinguser/iphone_project</code>. You can also see from the header on each of your project’s pages that you have two Git URLs (see Figure 4-8).</p>
+<p>Así, tu proyecto estará alojado en GitHub; y podrás dar su URL a cualquiera con quien desees compartirlo. En este ejemplo, la URL es <code>http://github.com/testinguser/iphone_project</code>. En la página de cabecera de cada uno de tus proyectos, podrás ver dos URLs (ver Figura 4-8).</p>
 
-<p><center><img src="/figures/ch4/18333fig0408-tn.png"></center><br/> Figure 4-8. Project header with a public URL and a private URL.</p>
+<p><center><img src="/figures/ch4/18333fig0408-tn.png"></center><br/> Figura 4-8. Cabecera de proyecto, con una URL pública y otra URL privada.</p>
 
-<p>The Public Clone URL is a public, read-only Git URL over which anyone can clone the project. Feel free to give out that URL and post it on your web site or what have you.</p>
+<p>El enlace &#8220;Public Clone URL&#8221;, es un enlace público, de solo lectura; a través del cual cualquiera puede clonar el proyecto. Puedes comunicar libremente ese URL o puedes publicarlo en tu sitio web o en cualquier otro médio que desees.</p>
 
-<p>The Your Clone URL is a read/write SSH-based URL that you can read or write over only if you connect with the SSH private key associated with the public key you uploaded for your user. When other users visit this project page, they won’t see that URL—only the public one.</p>
+<p>El enlace &#8220;Your Clone URL&#8221;, es un enlace de lectura/escritura basado en SSH; a través del cual puedes leer y escribir, pero solo si te conectas con la clave SSH privada correspondiente a la clave pública que has cargado para tu usuario. Cuando otros usuarios visiten la página del proyecto, no verán esta segunda URL &#8211;solo verán la URL pública&#8211;.</p>
 
-<h3 id='importing_from_subversion'>Importing from Subversion</h3>
+<h3 id='importacin_desde_subversion'>Importación desde Subversion</h3>
 
-<p>If you have an existing public Subversion project that you want to import into Git, GitHub can often do that for you. At the bottom of the instructions page is a link to a Subversion import. If you click it, you see a form with information about the import process and a text box where you can paste in the URL of your public Subversion project (see Figure 4-9).</p>
+<p>Si tienes un proyecto público Subversion que deseas pasar a Git, GitHub suele poder realizar la importación. All fondo de la página de instrucciones, tienes un enlace &#8220;Subversion import&#8221;. Si clicas sobre dicho enlace, verás un formulario con información sobre el proceso de importación y un cuadro de texto donde puedes pegar la URL de tu proyecto Subversion (ver Figura 4-9).</p>
 
-<p><center><img src="/figures/ch4/18333fig0409-tn.png"></center><br/> Figure 4-9. Subversion importing interface.</p>
+<p><center><img src="/figures/ch4/18333fig0409-tn.png"></center><br/> Figura 4-9. El interface de importación desde Subversion.</p>
 
-<p>If your project is very large, nonstandard, or private, this process probably won’t work for you. In Chapter 7, you’ll learn how to do more complicated manual project imports.</p>
+<p>Si tu proyecto es muy grande, no-estandar o privado, es muy posible que no se pueda importar. En el capítulo 7, aprenderás cómo realizar importaciones manuales de proyectos complejos.</p>
 
-<h3 id='adding_collaborators'>Adding Collaborators</h3>
+<h3 id='aadiendo_colaboradores'>Añadiendo colaboradores</h3>
 
-<p>Let’s add the rest of the team. If John, Josie, and Jessica all sign up for accounts on GitHub, and you want to give them push access to your repository, you can add them to your project as collaborators. Doing so will allow pushes from their public keys to work.</p>
+<p>Vamos a añadir al resto del equipo. Si tanto John, como Josie, como Jessica, todos ellos registran sus respectivas cuentas en GitHub. Y deseas darles acceso de escritura a tu repositorio. Puedes incluirlos en tu proyecto como colaboradores. De esta forma, funcionarán los envios (push) desde sus respectivas claves públicas.</p>
 
-<p>Click the &#8220;edit&#8221; button in the project header or the Admin tab at the top of the project to reach the Admin page of your GitHub project (see Figure 4-10).</p>
+<p>Has de hacer clic sobre el botón &#8220;edit&#8221; en la cabecera del proyecto o en la pestaña Admin de la parte superior del proyecto; yendo así a la página de administración del proyecto GitHub.</p>
 
-<p><center><img src="/figures/ch4/18333fig0410-tn.png"></center><br/> Figure 4-10. GitHub administration page.</p>
+<p><center><img src="/figures/ch4/18333fig0410-tn.png"></center><br/> Figura 4-10. Página de administración GitHub.</p>
 
-<p>To give another user write access to your project, click the “Add another collaborator” link. A new text box appears, into which you can type a username. As you type, a helper pops up, showing you possible username matches. When you find the correct user, click the Add button to add that user as a collaborator on your project (see Figure 4-11).</p>
+<p>Para dar acceso de escritura a otro usuario, clica sobre el enlace &#8220;Add another collaborator&#8221;. Aparecerá un cuadro de texto, donde podrás teclear un nombre. Según tecleas, aparecerá un cuadro de ayuda, mostrando posibles nombres de usuario que encajen con lo tecleado. Cuando localices al usuario deseado, clica sobre el botón &#8220;Add&#8221; para añadirlo como colaborador en tu proyecto (ver Figura 4-11).</p>
 
-<p><center><img src="/figures/ch4/18333fig0411-tn.png"></center><br/> Figure 4-11. Adding a collaborator to your project.</p>
+<p><center><img src="/figures/ch4/18333fig0411-tn.png"></center><br/> Figura 4-11. Añadirendo un colaborador a tu proyecto.</p>
 
-<p>When you’re finished adding collaborators, you should see a list of them in the Repository Collaborators box (see Figure 4-12).</p>
+<p>Cuando termines de añadir colaboradores, podrás ver a todos ellos en la lista &#8220;Repository Collaborators&#8221; (ver Figura 4-12).</p>
 
-<p><center><img src="/figures/ch4/18333fig0412-tn.png"></center><br/> Figure 4-12. A list of collaborators on your project.</p>
+<p><center><img src="/figures/ch4/18333fig0412-tn.png"></center><br/> Figura 4-12. Lista de colaboradores en tu proyecto.</p>
 
-<p>If you need to revoke access to individuals, you can click the &#8220;revoke&#8221; link, and their push access will be removed. For future projects, you can also copy collaborator groups by copying the permissions of an existing project.</p>
+<p>Si deseas revocar el acceso a alguno de ellos, puedes clicar sobre el enlace &#8220;revoke&#8221;, y sus permisos de envio (push) serán revocados. En proyectos futuros, podras incluir también a tu grupo de colaboradores copiando los permisos desde otro proyecto ya existente.</p>
 
-<h3 id='your_project'>Your Project</h3>
+<h3 id='tu_proyecto'>Tu proyecto</h3>
 
-<p>After you push your project up or have it imported from Subversion, you have a main project page that looks something like Figure 4-13.</p>
+<p>Una vez hayas enviado (push) tu proyecto, o lo hayas importado desde Subversion, tendrás una página principal de proyecto tal como:</p>
 
-<p><center><img src="/figures/ch4/18333fig0413-tn.png"></center><br/> Figure 4-13. A GitHub main project page.</p>
+<p><center><img src="/figures/ch4/18333fig0413-tn.png"></center><br/> Figura 4-13. Una página principal de proyecto GitHub.</p>
 
-<p>When people visit your project, they see this page. It contains tabs to different aspects of your projects. The Commits tab shows a list of commits in reverse chronological order, similar to the output of the <code>git log</code> command. The Network tab shows all the people who have forked your project and contributed back. The Downloads tab allows you to upload project binaries and link to tarballs and zipped versions of any tagged points in your project. The Wiki tab provides a wiki where you can write documentation or other information about your project. The Graphs tab has some contribution visualizations and statistics about your project. The main Source tab that you land on shows your project’s main directory listing and automatically renders the README file below it if you have one. This tab also shows a box with the latest commit information.</p>
+<p>Cuando la gente visite tu proyecto, verá esta página. Tiene pestañas que llevan a distintos aspectos del proyecto. La pestaña &#8220;Commits&#8221; muestra una lista de confirmaciones de cambio, en orden cronológico inverso, de forma similar a la salida del comando &#8216;git log&#8217;. La pestaña &#8220;Network&#8221; muestra una lista de toda la gente que ha bifurcado (forked) tu proyecto y ha contribuido a él. La pestaña &#8220;Downloads&#8221; permite cargar binarios del proyecto y enlaza con tarballs o versiones comprimidas de cualquier punto marcado (tagged) en tu proyecto. La pestaña &#8220;Wiki&#8221; enlaza con un espacio wiki donde puedes escribir documentación o cualquier otra información relevante sobre tu proyecto. La pestaña &#8220;Graphs&#8221; muestra diversas visualizaciones sobre contribuciones y estadísticas de tu proyecto. La pestaña principal &#8220;Source&#8221; en la que aterrizas cuando llegas al proyecto, muestra un listado de la carpeta principal; y muestra también el contenido del archivo README, si tienes uno en ella. Esta pestaña muestra también un cuadro con información sobre la última confirmación de cambio (commit) realizada en el proyecto.</p>
 
-<h3 id='forking_projects'>Forking Projects</h3>
+<h3 id='bifurcando_proyectos'>Bifurcando proyectos</h3>
 
-<p>If you want to contribute to an existing project to which you don’t have push access, GitHub encourages forking the project. When you land on a project page that looks interesting and you want to hack on it a bit, you can click the &#8220;fork&#8221; button in the project header to have GitHub copy that project to your user so you can push to it.</p>
+<p>Si deseas contribuir a un proyecto ya existente, en el que no tengas permisos de envio (push). GitHub recomienda bifurcar el proyecto. Cuando aterrizas en la página de un proyecto que te parece interesante y con el que deseas trastear un poco, puedes clicar sobre el botón &#8220;fork&#8221; de la cabecera del proyecto; de tal forma que GitHub haga una copia del proyecto a tu cuenta de usuario y puedas así enviar (push) cambios sobre él.</p>
 
-<p>This way, projects don’t have to worry about adding users as collaborators to give them push access. People can fork a project and push to it, and the main project maintainer can pull in those changes by adding them as remotes and merging in their work.</p>
+<p>De esta forma, los proyectos no han de preocuparse de añadir usuarios como colaboradores para darles acceso de envio (push). La gente puede bifurcar (fork) un proyecto y enviar (push) sobre su propia copia. El gestor del proyecto principal, puede recuperar (pull) esos cambios añadiendo las copias como remotos y fusionando (merge) el trabajo en ellas contenido.</p>
 
-<p>To fork a project, visit the project page (in this case, mojombo/chronic) and click the &#8220;fork&#8221; button in the header (see Figure 4-14).</p>
+<p>Para bifurcar un proyecto, visita su página (en el ejemplo, mojombo/chronic) y clica sobre el botón &#8220;fork&#8221; de su cabecera (ver Figura 4-14)</p>
 
-<p><center><img src="/figures/ch4/18333fig0414-tn.png"></center><br/> Figure 4-14. Get a writable copy of any repository by clicking the &#8220;fork&#8221; button.</p>
+<p><center><img src="/figures/ch4/18333fig0414-tn.png"></center><br/> Figura 4-14. Obtener una copia sobre la que escribir, clicando sobre el botón &#8220;fork&#8221; de un repositorio.</p>
 
-<p>After a few seconds, you’re taken to your new project page, which indicates that this project is a fork of another one (see Figure 4-15).</p>
+<p>Tras unos segundos, serás redirigido a la página del nuevo proyecto; y en ella se verá que este proyecto es una bifuración (fork) de otro existente (ver Figura 4-15).</p>
 
-<p><center><img src="/figures/ch4/18333fig0415-tn.png"></center><br/> Figure 4-15. Your fork of a project.</p>
+<p><center><img src="/figures/ch4/18333fig0415-tn.png"></center><br/> Figura 4-15. Tu bifurcación (fork) de un proyecto.</p>
 
-<h3 id='github_summary'>GitHub Summary</h3>
+<h3 id='resumen_de_github'>Resumen de GitHub</h3>
 
-<p>That’s all we’ll cover about GitHub, but it’s important to note how quickly you can do all this. You can create an account, add a new project, and push to it in a matter of minutes. If your project is open source, you also get a huge community of developers who now have visibility into your project and may well fork it and help contribute to it. At the very least, this may be a way to get up and running with Git and try it out quickly.</p>
+<p>Esto es todo lo que vamos a ver aquí sobre GitHub, pero merece la pena destacar lo rápido que puedes hacer todo esto. Puedes crear una cuenta, añadir un nuevo proyecto y contribuir a él en cuestión de minutos. Si tu proyecto es de código abierto, puedes tener también una amplia comunidad de desarrolladores que podrán ver tu proyecto, bifurcarlo (fork) y ayudar contribuyendo a él. Y, por último, comentar que esta puede ser una buena manera de iniciarte y comenzar rápidamente a trabajar con Git.</p>
 
 <div id='nav'>
 <a href='ch4-8.html'>prev</a> | <a href='ch4-10.html'>next</a>

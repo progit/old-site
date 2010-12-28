@@ -1,70 +1,165 @@
 ---
 layout: translation
-title: Pro Git 4.8 Git на сервере Git Daemon
+title: Pro Git 4.8 Git на сервере Gitolite
 ---
-<h2 id='git_daemon'>Git Daemon</h2>
+<h2 id='gitolite'>Gitolite</h2>
 
-<p>For public, unauthenticated read access to your projects, you’ll want to move past the HTTP protocol and start using the Git protocol. The main reason is speed. The Git protocol is far more efficient and thus faster than the HTTP protocol, so using it will save your users time.</p>
+<p>Git начал становиться очень популярным в корпоративных средах, где обычно есть дополнительные требования в плане контроля доступа. Gitolite был создан, чтобы посодействовать в выполнении таких требований.</p>
 
-<p>Again, this is for unauthenticated read-only access. If you’re running this on a server outside your firewall, it should only be used for projects that are publicly visible to the world. If the server you’re running it on is inside your firewall, you might use it for projects that a large number of people or computers (continuous integration or build servers) have read-only access to, when you don’t want to have to add an SSH key for each.</p>
+<p>Gitolite позволяет указать права доступа не только для репозиториев (как Gitosis), но и для веток или имён меток внутри каждого репозитория. То есть, вы можете указать, что определённые люди (или группы людей) могут отправлять (push) определённые &#8220;ссылки&#8221; (ветки или метки), а остальные нет.</p>
 
-<p>In any case, the Git protocol is relatively easy to set up. Basically, you need to run this command in a daemonized manner:</p>
+<h3 id='id191'>Установка</h3>
 
-<pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
+<p>Установить Gitolite очень просто, даже если вы не читали обширную документацию, которая идёт с ним. Вам нужен аккаунт на каком-нибудь Unix сервере; были протестированы различные Linux-ы и Solaris 10. Вам не нужен root-доступ, если git, perl и openssh-совместимый сервер уже настроены. Далее в примерах мы будем использовать аккаунт <code>gitolite</code> на хосте с именем <code>gitserver</code>.</p>
 
-<p><code>--reuseaddr</code> allows the server to restart without waiting for old connections to time out, the <code>--base-path</code> option allows people to clone projects without specifying the entire path, and the path at the end tells the Git daemon where to look for repositories to export. If you’re running a firewall, you’ll also need to punch a hole in it at port 9418 on the box you’re setting this up on.</p>
+<p>Gitolite устанавливается с помощью выполения сценария <em>на рабочей станции</em>, так что на вашей рабочей станции должен быть доступен bash-шелл. Если вам интересно, даже тот bash, который идёт с msysgit достаточен.</p>
 
-<p>You can daemonize this process a number of ways, depending on the operating system you’re running. On an Ubuntu machine, you use an Upstart script. So, in the following file</p>
+<p>Начните с настройки доступа к вашему серверу с помощью открытого ключа, так, чтобы вы могли войти с вашей рабочей станции на сервер без ввода пароля. Следующий способ работает в Linux; для рабочих станций с другими ОС вам, возможно, нужно будет сделать это вручную. Мы полагаем, что у вас уже есть пара ключей сгенерированных с помощью <code>ssh-keygen</code>.</p>
 
-<pre><code>/etc/event.d/local-git-daemon</code></pre>
+<pre><code>$ ssh-copy-id -i ~/.ssh/id_rsa gitolite@gitserver</code></pre>
 
-<p>you put this script:</p>
+<p>Эта команда спросит у вас пароль к учётной записи &#8216;gitolite&#8217;, а затем настроит доступ по открытому ключу. Он <strong>необходим</strong> для сценария установки, так что убедитесь, что вы можете выполнять команды без ввода пароля:</p>
 
-<pre><code>start on startup
-stop on shutdown
-exec /usr/bin/git daemon \
-    --user=git --group=git \
-    --reuseaddr \
-    --base-path=/opt/git/ \
-    /opt/git/
-respawn</code></pre>
+<pre><code>$ ssh gitolite@gitserver pwd
+/home/gitolite</code></pre>
 
-<p>For security reasons, it is strongly encouraged to have this daemon run as a user with read-only permissions to the repositories – you can easily do this by creating a new user &#8216;git-ro&#8217; and running the daemon as them. For the sake of simplicity we’ll simply run it as the same &#8216;git&#8217; user that Gitosis is running as.</p>
+<p>Затем склонируйте Gitolite с главного сайта проекта и выполните сценарий для лёгкой установки (третий аргумент это ваше имя в том виде, в котором вам бы хотелось его видеть в окончательном репозитории gitolite-admin):</p>
 
-<p>When you restart your machine, your Git daemon will start automatically and respawn if it goes down. To get it running without having to reboot, you can run this:</p>
+<pre><code>$ git clone git://github.com/sitaramc/gitolite
+$ cd gitolite/src
+$ ./gl-easy-install -q gitolite gitserver sitaram</code></pre>
 
-<pre><code>initctl start local-git-daemon</code></pre>
+<p>Всё готово! Gitolite теперь установлен на сервере, и у вас в вашей домашней директории на рабочей станции теперь есть новый репозиторий, который называется <code>gitolite-admin</code>. Администрирование вашего установленнего gitolite осуществляется с помощью внесения изменений в этот репозиторий и их отправки (push) так же как и в Gitosis.</p>
 
-<p>On other systems, you may want to use <code>xinetd</code>, a script in your <code>sysvinit</code> system, or something else — as long as you get that command daemonized and watched somehow.</p>
+<p><span>Кстати, <em>обновление</em> gitolite делается тем же способом. Кроме того, если интересно, можете запустить сценарий без аргументов и тогда получите справку по использованию.</span></p>
 
-<p>Next, you have to tell your Gitosis server which repositories to allow unauthenticated Git server-based access to. If you add a section for each repository, you can specify the ones from which you want your Git daemon to allow reading. If you want to allow Git protocol access for your iphone project, you add this to the end of the <code>gitosis.conf</code> file:</p>
+<p>Та последняя команда делает довольно большое количество вывода, который может быть интересно прочитать. Также, при первом её выполнении, создаётся новая пара ключей; вам придётся выбрать пароль или нажать enter, чтобы пароля не было. Зачем нужна вторая пара ключей и как она используется, описано в документе &#8220;ssh troubleshooting&#8221; поставляемым с Gitolite. (Ну должна же документация быть <em>хоть для чего-то</em> хороша!)</p>
 
-<pre><code>[repo iphone_project]
-daemon = yes</code></pre>
+<h3 id='__'>Изменение параметров установки</h3>
 
-<p>When that is committed and pushed up, your running daemon should start serving requests for the project to anyone who has access to port 9418 on your server.</p>
+<p>Хотя быстрая установка с параметрами по умолчанию подходит для большинства людей, есть несколько способов изменения параметров установки если вам это нужно. Если опустить опцию <code>-q</code>, вы получите &#8220;подробную&#8221; установку с детальной информацией о том, что происходит на каждом шаге. Подробный режим также позволяет изменить некоторые параметры на стороне сервера, такие как расположение репозиториев, с помощью редактирования &#8220;rc&#8221; файла используемого сервером. Этот &#8220;rc&#8221; файл содержит развёрнутые комметарии так, чтобы вы легко смогли сделать любые изменения, сохранить их и продолжить. Этот файл также содержит различные настройки, которые вы можете изменить, чтобы активировать или выключить некоторые &#8220;продвинутые&#8221; функции gitolite.</p>
 
-<p>If you decide not to use Gitosis, but you want to set up a Git daemon, you’ll have to run this on each project you want the Git daemon to serve:</p>
+<h3 id='_____'>Конфигурационный файл и правила контроля доступа</h3>
 
-<pre><code>$ cd /path/to/project.git
-$ touch git-daemon-export-ok</code></pre>
+<p>Итак, когда установка завершена, вы переходите в репозиторий <code>gitolite-admin</code> (он находится в вашем домашнем каталоге) и осматриваетесь, чтобы выяснить что же вы получили:</p>
 
-<p>The presence of that file tells Git that it’s OK to serve this project without authentication.</p>
+<pre><code>$ cd ~/gitolite-admin/
+$ ls
+conf/  keydir/
+$ find conf keydir -type f
+conf/gitolite.conf
+keydir/sitaram.pub
+$ cat conf/gitolite.conf
+#gitolite conf
+# please see conf/example.conf for details on syntax and features
 
-<p>Gitosis can also control which projects GitWeb shows. First, you need to add something like the following to the <code>/etc/gitweb.conf</code> file:</p>
+repo gitolite-admin
+    RW+                 = sitaram
 
-<pre><code>$projects_list = &quot;/home/git/gitosis/projects.list&quot;;
-$projectroot = &quot;/home/git/repositories&quot;;
-$export_ok = &quot;git-daemon-export-ok&quot;;
-@git_base_url_list = (&#39;git://gitserver&#39;);</code></pre>
+repo testing
+    RW+                 = @all</code></pre>
 
-<p>You can control which projects GitWeb lets users browse by adding or removing a <code>gitweb</code> setting in the Gitosis configuration file. For instance, if you want the iphone project to show up on GitWeb, you make the <code>repo</code> setting look like this:</p>
+<p>Заметьте, что &#8220;sitaram&#8221; (это последний аргумент при выполнении <code>gl-easy-install</code> ранее) имеет права на чтение и запись в репозиторий <code>gitolite-admin</code>, а также файл с открытым ключом с таким же именем.</p>
 
-<pre><code>[repo iphone_project]
-daemon = yes
-gitweb = yes</code></pre>
+<p>Синтаксис конфигурационного файла для Gitolite <em>сильно</em> отличается от того что у Gitosis. Снова, это всё подробно продокументированно в <code>conf/example.conf</code>, так что мы рассмотрим здесь только основные моменты.</p>
 
-<p>Now, if you commit and push the project, GitWeb will automatically start showing your iphone project.</p>
+<p>Вы можете сгруппировать пользователей или репозитории для удобства. Имена групп совсем как макросы; когда вы их определяете, даже не важно определяют ли они проекты или пользователей; это различие делается только, когда вы <em>используете</em> &#8220;макрос&#8221;.</p>
+
+<pre><code>@oss_repos      = linux perl rakudo git gitolite
+@secret_repos   = fenestra pear
+
+@admins         = scott     # Adams, not Chacon, sorry :)
+@interns        = ashok     # get the spelling right, Scott!
+@engineers      = sitaram dilbert wally alice
+@staff          = @admins @engineers @interns</code></pre>
+
+<p>Вы можете контролировать права доступа на уровне &#8220;ссылок&#8221; (то, что находится в .git/refs/). В следующем примере стажёры (группа @interns) могут отправлять (push) только ветку &#8220;int&#8221;. Инженеры (группа @engineers) могут отправлять любую ветку, чьё имя начинается с &#8220;eng-&#8220;, а также метки начинающиеся с &#8220;rc&#8221; и затем цифры. И администраторы (группа @admins) могут делать всё (в том числе откатить назад) с любыми ссылками.</p>
+
+<pre><code>repo @oss_repos
+    RW  int$                = @interns
+    RW  eng-                = @engineers
+    RW  refs/tags/rc[0-9]   = @engineers
+    RW+                     = @admins</code></pre>
+
+<p>Выражение после <code>RW</code> или <code>RW+</code> это регулярное выражение (regex), с которым сопоставляется имя отправляемой ссылки (ref). Поэтому мы называем его &#8220;refex&#8221;! Конечно, &#8220;refex&#8221; может быть гораздо более сильным, чем показанные здесь. Так что не переусердствуйте с ними, если вы не очень хорошо знакомы с регулярными выражениями perl.</p>
+
+<p>К тому же, как вы уже наверное догадались, Gitolite для удобства дописывает в начале регулярного выражения <code>refs/heads/</code> если оно не начинается с <code>refs/</code>.</p>
+
+<p>Важной особенностью синтаксиса конфигурационного файла является то, что все правила для репозитория не обязательно должны находиться в одном месте. Вы можете держать все общие вещи вместе, как, например, правила для всех <code>oss_repos</code> выше, а потом добавить уточняющие правила для отдельных случаев следующим образом:</p>
+
+<pre><code>repo gitolite
+    RW+                     = sitaram</code></pre>
+
+<p>Это правило будет добавлено к набору правил для репозитория <code>gitolite</code>.</p>
+
+<p>В данный момент вы, возможно, задаётесь вопросом: &#8220;Каким образом правила контроля доступа применяются на самом деле?&#8221; — так что давайте вкратце рассмотрим это.</p>
+
+<p>В gitolite есть два уровня контроля доступа. Первый — на уровне репозитория; если у вас есть доступ на чтение (или запись) к <em>любой</em> ссылке в репозитории, то у вас есть доступ на чтение (или запись) к этому репозиторию. Это тот единственный контроль доступа, который есть в Gitosis.</p>
+
+<p>Второй уровень применим только к доступу на запись и осуществляется по веткам или меткам внутри репозитория. Имя пользователя, запрашиваемый уровень доступа (<code>W</code> или <code>+</code>) и имя ссылки, которая будет обновлена, известны. Правила доступа проверяются в порядке их появления в конфигурационном файле, в поисках совпадений для этой комбинации (но помните, что имя ссылки сопоставляется с регулярным выражением, а не просто строкой). Если совпадение найдено, отправка (push) проходит успешно. При неудачном исходе доступ запрещается.</p>
+
+<h3 id='_____'>Продвинутый контроль доступа с запрещающими правилами</h3>
+
+<p>До сих пор у нас были только права вида <code>R</code>, <code>RW</code>, или <code>RW+</code>. Однако, в gitolite есть другие права доступа: <code>-</code> означающий &#8220;запретить&#8221;. Это даёт гораздо больше возможностей взамен большей сложности, так как теперь отсутствие разрешающего правила не <em>единственный</em> способ получить запрет доступа, так что <em>порядок правил теперь имеет значение</em>!</p>
+
+<p>Предположим, в описанной выше ситуации мы хотим, чтобы инженеры могли откатить назад любую ветку <em>кроме</em> master и integ. Вот как это сделать:</p>
+
+<pre><code>    RW  master integ    = @engineers
+    -   master integ    = @engineers
+    RW+                 = @engineers</code></pre>
+
+<p>Снова, вы просто идёте по правилам сверху вниз пока не наткнётесь на соответствующее вашему режиму доступа или на запрет. Неоткатывающий push в master или integ разрешается первым правилом. Откатывающий push для этих ссылок не соответствует первому правилу, переходит ко второму и поэтому запрещается. Любой push (откатывающий или неоткатывающий) по ссылкам отличным от master и integ не совпадёт с первыми двумя правилами, а третье правило его разрешает.</p>
+
+<h3 id='_push____'>Ограничение push-ей на основе изменённых файлов</h3>
+
+<p>Вдобавок к ограничению веток, в которые пользователю можно отправлять изменения, вы можете также ограничить файлы, которые он может трогать. Например, возможно, Makefile (или какая-то другая программа) не предназначен для изменения кем угодно, так как многие вещи зависят от него или сломаются, если изменения не будут сделаны <em>правильно</em>. Вы можете сказать gitolite-у:</p>
+
+<pre><code>repo foo
+    RW                  =   @junior_devs @senior_devs
+
+    RW  NAME/           =   @senior_devs
+    -   NAME/Makefile   =   @junior_devs
+    RW  NAME/           =   @junior_devs</code></pre>
+
+<p>Это мощное средство продокументировано в <code>conf/example.conf</code>.</p>
+
+<h3 id='_'>Персональные ветки</h3>
+
+<p>Gitolite также имеет средство, которое называется &#8220;персональные ветки&#8221; (или даже &#8220;персональное пространство имён веток&#8221;), которое может быть весьма полезным в корпоративных средах.</p>
+
+<p>Очень часто обмен кодом в мире git происходит через запросы &#8220;пожалуйста, заберите (pull)&#8221;. В корпоративных средах, однако, неаутентифицированный доступ под строгим запретом, и рабочая станция разработчика не может выполнить аутентификацию. Так что вы вынуждены отправить (push) работу на центральный сервер и попросить кого-нибудь забрать (pull) её оттуда.</p>
+
+<p>Это обычно вызывает такой же беспорядок с именами веток, что и в централизованных СУВ, плюс настройка прав доступа для этого становится ежедневной обязанностью админа.</p>
+
+<p>Gitolite позволяет определить &#8220;персональный&#8221; или &#8220;рабочий&#8221; префикс пространства имён для каждого разработчика (например, <code>refs/personal/&lt;devname&gt;/*</code>), с полными правами только для этого разработчика, и доступом на чтение для всех остальных. Просто выберите подробный режим установки и задайте <code>refs/personal</code> в качестве значения переменной <code>$PERSONAL</code> в &#8220;rc&#8221;-файле. Это всё. По большому счёту это решение по принципу &#8220;сделал и забыл&#8221;, по крайней мере что касается админа, даже при постоянной смене людей в составе команды проекта.</p>
+
+<h3 id='_'>&#8220;Шаблонные&#8221; репозитории</h3>
+
+<p>Gitolite позволяет указывать репозитории с помощью шаблонов (на самом деле регулярных выражений perl), таких как, например, <code>assignments/s[0-9][0-9]/a[0-9][0-9]</code>. Это <em>очень</em> мощная функция, которая включается с помощью установки <code>$GL_WILDREPOS = 1;</code> в rc файле. Она позволяет назначать новый режим доступа (&#8221;C&#8221;), который позволяет пользователям создавать репозитории на основе подобных шаблонов, автоматически назначает владельцем пользователя, который создал репозиторий, позволяет ему раздавать R и RW права другим пользователям и т.п. Эта функция описана в документе <code>doc/4-wildcard-repositories.mkd</code>.</p>
+
+<h3 id='_'>Другие функции</h3>
+
+<p>Мы закончим это обсуждение рассмотрением кучи других функций, все они описаны в мельчайших подробностях в документе &#8220;faqs, tips, etc&#8221;.</p>
+
+<p><strong>Логирование</strong>: Gitolite регистрирует все успешные доступы. Если вы несколько легкомысленно раздали людям права на откатывание изменений (<code>RW+</code>) и какая-то козлина снесла &#8220;master&#8221;, лог-файл спасёт вам жизнь, и вы легко и быстро найдёте проёбаный SHA.</p>
+
+<p><strong>Git не в обычном PATH</strong>: Одна крайне полезная и удобная функция в gitolite это поддержка git установленного вне обычного <code>$PATH</code> (это совсем не такая редкость как вы думаете; в некоторых корпоративных средах или даже у некоторых хостинг-провайдеров отказываются устанавливать что-либо в систему и всё заканчивается тем, что вы кладёте всё в свои личные директории). Обычно, вы вынуждены каким-то образом заставить git <em>на стороне клиента</em> учитывать это нестандартное расположение бинарников git-а. С gitolite, просто выберите &#8220;подробную&#8221; установку и задайте <code>$GIT_PATH</code> в &#8220;rc&#8221; файлах. Никаких изменений на стороне клиента после этого не требуется :-)</p>
+
+<p><strong>Уведомление о правах доступа</strong>: Другая удобная функция проявляется в момент, когда вы просто проверяете и заходите по ssh на сервер. Ранние версии gitolite обычно ругались на то, что переменная окружения <code>SSH_ORIGINAL_COMMAND</code> пуста (если интересно, смотри документацию по ssh). Сейчас Gitolite появляется с сообщением вроде этого:</p>
+
+<pre><code>hello sitaram, the gitolite version here is v0.90-9-g91e1e9f
+you have the following permissions:
+  R     anu-wsd
+  R     entrans
+  R  W  git-notes
+  R  W  gitolite
+  R  W  gitolite-admin
+  R     indic_web_input
+  R     shreelipi_converter</code></pre>
+
+<p><strong>Делегирование</strong>: При действительно больших установках, вы можете делегировать ответственность за группы репозиториев различным людям, которые будут независимо управлять этими частями. Это уменьшает нагрузку на главного админа и делает его не таким критичным элементом. Эта функция описана в отдельном файле в каталоге <code>doc/</code>.</p>
+
+<p>** Поддержка Gitweb<strong>: Gitolite имеет поддержку gitweb в нескольких аспектах. Вы можете указать какие репозитории видны через gitweb. Вы можете назначить &#8220;владельца&#8221; и &#8220;описание&#8221; для gitweb из конфигурационного файла для gitolite. В gitweb есть механизм организации контроля доступа через аутентификацию по HTTP, и вы можете заставить его использовать &#8220;скомпилированный&#8221; конфигурационный файл сделанный gitolite-ом, что означает действие одинаковых правил контроля доступа (для доступа на чтение) и для gitweb, и для gitolite.</strong></p>
 
 <div id='nav'>
 <a href='ch4-7.html'>prev</a> | <a href='ch4-9.html'>next</a>

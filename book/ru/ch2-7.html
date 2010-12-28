@@ -1,120 +1,43 @@
 ---
 layout: translation
-title: Pro Git 2.7 Основы Git Undoing Things
+title: Pro Git 2.7 Основы Git Опция Описание
 ---
-<h2 id='undoing_things'>Undoing Things</h2>
+<h2 id='_'>Опция Описание</h2>
 
-<p>На любой стадии может возникнуть необходимость что-либо отменить. Здесь мы рассмотрим несколько основных инструментов для отмены произведённых изменений. Будьте осторожны, ибо не всегда можно отменить сами отмены. Это одно из мест в Git, где вы можете потерять свою работу если сделаете что-то неправильно.</p>
+<p><code>-(n)</code> Показать последние n коммитов</p>
 
-<p>At any stage, you may want to undo something. Here, we’ll review a few basic tools for undoing changes that you’ve made. Be careful, because you can’t always undo some of these undos. This is one of the few areas in Git where you may lose some work if you do it wrong.</p>
+<p><code>--since</code>, <code>--after</code> Ограничить коммиты теми, которые сделаны после указанной даты.</p>
 
-<h3 id='__'>Изменение последнего коммита</h3>
+<p><code>--until</code>, <code>--before</code> Ограничить коммиты теми, которые сделаны до указанной даты.</p>
 
-<h3 id='changing_your_last_commit'>Changing Your Last Commit</h3>
+<p><code>--author</code> Показать только те коммиты, автор которых соответствует указанной строке.</p>
 
-<p>Одна из обычных отмен происходит, когда вы делаете коммит слишком рано забыв добавить какие-то файлы, или напутали с комментарием к коммиту. Если вам хотелось бы сделать этот коммит ещё раз, вы можете выполнить commit с опцией <code>--amend</code>.</p>
+<p><code>--committer</code> Показать только те коммиты, коммитер которых</p>
 
-<p>One of the common undos takes place when you commit too early and possibly forget to add some files, or you mess up your commit message. If you want to try that commit again, you can run commit with the <code>--amend</code> option:</p>
+<pre><code>                  соответствует указанной строке.</code></pre>
+<hr />
+<p>Таблица: Некоторые опции-фильтры <code>git log</code></p>
 
-<pre><code>$ git commit --amend</code></pre>
+<p>Например, если вы хотите посмотреть из истории Git такие коммиты, которые вносят изменения в тестовые файлы, были сделаны Junio Hamano, не являются слияниями и были сделаны в октябре 2008го, вы можете выполнить что-то вроде такого:</p>
 
-<p>Эта команда берёт индекс и использует его для коммита. Если после последнего коммита не было никаких изменений (например, вы запустили приведённую команду сразу после предыдущего коммита), то состояние проекта будет абсолютно таким же и всё, что вы измените это комментарий к коммиту.</p>
+<pre><code>$ git log --pretty=&quot;%h - %s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
+   --before=&quot;2008-11-01&quot; --no-merges -- t/
+5610e3b - Fix testcase failure when extended attribute
+acd3b9e - Enhance hold_lock_file_for_{update,append}()
+f563754 - demonstrate breakage of detached checkout wi
+d1a43f2 - reset --hard/read-tree --reset -u: remove un
+51a94af - Fix &quot;checkout --track -b newbranch&quot; on detac
+b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
-<p>This command takes your staging area and uses it for the commit. If you’ve have made no changes since your last commit (for instance, you run this command immediately after your previous commit), then your snapshot will look exactly the same and all you’ll change is your commit message.</p>
+<p>Из примерно 20 000 коммитов в истории Git, данная команда выбрала всего 6 коммитов соответствующих заданным критериям.</p>
 
-<p>Появится всё тот же редактор для комментариев к коммитам, но уже с введённым комментарем к предыдущему коммиту. Вы можете отредактировать это сообщение так же как обычно, и оно перепишет предыдущее.</p>
+<h3 id='_____'>Использование графического интерфейса для визуализации истории</h3>
 
-<p>The same commit-message editor fires up, but it already contains the message of your previous commit. You can edit the message the same as always, but it overwrites your previous commit.</p>
+<p>Если у вас есть желание использовать какой-нибудь графический инструмент для визуализации истории коммитов, можно попробовать распространяемую вместе с Git программу gitk, написанную на Tcl/Tk. В сущности gitk — это наглядный вариант <code>git log</code>, к тому же он принимает почти те же фильтрующие опции, что и <code>git log</code>. Если набрать в командной строке gitk находясь в проекте, вы увидете что-то наподобие Рис. 2-2.</p>
 
-<p>Для примера, если после совершения коммита вы осознали, что забыли проиндексировать изменения в файле, которые хотели добавить в этот коммит, вы можете сделать что-то подобное:</p>
+<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> Рисунок 2-2. Визуализация истории с помощью gitk.</p>
 
-<p>As an example, if you commit and then realize you forgot to stage the changes in a file you wanted to add to this commit, you can do something like this:</p>
-
-<pre><code>$ git commit -m &#39;initial commit&#39;
-$ git add forgotten_file
-$ git commit --amend </code></pre>
-
-<p>Все три команды вместе дают один коммит — второй коммит заменяет результат первого.</p>
-
-<p>All three of these commands end up with a single commit — the second commit replaces the results of the first.</p>
-
-<h3 id='__'>Отмена индексации файла</h3>
-
-<h3 id='unstaging_a_staged_file'>Unstaging a Staged File</h3>
-
-<p>В следующих двух разделах мы продемонстрируем как переделать проиндексированные изменения и изменения в рабочей директории. Приятно то, что команда используемая для определения состояния этих двух вещей дополнительно напоминает о том как отменить изменения в них. Приведём пример. Допустим вы внесли изменения в два файла и хотите записать их как два отдельных коммита, но случайно набрали <code>git add *</code> и проиндексировали оба файла. Как теперь отменить индексацию одного из двух файлов? Комманда <code>git status</code> напомнит вам об этом:</p>
-
-<p>The next two sections demonstrate how to wrangle your staging area and working directory changes. The nice part is that the command you use to determine the state of those two areas also reminds you how to undo changes to them. For example, let’s say you’ve changed two files and want to commit them as two separate changes, but you accidentally type <code>git add *</code> and stage them both. How can you unstage one of the two? The <code>git status</code> command reminds you:</p>
-
-<pre><code>$ git add .
-$ git status
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#       modified:   README.txt
-#       modified:   benchmarks.rb
-#</code></pre>
-
-<p>Сразу после надписи “Changes to be committed”, сказано использовать <code>git reset HEAD &lt;file&gt;...</code> для исключения из индекса. Так что давайте последуем совету и отменим индексацию файла benchmarks.rb:</p>
-
-<p>Right below the “Changes to be committed” text, it says use <code>git reset HEAD &lt;file&gt;...</code> to unstage. So, let’s use that advice to unstage the benchmarks.rb file:</p>
-
-<pre><code>$ git reset HEAD benchmarks.rb 
-benchmarks.rb: locally modified
-$ git status
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#       modified:   README.txt
-#
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
-#
-#       modified:   benchmarks.rb
-#</code></pre>
-
-<p>Эта команда немного странновата, но она сработала. Файл benchmarks.rb изменён, но уже не в индексе.</p>
-
-<p>The command is a bit strange, but it works. The benchmarks.rb file is modified but once again unstaged.</p>
-
-<h3 id='__'>Отмена изменения файла</h3>
-
-<h3 id='unmodifying_a_modified_file'>Unmodifying a Modified File</h3>
-
-<p>Что если вы поняли, что не хотите оставлять изменения внесённые в файл benchmarks.rb? Как быстро отменить изменения, вернуть то состояние, в котором он находился во время последнего коммита (или первоначального клонирования, или какого-то другого действия, после которого файл попал в рабочую директорию)? К счастью, <code>git status</code> говорит как добиться и этого. В выводе для последнего примера, неиндексированная область выглядит следующим образом:</p>
-
-<p>What if you realize that you don’t want to keep your changes to the benchmarks.rb file? How can you easily unmodify it — revert it back to what it looked like when you last committed (or initially cloned, or however you got it into your working directory)? Luckily, <code>git status</code> tells you how to do that, too. In the last example output, the unstaged area looks like this:</p>
-
-<pre><code># Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
-#
-#       modified:   benchmarks.rb
-#</code></pre>
-
-<p>Здесь довольно ясно сказано как отменить сделанные изменения (по крайней мере новые версии Git&#8217;а, 1.6.1 и дальше, делают это; если у вас более старая версии, мы настоятельно рекомендуем обновиться, чтобы получить некоторые приятные удобные возможности). Давайте сделаем, то что написано:</p>
-
-<p>It tells you pretty explicitly how to discard the changes you’ve made (at least, the newer versions of Git, 1.6.1 and later, do this — if you have an older version, we highly recommend upgrading it to get some of these nicer usability features). Let’s do what it says:</p>
-
-<pre><code>$ git checkout -- benchmarks.rb
-$ git status
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#       modified:   README.txt
-#</code></pre>
-
-<p>Как вы видите, изменения отменены. Вы должны понимать, что это опасная команда: все сделанные вами изменения в этом файле пропали — вы просто скопировали поверх него другой файл. Никогда не используйте эти команду если вы не полностью уверены, что этот файл вам не нужен. Если вам нужно просто сделать, чтобы он не мешался, мы рассмотрим прятание(??) и ветвление в следующей главе; это обычно более предпочтительный способ.</p>
-
-<p>You can see that the changes have been reverted. You should also realize that this is a dangerous command: any changes you made to that file are gone — you just copied another file over it. Don’t ever use this command unless you absolutely know that you don’t want the file. If you just need to get it out of the way, we’ll go over stashing and branching in the next chapter; these are generally better ways to go.</p>
-
-<p>Помните, что всё, что является частью коммита в Git, почти всегда может быть восстановлено. Даже коммиты, которые находятся на ветках, которые были удалены, и коммиты переписанные с помощью <code>--amend</code> могут быть восстановлены (см. Главу 9 для восстановления данных). Несмотря на это, всё, что никогда не попадало в коммит, вы скорее всего уже не увидете снова.</p>
-
-<p>Remember, anything that is committed in Git can almost always be recovered. Even commits that were on branches that were deleted or commits that were overwritten with an <code>--amend</code> commit can be recovered (see Chapter 9 for data recovery). However, anything you lose that was never committed is likely never to be seen again.</p>
+<p>В верхней части окна располагается история коммитов вместе с подробным графом наследников. Просмотрщик дельт в нижней половине окна отображает изменения сделанные выбранным коммитом. Указать коммит можно с помощью щелчка мышью.</p>
 
 <div id='nav'>
 <a href='ch2-6.html'>prev</a> | <a href='ch2-8.html'>next</a>

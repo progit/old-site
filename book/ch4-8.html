@@ -4,15 +4,23 @@ title: Pro Git 4.8 Git on the Server Gitolite
 ---
 <h2 id='gitolite'>Gitolite</h2>
 
-<p>Git has started to become very popular in corporate environments, which tend to have some additional requirements in terms of access control. Gitolite was created to help with those requirements.</p>
+<p>Note: the latest copy of this section of the ProGit book is always available within the <a href='http://github.com/sitaramc/gitolite/blob/pu/doc/progit-article.mkd'>gitolite documentation</a>. The author would also like to humbly state that, while this section is accurate, and <em>can</em> (and often <em>has</em>) been used to install gitolite without reading any other documentation, it is of necessity not complete, and cannot completely replace the enormous amount of documentation that gitolite comes with.</p>
 
-<p>Gitolite allows you to specify permissions not just by repository (like Gitosis does), but also by branch or tag names within each repository. That is, you can specify that certain people (or groups of people) can only push certain &#8220;refs&#8221; (branches or tags) but not others.</p>
+<p>Git has started to become very popular in corporate environments, which tend to have some additional requirements in terms of access control. Gitolite was originally created to help with those requirements, but it turns out that it&#8217;s equally useful in the open source world: the Fedora Project controls access to their package management repositories (over 10,000 of them!) using gitolite, and this is probably the largest gitolite installation anywhere too.</p>
+
+<p>Gitolite allows you to specify permissions not just by repository, but also by branch or tag names within each repository. That is, you can specify that certain people (or groups of people) can only push certain &#8220;refs&#8221; (branches or tags) but not others.</p>
 
 <h3 id='installing'>Installing</h3>
 
 <p>Installing Gitolite is very easy, even if you don&#8217;t read the extensive documentation that comes with it. You need an account on a Unix server of some kind; various Linux flavours, and Solaris 10, have been tested. You do not need root access, assuming git, perl, and an openssh compatible ssh server are already installed. In the examples below, we will use the <code>gitolite</code> account on a host called <code>gitserver</code>.</p>
 
-<p>Curiously, Gitolite is installed by running a script <em>on the workstation</em>, so your workstation must have a bash shell available. Even the bash that comes with msysgit will do, in case you&#8217;re wondering.</p>
+<p>Gitolite is somewhat unusual as far as &#8220;server&#8221; software goes &#8211; access is via ssh, and so every userid on the server is a potential &#8220;gitolite host&#8221;. As a result, there is a notion of &#8220;installing&#8221; the software itself, and then &#8220;setting up&#8221; a user as a &#8220;gitolite host&#8221;.</p>
+
+<p>Gitolite has 4 methods of installation. People using Fedora or Debian systems can obtain an RPM or a DEB and install that. People with root access can install it manually. In these two methods, any user on the system can then become a &#8220;gitolite host&#8221;.</p>
+
+<p>People without root access can install it within their own userids. And finally, gitolite can be installed by running a script <em>on the workstation</em>, from a bash shell. (Even the bash that comes with msysgit will do, in case you&#8217;re wondering.)</p>
+
+<p>We will describe this last method in this article; for the other methods please see the documentation.</p>
 
 <p>You start by obtaining public key based access to your server, so that you can log in from your workstation to the server without getting a password prompt. The following method works on Linux; for other workstation OSs you may have to do this manually. We assume you already had a key pair generated using <code>ssh-keygen</code>.</p>
 
@@ -29,11 +37,19 @@ title: Pro Git 4.8 Git on the Server Gitolite
 $ cd gitolite/src
 $ ./gl-easy-install -q gitolite gitserver sitaram</code></pre>
 
-<p>And you&#8217;re done! Gitolite has now been installed on the server, and you now have a brand new repository called <code>gitolite-admin</code> in the home directory of your workstation. You administer your gitolite setup by making changes to this repository and pushing (just like Gitosis).</p>
-
-<p><span>By the way, <em>upgrading</em> gitolite is also done the same way. Also, if you&#8217;re interested, run the script without any arguments to get a usage message.</span></p>
+<p>And you&#8217;re done! Gitolite has now been installed on the server, and you now have a brand new repository called <code>gitolite-admin</code> in the home directory of your workstation. You administer your gitolite setup by making changes to this repository and pushing.</p>
 
 <p>That last command does produce a fair amount of output, which might be interesting to read. Also, the first time you run this, a new keypair is created; you will have to choose a passphrase or hit enter for none. Why a second keypair is needed, and how it is used, is explained in the &#8220;ssh troubleshooting&#8221; document that comes with Gitolite. (Hey the documentation has to be good for <em>something</em>!)</p>
+
+<p>Repos named <code>gitolite-admin</code> and <code>testing</code> are created on the server by default. If you wish to clone either of these locally (from an account that has SSH console access to the gitolite account via <em>authorized_keys</em>), type:</p>
+
+<pre><code>$ git clone gitolite:gitolite-admin
+$ git clone gitolite:testing</code></pre>
+
+<p>To clone these same repos from any other account:</p>
+
+<pre><code>$ git clone gitolite@servername:gitolite-admin
+$ git clone gitolite@servername:testing</code></pre>
 
 <h3 id='customising_the_install'>Customising the Install</h3>
 
@@ -41,7 +57,7 @@ $ ./gl-easy-install -q gitolite gitserver sitaram</code></pre>
 
 <h3 id='config_file_and_access_control_rules'>Config File and Access Control Rules</h3>
 
-<p>So once the install is done, you switch to the <code>gitolite-admin</code> repository (placed in your HOME directory) and poke around to see what you got:</p>
+<p>Once the install is done, you switch to the <code>gitolite-admin</code> repository (placed in your HOME directory) and poke around to see what you got:</p>
 
 <pre><code>$ cd ~/gitolite-admin/
 $ ls
@@ -61,7 +77,7 @@ repo testing
 
 <p>Notice that &#8220;sitaram&#8221; (the last argument in the <code>gl-easy-install</code> command you gave earlier) has read-write permissions on the <code>gitolite-admin</code> repository as well as a public key file of the same name.</p>
 
-<p>The config file syntax for Gitolite is <em>quite</em> different from Gitosis. Again, this is liberally documented in <code>conf/example.conf</code>, so we&#8217;ll only mention some highlights here.</p>
+<p>The config file syntax for gitolite is liberally documented in <code>conf/example.conf</code>, so we&#8217;ll only mention some highlights here.</p>
 
 <p>You can group users or repos for convenience. The group names are just like macros; when defining them, it doesn&#8217;t even matter whether they are projects or users; that distinction is only made when you <em>use</em> the &#8220;macro&#8221;.</p>
 
@@ -94,7 +110,7 @@ repo testing
 
 <p>At this point you might be wondering how the access control rules are actually applied, so let&#8217;s go over that briefly.</p>
 
-<p>There are two levels of access control in gitolite. The first is at the repository level; if you have read (or write) access to <em>any</em> ref in the repository, then you have read (or write) access to the repository. This is the only access control that Gitosis had.</p>
+<p>There are two levels of access control in gitolite. The first is at the repository level; if you have read (or write) access to <em>any</em> ref in the repository, then you have read (or write) access to the repository.</p>
 
 <p>The second level, applicable only to &#8220;write&#8221; access, is by branch or tag within a repository. The username, the access being attempted (<code>W</code> or <code>+</code>), and the refname being updated are known. The access rules are checked in order of appearance in the config file, looking for a match for this combination (but remember that the refname is regex-matched, not merely string-matched). If a match is found, the push succeeds. A fallthrough results in access being denied.</p>
 
@@ -131,7 +147,7 @@ repo testing
 
 <p>This would normally cause the same branch name clutter as in a centralised VCS, plus setting up permissions for this becomes a chore for the admin.</p>
 
-<p>Gitolite lets you define a &#8220;personal&#8221; or &#8220;scratch&#8221; namespace prefix for each developer (for example, <code>refs/personal/&lt;devname&gt;/*</code>), with full permissions for that dev only, and read access for everyone else. Just choose a verbose install and set the <code>$PERSONAL</code> variable in the &#8220;rc&#8221; file to <code>refs/personal</code>. That&#8217;s all; it&#8217;s pretty much fire and forget as far as the admin is concerned, even if there is constant churn in the project team composition.</p>
+<p>Gitolite lets you define a &#8220;personal&#8221; or &#8220;scratch&#8221; namespace prefix for each developer (for example, <code>refs/personal/&lt;devname&gt;/*</code>); see the &#8220;personal branches&#8221; section in <code>doc/3-faq-tips-etc.mkd</code> for details.</p>
 
 <h3 id='wildcard_repositories'>&#8220;Wildcard&#8221; repositories</h3>
 
@@ -139,27 +155,29 @@ repo testing
 
 <h3 id='other_features'>Other Features</h3>
 
-<p>We&#8217;ll round off this discussion with a bunch of other features, all of which are described in great detail in the &#8220;faqs, tips, etc&#8221; document.</p>
+<p>We&#8217;ll round off this discussion with a sampling of other features, all of which, and many more, are described in great detail in the &#8220;faqs, tips, etc&#8221; and other documents.</p>
 
 <p><strong>Logging</strong>: Gitolite logs all successful accesses. If you were somewhat relaxed about giving people rewind permissions (<code>RW+</code>) and some kid blew away &#8220;master&#8221;, the log file is a life saver, in terms of easily and quickly finding the SHA that got hosed.</p>
 
 <p><strong>Git outside normal PATH</strong>: One extremely useful convenience feature in gitolite is support for git installed outside the normal <code>$PATH</code> (this is more common than you think; some corporate environments or even some hosting providers refuse to install things system-wide and you end up putting them in your own directories). Normally, you are forced to make the <em>client-side</em> git aware of this non-standard location of the git binaries in some way. With gitolite, just choose a verbose install and set <code>$GIT_PATH</code> in the &#8220;rc&#8221; files. No client-side changes are required after that :-)</p>
 
-<p><strong>Access rights reporting</strong>: Another convenient feature is what happens when you try and just ssh to the server. Older versions of gitolite used to complain about the <code>SSH_ORIGINAL_COMMAND</code> environment variable being empty (see the ssh documentation if interested). Now Gitolite comes up with something like this:</p>
+<p><strong>Access rights reporting</strong>: Another convenient feature is what happens when you try and just ssh to the server. Gitolite shows you what repos you have access to, and what that access may be. Here&#8217;s an example:</p>
 
-<pre><code>hello sitaram, the gitolite version here is v0.90-9-g91e1e9f
-you have the following permissions:
-  R     anu-wsd
-  R     entrans
-  R  W  git-notes
-  R  W  gitolite
-  R  W  gitolite-admin
-  R     indic_web_input
-  R     shreelipi_converter</code></pre>
+<pre><code>    hello sitaram, the gitolite version here is v1.5.4-19-ga3397d4
+    the gitolite config gives you the following access:
+         R     anu-wsd
+         R     entrans
+         R  W  git-notes
+         R  W  gitolite
+         R  W  gitolite-admin
+         R     indic_web_input
+         R     shreelipi_converter</code></pre>
 
 <p><strong>Delegation</strong>: For really large installations, you can delegate responsibility for groups of repositories to various people and have them manage those pieces independently. This reduces the load on the main admin, and makes him less of a bottleneck. This feature has its own documentation file in the <code>doc/</code> directory.</p>
 
 <p><strong>Gitweb support</strong>: Gitolite supports gitweb in several ways. You can specify which repos are visible via gitweb. You can set the &#8220;owner&#8221; and &#8220;description&#8221; for gitweb from the gitolite config file. Gitweb has a mechanism for you to implement access control based on HTTP authentication, so you can make it use the &#8220;compiled&#8221; config file that gitolite produces, which means the same access control rules (for read access) apply for gitweb and gitolite.</p>
+
+<p><strong>Mirroring</strong>: Gitolite can help you maintain multiple mirrors, and switch between them easily if the primary server goes down.</p>
 
 <div id='nav'>
 <a href='ch4-7.html'>prev</a> | <a href='ch4-9.html'>next</a>

@@ -65,7 +65,11 @@ $ rm -Rf .git/refs/remotes/tags</code></pre>
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
 
-<p>Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Because you want all your branches and tags to go up, you can run this:</p>
+<p>Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Here is an example of adding your server as a remote:</p>
+
+<pre><code>$ git remote add origin git@my-git-server:myrepository.git</code></pre>
+
+<p>Because you want all your branches and tags to go up, you can now run this:</p>
 
 <pre><code>$ git push origin --all</code></pre>
 

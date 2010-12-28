@@ -1,36 +1,36 @@
 ---
 layout: translation
-title: Pro Git 8.2 Git and Other Systems Migrating to Git
+title: Pro Git 8.2 Git et les autres systèmes Migrer sur Git
 ---
-<h2 id='migrating_to_git'>Migrating to Git</h2>
+<h2 id='migrer_sur_git'>Migrer sur Git</h2>
 
-<p>If you have an existing codebase in another VCS but you’ve decided to start using Git, you must migrate your project one way or another. This section goes over some importers that are included with Git for common systems and then demonstrates how to develop your own custom importer.</p>
+<p>Si vous avez une base de code dans un autre VCS et que vous avez décidé d&#8217;utiliser Git, vous devez migrer votre projet d&#8217;une manière ou d&#8217;une autre. Ce chapitre traite d&#8217;outils d&#8217;import inclus dans Git avec des systèmes communs et démontre comment développer votre propre outil.</p>
 
-<h3 id='importing'>Importing</h3>
+<h3 id='importer'>Importer</h3>
 
-<p>You’ll learn how to import data from two of the bigger professionally used SCM systems — Subversion and Perforce — both because they make up the majority of users I hear of who are currently switching, and because high-quality tools for both systems are distributed with Git.</p>
+<p>Nous allons détailler la manière d&#8217;importer des données à partir de deux des plus grands systèmes SCM utilisés en milieu professionnel, Subversion et Perforce, pour les raisons combinées qu&#8217;ils regroupent la majorité des utilisateurs que je connais migrer vers Git et que des outils de grande qualité pour ces deux systèmes sont distribués avec Git.</p>
 
 <h3 id='subversion'>Subversion</h3>
 
-<p>If you read the previous section about using <code>git svn</code>, you can easily use those instructions to <code>git svn clone</code> a repository; then, stop using the Subversion server, push to a new Git server, and start using that. If you want the history, you can accomplish that as quickly as you can pull the data out of the Subversion server (which may take a while).</p>
+<p>Si vous avez lu la section précédente sur l&#8217;utilisation de <code>git svn</code>, vous pouvez facilement utiliser ces instructions pour réaliser un <code>git svn clone</code> du dépôt. Ensuite, arrêtez d&#8217;utiliser le serveur Subversion, poussez sur un nouveau serveur Git et commencez à l&#8217;utiliser. Si vous voulez l&#8217;historique, vous pouvez l&#8217;obtenir aussi rapidement que vous pourrez tirer les données du serveur Subversion (ce qui peut prendre un certain temps).</p>
 
-<p>However, the import isn’t perfect; and because it will take so long, you may as well do it right. The first problem is the author information. In Subversion, each person committing has a user on the system who is recorded in the commit information. The examples in the previous section show <code>schacon</code> in some places, such as the <code>blame</code> output and the <code>git svn log</code>. If you want to map this to better Git author data, you need a mapping from the Subversion users to the Git authors. Create a file called <code>users.txt</code> that has this mapping in a format like this:</p>
+<p>Cependant, l&#8217;import n&#8217;est pas parfait ; et comme cela prend autant de temps, autant le faire bien. Le premier problème est l&#8217;information d&#8217;auteur. Dans Subversion, chaque personne qui valide dispose d&#8217;un compte sur le système qui est enregistré dans l&#8217;information de validation. Les exemples de la section précédente montrent <code>schacon</code> à certains endroits, tels que la sortie de <code>blame</code> ou de <code>git svn log</code>. Si vous voulez transposer ces données vers des données d&#8217;auteur au format Git, vous avez besoin d&#8217;une correspondance entre les utilisateurs Subversion et les auteurs Git. Créez un fichier appelé <code>users.txt</code> contenant cette équivalence dans le format suivant :</p>
 
 <pre><code>schacon = Scott Chacon &lt;schacon@geemail.com&gt;
 selse = Someo Nelse &lt;selse@geemail.com&gt;</code></pre>
 
-<p>To get a list of the author names that SVN uses, you can run this:</p>
+<p>Pour récupérer la liste des noms d&#8217;auteurs utilisés par SVN, vous pouvez utiliser la ligne suivante :</p>
 
 <pre><code>$ svn log --xml | grep author | sort -u | perl -pe &#39;s/.&gt;(.?)&lt;./$1 = /&#39;</code></pre>
 
-<p>That gives you the log output in XML format — you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with <code>grep</code>, <code>sort</code>, and <code>perl</code> installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.</p>
+<p>Cela génère une sortie au format XML — vous pouvez visualiser les auteurs, créer une liste unique puis éliminer l&#8217;XML. Évidemment, cette ligne ne fonctionne que sur une machine disposant des commandes <code>grep</code>, <code>sort</code> et <code>perl</code>. Ensuite, redirigez votre sortie dans votre fichier users.txt pour pouvoir y ajouter en correspondance les données équivalentes Git.</p>
 
-<p>You can provide this file to <code>git svn</code> to help it map the author data more accurately. You can also tell <code>git svn</code> not to include the metadata that Subversion normally imports, by passing <code>--no-metadata</code> to the <code>clone</code> or <code>init</code> command. This makes your <code>import</code> command look like this:</p>
+<p>Vous pouvez alors fournir ce fichier à <code>git svn</code> pour l&#8217;aider à convertir les données d&#8217;auteur plus précisément. Vous pouvez aussi indiquer à <code>git svn</code> de ne pas inclure les métadonnées que Subversion importe habituellement en passant l&#8217;option <code>--no-metadata</code> à la commande <code>clone</code> ou <code>init</code>. Au final, votre commande d&#8217;import ressemble à ceci :</p>
 
-<pre><code>$ git-svn clone http://my-project.googlecode.com/svn/ \
+<pre><code>$ git-svn clone http://mon-projet.googlecode.com/svn/ \
       --authors-file=users.txt --no-metadata -s my_project</code></pre>
 
-<p>Now you should have a nicer Subversion import in your <code>my_project</code> directory. Instead of commits that look like this</p>
+<p>Maintenant, l&#8217;import depuis Subversion dans le répertoire <code>my_project</code> est plus présentable. En lieu et place de commits qui ressemblent à ceci :</p>
 
 <pre><code>commit 37efa680e8473b615de980fa935944215428a35a
 Author: schacon &lt;schacon@4c93b258-373f-11de-be05-5f7a86268029&gt;
@@ -41,7 +41,7 @@ Date:   Sun May 3 00:12:22 2009 +0000
     git-svn-id: https://my-project.googlecode.com/svn/trunk@94 4c93b258-373f-11de-
     be05-5f7a86268029</code></pre>
 
-<p>they look like this:</p>
+<p>les commits ressemblent à ceci :</p>
 
 <pre><code>commit 03a8785f44c8ea5cdb0e8834b7c8e6c469be2ff2
 Author: Scott Chacon &lt;schacon@geemail.com&gt;
@@ -49,27 +49,27 @@ Date:   Sun May 3 00:12:22 2009 +0000
 
     fixed install - go to trunk</code></pre>
 
-<p>Not only does the Author field look a lot better, but the <code>git-svn-id</code> is no longer there, either.</p>
+<p>Non seulement le champ auteur a meilleure mine, mais de plus le champ <code>git-svn-id</code> a disparu.</p>
 
-<p>You need to do a bit of <code>post-import</code> cleanup. For one thing, you should clean up the weird references that <code>git svn</code> set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.</p>
+<p>Il est encore nécessaire de faire un peu de ménage <code>post-import</code>. Déjà, vous devriez nettoyer les références bizarres que <code>git svn</code> crée. Premièrement, déplacez les balises pour qu&#8217;elles soient de vraies balises plutôt que des branches distantes étranges, ensuite déplacez le reste des branches pour qu&#8217;elles deviennent locales.</p>
 
-<p>To move the tags to be proper Git tags, run</p>
+<p>Pour déplacer les balises et en faire de vraies balises Git, lancez</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/tags/* .git/refs/tags/
 $ rm -Rf .git/refs/remotes/tags</code></pre>
 
-<p>This takes the references that were remote branches that started with <code>tag/</code> and makes them real (lightweight) tags.</p>
+<p>Cela récupère les références déclarées comme branches distantes commençant par <code>tags/</code> et les transforme en vraies balises (légères).</p>
 
-<p>Next, move the rest of the references under <code>refs/remotes</code> to be local branches:</p>
+<p>Ensuite, déplacez le reste des références sous <code>refs/remotes</code> en branches locales :</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
 
-<p>Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Because you want all your branches and tags to go up, you can run this:</p>
+<p>À présent, toutes les vieilles branches sont des vraies branches Git et toutes les vieilles balises sont de vraies balises Git. La dernière activité consiste à ajouter votre nouveau serveur Git comme serveur distant et à y pousser votre projet transformé. Pour pousser tout, y compris branches et balises, lancez :</p>
 
 <pre><code>$ git push origin --all</code></pre>
 
-<p>All your branches and tags should be on your new Git server in a nice, clean import.</p>
+<p>Toutes vos données, branches et tags sont à présent disponibles sur le serveur Git comme import propre et naturel.</p>
 
 <h3 id='perforce'>Perforce</h3>
 

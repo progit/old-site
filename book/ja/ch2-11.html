@@ -1,0 +1,212 @@
+---
+layout: translation
+title: Pro Git 2.11 Git の基本 タグ
+---
+<h2 id='id47'>タグ</h2>
+
+<p>多くの VCS と同様に Git にもタグ機能があり、歴史上の重要なポイントに印をつけることができます。一般に、この機能は (バージョン 1.0 などの) リリースポイントとして使われています。このセクションでは、既存のタグ一覧の取得や新しいタグの作成、さまざまなタグの形式などについて扱います。</p>
+
+<h3 id='id48'>タグの一覧表示</h3>
+
+<p>Git で既存のタグの一覧を表示するのは簡単で、単に <code>git tag</code> と打ち込むだけです。</p>
+
+<pre><code>$ git tag
+v0.1
+v1.3</code></pre>
+
+<p>このコマンドは、タグをアルファベット順に表示します。この表示順に深い意味はありません。</p>
+
+<p>パターンを指定してタグを検索することもできます。Git のソースリポジトリを例にとると、240 以上のタグが登録されています。その中で 1.4.2 系のタグのみを見たい場合は、このようにします。</p>
+
+<pre><code>$ git tag -l &#39;v1.4.2.*&#39;
+v1.4.2.1
+v1.4.2.2
+v1.4.2.3
+v1.4.2.4</code></pre>
+
+<h3 id='id49'>タグの作成</h3>
+
+<p>Git のタグには、軽量 (lightweight) 版と注釈付き (annotated) 版の二通りがあります。軽量版のタグは、変更のないブランチのようなものです。特定のコミットに対する単なるポインタでしかありません。しかし注釈付きのタグは、Git データベース内に完全なオブジェクトとして格納されます。チェックサムが付き、タグを作成した人の名前・メールアドレス・作成日時・タグ付け時のメッセージなども含まれます。また、署名をつけて GNU Privacy Guard (GPG) で検証することもできます。一般的には、これらの情報を含められる注釈付きのタグを使うことをおすすめします。しかし、一時的に使うだけのタグである場合や何らかの理由で情報を含めたくない場合は、軽量版のタグも使用可能です。</p>
+
+<h3 id='id50'>注釈付きのタグ</h3>
+
+<p>Git では、注釈付きのタグをシンプルな方法で作成できます。もっとも簡単な方法は、<code>tag</code> コマンドの実行時に <code>-a</code> を指定することです。</p>
+
+<pre><code>$ git tag -a v1.4 -m &#39;my version 1.4&#39;
+$ git tag
+v0.1
+v1.3
+v1.4</code></pre>
+
+<p><code>-m</code> で、タグ付け時のメッセージを指定します。これはタグとともに格納されます。注釈付きタグの作成時にメッセージを省略すると、エディタが立ち上がるのでそこでメッセージを記入します。</p>
+
+<p>タグのデータとそれに関連づけられたコミットを見るには <code>git show</code> コマンドを使用します。</p>
+
+<pre><code>$ git show v1.4
+tag v1.4
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 14:45:11 2009 -0800
+
+my version 1.4
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>タグ付けした人の情報とその日時、そして注釈メッセージを表示したあとにコミットの情報が続きます。</p>
+
+<h3 id='id51'>署名付きのタグ</h3>
+
+<p>GPG 秘密鍵を持っていれば、タグに署名をすることができます。その場合は <code>-a</code> の場合に <code>-s</code> を指定すればいいだけです。</p>
+
+<pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
+You need a passphrase to unlock the secret key for
+user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
+1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
+
+<p>このタグに対して <code>git show</code> を実行すると、あなたの GPG 署名が表示されます。</p>
+
+<pre><code>$ git show v1.5
+tag v1.5
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:22:20 2009 -0800
+
+my signed 1.5 tag
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (Darwin)
+
+iEYEABECAAYFAkmQurIACgkQON3DxfchxFr5cACeIMN+ZxLKggJQf0QYiQBwgySN
+Ki0An2JeAVUCAiJ7Ox6ZEtK+NvZAj82/
+=WryJ
+-----END PGP SIGNATURE-----
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>タグの署名を検証する方法については後ほど説明します。</p>
+
+<h3 id='id52'>軽量版のタグ</h3>
+
+<p>コミットにタグをつけるもうひとつの方法が、軽量版のタグです。これは基本的に、コミットのチェックサムだけを保持するもので、それ以外の情報は含まれません。軽量版のタグを作成するには <code>-a</code>、<code>-s</code> あるいは <code>-m</code> といったオプションをつけずにコマンドを実行します。</p>
+
+<pre><code>$ git tag v1.4-lw
+$ git tag
+v0.1
+v1.3
+v1.4
+v1.4-lw
+v1.5</code></pre>
+
+<p>このタグに対して <code>git show</code> を実行しても、先ほどのような追加情報は表示されません。単に、対応するコミットの情報を表示するだけです。</p>
+
+<pre><code>$ git show v1.4-lw
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<h3 id='id53'>タグの検証</h3>
+
+<p>署名付きのタグを検証するには <code>git tag -v [tag-name]</code> を使用します。このコマンドは、GPG を使って署名を検証します。これを正しく実行するには、署名者の公開鍵があなたの鍵リングに含まれている必要があります。</p>
+
+<pre><code>$ git tag -v v1.4.2.1
+object 883653babd8ee7ea23e6a5c392bb739348b1eb61
+type commit
+tag v1.4.2.1
+tagger Junio C Hamano &lt;junkio@cox.net&gt; 1158138501 -0700
+
+GIT 1.4.2.1
+
+Minor fixes since 1.4.2, including git-mv and git-http with alternates.
+gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Good signature from &quot;Junio C Hamano &lt;junkio@cox.net&gt;&quot;
+gpg:                 aka &quot;[jpeg image of size 1513]&quot;
+Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A</code></pre>
+
+<p>署名者の公開鍵を持っていない場合は、このようなメッセージが表示されます。</p>
+
+<pre><code>gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Can&#39;t check signature: public key not found
+error: could not verify the tag &#39;v1.4.2.1&#39;</code></pre>
+
+<h3 id='id54'>後からのタグ付け</h3>
+
+<p>過去にさかのぼってコミットにタグ付けすることもできます。仮にあなたのコミットの歴史が次のようなものであったとしましょう。</p>
+
+<pre><code>$ git log --pretty=oneline
+15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch &#39;experiment&#39;
+a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
+0d52aaab4479697da7686c15f77a3d64d9165190 one more thing
+6d52a271eda8725415634dd79daabbc4d9b6008e Merge branch &#39;experiment&#39;
+0b7434d86859cc7b8c3d5e1dddfed66ff742fcbc added a commit function
+4682c3261057305bdd616e23b64b0857d832627b added a todo file
+166ae0c4d3f420721acbb115cc33848dfcc2121a started write support
+9fceb02d0ae598e95dc970b74767f19372d61af8 updated rakefile
+964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
+8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme</code></pre>
+
+<p>今になって、このプロジェクトに v1.2 のタグをつけるのを忘れていたことに気づきました。本来なら &#8220;updated rakefile&#8221; のコミットにつけておくべきだったものです。しかし今からでも遅くありません。特定のコミットにタグをつけるには、そのコミットのチェックサム (あるいはその一部) をコマンドの最後に指定します。</p>
+
+<pre><code>$ git tag -a v1.2 9fceb02</code></pre>
+
+<p>これで、そのコミットにタグがつけられたことが確認できます。</p>
+
+<pre><code>$ git tag 
+v0.1
+v1.2
+v1.3
+v1.4
+v1.4-lw
+v1.5
+
+$ git show v1.2
+tag v1.2
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:32:16 2009 -0800
+
+version 1.2
+commit 9fceb02d0ae598e95dc970b74767f19372d61af8
+Author: Magnus Chacon &lt;mchacon@gee-mail.com&gt;
+Date:   Sun Apr 27 20:43:35 2008 -0700
+
+    updated rakefile
+...</code></pre>
+
+<h3 id='id55'>タグの共有</h3>
+
+<p>デフォルトでは、<code>git push</code> コマンドはタグ情報をリモートに送りません。タグを作ったら、タグをリモートサーバーにプッシュするよう明示する必要があります。その方法は、リモートブランチを共有するときと似ています。<code>git push origin [tagname]</code> を実行するのです。</p>
+
+<pre><code>$ git push origin v1.5
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+* [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>多くのタグを一度にプッシュしたい場合は、<code>git push</code> コマンドのオプション <code>--tags</code> を使用します。これは、手元にあるタグのうちまだリモートサーバーに存在しないものをすべて転送します。</p>
+
+<pre><code>$ git push origin --tags
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+ * [new tag]         v0.1 -&gt; v0.1
+ * [new tag]         v1.2 -&gt; v1.2
+ * [new tag]         v1.4 -&gt; v1.4
+ * [new tag]         v1.4-lw -&gt; v1.4-lw
+ * [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>これで、誰か他の人がリポジトリのクローンやプルを行ったときにすべてのタグを取得できるようになりました。</p>
+
+<div id='nav'>
+<a href='ch2-10.html'>prev</a> | <a href='ch2-12.html'>next</a>
+</div>
