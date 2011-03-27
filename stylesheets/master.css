@@ -11,14 +11,6 @@ img.right {
   margin: 15px;
 }
 
-a {
-  color: #3E423A;
-}
-
-a:visited {
-  color: #6C6E58;
-}
-
 #wrapper {
   width: 50em;
   margin: 2em auto 0;

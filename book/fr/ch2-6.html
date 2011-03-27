@@ -26,7 +26,7 @@ v1.4.2.4</code></pre>
 
 <h3 id='crer_des_balises'>Créer des balises</h3>
 
-<p>Git utilise deux types principaux de balises : légères et annotées. Une balise légère ressemble beaucoup à une branche qui ne change pas — c&#8217;est juste un pointeur sur un commit spécifique. Les balises annotées, par contre sont stockées en tant qu&#8217;objets à part entière dans la base de données de Git. Elles ont une somme de contrôle, contiennent le nom et l&#8217;adresse e-mail du créateur, la date, un message de balisage et peuvent être signées et vérifiées avec GNU Privacy Guard (GPG). Il est généralement recommandé de créer des balises annotées pour générer toute cette information mais si la balise doit rester temporaire ou l&#8217;information supplémentaire n&#8217;est pas désirée, il reste toujours les balises légères.</p>
+<p>Git utilise deux types principaux de balises : légères et annotées. Une balise légère ressemble beaucoup à une branche qui ne change pas, c&#8217;est juste un pointeur sur un commit spécifique. Les balises annotées, par contre sont stockées en tant qu&#8217;objets à part entière dans la base de données de Git. Elles ont une somme de contrôle, contiennent le nom et l&#8217;adresse e-mail du créateur, la date, un message de balisage et peuvent être signées et vérifiées avec GNU Privacy Guard (GPG). Il est généralement recommandé de créer des balises annotées pour générer toute cette information mais si la balise doit rester temporaire ou l&#8217;information supplémentaire n&#8217;est pas désirée, il reste toujours les balises légères.</p>
 
 <h3 id='les_balises_annotes'>Les balises annotées</h3>
 
@@ -40,7 +40,7 @@ v1.4</code></pre>
 
 <p>L&#8217;option <code>-m</code> permet de spécifier le message de balisage qui sera stocké avec la balise. Si vous ne spécifiez pas de message en ligne pour une balise annotée, Git lance votre éditeur pour pouvoir le saisir.</p>
 
-<p>Vous pouvez visualiser les données de la balise au côté du commit qui a été marqué en utilisant la commande <code>git show</code> :</p>
+<p>Vous pouvez visualiser les données de la balise à côté du commit qui a été marqué en utilisant la commande <code>git show</code> :</p>
 
 <pre><code>$ git show v1.4
 tag v1.4
@@ -92,7 +92,7 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
 <h3 id='les_balises_lgres'>Les balises légères</h3>
 
-<p>Une autre manière de baliser les commits est d&#8217;utiliser les balises légères. Celles-ci se réduisent à stocker la somme de contrôle d&#8217;un commit dans un fichier — aucune autre information n&#8217;est conservée. Pour créer une balise légère, il suffit de n&#8217;utiliser aucune des option <code>-a</code>, <code>-s</code> ou <code>-m</code> :</p>
+<p>Une autre manière de baliser les commits est d&#8217;utiliser les balises légères. Celles-ci se réduisent à stocker la somme de contrôle d&#8217;un commit dans un fichier, aucune autre information n&#8217;est conservée. Pour créer une balise légère, il suffit de n&#8217;utiliser aucune des option <code>-a</code>, <code>-s</code> ou <code>-m</code> :</p>
 
 <pre><code>$ git tag v1.4-lw
 $ git tag

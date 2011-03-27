@@ -1,40 +1,40 @@
 ---
 layout: translation
-title: Pro Git 1.1 Per iniziare About Version Control
+title: Pro Git 1.1 Per iniziare Il Controllo di Versione
 ---
-<h2 id='about_version_control'>About Version Control</h2>
+<h2 id='il_controllo_di_versione'>Il Controllo di Versione</h2>
 
-<p>What is version control, and why should you care? Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later. For the examples in this book you will use software source code as the files being version controlled, though in reality you can do this with nearly any type of file on a computer.</p>
+<p>Cos&#8217;è il controllo di versione, e perché si dovrebbe usare? Il controllo di versione è un sistema che registra i cambiamenti ad un file o ad una serie di file nel tempo, così da poter richiamare una versione specifica successivamente. Per gli esempi in questo libro, useremo i file del codice sorgente di un software per controllarne la versione, anche se in realtà si può fare con quasi ogni tipo di file sul computer.</p>
 
-<p>If you are a graphic or web designer and want to keep every version of an image or layout (which you would most certainly want to), a Version Control System (VCS) is a very wise thing to use. It allows you to revert files back to a previous state, revert the entire project back to a previous state, compare changes over time, see who last modified something that might be causing a problem, who introduced an issue and when, and more. Using a VCS also generally means that if you screw things up or lose files, you can easily recover. In addition, you get all this for very little overhead.</p>
+<p>Se sei un grafico o un webdesigner e vuoi tenere tutte le versioni di un&#8217;immagine o di un layout (e sicuramente lo vorrai fare), un Version Control System (VCS) è una cosa saggia da usare. Ti permette di ripristinare i file ad uno stato precedente, ripristinare l&#8217;intero progetto ad uno stato precedente, comparare i cambiamenti nel tempo, vedere chi ha modificato cosa che può aver causato un problema, chi ha introdotto un problema e quando, e altro ancora. Usare un VCS, in generale, significa che se si fanno dei pasticci o si perdono dei file, si possono facilmente ripristinare. In aggiunta, si ottiene tutto questo con un piccolo dispendio di risorse.</p>
 
-<h3 id='local_version_control_systems'>Local Version Control Systems</h3>
+<h3 id='sistema_di_controllo_di_versione_locale'>Sistema di Controllo di Versione locale</h3>
 
-<p>Many people’s version-control method of choice is to copy files into another directory (perhaps a time-stamped directory, if they’re clever). This approach is very common because it is so simple, but it is also incredibly error prone. It is easy to forget which directory you’re in and accidentally write to the wrong file or copy over files you don’t mean to.</p>
+<p>Il metodo di controllo di versione scelto da molte persone è di copiare i file in un&#8217;altra directory (magari una directory denominata con la data, se sono furbi). Questo approccio è molto comune perché è molto semplice, ma è anche incredibilmente soggetto ad errori. E&#8217; facile dimenticarsi la directory in cui ci si trova e accidentalmente scrivere sul file sbagliato o copiare i file che non si intendevano copiare.</p>
 
-<p>To deal with this issue, programmers long ago developed local VCSs that had a simple database that kept all the changes to files under revision control (see Figure 1-1).</p>
+<p>Per far fronte a questo problema, i programmatori svilupparono VCS locali che avevano un semplice database che manteneva tutti i cambiamenti dei file sotto controllo di revisione (vedi Figura 1-1).</p>
 
-<p><center><img src="/figures/ch1/18333fig0101-tn.png"></center><br/> Figure 1-1. Local version control diagram.</p>
+<p><center><img src="/figures/ch1/18333fig0101-tn.png"></center><br/> Figura 1-1. Diagramma di controllo di versione locale.</p>
 
-<p>One of the more popular VCS tools was a system called rcs, which is still distributed with many computers today. Even the popular Mac OS X operating system includes the rcs command when you install the Developer Tools. This tool basically works by keeping patch sets (that is, the differences between files) from one change to another in a special format on disk; it can then re-create what any file looked like at any point in time by adding up all the patches.</p>
+<p>Uno dei più popolari strumenti VCS era un sistema chiamato rcs, che è ancora oggi distribuito con alcuni computer. Anche il popolare sistema operativo Mac OS X include il comando rcs quando si installano gli Strumenti di Sviluppo. Semplicemente questo strumento funziona mantenendo una serie di patch (che sono le differenze fra i file) da un cambiamento ad un altro in un formato specifico sul disco; esso può poi ricreare qualsiasi file come se fosse quel file in un determinato momento aggiungendo tutte le patch.</p>
 
-<h3 id='centralized_version_control_systems'>Centralized Version Control Systems</h3>
+<h3 id='sistemi_di_controllo_di_versione_centralizzati'>Sistemi di Controllo di Versione Centralizzati</h3>
 
-<p>The next major issue that people encounter is that they need to collaborate with developers on other systems. To deal with this problem, Centralized Version Control Systems (CVCSs) were developed. These systems, such as CVS, Subversion, and Perforce, have a single server that contains all the versioned files, and a number of clients that check out files from that central place. For many years, this has been the standard for version control (see Figure 1-2).</p>
+<p>Il problema successivo in cui incorsero le persone è che queste hanno bisogno di collaborare con altri sviluppatori su altri sistemi. Per far fronte a questo problema, vennero sviluppati sistemi di controllo di versione centralizzati (Centralized Version Control Systems, CVCS). Questi sistemi, come CVS, Subversion e Perforce, hanno un singolo server che contiene tutte le versioni dei file e un numero di utenti che controllano i file dalla centrale. Per alcuni anni, questo fu lo standard per il controllo di versione (vedi Figura 1-2).</p>
 
-<p><center><img src="/figures/ch1/18333fig0102-tn.png"></center><br/> Figure 1-2. Centralized version control diagram.</p>
+<p><center><img src="/figures/ch1/18333fig0102-tn.png"></center><br/> Figura 1-2. Diagramma controllo di versione centralizzato.</p>
 
-<p>This setup offers many advantages, especially over local VCSs. For example, everyone knows to a certain degree what everyone else on the project is doing. Administrators have fine-grained control over who can do what; and it’s far easier to administer a CVCS than it is to deal with local databases on every client.</p>
+<p>Questa impostazione offre molti vantaggi, specialmente rispetto ai VCS locali. Per esempio, chiunque sa, ad un certo livello, cosa stia facendo un&#8217;altra persona nel progetto. Gli amministratori hanno un controllo preciso su chi può fare cosa; ed è molto più facile amministrare un tale CVCS che un database locale su ogni client.</p>
 
-<p>However, this setup also has some serious downsides. The most obvious is the single point of failure that the centralized server represents. If that server goes down for an hour, then during that hour nobody can collaborate at all or save versioned changes to anything they’re working on. If the hard disk the central database is on becomes corrupted, and proper backups haven’t been kept, you lose absolutely everything—the entire history of the project except whatever single snapshots people happen to have on their local machines. Local VCS systems suffer from this same problem—whenever you have the entire history of the project in a single place, you risk losing everything.</p>
+<p>Tuttavia, questa configurazione ha alcuni gravi lati negativi. La più ovvia è il singolo punto di cedimento che il server centralizzato rappresenta. Se questo va giù per un&#8217;ora, durante questo periodo nessuno può collaborare o salvare le modifiche di versione di qualsiasi cosa su cui sta lavorando. Se il disco rigido del database centrale si danneggia, e non sono state effettuate copie di backup, si perde tutta la storia del progetto, ad eccezione di singoli snapshot (istantanee) fatte dalle persone sulla loro macchina locale. Anche i sistemi locali di VCS soffrono di questo problema-ogni volta che si ha tutta la storia del progetto in un unico posto, si rischia di perdere tutto.</p>
 
-<h3 id='distributed_version_control_systems'>Distributed Version Control Systems</h3>
+<h3 id='sistemi_di_controllo_di_versione_distribuiti'>Sistemi di Controllo di Versione Distribuiti</h3>
 
-<p>This is where Distributed Version Control Systems (DVCSs) step in. In a DVCS (such as Git, Mercurial, Bazaar or Darcs), clients don’t just check out the latest snapshot of the files: they fully mirror the repository. Thus if any server dies, and these systems were collaborating via it, any of the client repositories can be copied back up to the server to restore it. Every checkout is really a full backup of all the data (see Figure 1-3).</p>
+<p>E qui entrano in gioco i Sistemi di Controllo di Versione Distribuiti (Distributed Version Control Systems o DVCS). In un DVCS (come Git, Mercurial, Bazaar o Darcs), i client non solo controllano il recente snapshot dei file: essi fanno una copia completa del repository. In tal modo, se si blocca un server ed i sistemi interagiscono tramite un DVCS, un qualsiasi repository di client può essere copiato sul server e quindi ripristinarlo. Ogni checkout, in realtà, è un backup completo di tutti i dati (vedi Figura 1-3).</p>
 
-<p><center><img src="/figures/ch1/18333fig0103-tn.png"></center><br/> Figure 1-3. Distributed version control diagram.</p>
+<p><center><img src="/figures/ch1/18333fig0103-tn.png"></center><br/> Figura 1-3. Diagramma controllo di versione distribuito.</p>
 
-<p>Furthermore, many of these systems deal pretty well with having several remote repositories they can work with, so you can collaborate with different groups of people in different ways simultaneously within the same project. This allows you to set up several types of workflows that aren’t possible in centralized systems, such as hierarchical models.</p>
+<p>Inoltre, molti di questi sistemi trattano abbastanza bene l&#8217;avere più repository remoti su cui poter lavorare, così si può collaborare con gruppi differenti di persone in modi differenti simultaneamente sullo stesso progetto. Questo ti permette di impostare diversi tipi di flussi di lavoro che non sono possibili in sistemi centralizzati, come i modelli gerarchici.</p>
 
 <div id='nav'>
 <a href='ch1-0.html'>prev</a> | <a href='ch1-2.html'>next</a>

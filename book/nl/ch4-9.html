@@ -16,7 +16,7 @@ title: Pro Git 4.9 Git op de Server Hosted Git
 
 <h3 id='github'>GitHub</h3>
 
-<p>GitHub is een beetje verschillend van de meeste code-beheer pagina&#8217;s in de manier waarop het de projecten een naamruimte geeft. In plaats van dat het primair gebaseerd is op het project, stelt GitHub gebruikers centraal. Dat betekend dat als ik mijn <code>grit</code> project op GitHub beheer, je het niet zult vinden op <code>github.com/grit</code> maar in plaats daarvan op <code>github.com/schacon/grit</code>. Er is geen generieke versie van een project, wat een project toestaat om naadloos van de ene op de andere gebruiker over te gaan als de eerste auteur het project verlaat.</p>
+<p>GitHub verschilt een beetje van de meeste code-beheer pagina&#8217;s in de manier waarop het de projecten een naamruimte geeft. In plaats dat het primair gebaseerd is op het project, stelt GitHub gebruikers centraal. Dat betekent dat als ik mijn <code>grit</code> project op GitHub beheer, je het niet zult vinden op <code>github.com/grit</code> maar in plaats daarvan op <code>github.com/schacon/grit</code>. Er is geen generieke versie van een project, wat een project toestaat om naadloos van de ene op de andere gebruiker over te gaan als de eerste auteur het project verlaat.</p>
 
 <p>GitHub is ook een commercieel bedrijf dat geld vraagt voor accounts die privé repositories beheren, maar iedereen kan snel een gratis account krijgen om zoveel open source projecten als ze willen te beheren. We zullen er snel doorheen lopen hoe je dat doet.</p>
 
@@ -30,7 +30,7 @@ title: Pro Git 4.9 Git op de Server Hosted Git
 
 <p><center><img src="/figures/ch4/18333fig0403-tn.png"></center><br/> Figuur 4-3. Het GitHub gebruikers inteken formulier.</p>
 
-<p>Als je hem beschikbaar hebt, is dit een goed moment om je publieke SSH sleutel ook toe te voegen. We hebben je eerder laten zien hoe je een nieuwe sleutel kunt genereren, in de &#8220;Eenvoudige Instellingen&#8221; sectie. Neem de inhoud van de publieke sleutel van dat paar, en plak het in het SSH publieke sleutel tekstveld. Door op de &#8220;explain ssh keys&#8221; link te klikken wordt je naar gedetaileerde instructies gebracht die je vertellen hoe dit te doen op alle veelgebruikte besturingssystemen. Door op de &#8220;I agree, sign me up&#8221; knop te klikken wordt je naar je nieuwe gebruikers dashboard gebracht (zie Figuur 4-4).</p>
+<p>Als je account beschikbaar hebt, is dit een goed moment om je publieke SSH sleutel ook toe te voegen. We hebben je eerder laten zien hoe je een nieuwe sleutel kunt genereren, in de &#8220;Eenvoudige Instellingen&#8221; sectie. Neem de inhoud van de publieke sleutel van dat paar, en plak het in het SSH publieke sleutel tekstveld. Door op de &#8220;explain ssh keys&#8221; link te klikken wordt je naar gedetaileerde instructies gebracht die je vertellen hoe dit te doen op alle veelgebruikte besturingssystemen. Door op de &#8220;I agree, sign me up&#8221; knop te klikken wordt je naar je nieuwe gebruikers dashboard gebracht (zie Figuur 4-4).</p>
 
 <p><center><img src="/figures/ch4/18333fig0404-tn.png"></center><br/> Figuur 4-4. Het GitHub gebruikers dashboard.</p>
 
@@ -71,7 +71,7 @@ $ git push origin master</code></pre>
 
 <h3 id='importeren_vanuit_subversion'>Importeren vanuit Subversion</h3>
 
-<p>Als je een bestaande publiek Subversion project hebt dat je in Git wilt impoteren, kan GitHub dat vaak voor je doen. Aan de onderkant van de instructies pagina staat een link naar een Subversion import. Als je die aanklikt, zie je een formulier met informatie over het importeer proces een een tekstveld waar je de URL van je publieke Subversion project in kan plakken (zie Figuur 4-9).</p>
+<p>Als je een bestaande publiek Subversion project hebt dat je in Git wilt importeren, kan GitHub dat vaak voor je doen. Aan de onderkant van de instructies pagina staat een link naar een Subversion import. Als je die aanklikt, zie je een formulier met informatie over het importeer proces een een tekstveld waar je de URL van je publieke Subversion project in kan plakken (zie Figuur 4-9).</p>
 
 <p><center><img src="/figures/ch4/18333fig0409-tn.png"></center><br/> Figuur 4-9. Subversion importeer interface.</p>
 
@@ -89,7 +89,7 @@ $ git push origin master</code></pre>
 
 <p><center><img src="/figures/ch4/18333fig0411-tn.png"></center><br/> Figuur 4-11. Een medewerker aan je project toevoegen.</p>
 
-<p>Als je klaar bent met medewerkers toevoegen, dan zou je een lijst met ze moeten zien in het Repository Collaborators veld (zie Figuur 4-12).</p>
+<p>Als je klaar bent met medewerkers toevoegen, dan zou je een lijst met de namen moeten zien in het Repository Collaborators veld (zie Figuur 4-12).</p>
 
 <p><center><img src="/figures/ch4/18333fig0412-tn.png"></center><br/> Figuur 4-12. Een lijst met medewerkers aan je project.</p>
 
@@ -101,11 +101,11 @@ $ git push origin master</code></pre>
 
 <p><center><img src="/figures/ch4/18333fig0413-tn.png"></center><br/> Figuur 4-13. Een GitHub project hoofpagina.</p>
 
-<p>Als mensen je project bezoeken, zien ze deze pagina. Het bevat tabs naar de verschillende aspecten vna je projecten. De Commits tab laat een lijst van commits in omgekeerde chronologische volgorde zien, vergelijkbaar met de output van het <code>git log</code> commando. De Network tab toont alle mensen die je project hebben geforked en bijgedragen hebben. De Downloads tab staat je toe project binaries te uploaden en naar tarballs en gezipte versies van ieder getagged punt in je project te linken. De Wiki tab voorziet in een wiki waar je documentatie kunt schrijven of andere informatie over je project. De Graphs tab heeft wat contributie visualisaties en statistieken over je project. De hoofd Source tab waarop je binnen komt toont de inhoud van de hoofdmap van je project en toont automatisch het README bestand eronder als je er een hebt. Deze tab toont ook een veld met de laatste commit informatie.</p>
+<p>Als mensen je project bezoeken, zien ze deze pagina. Het bevat tabs naar de verschillende aspecten van je projecten. De Commits tab laat een lijst van commits in omgekeerde chronologische volgorde zien, vergelijkbaar met de output van het <code>git log</code> commando. De Network tab toont alle mensen die je project hebben geforked en bijgedragen hebben. De Downloads tab staat je toe project binaries te uploaden en naar tarballs en gezipte versies van ieder getagged punt in je project te linken. De Wiki tab voorziet in een wiki waar je documentatie kunt schrijven of andere informatie over je project. De Graphs tab heeft wat contributie visualisaties en statistieken over je project. De hoofd Source tab waarop je binnen komt toont de inhoud van de hoofdmap van je project en toont automatisch het README bestand eronder als je er een hebt. Deze tab toont ook een veld met de laatste commit informatie.</p>
 
 <h3 id='projecten_forken'>Projecten Forken</h3>
 
-<p>Als je aan een bestaand project waarop je geen push toegang hebt wilt bijdragen, dan moedigt GitHub het forken van een project toe. Als je op een project pagina beland, die interessant lijkt en je wilt er een beetje op hacken, dan kun je de &#8220;fork&#8221; knop klikken aan de bovenkant van het project om GitHub dat project te laten kopieeren naar jouw gebruiker zodat je er naar kunt pushen.</p>
+<p>Als je aan een bestaand project waarop je geen push toegang hebt wilt bijdragen, dan moedigt GitHub het forken van een project toe. Als je op een project pagina belandt, die interessant lijkt en je wilt er een beetje op hacken, dan kun je de &#8220;fork&#8221; knop klikken aan de bovenkant van het project om GitHub dat project te laten kopieeren naar jouw gebruiker zodat je er naar kunt pushen.</p>
 
 <p>Op deze manier hoeven projecten zich geen zorgen te maken over het toevoegen van medewerkers om ze push toegang te geven. Mensen kunnen een project forken en ernaar pushen, en de hoofdeigenaar van het project kan die wijzigingen pullen door ze als remotes toe te voegen en hun werk te mergen.</p>
 

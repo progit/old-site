@@ -11,7 +11,7 @@ $ ls
 authorized_keys2  id_dsa       known_hosts
 config            id_dsa.pub</code></pre>
 
-<p>Je bent op zoek naar een aantal bestanden genaamd iets en iets.pub, waarbij het iets meestal zoiets is als <code>id_dsa</code> of <code>id_rsa</code>. Het <code>.pub</code> bestand is je publieke sleutel en het andere bestand is je private sleutel. Als je deze bestanden niet hebt (of als je zelfs geen <code>.ssh</code> map hebt), dan kun je ze aanmaken door een applicatie genaamd <code>ssh-keygen</code> uit te voeren, wat meegeleverd wordt met het SSH pakket op Linux/Mac systemen en meegeleverd wordt met het MSysGit pakket op Windows:</p>
+<p>Je bent op zoek naar een aantal bestanden genaamd iets en iets.pub, waarbij het <code>iets</code> meestal zoiets is als <code>id_dsa</code> of <code>id_rsa</code>. Het <code>.pub</code> bestand is je publieke sleutel en het andere bestand is je private sleutel. Als je deze bestanden niet hebt (of als je zelfs geen <code>.ssh</code> map hebt), dan kun je ze aanmaken door een applicatie genaamd <code>ssh-keygen</code> uit te voeren, wat meegeleverd wordt met het SSH pakket op Linux/Mac systemen en meegeleverd wordt met het MSysGit pakket op Windows:</p>
 
 <pre><code>$ ssh-keygen 
 Generating public/private rsa key pair.
@@ -23,9 +23,9 @@ Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
 The key fingerprint is:
 43:c5:5b:5f:b1:f1:50:43:ad:20:a6:92:6a:1f:9a:3a schacon@agadorlaptop.local</code></pre>
 
-<p>Eerst bevestigd het de lokatie waar je de sleutel wilt opslaan (<code>.ssh/id_rsa</code>), en vervolgens vraagt het tweemaal om een wachtzin, die je leeg kunt laten als je geen wachtwoordt wilt intypen op het moment dat je de sleutel gebruikt.</p>
+<p>Eerst bevestigt het de lokatie waar je de sleutel wilt opslaan (<code>.ssh/id_rsa</code>), en vervolgens vraagt het tweemaal om een wachtzin, die je leeg kunt laten als je geen wachtwoord wilt intypen op het moment dat je de sleutel gebruikt.</p>
 
-<p>Iedere gebruiker die dit doet, moet zijn sleutel sturen naar jou of degene die de Git server beheerd (aangenomen dat je een SSH server gebruikt die publieke sleutels vereist). Het enige dat ze hoeven doen is de inhoud van het <code>.pub</code> bestand kopieeren en e-mailen. De publieke sleutel ziet er ongeveer zo uit:</p>
+<p>Iedere gebruiker die dit doet, moet zijn sleutel sturen naar jou of degene die de Git server beheert (aangenomen dat je een SSH server gebruikt die publieke sleutels vereist). Het enige dat ze hoeven doen is de inhoud van het <code>.pub</code> bestand kopieeren en e-mailen. De publieke sleutel ziet er ongeveer zo uit:</p>
 
 <pre><code>$ cat ~/.ssh/id_rsa.pub 
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU

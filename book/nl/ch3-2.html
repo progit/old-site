@@ -60,7 +60,7 @@ $ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
 <pre><code>$ git checkout master
 Switched to branch &quot;master&quot;</code></pre>
 
-<p>Op dit punt, is je project werkmap precies zoals het was voordat je begon te werken aan probleem #53, en je kunt je concentreren op je snelle reparatie. Dit is een belangrijk punt om te onthouden: Git hersteld je werkmap zodat die eruit ziet als het snapshot van de commit waar de branch die je uitchecked naar wijst. Het voegt toe, verwijderd en wijzigt bestanden automatisch om er zeker van te zijn dat je werkkopie eruit ziet zoals de branch eruit zag toen je er voor het laatst op committe.</p>
+<p>Op dit punt, is je project werkmap precies zoals het was voordat je begon te werken aan probleem #53, en je kunt je concentreren op je snelle reparatie. Dit is een belangrijk punt om te onthouden: Git herstelt je werkmap zodat die eruit ziet als het snapshot van de commit waar de branch die je uitchecked naar wijst. Het voegt toe, verwijdert en wijzigt bestanden automatisch om er zeker van te zijn dat je werkkopie eruit ziet zoals de branch eruit zag toen je er voor het laatst op committe.</p>
 
 <p>Vervolgens heb je een snelle reparatie te doen. Laten we een reparatie branch maken om op te werken totdat het af is (zie Figuur 3-13):</p>
 
@@ -82,7 +82,7 @@ Fast forward
  README |    1 -
  1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
 
-<p>Je zult de uitdrukking &#8220;Fast forward&#8221; zien in die samenvoeging. Omdat de commit waar de branch waar je mee samenvoegde naar wees direct stroomopwaarts was van de commit waar je op zit, zal Git de verwijzing vooruit zetten. Om dat op een andere manier te zeggen, als je een commit probeert samen te voegen met een commit die bereikt kan worden door de historie van eerste commit te volgen, zal Git de dingen vereenvoudigen door de verwijzing vooruit te verplaatsen omdat er geen afwijkend werk is om samen te voegen – dit wordt een &#8220;Fast forward&#8221; genoemd.</p>
+<p>Je zult de uitdrukking &#8220;Fast forward&#8221; zien in die samenvoeging. Omdat de commit van de branch waar je mee samenvoegde direct stroomopwaarts was van de commit waar je op zit, zal Git de verwijzing vooruit zetten. Om dat op een andere manier te zeggen, als je een commit probeert samen te voegen met een commit die bereikt kan worden door de historie van eerste commit te volgen, zal Git de dingen vereenvoudigen door de verwijzing vooruit te verplaatsen omdat er geen afwijkend werk is om samen te voegen – dit wordt een &#8220;Fast forward&#8221; genoemd.</p>
 
 <p>Je wijziging is nu in het snapshot van de commit waar de <code>master</code> branch naar wijst, en je kunt je wijziging uitrollen (zie Figuur 3-14).</p>
 
@@ -104,11 +104,11 @@ $ git commit -a -m &#39;finished the new footer [issue 53]&#39;
 
 <p><center><img src="/figures/ch3/18333fig0315-tn.png"></center><br/> Figuur 3-15. Je iss53 branch kan onafhankelijk vooruit bewegen.</p>
 
-<p>Het is interessant om hier op te merken dan het werk dat je in je snelle reparatie branch gedaan hebt, niet zit in de bestanden van je <code>iss53</code> branch. Als je dat binnen moet halen, dan kun je je <code>master</code> branch in je <code>iss53</code> branch samenvoegen door <code>git merge master</code> uit te voeren, of je kunt wachten met die wijzgingen te integreren totdat je beslist om je <code>iss53</code> branch later in je <code>master</code> binnen te halen.</p>
+<p>Het is interessant om hier op te merken dat het werk dat je in je snelle reparatie branch gedaan hebt, niet zit in de bestanden van je <code>iss53</code> branch. Als je dat binnen moet halen, dan kun je je <code>master</code> branch in je <code>iss53</code> branch samenvoegen door <code>git merge master</code> uit te voeren, of je kunt wachten met die wijzigingen te integreren totdat je beslist om je <code>iss53</code> branch later in je <code>master</code> binnen te halen.</p>
 
 <h3 id='eenvoudig_samenvoegen'>Eenvoudig Samenvoegen</h3>
 
-<p>Stel dat je besloten hebt dat je probleem #53 werk compleet is en klaar bent om samen ta gaan voegen in je <code>master</code> branch. Om dat te doen, zul je je <code>iss53</code> branch samenvoegen zoals je je snelle reparatie branch eerder hebt samengevoegd. Het enige dat je hoeft te doen is de branch uit te checken waar je in wenst samen te voegen en dan het <code>git merge</code> commando uit te voeren:</p>
+<p>Stel dat je besloten hebt dat je probleem #53 werk compleet is en klaar bent om samen te gaan voegen in je <code>master</code> branch. Om dat te doen, zul je je <code>iss53</code> branch samenvoegen zoals je je snelle reparatie branch eerder hebt samengevoegd. Het enige dat je hoeft te doen is de branch uit te checken waar je in wenst samen te voegen en dan het <code>git merge</code> commando uit te voeren:</p>
 
 <pre><code>$ git checkout master
 $ git merge iss53
@@ -122,7 +122,7 @@ Merge made by recursive.
 
 <p>In plaats van de branch verwijzing vooruit te bewegen, maakt Git een nieuw snapshot dat resulteert uit deze drieweg samenvoeging en maakt automatisch een nieuwe commit die daar naar wijst (zie Figuur 3-17). Dit wordt een samenvoegings commit genoemd, en is bijzonder in dat het meer dan één ouder heeft.</p>
 
-<p>Het is de moeite om te vertellen dat Git de beste gezamenlijke voorouder bepaald om te gebruiken als samenvoeg basis; dit is anders dan CVS of Subversion (voor versie 1.5), waarbij de ontwikkelaar die de samenvoeging deed zelf de beste samenvoeg basis moest uitzoeken. Dit zorgt er voor dat samenvoegen in Git een serieus stuk eenvoudiger is dan in deze andere systemen.</p>
+<p>Het is de moeite om te vertellen dat Git de beste gezamenlijke voorouder bepaalt om te gebruiken als samenvoeg basis; dit is anders dan CVS of Subversion (voor versie 1.5), waarbij de ontwikkelaar die de samenvoeging deed zelf de beste samenvoeg basis moest uitzoeken. Dit zorgt er voor dat samenvoegen in Git een serieus stuk eenvoudiger is dan in deze andere systemen.</p>
 
 <p><center><img src="/figures/ch3/18333fig0317-tn.png"></center><br/> Figuur 3-17. Git maakt automatisch een nieuw commit object aan die het samengevoegde werk bevat.</p>
 
@@ -161,7 +161,7 @@ index.html: needs merge
 &lt;/div&gt;
 &gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
 
-<p>Dit betekend dat de versie in HEAD (jouw master branch, omdat dat hetgene was dat je uitgechecked had toen je je samenvoeg commando uitvoerde) is het bovenste gedeelte van dat blok (alles boven de <code>======</code>), terwijl de versie in je <code>iss53</code> branch eruit ziet zoals alles in het onderste gedeelte. Om het conflict op te lossen, moet je één van de twee gedeeltes kiezen of de inhoud zelf samenvoegen. Bijvoorbeeld, je zou dit conflict op kunnen lossten door het hele blok met dit te vervangen:</p>
+<p>Dit betekend dat de versie in HEAD (jouw master branch, omdat dat hetgene was dat je uitgechecked had toen je je samenvoeg commando uitvoerde) is het bovenste gedeelte van dat blok (alles boven de <code>======</code>), terwijl de versie in je <code>iss53</code> branch eruit ziet zoals alles in het onderste gedeelte. Om het conflict op te lossen, moet je één van de twee gedeeltes kiezen of de inhoud zelf samenvoegen. Bijvoorbeeld, je zou dit conflict op kunnen lossen door het hele blok met dit te vervangen:</p>
 
 <pre><code>&lt;div id=&quot;footer&quot;&gt;
 please contact us at email.support@github.com
@@ -180,7 +180,7 @@ Hit return to start merge resolution tool (opendiff):</code></pre>
 
 <p>Als je een ander samenvoeg applicatie wil gebruiken dan de standaard (Git koos <code>opendiff</code> voor me in dit geval, omdat ik het commando uitvoerde op een Mac), dan kun je alle ondersteunde applicaties zien aan de top na &#8220;merge tool candidates&#8221;. Type de naam van de applicatie die je liever gebruikt. In Hoofdstuk 7 zullen we bespreken hoe je deze standaard waarde voor je omgeving kunt wijzigen.</p>
 
-<p>Nadat je de samenvoeg applicatie afsluit, vraagt Git je of de samenvoeging succesvol was. Als je het script verteld dat dat zo is, dan staged het het bestand om het voor je als opgelost te markeren.</p>
+<p>Nadat je de samenvoeg applicatie afsluit, vraagt Git je of de samenvoeging succesvol was. Als je het script vertelt dat dat zo is, dan staged het het bestand om het voor je als opgelost te markeren.</p>
 
 <p>Je kunt <code>git status</code> nogmaals uitvoeren om er zeker van te zijn dat alle conflicten opgelost zijn:</p>
 

@@ -26,7 +26,7 @@ v1.4.2.4</code></pre>
 
 <h3 id='tags_creren'>Tags Crëeren</h3>
 
-<p>Git gebruikt twee soorten tags: lightweight (lichtgewicht) en annotated (beschreven). Een lichtgewicht tag komt overeen met een branch die niet veranderd – het is slechts een wijzer naar een specifieke commit. Beschreven tags daarentegen, zijn als volwaardige objecten in de Git database opgeslagen. Ze worden gechecksummed; bevatten de naam van de tagger, e-mail en datum; hebben een tag boodschap; en kunnen gesigneerd en geverifieerd worden met GNU Privacy Guard (GPG). Het wordt over het algemeen aangeraden om beschreven tags te maken zodat je deze informatie hebt; maar als je een tijdelijke tag wilt of om een of andere reden de andere informatie niet wilt houden, dan zijn er ook lichtgewicht tags.</p>
+<p>Git gebruikt twee soorten tags: lightweight (lichtgewicht) en annotated (beschreven). Een lichtgewicht tag komt overeen met een branch die niet verandert – het is slechts een wijzer naar een specifieke commit. Beschreven tags daarentegen, zijn als volwaardige objecten in de Git database opgeslagen. Ze worden gechecksummed, bevatten de naam van de tagger, e-mail en datum, hebben een tag boodschap, en kunnen gesigneerd en geverifieerd worden met GNU Privacy Guard (GPG). Het wordt over het algemeen aangeraden om beschreven tags te maken zodat je deze informatie hebt; maar als je een tijdelijke tag wilt of om een of andere reden de andere informatie niet wilt houden, dan zijn er ook lichtgewicht tags.</p>
 
 <h3 id='beschreven_tags'>Beschreven Tags</h3>
 
@@ -38,7 +38,7 @@ v0.1
 v1.3
 v1.4</code></pre>
 
-<p>De <code>-m</code> specificeerd een tag boodschap, die bij de tag opgeslagen wordt. Als je geen boodschap voor een beschreven tag opgeeft, dan opent Git je editor zodat je hem in kunt typen.</p>
+<p>De <code>-m</code> specificeert een tag boodschap, die bij de tag opgeslagen wordt. Als je geen boodschap voor een beschreven tag opgeeft, dan opent Git je editor zodat je hem in kunt typen.</p>
 
 <p>Je kunt de tag data zien, samen met de commit die getagged was, door het <code>git show</code> commando te gebruiken:</p>
 
@@ -191,7 +191,7 @@ Total 44 (delta 18), reused 8 (delta 1)
 To git@github.com:schacon/simplegit.git
 * [new tag]         v1.5 -&gt; v1.5</code></pre>
 
-<p>Als je veel tags hebt die je ineens wilt pushen, kun je ook de <code>--tags</code> optie aan het <code>git push</code> commando toevoegen. Dit zal al je tags, die nog niet op de remote server zijn, ineens ernaartoe sturen.</p>
+<p>Als je veel tags hebt die je ineens wilt pushen, kun je ook de <code>--tags</code> optie aan het <code>git push</code> commando toevoegen. Dit zal al je tags, die nog niet op de remote server zijn, in een keer er naartoe sturen.</p>
 
 <pre><code>$ git push origin --tags
 Counting objects: 50, done.

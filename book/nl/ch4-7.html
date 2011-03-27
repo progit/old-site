@@ -6,11 +6,11 @@ title: Pro Git 4.7 Git op de Server Gitosis
 
 <p>De publieke sleutels van alle gebruikers in een <code>authorized_keys</code> bestand bewaren voor toegang werkt slechts korte tijd goed. Als je honderden gebruikers hebt, dan is het moeizaam om dat proces te beheersen. Je moet iedere keer in de server inloggen, en er is geen toegangscontrole – iedereen in het bestand heeft lees- en schrijftoegang op ieder project.</p>
 
-<p>Op dit punt wil je je misschien wenden tot een veelgebruikt software project genaamd Gitosis. Gitosis is in feite een set scripts die je helpen het <code>authorized_keys</code> bestand te beheren en eenvoudige toegangscontrole te implementeren. Het meest interessante gedeelte is dat de gebruikers interface voor deze applicatie om mensen toe te voegen en toegang te bepalen, geen web interface is maar een speciale Git repository. Je stelt de informatie in in dat project; en als je het pushed, dan herconfigureerd Gitosis de server op basis van dat project, wat stoer is.</p>
+<p>Op dit punt wil je je misschien wenden tot een veelgebruikt software project genaamd Gitosis. Gitosis is in feite een set scripts die je helpen het <code>authorized_keys</code> bestand te beheren en eenvoudige toegangscontrole te implementeren. Het meest interessante gedeelte is dat de gebruikers interface voor deze applicatie om mensen toe te voegen en toegang te bepalen, geen web interface is maar een speciale Git repository. Je stelt de informatie in in dat project; en als je het pushed, dan herconfigureert Gitosis de server op basis van dat project, wat stoer is.</p>
 
 <p>Gitosis installeren is niet de makkelijkste taak ooit, maar het is ook niet te moeilijk. Het is het makkelijkst om er een Linux server voor te gebruiken – deze voorbeelden gebruiken een standaard Ubuntu 8.10 server.</p>
 
-<p>Gitosis vereist wat Python applicaties, due moet je eerst het Python setuptools pakket installeren, wat Ubuntu meeleverd als python-setuptools:</p>
+<p>Gitosis vereist wat Python applicaties, dus moet je eerst het Python setuptools pakket installeren, wat Ubuntu meelevert als python-setuptools:</p>
 
 <pre><code>$ apt-get install python-setuptools</code></pre>
 
@@ -42,7 +42,7 @@ $ sudo python setup.py install</code></pre>
 Initialized empty Git repository in /opt/git/gitosis-admin.git/
 Reinitialized existing Git repository in /opt/git/gitosis-admin.git/</code></pre>
 
-<p>Dit staat de gebruiker met die sleutel toe de hoofd Git repository, die de Gitosis installatie beheerd, aan te passen. Daarna zul je met de hand het execute bit op het <code>post-update</code> script moeten instellen voor je nieuwe beheer repository.</p>
+<p>Dit staat de gebruiker met die sleutel toe de hoofd Git repository, die de Gitosis installatie beheert, aan te passen. Daarna zul je met de hand het execute bit op het <code>post-update</code> script moeten instellen voor je nieuwe beheer repository.</p>
 
 <pre><code>$ sudo chmod 755 /opt/git/gitosis-admin.git/hooks/post-update</code></pre>
 
@@ -53,7 +53,7 @@ PTY allocation request failed on channel 0
 fatal: unrecognized command &#39;gitosis-serve schacon@quaternion&#39;
   Connection to gitserver closed.</code></pre>
 
-<p>Dat betekend dat Gitosis je herkend heeft, maar je buitensluit omdat je geen Git commando&#8217;s aan het doen bent. Dus, laten we een echt Git commando doen – je gaat de Gitosis beheer repository clonen:</p>
+<p>Dat betekent dat Gitosis je herkend heeft, maar je buitensluit omdat je geen Git commando&#8217;s aan het doen bent. Dus, laten we een echt Git commando doen – je gaat de Gitosis beheer repository clonen:</p>
 
 <pre><code># op je locale computer
 $ git clone git@gitserver:gitosis-admin.git</code></pre>
@@ -111,7 +111,7 @@ To git@gitserver:iphone_project.git
 
 <p>Merk op dat je geen pad hoeft te specificeren (sterker nog, het wel doen zal niet werken), alleen een dubbele punt en dan de naam van het project – Gitosis zal het voor je vinden.</p>
 
-<p>Je wil samen met je vrienden aan dit project werken, dus je zult hun publieke sleutels weer toe moeten voegen. Maar in plaats van ze handmatig aan het <code>~/.ssh/authorized_keys</code> bestand op je server toe te voegen, voeg je ze, één sleutel per bestand, aan de <code>keydir</code> map toe. Hoe je de sleutels noemt bepaald hoe je aan de gebruikers refereerd in het <code>gitosis.conf</code> bestand. Laten we de publieke sleutels voor John, Josie en Jessica toevoegen:</p>
+<p>Je wil samen met je vrienden aan dit project werken, dus je zult hun publieke sleutels weer toe moeten voegen. Maar in plaats van ze handmatig aan het <code>~/.ssh/authorized_keys</code> bestand op je server toe te voegen, voeg je ze, één sleutel per bestand, aan de <code>keydir</code> map toe. Hoe je de sleutels noemt bepaalt hoe je aan de gebruikers refereert in het <code>gitosis.conf</code> bestand. Laten we de publieke sleutels voor John, Josie en Jessica toevoegen:</p>
 
 <pre><code>$ cp /tmp/id_rsa.john.pub keydir/john.pub
 $ cp /tmp/id_rsa.josie.pub keydir/josie.pub

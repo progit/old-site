@@ -8,7 +8,7 @@ title: Pro Git 2.5 De Basis van Git Werken Met Remotes
 
 <h3 id='laat_je_remotes_zien'>Laat Je Remotes Zien</h3>
 
-<p>Om te zien welke remote servers je geconfigureerd hebt, kun je het git remote commando uitvoern. Het laat de verkorte namen van iedere remote alias zien die je gespecificeerd hebt. Als je je repository gecloned hebt, dan zul je op z&#8217;n minst de origin zien – dat is de standaard naam die Git aan de server geeft waarvan je gecloned hebt:</p>
+<p>Om te zien welke remote servers je geconfigureerd hebt, kun je het <code>git remote</code> commando uitvoeren. Het laat de verkorte namen van iedere remote alias zien die je gespecificeerd hebt. Als je je repository gecloned hebt, dan zul je op z&#8217;n minst de origin zien – dat is de standaard naam die Git aan de server geeft waarvan je gecloned hebt:</p>
 
 <pre><code>$ git clone git://github.com/schacon/ticgit.git
 Initialized empty Git repository in /private/tmp/ticgit/.git/
@@ -36,7 +36,7 @@ defunkt   git://github.com/defunkt/grit.git
 koke      git://github.com/koke/grit.git
 origin    git@github.com:mojombo/grit.git</code></pre>
 
-<p>Dit betekend dat we vrij gemakkelijk de bijdragen van ieder van deze gebruikers naar binnen kunnen pullen. Let op dat alleen de origin een SSH URL is, dus dat is de enige waar ik naartoe kan pushen (we laten het waarom zien in Hoofdstuk 4).</p>
+<p>Dit betekent dat we vrij gemakkelijk de bijdragen van ieder van deze gebruikers naar binnen kunnen pullen. Let op dat alleen de origin een SSH URL is, dus dat is de enige waar ik naartoe kan pushen (we laten het waarom zien in Hoofdstuk 4).</p>
 
 <h3 id='remote_repositories_toevoegen'>Remote Repositories Toevoegen</h3>
 
@@ -70,7 +70,7 @@ From git://github.com/paulboone/ticgit
 
 <p>Het commando gaat naar het remote project en haalt alle data van dat remote project dat jij nog niet hebt. Nadat je dit gedaan hebt, zou je references (referenties) naar alle branches van dat remote moeten hebben, die je op ieder tijdstip kunt mergen en bekijken. (We zullen zien wat branches precies zijn, en hoe je ze moet gebruiken in meer detail in Hoofstuk 3.)</p>
 
-<p>Als je een repository cloned, voegt dat commando dat remote repository automatisch toe onder de naam origin. Dus <code>git fetch origin</code> fetched (haalt) ieder nieuw werk dat gepushed is naar die server sinds je gecloned hebt (of voor het laatst ge-fetched hebt). Het is belangrijk om te weten dat het fetch commando de data naar je locale repository haalt – het merged niet automatisch met je werk of veranderd waar je momenteel aan zit te werken. Je kunt het handmatig in je werk mergen als je er klaar voor bent.</p>
+<p>Als je een repository cloned, voegt dat commando dat remote repository automatisch toe onder de naam origin. Dus <code>git fetch origin</code> fetched (haalt) ieder nieuw werk dat gepushed is naar die server sinds je gecloned hebt (of voor het laatst ge-fetched hebt). Het is belangrijk om te weten dat het fetch commando de data naar je locale repository haalt – het merged niet automatisch met je werk of verandert waar je momenteel aan zit te werken. Je kunt het handmatig in je werk mergen als je er klaar voor bent.</p>
 
 <p>Als je een branch geconfigureerd hebt om een remote branch te tracken (volgen) (zie de volgende sectie en Hoofdstuk 3 voor meer informatie), dan kun je het <code>git pull</code> commando gebruiken om automatisch een remote branch te fetchen en mergen in je huidige branch. Dit kan makkelijker of meer comfortabel zijn voor je werkwijze; en standaard stelt het <code>git clone</code> commando je lokale master branch zo in dat het de remote master branch van de server waarvan je gecloned hebt volgt (aangenomen dat de remote een master branch heeft). Over het algemeen zal een <code>git pull</code> dat van de server waarvan je origineel gecloned hebt halen en proberen het automatisch in de code waar je op dat moment aan zit te werken te mergen.</p>
 
@@ -80,7 +80,7 @@ From git://github.com/paulboone/ticgit
 
 <pre><code>$ git push origin master</code></pre>
 
-<p>Dit commando werkt alleen als je gecloned hebt van een server waarop je schrijf toegang hebt, en als niemand in de tussentijd gepushed heeft. Als jij en iemand anders op hetzelfde tijdstip gecloned hebben en zij pushen stroomopwaarts en dan jij, dan zal je push terecht geweigerd worden. Je zult eerst hun werk moeten pullen en in jouw werk verwerken voordat je toegestaand wordt te pushen. Zie Hoofstuk 3 voor meer gedetaileerde informatie over hoe je naar remote servers moet pushen.</p>
+<p>Dit commando werkt alleen als je gecloned hebt van een server waarop je schrijf toegang hebt, en als niemand in de tussentijd gepushed heeft. Als jij en iemand anders op hetzelfde tijdstip gecloned hebben en zij pushen stroomopwaarts en dan jij, dan zal je push terecht geweigerd worden. Je zult eerst hun werk moeten pullen en in jouw werk verwerken voordat je toegestaan wordt te pushen. Zie Hoofstuk 3 voor meer gedetaileerde informatie over hoe je naar remote servers moet pushen.</p>
 
 <h3 id='een_remote_inspecteren'>Een Remote Inspecteren</h3>
 
@@ -95,9 +95,9 @@ From git://github.com/paulboone/ticgit
     master
     ticgit</code></pre>
 
-<p>Het toont de URL voor de remote repository, samen met de tracking branch informatie. Het commando verteld je behulpzaam dat als je op de master branch zit, en je voert <code>git pull</code> uit, dan zal het automatisch de master branch op de remote mergen nadat het alle remote references gehaald heeft. Het toont ook alle remote referenties die het gepulled heeft.</p>
+<p>Het toont de URL voor de remote repository, samen met de tracking branch informatie. Het commando vertelt je behulpzaam dat als je op de master branch zit, en je voert <code>git pull</code> uit, dan zal het automatisch de master branch op de remote mergen nadat het alle remote references opgehaald heeft. Het toont ook alle remote referenties die het gepulled heeft.</p>
 
-<p>Dat is een eenvoudig voorbeeld dat je vaak tegenkomt. Als je Git meer intens gebruikt, zul je veel meer informatie van <code>git remote show</code> krijgen:</p>
+<p>Dat is een eenvoudig voorbeeld dat je vaak tegenkomt. Als je Git meer intensief gebruikt, zul je veel meer informatie van <code>git remote show</code> krijgen:</p>
 
 <pre><code>$ git remote show origin
 * remote origin
@@ -121,7 +121,7 @@ From git://github.com/paulboone/ticgit
   Local branch pushed with &#39;git push&#39;
     master:master</code></pre>
 
-<p>Dit commando toont welke branch automatisch gepushed wordt als je <code>git push</code> uitvoert op bepaalde branches. Het toont je ook welke remote branches op de server je nog niet hebt, welke remote branches je hebt die verwijderd zijn van de server, en meerdere branches die automatisch gemerged worden als je <code>git pull</code> uitvoerd.</p>
+<p>Dit commando toont welke branch automatisch gepushed wordt als je <code>git push</code> uitvoert op bepaalde branches. Het toont je ook welke remote branches op de server je nog niet hebt, welke remote branches je hebt die verwijderd zijn van de server, en meerdere branches die automatisch gemerged worden als je <code>git pull</code> uitvoert.</p>
 
 <h3 id='remotes_verwijderen_en_hernoemen'>Remotes Verwijderen En Hernoemen</h3>
 
@@ -132,7 +132,7 @@ $ git remote
 origin
 paul</code></pre>
 
-<p>Het is de moeite om te melden dat dit ook je remote branch naam veranderd. Wat voorheen gerefereerd werd als <code>pb/master</code> is nu <code>paul/master</code>.</p>
+<p>Het is de moeite om te melden dat dit ook je remote branch naam verandert. Wat voorheen gerefereerd werd als <code>pb/master</code> is nu <code>paul/master</code>.</p>
 
 <p>Als je om een of andere reden een referentie wilt verwijderen – je hebt de server verplaatst of je gebruikt een bepaalde spiegel niet meer, of een medewerker doet niet meer mee – dan kun je <code>git remote rm</code> gebruiken:</p>
 

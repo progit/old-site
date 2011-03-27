@@ -22,7 +22,7 @@ $ chmod a+x hooks/post-update</code></pre>
 #!/bin/sh
 exec git-update-server-info</code></pre>
 
-<p>Dit betekend dat wanneer je naar de server via SSH pushed, Git dit commando uitvoert om de benodigde bestanden voor HTTP fetching te verversen.</p>
+<p>Dit betekent dat wanneer je naar de server via SSH pushed, Git dit commando uitvoert om de benodigde bestanden voor HTTP fetching te verversen.</p>
 
 <p>Vervolgens moet je een VirtualHost toevoeging in je Apache configuratie aanmaken, met de document root als de hoofdmap van je Git projecten. Hier nemen we aan dat je joker DNS ingesteld hebt om <code>*.gitserver</code> door te sturen naar waar je dit alles draait:</p>
 

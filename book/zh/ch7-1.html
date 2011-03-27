@@ -17,7 +17,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>最后 Git 会查找由用户定义的各个库中 Git 目录下的配置文件（<code>.git/config</code>），该文件中的值只对属主库有效。 以上阐述的三层配置从一般到特殊层层推进，如果定义的值有冲突，以后面层中定义的为准，例如：在<code>.git/config</code>和<code>/etc/gitconfig</code>的较量中， <code>.git/config</code>取得了胜利。虽然你也可以直接手动编辑这些配置文件，但是运行<code>git config</code>命令将会来得简单些。</p>
 
-<h3 id='id351'>客户端基本配置</h3>
+<h3 id='id360'>客户端基本配置</h3>
 
 <p>Git 能够识别的配置项被分为了两大类：客户端和服务器端，其中大部分基于你个人工作偏好，属于客户端配置。尽管有数不尽的选项，但我只阐述 其中经常使用或者会对你的工作流产生巨大影响的选项，如果你想观察你当前的 Git 能识别的选项列表，请运行</p>
 
@@ -117,7 +117,7 @@ Did you mean this?
 
 <p>你会很少用到<code>color.ui = always</code>，在大多数情况下，如果你想在被重定向的输出中插入颜色码，你能传递<code>--color</code>标志给 Git 命令来迫使它这么做，<code>color.ui = true</code>应该是你的首选。</p>
 
-<h4 id='id352'><code>color.*</code></h4>
+<h4 id='id361'><code>color.*</code></h4>
 
 <p>想要具体到哪些命令输出需要被着色以及怎样着色或者 Git 的版本很老，你就要用到和具体命令有关的颜色配置选项，它们都能被置为<code>true</code>、<code>false</code>或<code>always</code>：</p>
 
@@ -134,7 +134,7 @@ color.status</code></pre>
 
 <p>如果你想配置子选项的话，可以参考<code>git config</code>帮助页。</p>
 
-<h3 id='id353'>外部的合并与比较工具</h3>
+<h3 id='id362'>外部的合并与比较工具</h3>
 
 <p>虽然 Git 自己实现了diff,而且到目前为止你一直在使用它，但你能够用一个外部的工具替代它，除此以外，你还能用一个图形化的工具来合并和解决冲突从而不必自己手动解决。有一个不错且免费的工具可以被用来做比较和合并工作，它就是P4Merge（译注：Perforce图形化合并工具），我会展示它的安装过程。</p>
 
@@ -207,7 +207,7 @@ $ git config --global diff.external extDiff</code></pre>
 
 <p>如果运行了以上命令，没有设置<code>extMerge</code>和<code>extDiff</code>文件，Git 会用KDiff3做合并，让通常内设的比较工具来做比较。</p>
 
-<h3 id='id354'>格式化与空白</h3>
+<h3 id='id363'>格式化与空白</h3>
 
 <p>格式化与空白是许多开发人员在协作时，特别是在跨平台情况下，遇到的令人头疼的细小问题。由于编辑器的不同或者Windows程序员在跨平台项目中的文件行尾加入了回车换行符，一些细微的空格变化会不经意地进入大家合作的工作或提交的补丁中。不用怕，Git 的一些配置选项会帮助你解决这些问题。</p>
 
@@ -252,7 +252,7 @@ $ git config --global diff.external extDiff</code></pre>
 
 <p>这些选项也能运用于衍合。如果提交了有空白问题的文件但还没推送到上流，你可以运行带有<code>--whitespace=fix</code>选项的<code>rebase</code>来让Git在重写补丁时自动修正它们。</p>
 
-<h3 id='id355'>服务器端配置</h3>
+<h3 id='id364'>服务器端配置</h3>
 
 <p>Git服务器端的配置选项并不多，但仍有一些饶有生趣的选项值得你一看。</p>
 

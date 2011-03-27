@@ -4,7 +4,7 @@ title: Pro Git 4.8 Git op de Server Git Daemon
 ---
 <h2 id='git_daemon'>Git Daemon</h2>
 
-<p>Voor publieke ongeverifieerde leestoegang to je projecten zul je voorbij het HTTP protocol willen, en overstappen op het Git protocol. De hoofdreden is snelheid. Het Git protocol is veel efficienter en daarmee sneller dan het HTTP protocol, dus het zal je gebruikers tijd besparen.</p>
+<p>Voor publieke ongeverifieerde leestoegang tot je projecten zul je het HTTP protocol achter je willen laten, en overstappen op het Git protocol. De hoofdreden is snelheid. Het Git protocol is veel efficienter en daarmee sneller dan het HTTP protocol, dus het zal je gebruikers tijd besparen.</p>
 
 <p>Nogmaals, dit is voor ongeverifieerde alleen-lezen toegang. Als je dit op een server buiten je firewall draait, zul je het alleen moeten gebruiken voor projecten die voor de hele wereld toegankelijk moeten zijn. Als de server waarop je het draait binnen je firewall staat, zou je het kunnen gebruiken voor projecten waarbij een groot aantal mensen of computers (continue integratie of bouwservers) alleen-lezen toegang moeten hebben, waarbij je niet voor iedereen een SSH sleutel wilt toevoegen.</p>
 
@@ -12,7 +12,7 @@ title: Pro Git 4.8 Git op de Server Git Daemon
 
 <pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
 
-<p><code>--reuseaddr</code> staat de server toe om te herstarten zonder te wachten tot oude connecties een time out krijgen, de <code>--base-path</code> optie staat mensen toe om projecten te clonen zonder het volledige pad te specificeren, en het pad aan het einde verteld de Git daemon waar hij moet kijken voor de te exporteren repositories. Als je een firewall draait, zul je er ook een gat in moeten maken in poort 9418 op de doos waar je dit op insteld.</p>
+<p><code>--reuseaddr</code> staat de server toe om te herstarten zonder te wachten tot oude connecties een time out krijgen, de <code>--base-path</code> optie staat mensen toe om projecten te clonen zonder het volledige pad te specificeren, en het pad aan het einde vertelt de Git daemon waar hij moet kijken voor de te exporteren repositories. Als je een firewall draait, zul je er ook een gat in moeten maken in poort 9418 op de machine waar je dit op instelt.</p>
 
 <p>Je kunt dit proces op een aantal manieren daemonisern, afhankelijk van het besturingssystem waarop je draait. Op een Ubuntu machine, zul je een Upstart script gebruiken. Dus in het volgende bestand</p>
 
@@ -37,7 +37,7 @@ respawn</code></pre>
 
 <p>Op andere systemen zul je misschien <code>xinetd</code> willen gebruiken, een script in je <code>sysvinit</code> systeem, of iets anders – zolang je dat commando maar ge-daemoniseerd krijgt en op een of andere manier in de gaten gehouden wordt.</p>
 
-<p>Vervolgens zul je je Gitosis server moeten vertellen welke repositories je toe wilt staan om ongeverifieerde Gitserver gebaseerde toegang op wil geven. Als je een sectie toevoegt voor iedere repository, dan kun je diegenen specificeren waarop je je Git daemon wil laten lezen. Als je Git protocol toegang tot je iphone project wilt toestaan, dan voeg je dit toe aan het eind van het <code>gitosis.conf</code> bestand:</p>
+<p>Vervolgens zul je je Gitosis server moeten vertellen welke repositories je ongeverifieerde Gitserver gebaseerde toegang toestaat. Als je een sectie toevoegt voor iedere repository, dan kun je die repositories specificeren waarop je je Git daemon wilt laten lezen. Als je Git protocol toegang tot je iphone project wilt toestaan, dan voeg je dit toe aan het eind van het <code>gitosis.conf</code> bestand:</p>
 
 <pre><code>[repo iphone_project]
 daemon = yes</code></pre>
@@ -49,7 +49,7 @@ daemon = yes</code></pre>
 <pre><code>$ cd /path/to/project.git
 $ touch git-daemon-export-ok</code></pre>
 
-<p>De aanwezigheid van dat bestand verteld Git dat het OK is om dit project zonder verificatie te serveren.</p>
+<p>De aanwezigheid van dat bestand vertelt Git dat het OK is om dit project zonder verificatie te serveren.</p>
 
 <p>Gitosis kan ook de projecten die GitWeb toont beheren. Eerst moet je zoiets als het volgende aan het <code>/etc/gitweb.conf</code> bestand toevoegen:</p>
 
@@ -64,7 +64,7 @@ $export_ok = &quot;git-daemon-export-ok&quot;;
 daemon = yes
 gitweb = yes</code></pre>
 
-<p>Als je nu het project commmit en pushed, start GitWeb automatisch met het tonen van je iphone project.</p>
+<p>Als je nu het project commit en pushed, start GitWeb automatisch met het tonen van je iphone project.</p>
 
 <div id='nav'>
 <a href='ch4-7.html'>prev</a> | <a href='ch4-9.html'>next</a>

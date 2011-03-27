@@ -1,0 +1,89 @@
+---
+layout: translation
+title: Pro Git 2.4 Basi di Git Annullare le cose
+---
+<h2 id='annullare_le_cose'>Annullare le cose</h2>
+
+<p>Ad ogni stadio potresti voler annullare qualcosa. Qui, vedremo alcuni strumenti fondamentali per annullare i cambiamenti che hai fatto. Attenzione, perché non sempre puoi annullare alcuni annullamenti. Questa è una delle aree in Git dove puoi perdere qualche lavoro se sbagli.</p>
+
+<h3 id='modifica_il_tuo_ultimo_commit'>Modifica il tuo ultimo commit</h3>
+
+<p>Uno degli annullamenti comuni è quando invii troppo presto un commit e magari dimentichi di aggiungere alcuni file, o ti dimentichi di inserire un messaggio. Se provi nuovamente questo commit, puoi rilanciarlo con l&#8217;opzione <code>--amend</code>:</p>
+
+<pre><code>$ git commit --amend</code></pre>
+
+<p>Questo commando prende la tua area di parcheggio e la usa per il commit. Se non hai fatto cambiamenti dal tuo ultimo commit (per esempio, lanci questo comando subito dopo il tuo commit precedente), allora il tuo snapshot sarà esattamente uguale e potrai cambiare il tuo messaggio di commit.</p>
+
+<p>L&#8217;editor per il messaggio del commit apparirà, ma già contiene il messaggio del commit precedente. Puoi modificare il messaggio come sempre, ma sovrascriverà il commit precedente.</p>
+
+<p>Come esempio, se fai il commit e poi realizzi di aver dimenticato un cambiamento nella tua area di stage di un file e vuoi aggiungerlo a questo commit, puoi farlo così:</p>
+
+<pre><code>$ git commit -m &#39;initial commit&#39;
+$ git add forgotten_file
+$ git commit --amend</code></pre>
+
+<p>Tutti e tre i comandi finisco in un singolo commit — il secondo commit riscrive il risultato del primo.</p>
+
+<h3 id='disimpegnare_un_file_parcheggiato'>Disimpegnare un file parcheggiato</h3>
+
+<p>Le prossime due sezioni mostrano come gestire le modifiche della tua area di parcheggio (area di stage) e della directory di lavoro. La parte divertente è che il comando che usi per determinare lo stato di queste due aree ricorda come annullare i cambiamenti fatti. Per esempio, supponiamo che hai modificato due file e vuoi inviarli come modifiche separate, ma accidentalmente digiti <code>git add *</code> e li parcheggi entrambi. Come puoi disimpegnare uno dei due? Il comando <code>git status</code> ti ricorda:</p>
+
+<pre><code>$ git add .
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       modified:   README.txt
+#       modified:   benchmarks.rb
+#</code></pre>
+
+<p>Ora il testo sotto “Changes to be committed”, dice di usare <code>git reset HEAD &lt;file&gt;...</code> per annullare. Così, usa questo avviso per disimpegnare il file benchmarks.rb dal parcheggio:</p>
+
+<pre><code>$ git reset HEAD benchmarks.rb
+benchmarks.rb: locally modified
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       modified:   README.txt
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#       modified:   benchmarks.rb
+#</code></pre>
+
+<p>Il comando è un po&#8217; strano, ma funziona. Il file benchmarks.rb è modificato ma non parcheggiato.</p>
+
+<h3 id='annullare_la_modifica_ad_un_file'>Annullare la modifica ad un file</h3>
+
+<p>Come fare se hai realizzato che non vuoi più tenere le modifiche che hai fatto al file benchmarks.rv? Come puoi annullarle facilmente — ritornare a come era al tuo ultimo commit (o alla clonazione iniziale, o come lo avevi nella tua directory di lavoro)? Fortunatamente, <code>git status</code> ci dice come farlo. Nell&#8217;ultimo output di esempio, l&#8217;area di unstage (file non parcheggiati) assomiglia a:</p>
+
+<pre><code># Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#   (use &quot;git checkout -- &lt;file&gt;...&quot; to discard changes in working directory)
+#
+#       modified:   benchmarks.rb
+#</code></pre>
+
+<p>Ci dice abbastanza esplicitamente come annullare le modifiche fatte (al limite, le nuove versioni di Git, 1.6.1 e successive, lo fanno — se hai una versione più vecchia è raccomandato aggiornarla per avere queste funzioni utili). Vediamo cosa ci dice:</p>
+
+<pre><code>$ git checkout -- benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       modified:   README.txt
+#</code></pre>
+
+<p>Puoi vedere come le modifiche sono state annullate. Dovresti inoltre realizzare che è un comando pericoloso: ogni cambiamento fatto al file è sparito — semplicemente hai copiato un altro file su di esso. Non usare mai questo comando a meno che non sai assolutamente cosa stai facendo. Se hai bisogno di riprenderlo in qualche modo, vai nei capitoli successivi sullo stashing e branching; queste sono generalmente le vie migliori da seguire.</p>
+
+<p>Ricorda, qualsiasi cosa che è stata affidata a Git può essere recuperata. Tutti i commit che sono sui rami che sono stati cancellati o inviati con una sovra-scrizione tramite un commit <code>--amend</code> possono essere recuperati (vedi il Capitolo 9 per il recupero dei dati). Ovviamente, qualsiasi cosa che perdi e che non è stata affidata a Git non sarà più vista in futuro.</p>
+
+<div id='nav'>
+<a href='ch2-3.html'>prev</a> | <a href='ch2-5.html'>next</a>
+</div>

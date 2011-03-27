@@ -4,7 +4,7 @@ title: Pro Git 3.6 Branchen in Git Rebasen
 ---
 <h2 id='rebasen'>Rebasen</h2>
 
-<p>In Git zijn er twee hoofdmanieren om wijzigingen te integreren van één branch in een andere: de <code>samenvoeging</code> en de <code>rebase</code>. In dit gedeelte zul je leren wat rebasen is, hoe je het moet doen, waarom het een zeer bijzondere applicatie is, en in welke gevallen je het niet wilt gebruiken.</p>
+<p>In Git zijn er twee hoofdmanieren om wijzigingen te integreren van één branch in een andere: de <code>samenvoeging</code> en de <code>rebase</code>. In dit gedeelte zul je leren wat rebasen is, hoe je het moet doen, waarom het een zeer bijzondere toepassing is, en in welke gevallen je het niet wilt gebruiken.</p>
 
 <h3 id='de_eenvoudige_rebase'>De Eenvoudige Rebase</h3>
 
@@ -33,9 +33,9 @@ Applying: added staged command</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0330-tn.png"></center><br/> Figuur 3-30. De master branch Fast-forwarden.</p>
 
-<p>Nu is het snapshot waar C3 naar wijst precies hetzelfde als degene waar C5 naar wees in het samenvoeg voorbeeld. Er zit geen verschil in het eindproduct van de integratie, maar rebasen zorgt voor een schonere historie. Als je de log van een gerebasete branch bekijt, ziet het eruit als een lineaire historie: het lijkt alsof al het werk in serie is gebeurt, zelfs als het in werkelijkheid in parallel gedaan is.</p>
+<p>Nu is het snapshot waar C3 naar wijst precies hetzelfde als degene waar C5 naar wees in het samenvoeg voorbeeld. Er zit geen verschil in het eindproduct van de integratie, maar rebasen zorgt voor een schonere historie. Als je de log van een gerebasete branch bekijkt, ziet het eruit als een lineaire historie: het lijkt alsof al het werk in serie is gebeurt, zelfs als het in werkelijkheid in parallel gedaan is.</p>
 
-<p>Vaak zul je dit doen om er zeker van te zijn dat je commits netjes toepassen op een remote branch – misschien in een project waar je op probeert bij te drangen, maar dat je niet onderhoudt. In dit geval zou je je werk in een branch doen en dan je werk rebasen op <code>origin/master</code> als je klaar ben om je patches in te sturen naar het hoofd project. Op die manier hoeft de beheerder geen integratie werk te doen – gewoon een fast-forward of een schone toepassing.</p>
+<p>Vaak zul je dit doen om er zeker van te zijn dat je commits netjes aansluiten op een remote branch – misschien in een project waar je op probeert bij te dragen, maar dat je niet onderhoudt. In dit geval zou je je werk in een branch doen en dan je werk rebasen op <code>origin/master</code> als je klaar ben om je patches in te sturen naar het hoofd project. Op die manier hoeft de beheerder geen integratie werk te doen – gewoon een fast-forward of een schone toepassing.</p>
 
 <p>Let op het snapshot waar de laatste commit naar wijst waar je mee eindigt, of het de laatste van de gerebasete commits voor een rebase is, of de laatste samenvoeg commit na een samenvoeging, het is hetzelfde snapshot – alleen de historie is verschillend. Rebasen speelt veranderingen van een werklijn opnieuw af op een andere in de volgorde waarin ze geïntroduceerd waren, en samenvoegen pakt de eindpunten en voegt die samen.</p>
 
@@ -82,13 +82,13 @@ $ git branch -d server</code></pre>
 
 <h3 id='de_gevaren_van_rebasen'>De Gevaren van Rebasen</h3>
 
-<p>Ahh, maar de zegen van rebasen is niet zonder nadelen, wat samengevat kant worden in een enkele regel:</p>
+<p>Ahh, maar de zegen van rebasen is niet zonder nadelen, wat samengevat kan worden in een enkele regel:</p>
 
 <p><strong>Rebase geen commits die je teruggezet hebt naar een publiek repository.</strong></p>
 
 <p>Als je die richtlijn volgt, dan gebeurt je niets. Als je dat niet doet, zullen mensen je haten, en je zult door vrienden en familie uitgehoond worden.</p>
 
-<p>Als je spullen rebaset, laat je bestaande commits achter en maak je nieuwe aan die vergelijkbaar zijn maar anders. Als je commits ergens naartoe zet en andere hallen ze binnen en baseren daar werk op, en vervolgens herschrijf je die commits met <code>git rebase</code> en zet ze opnieuw terug, dan zullen je medewerkers hun werk opnieuw moeten samenvoegen en zullen de dingen vervelend worden als je hun werk probeert binnen te halen in het jouwe.</p>
+<p>Als je spullen rebaset, laat je bestaande commits achter en maak je nieuwe aan die vergelijkbaar zijn maar anders. Als je commits ergens naartoe zet en andere halen ze binnen en baseren daar werk op, en vervolgens herschrijf je die commits met <code>git rebase</code> en zet ze opnieuw terug, dan zullen je medewerkers hun werk opnieuw moeten samenvoegen en zullen de dingen vervelend worden als je hun werk probeert binnen te halen in het jouwe.</p>
 
 <p>Laten we eens kijken naar een voorbeeld of hoe werk rebasen dat je publiekelijk gemaakt hebt problemen kan veroorzaken. Stel dat je van een centrale server cloned en dan daar wat werk vanaf doet. Je commit historie ziet er uit als Figuur 3-36.</p>
 
@@ -102,13 +102,13 @@ $ git branch -d server</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0338-tn.png"></center><br/> Figuur 3-38. Iemand zet gerebasete commits terug, daarbij commits achterlatend waar jij werk op gebaseerd hebt.</p>
 
-<p>Op dit punt, moet je dit werk opnieuw samenvoegen, alhoewel je dat al gedaan hebt. Rebasen veranderd de SHA-1 hashes van deze commits, dus voor Git zien ze er uit als nieuwe commits, terwijl je in feite als het C4 werk in je historie hebt (zie Figuur 3-39).</p>
+<p>Op dit punt, moet je dit werk opnieuw samenvoegen, alhoewel je dat al gedaan hebt. Rebasen verandert de SHA-1 hashes van deze commits, dus voor Git zien ze er uit als nieuwe commits, terwijl je in feite als het C4 werk in je historie hebt (zie Figuur 3-39).</p>
 
 <p><center><img src="/figures/ch3/18333fig0339-tn.png"></center><br/> Figuur 3-39. Je voegt hetzelfde werk opnieuw samen in een nieuwe samenvoegingscommit.</p>
 
 <p>Je moet dat werk op een bepaald punt samenvoegen, zodat je bij kunt blijven met de andere ontwikkelaar in de toekomst. Nadat je dat doet, zal je history zowel de C4 als de C4&#8217; commits bevatten, die verschillende SHA-1 hashes hebben, maar hetzelfde werk introduceren en hetzelfde commit bericht hebben. Als je een <code>git log</code> uitvoert als je historie er zo uitziet, dan zul je twee commits zien die dezelfde auteur en bericht hebben, wat verwarrend zal zijn. Daarnaast, als je deze historie terugzet naar de server, dan zul je al die gerebasete commits opnieuw introduceren op de centrale server, wat mensen nog meer kan verwarren.</p>
 
-<p>Als je rebasen behandeld als een manier om op te ruimen en met commits werkt voordat je ze terugzet, en als je alleen commits rebaset die nog nooit publiekelijk beschikbaar zijn geweest, dan zal alles in orde zijn. Als je commits rebaset die al publiekelijk teruggezet zijn, en mensen kunnen werk gebaseerd hebben op die commits, dan bereid je maar voor op wat frustrerende problemen.</p>
+<p>Als je rebasen behandelt als een manier om op te ruimen en met commits werkt voordat je ze terugzet, en als je alleen commits rebaset die nog nooit publiekelijk beschikbaar zijn geweest, dan zal alles in orde zijn. Als je commits rebaset die al publiekelijk teruggezet zijn, en mensen kunnen werk gebaseerd hebben op die commits, dan bereid je maar voor op wat frustrerende problemen.</p>
 
 <div id='nav'>
 <a href='ch3-5.html'>prev</a> | <a href='ch3-7.html'>next</a>

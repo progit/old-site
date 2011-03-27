@@ -8,7 +8,7 @@ title: Pro Git 7.4 自定义 Git Git 强制策略实例
 
 <p>这些脚本使用 Ruby 写成，一半由于它是作者倾向的脚本语言，另外作者觉得它是最接近伪代码的脚本语言；因而即便你不使用 Ruby 也能大致看懂。不过任何其他语言也一样适用。所有 Git 自带的样例脚本都是用 Perl 或 Bash 写的。所以从这些脚本中能找到相当多的这两种语言的挂钩样例。</p>
 
-<h3 id='id367'>服务端挂钩</h3>
+<h3 id='id376'>服务端挂钩</h3>
 
 <p>所有服务端的工作都在hooks（挂钩）目录的 update（更新）脚本中制定。update 脚本为每一个得到推送的分支运行一次；它接受推送目标的索引，该分支原来指向的位置，以及被推送的新内容。如果推送是通过 SSH 进行的，还可以获取发出此次操作的用户。如果设定所有操作都通过公匙授权的单一帐号（比如＂git＂）进行，就有必要通过一个 shell 包装依据公匙来判断用户的身份，并且设定环境变量来表示该用户的身份。下面假设尝试连接的用户储存在 <code>$USER</code> 环境变量里，我们的 update 脚本首先搜集一切需要的信息：</p>
 
@@ -23,7 +23,7 @@ puts &quot;Enforcing Policies... \n(#{$refname}) (#{$oldrev[0,6]}) (#{$newrev[0,
 
 <p>没错，我在用全局变量。别鄙视我——这样比较利于演示过程。</p>
 
-<h4 id='id368'>指定特殊的提交信息格式</h4>
+<h4 id='id377'>指定特殊的提交信息格式</h4>
 
 <p>我们的第一项任务是指定每一条提交信息都必须遵循某种特殊的格式。作为演示，假定每一条信息必须包含一条形似 &#8220;ref: 1234&#8221; 这样的字符串，因为我们需要把每一次提交和项目的问题追踪系统。我们要逐一检查每一条推送上来的提交内容，看看提交信息是否包含这么一个字符串，然后，如果该提交里不包含这个字符串，以非零返回值退出从而拒绝此次推送。</p>
 
@@ -227,25 +227,21 @@ error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></p
 
 <p>The answer to this dilemma is to provide some client-side hooks that users can use to notify them when they’re doing something that the server is likely to reject. That way, they can correct any problems before committing and before those issues become more difficult to fix. Because hooks aren’t transferred with a clone of a project, you must distribute these scripts some other way and then have your users copy them to their <code>.git/hooks</code> directory and make them executable. You can distribute these hooks within the project or in a separate project, but there is no way to set them up automatically.</p>
 
-<p>To begin, you should check your commit message just before each commit is recorded, so you know the server won’t reject your changes due to badly formatted commit messages. To do this, you can add the <code>commit-msg</code> hook. If you have it read the message from the file passed as the first argument and compare that to the pattern, you can force Git to abort the commit if there is no match:</p>
+<p>首先，你应该在每次提交前核查你的提交注释信息，这样你才能确保服务器不会因为不合条件的提交注释信息而拒绝你的更改。为了达到这个目的，你可以增加&#8217;commit-msg&#8217;挂钩。如果你使用该挂钩来阅读作为第一个参数传递给git的提交注释信息，并且与规定的模式作对比，你就可以使git在提交注释信息不符合条件的情况下，拒绝执行提交。 #!/usr/bin/env ruby message_file = ARGV<span>0</span> message = File.read(message_file)</p>
 
-<pre><code>#!/usr/bin/env ruby
-message_file = ARGV[0]
-message = File.read(message_file)
-
-$regex = /\[ref: (\d+)\]/
+<pre><code>$regex = /\[ref: (\d+)\]/
 
 if !$regex.match(message)
   puts &quot;[POLICY] Your message is not formatted correctly&quot;
   exit 1
 end</code></pre>
 
-<p>If that script is in place (in <code>.git/hooks/commit-msg</code>) and executable, and you commit with a message that isn’t properly formatted, you see this:</p>
+<p>如果这个脚本放在这个位置 (<code>.git/hooks/commit-msg</code>) 并且是可执行的, 并且你的提交注释信息不是符合要求的，你会看到：</p>
 
 <pre><code>$ git commit -am &#39;test&#39;
 [POLICY] Your message is not formatted correctly</code></pre>
 
-<p>No commit was completed in that instance. However, if your message contains the proper pattern, Git allows you to commit:</p>
+<p>在这个实例中，提交没有成功。然而如果你的提交注释信息是符合要求的，git会允许你提交：</p>
 
 <pre><code>$ git commit -am &#39;test [ref: 132]&#39;
 [master e05c914] test [ref: 132]

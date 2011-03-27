@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 3.5 Git 分支 远程分支
 ---
-<h2 id='id269'>远程分支</h2>
+<h2 id='id278'>远程分支</h2>
 
 <p>远程分支（remote branch）是对远程仓库状态的索引。它们是一些无法移动的本地分支；只有在进行 Git 的网络活动时才会更新。远程分支就像是书签，提醒着你上次连接远程仓库时上面各分支的位置。</p>
 
@@ -10,25 +10,25 @@ title: Pro Git 3.5 Git 分支 远程分支
 
 <p>可能有点乱，我们不妨举例说明。假设你们团队有个地址为 <code>git.ourcompany.com</code> 的 Git 服务器。如果你从这里克隆，Git 会自动为你将此远程仓库命名为 <code>origin</code>，并下载其中所有的数据，建立一个指向它的 <code>master</code> 分支的指针，在本地命名为 <code>origin/master</code>，但你无法在本地更改其数据。接着，Git 建立一个属于你自己的本地 <code>master</code> 分支，始于 <code>origin</code> 上 <code>master</code> 分支相同的位置，你可以就此开始工作（见图 3-22）：</p>
 
-<p><center><img src="/figures/ch3/18333fig0322-tn.png"></center><br/> 图 3-22. 一次 Git 克隆会建立你自己的本地分支 master 和远程分支 origin/master，它们都指向 origin/master 分支的最后一次提交。</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0322-tn.png' alt='03-22' /> <br />图 3-22. 一次 Git 克隆会建立你自己的本地分支 master 和远程分支 origin/master，它们都指向 origin/master 分支的最后一次提交。</p>
 
 <p>要是你在本地 <code>master</code> 分支做了会儿事情，与此同时，其他人向 <code>git.ourcompany.com</code> 推送了内容，更新了上面的 <code>master</code> 分支，那么你的提交历史会开始朝不同的方向发展。不过只要你不和服务器通讯，你的 <code>origin/master</code> 指针不会移动（见图 3-23）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0323-tn.png"></center><br/> 图 3-23. 在本地工作的同时有人向远程仓库推送内容会让提交历史发生分歧。</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0323-tn.png' alt='03-23' /><br />图 3-23. 在本地工作的同时有人向远程仓库推送内容会让提交历史发生分歧。</p>
 
 <p>可以运行 <code>git fetch origin</code> 来进行同步。该命令首先找到 <code>origin</code> 是哪个服务器（本例为 <code>git.ourcompany.com</code>），从上面获取你尚未拥有的数据，更新你本地的数据库，然后把 <code>origin/master</code> 的指针移到它最新的位置（见图 3-24）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0324-tn.png"></center><br/> 图 3-24. git fetch 命令会更新 remote 索引。</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0324-tn.png' alt='03-24' /> <br />图 3-24. git fetch 命令会更新 remote 索引。</p>
 
 <p>为了演示拥有多个远程分支（不同的远程服务器）的项目是个什么样，我们假设你还有另一个仅供你的敏捷开发小组使用的内部服务器 <code>git.team1.ourcompany.com</code>。可以用第二章中提到的 <code>git remote add</code> 命令把它加为当前项目的远程分支之一。我们把它命名为 <code>teamone</code>，表示那一整串 Git 地址（见图 3-25）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> 图 3-25. 把另一个服务器加为远程仓库</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0325-tn.png' alt='03-25' /> <br />图 3-25. 把另一个服务器加为远程仓库</p>
 
 <p>现在你可以用 <code>git fetch teamone</code> 来获取小组服务器上你还没有的数据了。由于当前该服务器上的内容是你 <code>origin</code> 服务器上的子集，Git 不会下载任何数据，而只是简单地创建一个名为 <code>teamone/master</code> 的分支来指向 <code>teamone</code> 服务器上 <code>master</code> 所指向的更新 <code>31b8e</code>（见图 3-26）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> 图 3-26. 你在本地有了一个指向 teamone 服务器上 master 分支的索引。</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0326-tn.png' alt='03-26' /> <br />图 3-26. 你在本地有了一个指向 teamone 服务器上 master 分支的索引。</p>
 
-<h3 id='id270'>推送</h3>
+<h3 id='id279'>推送</h3>
 
 <p>要想和其他人分享某个分支，你需要把它推送到一个你拥有写权限的远程仓库。你的本地分支不会被自动同步到你引入的远程分支中，除非你明确执行推送操作。换句话说，对于无意分享的，你尽可以保留为私人分支，而只推送那些协同工作的特性分支。</p>
 
@@ -64,7 +64,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <p>这会切换到新建的 <code>serverfix</code> 本地分支，其内容同远程分支 <code>origin/serverfix</code> 一致，你可以在里面继续开发了。</p>
 
-<h3 id='id271'>跟踪分支</h3>
+<h3 id='id280'>跟踪分支</h3>
 
 <p>从远程分支检出的本地分支，称为_跟踪分支(tracking branch)_。跟踪分支是一种和远程分支有直接联系的本地分支。在跟踪分支里输入 <code>git push</code>，Git 会自行推断应该向哪个服务器的哪个分支推送数据。反过来，在这些分支里运行 <code>git pull</code> 会获取所有远程索引，并把它们的数据都合并到本地分支中来。</p>
 
@@ -82,7 +82,7 @@ Switched to a new branch &quot;sf&quot;</code></pre>
 
 <p>现在你的本地分支 <code>sf</code> 会自动向 <code>origin/serverfix</code> 推送和抓取数据了。</p>
 
-<h3 id='id272'>删除远程分支</h3>
+<h3 id='id281'>删除远程分支</h3>
 
 <p>如果不再需要某个远程分支了，比如搞定了某个特性并把它合并进了远程的 <code>master</code> 分支（或任何其他存放稳定代码的地方），可以用这个非常无厘头的语法来删除它：<code>git push [远程名] :[分支名]</code>。如果想在服务器上删除 <code>serverfix</code> 分支，运行下面的命令：</p>
 

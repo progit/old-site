@@ -60,7 +60,7 @@ $ git status
 
 <h3 id='rinitialiser_un_fichier_modifi'>Réinitialiser un fichier modifié</h3>
 
-<p>Que faire si vous réalisez que vous ne souhaitez pas conserver les modifications au fichier benchmark.rb ? Comment le réinitialiser facilement — le ramener à l&#8217;état qu&#8217;il avait dans le dernier instantané (ou lors clonage, ou dans l&#8217;état dans lequel vous l&#8217;avez obtenu dans votre copie de travail) ? Heureusement, <code>git status</code> est secourable. Dans le résultat de la dernière commande, la zone de travail ressemble à ceci :</p>
+<p>Que faire si vous réalisez que vous ne souhaitez pas conserver les modifications au fichier benchmark.rb ? Comment le réinitialiser facilement, le ramener à l&#8217;état qu&#8217;il avait dans le dernier instantané (ou lors clonage, ou dans l&#8217;état dans lequel vous l&#8217;avez obtenu dans votre copie de travail) ? Heureusement, <code>git status</code> est utile. Dans le résultat de la dernière commande, la zone de travail ressemble à ceci :</p>
 
 <pre><code># Changed but not updated:
 #   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
@@ -69,7 +69,7 @@ $ git status
 #       modified:   benchmarks.rb
 #</code></pre>
 
-<p>Cela vous indique assez explicitement comment annuler des modifications que vous avez faites (du moins, les nouvelles version de Git, 1.6.1 et supérieures le font  — si vous avez une version plus ancienne, nous vous recommandons de la mettre à jour pour bénéficier de ces fonctionnalités d&#8217;utilisabilité). Faisons comme indiqué :</p>
+<p>Cela vous indique de facon explique comment annuler des modifications que vous avez faites (du moins, les nouvelles version de Git, 1.6.1 et supérieures le font, si vous avez une version plus ancienne, nous vous recommandons de la mettre à jour pour bénéficier de ces fonctionnalités pratiques). Faisons comme indiqué :</p>
 
 <pre><code>$ git checkout -- benchmarks.rb
 $ git status
@@ -80,7 +80,7 @@ $ git status
 #       modified:   LISEZMOI
 #</code></pre>
 
-<p>Vous pouvez constater que les modifications ont été annulées. Vous devriez aussi vous apercevoir que c&#8217;est une commande dangereuse : toute modification que vous auriez réalisée sur ce fichier a disparu — vous venez tout juste de l&#8217;écraser avec un autre fichier. N&#8217;utilisez jamais cette commande à moins d&#8217;être vraiment sûr de ne pas vouloir de ces modifications. Si vous souhaitez seulement écarter momentanément cette modification, nous verrons comment mettre de côté et créer des branches dans le chapitre suivant ; ce sont de meilleures façons de procéder. Souvenez-vous, tout ce qui a été validé dans Git peut quasiment toujours être récupéré. Y compris des commits sur des branches qui ont été effacées ou des commits qui ont été écrasés par une validation avec l&#8217;option <code>--amend</code> (se référer au chapitre 9 pour la récupération de données). Cependant, tout ce que vous perdez avant de l&#8217;avoir validé n&#8217;a aucune chance d&#8217;être récupérable via Git.</p>
+<p>Vous pouvez constater que les modifications ont été annulées. Vous devriez aussi vous apercevoir que c&#8217;est une commande dangereuse : toutes les modifications que vous auriez réalisée sur ce fichier ont disparu — vous venez tout juste de l&#8217;écraser avec un autre fichier. N&#8217;utilisez jamais cette commande à moins d&#8217;être vraiment sûr de ne pas vouloir de ces modifications. Si vous souhaitez seulement écarter momentanément cette modification, nous verrons comment mettre de côté et créer des branches dans le chapitre suivant ; ce sont de meilleures façons de procéder. Souvenez-vous, tout ce qui a été validé dans Git peut quasiment toujours être récupéré. Y compris des commits sur des branches qui ont été effacées ou des commits qui ont été écrasés par une validation avec l&#8217;option <code>--amend</code> (se référer au chapitre 9 pour la récupération de données). Cependant, tout ce que vous perdez avant de l&#8217;avoir validé n&#8217;a aucune chance d&#8217;être récupérable via Git.</p>
 
 <div id='nav'>
 <a href='ch2-3.html'>prev</a> | <a href='ch2-5.html'>next</a>

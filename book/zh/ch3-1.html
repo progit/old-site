@@ -2,7 +2,7 @@
 layout: translation
 title: Pro Git 3.1 Git 分支 何谓分支
 ---
-<h2 id='id260'>何谓分支</h2>
+<h2 id='id269'>何谓分支</h2>
 
 <p>为了理解 Git 分支的实现方式，我们需要回顾一下 Git 是如何储存数据的。或许你还记得第一章的内容，Git 保存的不是文件差异或者变化量，而只是一系列文件快照。</p>
 
@@ -17,15 +17,15 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>现在，Git 仓库中有五个对象：三个表示文件快照内容的 blob 对象；一个记录着目录树内容及其中各个文件对应 blob 对象索引的 tree 对象；以及一个包含指向 tree 对象（根目录）的索引和其他提交信息元数据的 commit 对象。概念上来说，仓库中的各个对象保存的数据和相互关系看起来如图 3-1 所示：</p>
 
-<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> 图 3-1. 一次提交后仓库里的数据</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0301-tn.png' alt='03-1' /><br />图 3-1. 一次提交后仓库里的数据</p>
 
 <p>作些修改后再次提交，那么这次的提交对象会包含一个指向上次提交对象的指针（译注：即下图中的 parent 对象）。两次提交后，仓库历史会变成图 3-2 的样子：</p>
 
-<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> 图 3-2. 多次提交后的 Git 对象数据</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0302-tn.png' alt='03-2' /><br />图 3-2. 多次提交后的 Git 对象数据</p>
 
 <p>现在来谈分支。Git 中的分支，其实本质上仅仅是个指向 commit 对象的可变指针。Git 会使用 master 作为分支的默认名字。在若干次提交后，你其实已经有了一个指向最后一次提交对象的 master 分支，它在每次提交的时候都会自动向前移动。</p>
 
-<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> 图 3-3. 指向提交数据历史的分支</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0303-tn.png' alt='03-3' /><br />图 3-3. 指向提交数据历史的分支</p>
 
 <p>那么，Git 又是如何创建一个新的分支的呢？答案很简单，创建一个新的分支指针。比如新建一个 testing 分支，可以使用 <code>git branch</code> 命令：</p>
 
@@ -33,11 +33,11 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>这会在当前 commit 对象上新建一个分支指针（见图 3-4）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> 图 3-4. 多个分支指向提交数据的历史</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0304-tn.png' alt='03-4' /><br />图 3-4. 多个分支指向提交数据的历史</p>
 
 <p>那么，Git 是如何知道你当前在哪个分支上工作的呢？其实答案也很简单，它保存着一个名为 HEAD 的特别指针。请注意它和你熟知的许多其他版本控制系统（比如 Subversion 或 CVS）里的 HEAD 概念大不相同。在 Git 中，它是一个指向你正在工作中的本地分支的指针。运行 <code>git branch</code> 命令，仅仅是建立了一个新的分支，但不会自动切换到这个分支中去，所以在这个例子中，我们依然还在 master 分支里工作（参考图 3-5）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> 图 3-5. HEAD 指向当前所在的分支</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0305-tn.png' alt='03-5' /> <br />图 3-5. HEAD 指向当前所在的分支</p>
 
 <p>要切换到其他分支，可以执行 <code>git checkout</code> 命令。我们现在转换到新建的 testing 分支：</p>
 
@@ -45,7 +45,7 @@ $ git commit -m &#39;initial commit of my project&#39;</code></pre>
 
 <p>这样 HEAD 就指向了 testing 分支（见图3-6）。</p>
 
-<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> 图 3-6. HEAD 在你转换分支时指向新的分支</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0306-tn.png' alt='03-6' /><br />图 3-6. HEAD 在你转换分支时指向新的分支</p>
 
 <p>这样的实现方式会给我们带来什么好处呢？好吧，现在不妨再提交一次：</p>
 
@@ -54,7 +54,7 @@ $ git commit -a -m &#39;made a change&#39;</code></pre>
 
 <p>图 3-7 展示了提交后的结果。</p>
 
-<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> 图 3-7. 每次提交后 HEAD 随着分支一起向前移动</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0307-tn.png' alt='03-7' /><br />图 3-7. 每次提交后 HEAD 随着分支一起向前移动</p>
 
 <p>非常有趣，现在 testing 分支向前移动了一格，而 master 分支仍然指向原先 <code>git checkout</code> 时所在的 commit 对象。现在我们回到 master 分支看看：</p>
 
@@ -62,7 +62,7 @@ $ git commit -a -m &#39;made a change&#39;</code></pre>
 
 <p>图 3-8 显示了结果。</p>
 
-<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> 图 3-8. HEAD 在一次 checkout 之后移动到了另一个分支</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0308-tn.png' alt='03-8' /> <br />图 3-8. HEAD 在一次 checkout 之后移动到了另一个分支</p>
 
 <p>这条命令做了两件事。它把 HEAD 指针移回到 master 分支，并把工作目录中的文件换成了 master 分支所指向的快照内容。也就是说，现在开始所做的改动，将始于本项目中一个较老的版本。它的主要作用是将 testing 分支里作出的修改暂时取消，这样你就可以向另一个方向进行开发。</p>
 
@@ -73,7 +73,7 @@ $ git commit -a -m &#39;made other changes&#39;</code></pre>
 
 <p>现在我们的项目提交历史产生了分叉（如图 3-9 所示），因为刚才我们创建了一个分支，转换到其中进行了一些工作，然后又回到原来的主分支进行了另外一些工作。这些改变分别孤立在不同的分支里：我们可以在不同分支里反复切换，并在时机成熟时把它们合并到一起。而所有这些工作，仅仅需要 <code>branch</code> 和 <code>checkout</code> 这两条命令就可以完成。</p>
 
-<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> 图 3-9. 分叉了的分支历史</p>
+<p><img src='http://progit.org/figures/ch3/18333fig0309-tn.png' alt='03-9' /><br />图 3-9. 分叉了的分支历史</p>
 
 <p>由于 Git 中的分支实际上仅是一个包含所指对象校验和（40 个字符长度 SHA-1 字串）的文件，所以创建和销毁一个分支就变得非常廉价。说白了，新建一个分支就是向一个文件写入 41 个字节（外加一个换行符）那么简单，当然也就很快了。</p>
 

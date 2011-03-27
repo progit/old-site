@@ -24,7 +24,7 @@ title: Pro Git 3.5 Git Branching Remote Branches
 
 <p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Figure 3-25. Adding another server as a remote.</p>
 
-<p>Now, you can run <code>git fetch teamone</code> to fetch everything server has that you don’t have yet. Because that server is a subset of the data your <code>origin</code> server has right now, Git fetches no data but sets a remote branch called <code>teamone/master</code> to point to the commit that <code>teamone</code> has as its <code>master</code> branch (see Figure 3-26).</p>
+<p>Now, you can run <code>git fetch teamone</code> to fetch everything the remote <code>teamone</code> server has that you don’t have yet. Because that server is a subset of the data your <code>origin</code> server has right now, Git fetches no data but sets a remote branch called <code>teamone/master</code> to point to the commit that <code>teamone</code> has as its <code>master</code> branch (see Figure 3-26).</p>
 
 <p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> Figure 3-26. You get a reference to teamone’s master branch position locally.</p>
 
@@ -66,7 +66,7 @@ Switched to a new branch &quot;serverfix&quot;</code></pre>
 
 <h3 id='tracking_branches'>Tracking Branches</h3>
 
-<p>Checking out a local branch from a remote branch automatically creates what is called a <em>tracking branch</em>. Tracking branches are local branches that have a direct relationship to a remote branch. If you’re on a tracking branch and type git push, Git automatically knows which server and branch to push to. Also, running <code>git pull</code> while on one of these branches fetches all the remote references and then automatically merges in the corresponding remote branch.</p>
+<p>Checking out a local branch from a remote branch automatically creates what is called a <em>tracking branch</em>. Tracking branches are local branches that have a direct relationship to a remote branch. If you’re on a tracking branch and type <code>git push</code>, Git automatically knows which server and branch to push to. Also, running <code>git pull</code> while on one of these branches fetches all the remote references and then automatically merges in the corresponding remote branch.</p>
 
 <p>When you clone a repository, it generally automatically creates a <code>master</code> branch that tracks <code>origin/master</code>. That’s why <code>git push</code> and <code>git pull</code> work out of the box with no other arguments. However, you can set up other tracking branches if you wish — ones that don’t track branches on <code>origin</code> and don’t track the <code>master</code> branch. The simple case is the example you just saw, running <code>git checkout -b [branch] [remotename]/[branch]</code>. If you have Git version 1.6.2 or later, you can also use the <code>--track</code> shorthand:</p>
 

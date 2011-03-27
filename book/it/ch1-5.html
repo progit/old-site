@@ -1,49 +1,49 @@
 ---
 layout: translation
-title: Pro Git 1.5 Per iniziare First-Time Git Setup
+title: Pro Git 1.5 Per iniziare Prima configurazione di Git
 ---
-<h2 id='firsttime_git_setup'>First-Time Git Setup</h2>
+<h2 id='prima_configurazione_di_git'>Prima configurazione di Git</h2>
 
-<p>Now that you have Git on your system, you’ll want to do a few things to customize your Git environment. You should have to do these things only once; they’ll stick around between upgrades. You can also change them at any time by running through the commands again.</p>
+<p>Ora che hai Git sul tuo sistema, vorrai fare un paio di cose per personalizzare l&#8217;ambiente di Git. Ti occorre farle solo una volta; esse rimangono invariate anche dopo un aggiornamento. Comunque, puoi cambiarle, in ogni momento, eseguendo di nuovo questi comandi.</p>
 
-<p>Git comes with a tool called git config that lets you get and set configuration variables that control all aspects of how Git looks and operates. These variables can be stored in three different places:</p>
+<p>Git è rilasciato con uno strumento che si chiama git config che ti permetterà di ottenere ed impostare le variabili di configurazione che controllano ogni aspetto delle operazioni e del look di Git. Queste variabili possono essere salvate in tre posti differenti:</p>
 
 <ul>
-<li><code>/etc/gitconfig</code> file: Contains values for every user on the system and all their repositories. If you pass the option<code> --system</code> to <code>git config</code>, it reads and writes from this file specifically.</li>
+<li>file <code>/etc/gitconfig</code>: Contiene i valori per ogni utente sul sistema e per tutti i loro repository. Se si passa l&#8217;opzione<code> --system</code> a <code>git config</code>, lui legge e scrive da questo specifico file.</li>
 
-<li><code>~/.gitconfig</code> file: Specific to your user. You can make Git read and write to this file specifically by passing the <code>--global</code> option.</li>
+<li>file <code>~/.gitconfig</code>: Specifico per il tuo utente. Puoi far leggere e scrivere a Git questo file passando l&#8217;opzione <code>--global</code>.</li>
 
-<li>config file in the git directory (that is, <code>.git/config</code>) of whatever repository you’re currently using: Specific to that single repository. Each level overrides values in the previous level, so values in <code>.git/config</code> trump those in <code>/etc/gitconfig</code>.</li>
+<li>file di configurazione nella directory git (che è <code>.git/config</code>) di ogni repository che si sta usando. Specifico per ogni singolo repository. Ogni livello sovrascrive i valori del livello precedente, così i valori in <code>.git/config</code> vincono su quelli in <code>/etc/gitconfig</code>.</li>
 </ul>
 
-<p>On Windows systems, Git looks for the <code>.gitconfig</code> file in the <code>$HOME</code> directory (<code>C:\Documents and Settings\$USER</code> for most people). It also still looks for /etc/gitconfig, although it’s relative to the MSys root, which is wherever you decide to install Git on your Windows system when you run the installer.</p>
+<p>Sui sistemi Windows, Git cerca il file <code>.gitconfig</code> nella directory <code>$HOME</code> (<code>C:\Documents and Settings\$USER</code> per la maggior parte delle persone). Inoltre per quanto riguarda /etc/gitconfig, sarà relativo alla radice di MSys, che è in dipendenza a dove si vorrà installare Git sul sistema Windows quando si lancia l&#8217;installazione.</p>
 
-<h3 id='your_identity'>Your Identity</h3>
+<h3 id='la_propria_identit'>La propria identità</h3>
 
-<p>The first thing you should do when you install Git is to set your user name and e-mail address. This is important because every Git commit uses this information, and it’s immutably baked into the commits you pass around:</p>
+<p>La prima cosa che occorrerebbe fare, quando si installa Git, è impostare il proprio nome utente e indirizzo e-mail. Ciò è importante, perché ogni commit di Git usa queste informazioni, che vengono incapsulate nei commit che si fanno:</p>
 
 <pre><code>$ git config --global user.name &quot;John Doe&quot;
 $ git config --global user.email johndoe@example.com</code></pre>
 
-<p>Again, you need to do this only once if you pass the <code>--global</code> option, because then Git will always use that information for anything you do on that system. If you want to override this with a different name or e-mail address for specific projects, you can run the command without the <code>--global</code> option when you’re in that project.</p>
+<p>Di nuovo, passando l&#8217;opzione <code>--global</code>, occorre fare ciò solo una volta, dopo di che Git userà sempre queste informazioni, per qualsiasi operazione fatta sul sistema. Se si vuole sovrascriverle con un nome o una e-mail per progetti specifici, basta eseguire il comando senza l&#8217;opzione <code>--global</code>, quando si è in uno di quei progetti.</p>
 
-<h3 id='your_editor'>Your Editor</h3>
+<h3 id='il_proprio_editor'>Il proprio editor</h3>
 
-<p>Now that your identity is set up, you can configure the default text editor that will be used when Git needs you to type in a message. By default, Git uses your system’s default editor, which is generally Vi or Vim. If you want to use a different text editor, such as Emacs, you can do the following:</p>
+<p>Ora che è configurata la propria identità, si può configurare l&#8217;editor di testo predefinito, da usare quando Git avrà bisogno di inserire un messaggio. Per impostazione predefinita, Git usa l&#8217;editor di testo predefinito del sistema, che generalmente è Vi o Vim. Se vuoi usare un editor di testo differente, come Emacs, puoi fare come segue:</p>
 
 <pre><code>$ git config --global core.editor emacs</code></pre>
 
-<h3 id='your_diff_tool'>Your Diff Tool</h3>
+<h3 id='il_proprio_diff'>Il proprio Diff</h3>
 
-<p>Another useful option you may want to configure is the default diff tool to use to resolve merge conflicts. Say you want to use vimdiff:</p>
+<p>Un&#8217;altra utile opzione, che si potrebbe voler configurare, è lo strumento diff, predefinito, da usare per risolvere i conflitti di merge (fusione). Per usare vimdiff:</p>
 
 <pre><code>$ git config --global merge.tool vimdiff</code></pre>
 
-<p>Git accepts kdiff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge, and opendiff as valid merge tools. You can also set up a custom tool; see Chapter 7 for more information about doing that.</p>
+<p>Git accetta kdeff3, tkdiff, meld, xxdiff, emerge, vimdiff, gvimdiff, ecmerge e opendiff, come strumenti validi di merge. E&#8217; anche possibile impostare uno strumento personalizzato; vedere il Capitolo 7, per maggiori informazioni su come farlo.</p>
 
-<h3 id='checking_your_settings'>Checking Your Settings</h3>
+<h3 id='controllare_le_impostazioni'>Controllare le impostazioni</h3>
 
-<p>If you want to check your settings, you can use the <code>git config --list</code> command to list all the settings Git can find at that point:</p>
+<p>Per controllare le proprie impostazioni, si può usare il comando <code>git config --list</code>, che elenca tutte le impostazioni di Git, fatte fino a questo punto:</p>
 
 <pre><code>$ git config --list
 user.name=Scott Chacon
@@ -54,9 +54,9 @@ color.interactive=auto
 color.diff=auto
 ...</code></pre>
 
-<p>You may see keys more than once, because Git reads the same key from different files (<code>/etc/gitconfig</code> and <code>~/.gitconfig</code>, for example). In this case, Git uses the last value for each unique key it sees.</p>
+<p>La stessa chiave può comparire più volte, perché Git legge la stessa chiave da file differenti (<code>/etc/gitconfig</code> e <code>~/.gitconfig</code>, per esempio). In questo caso, Git usa l&#8217;ultimo valore per ogni chiave unica che vede.</p>
 
-<p>You can also check what Git thinks a specific key’s value is by typing <code>git config {key}</code>:</p>
+<p>Per controllare quale sia il valore di una chiave, ritenuto da Git usare, <code>git config {key}</code>:</p>
 
 <pre><code>$ git config user.name
 Scott Chacon</code></pre>

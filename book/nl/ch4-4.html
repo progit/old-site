@@ -27,14 +27,14 @@ dAv8JggJICUvax2T9va5 gsg-keypair</code></pre>
 $ cat /tmp/id_rsa.josie.pub &gt;&gt; ~/.ssh/authorized_keys
 $ cat /tmp/id_rsa.jessica.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
 
-<p>Nu kun je een leeg repository voor ze instellen door <code>git init</code> uit te voeren met de <code>--bare</code> optie, wat het repository initialiseerd zonder een werkmap:</p>
+<p>Nu kun je een leeg repository voor ze instellen door <code>git init</code> uit te voeren met de <code>--bare</code> optie, wat het repository initialiseert zonder een werkmap:</p>
 
 <pre><code>$ cd /opt/git
 $ mkdir project.git
 $ cd project.git
 $ git --bare init</code></pre>
 
-<p>Daarna kunnen John, Josie of Jessica de eerste versie van hun project in dat repository pushen door het als een remote toe te voegen en naar een branch te pushen. Let op dat iemand met een shell in de machine zal moeten loggen een een bare repository moet creeeren, iedere keer als je een project wilt toevoegen. Laten we <code>gitserver</code> als hostnaam gebruiken voor de server waar je je &#8216;git&#8217; gebruiker en repository hebt ingesteld. Als je het intern gaat draaien, en je de DNS insteld zodat <code>gitserver</code> naar die server wijst, dan kun je de commando&#8217;s vrijwel ongewijzigd gebruiken:</p>
+<p>Daarna kunnen John, Josie of Jessica de eerste versie van hun project in de repository pushen door het als een remote toe te voegen en naar een branch te pushen. Let op dat iemand met een shell op de machine zal moeten inloggen en een kale repository moet creeeren, iedere keer als je een project wilt toevoegen. Laten we <code>gitserver</code> als hostnaam gebruiken voor de server waar je je &#8216;git&#8217; gebruiker en repository hebt ingesteld. Als je het intern gaat draaien, en je de DNS instelt zodat <code>gitserver</code> naar die server wijst, dan kun je de commando&#8217;s vrijwel ongewijzigd gebruiken:</p>
 
 <pre><code># op Johns computer
 $ cd myproject
@@ -53,7 +53,7 @@ $ git push origin master</code></pre>
 
 <p>Met deze methode kun je snel een lees/schrijf Git server draaiend krijgen voor een handvol ontwikkelaars.</p>
 
-<p>Als een extra voorzorgsmaatregel kun je de &#8216;git&#8217; gebruiker makkelijk beperken tot het doen van alleen Git activiteiten, met een gelimiteerde shell applicatie genaamd <code>git-shell</code> die bij Git geleverd wordt. Als je dit als login shell voor je &#8216;git&#8217; gebruiker instelt, dan kan de &#8216;git&#8217; gebruiker geen normale shell toegang hebben op je server. Specificeer <code>git-shell</code> in plaats van bash of csh voor je gebruikers login shell om dit te gebruiken. Om dit te doen zul je waarschijnlijk je <code>/etc/passwd</code> bestand aan moeten passen:</p>
+<p>Als een extra voorzorgsmaatregel kun je de &#8216;git&#8217; gebruiker makkelijk beperken tot het doen van alleen Git activiteiten, met een gelimiteerde shell applicatie genaamd <code>git-shell</code> die bij Git geleverd wordt. Als je dit als login shell voor je &#8216;git&#8217; gebruiker instelt, dan kan de &#8216;git&#8217; gebruiker geen normale shell toegang hebben op je server. Specificeer <code>git-shell</code> in plaats van bash of csh voor je gebruikers login shell om dit te gebruiken. Om dit te doen zul je waarschijnlijk het <code>/etc/passwd</code> bestand aan moeten passen:</p>
 
 <pre><code>$ sudo vim /etc/passwd</code></pre>
 
@@ -65,7 +65,7 @@ $ git push origin master</code></pre>
 
 <pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
-<p>Nu kan de &#8216;git&#8217; gebruiker de SSH connectie alleen gebruiken om Git repositories te pushen en te pullen, en niet om in te loggen in de machine. Als je het probeerd zul je een login weigering zoals deze zien:</p>
+<p>Nu kan de &#8216;git&#8217; gebruiker de SSH connectie alleen gebruiken om Git repositories te pushen en te pullen, en niet om in te loggen in de machine. Als je het probeert zul je een login weigering zoals deze zien:</p>
 
 <pre><code>$ ssh git@gitserver
 fatal: What do you think I am? A shell?

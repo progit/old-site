@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 7.4 Git のカスタマイズ An Example Git-Enforced Policy
+title: Pro Git 7.4 Git のカスタマイズ Git ポリシーの実施例
 ---
-<h2 id='an_example_gitenforced_policy'>An Example Git-Enforced Policy</h2>
+<h2 id='git_'>Git ポリシーの実施例</h2>
 
-<p>In this section, you’ll use what you’ve learned to establish a Git workflow that checks for a custom commit message format, enforces fast-forward-only pushes, and allows only certain users to modify certain subdirectories in a project. You’ll build client scripts that help the developer know if their push will be rejected and server scripts that actually enforce the policies.</p>
+<p>このセクションでは、これまでに学んだ内容を使って実際に Git のワークフローを確立してみます。コミットメッセージの書式をチェックし、プッシュは fast-forward 限定にし、そしてプロジェクト内の各サブディレクトリに対して特定のユーザーだけが変更を加えられるようにするというものです。開発者に対して「なぜプッシュが却下されたのか」を伝えるためのクライアントスクリプト、そして実際にそのポリシーを実施するためのサーバースクリプトを作成します。</p>
 
-<p>I used Ruby to write these, both because it’s my preferred scripting language and because I feel it’s the most pseudocode-looking of the scripting languages; thus you should be able to roughly follow the code even if you don’t use Ruby. However, any language will work fine. All the sample hook scripts distributed with Git are in either Perl or Bash scripting, so you can also see plenty of examples of hooks in those languages by looking at the samples.</p>
+<p>スクリプトは Ruby を使って書きます。その理由のひとつは私が Ruby を好きなこと、そしてもうひとつの理由はその他のスクリプト言語の疑似コードとしてもそれっぽく見えるであろうということです。Ruby 使いじゃなくても、きっとコードの大まかな流れは追えるはずです。しかし、Ruby 以外の言語であってもきちんと動作します。Git に同梱されているサンプルスクリプトはすべて Perl あるいは Bash で書かれているので、それらの言語のサンプルも大量に見ることができます。</p>
 
-<h3 id='serverside_hook'>Server-Side Hook</h3>
+<h3 id='id176'>サーバーサイドフック</h3>
 
-<p>All the server-side work will go into the update file in your hooks directory. The update file runs once per branch being pushed and takes the reference being pushed to, the old revision where that branch was, and the new revision being pushed. You also have access to the user doing the pushing if the push is being run over SSH. If you’ve allowed everyone to connect with a single user (like &#8220;git&#8221;) via public-key authentication, you may have to give that user a shell wrapper that determines which user is connecting based on the public key, and set an environment variable specifying that user. Here I assume the connecting user is in the <code>$USER</code> environment variable, so your update script begins by gathering all the information you need:</p>
+<p>サーバーサイドの作業は、すべて hooks ディレクトリの update ファイルにまとめます。update ファイルはプッシュされるブランチごとに実行されるもので、プッシュされる参照と操作前のブランチのリビジョン、そしてプッシュされる新しいリビジョンを受け取ります。また、SSH 経由でのプッシュの場合は、プッシュしたユーザーを知ることもできます。全員に共通のユーザー (&#8220;git&#8221; など) を使って公開鍵認証をさせている場合は、公開鍵の情報に基づいて実際のユーザーを判断して環境変数を設定するというラッパーが必要です。ここでは、接続しているユーザー名が環境変数 <code>$USER</code> に格納されているものとします。スクリプトは、まずこれらの情報を取得するところから始まります。</p>
 
 <pre><code>#!/usr/bin/env ruby
 
@@ -21,13 +21,13 @@ $user    = ENV[&#39;USER&#39;]
 
 puts &quot;Enforcing Policies... \n(#{$refname}) (#{$oldrev[0,6]}) (#{$newrev[0,6]})&quot;</code></pre>
 
-<p>Yes, I’m using global variables. Don’t judge me — it’s easier to demonstrate in this manner.</p>
+<p>ああ、グローバル変数を使ってるとかいうツッコミは勘弁してください。このほうが説明が楽なので。</p>
 
-<h4 id='enforcing_a_specific_commitmessage_format'>Enforcing a Specific Commit-Message Format</h4>
+<h4 id='id177'>特定のコミットメッセージ書式の強制</h4>
 
-<p>Your first challenge is to enforce that each commit message must adhere to a particular format. Just to have a target, assume that each message has to include a string that looks like &#8220;ref: 1234&#8221; because you want each commit to link to a work item in your ticketing system. You must look at each commit being pushed up, see if that string is in the commit message, and, if the string is absent from any of the commits, exit non-zero so the push is rejected.</p>
+<p>まずは、コミットメッセージを特定の書式に従わせることに挑戦してみましょう。ここでは、コミットメッセージには必ず &#8220;ref: 1234&#8221; 形式の文字列を含むこと、というルールにします。個々のコミットをチケットシステムとリンクさせたいという意図です。やらなければならないことは、プッシュされてきた各コミットのコミットメッセージにその文字列があるかどうかを調べ、もしなければゼロ以外の値で終了してプッシュを却下することです。</p>
 
-<p>You can get a list of the SHA-1 values of all the commits that are being pushed by taking the <code>$newrev</code> and <code>$oldrev</code> values and passing them to a Git plumbing command called <code>git rev-list</code>. This is basically the <code>git log</code> command, but by default it prints out only the SHA-1 values and no other information. So, to get a list of all the commit SHAs introduced between one commit SHA and another, you can run something like this:</p>
+<p>プッシュされたすべてのコミットの SHA-1 値を取得するには、<code>$newrev</code> と <code>$oldrev</code> の内容を <code>git rev-list</code> という低レベル Git コマンドに渡します。これは基本的には <code>git log</code> コマンドのようなものですが、デフォルトでは SHA-1 値だけを表示してそれ以外の情報は出力しません。ふたつのコミットの間のすべてのコミットの SHA を得るには、次のようなコマンドを実行します。</p>
 
 <pre><code>$ git rev-list 538c33..d14fc7
 d14fc7c847ab946ec39590d87783c69b031bdfb7
@@ -36,9 +36,9 @@ d14fc7c847ab946ec39590d87783c69b031bdfb7
 dfa04c9ef3d5197182f13fb5b9b1fb7717d2222a
 17716ec0f1ff5c77eff40b7fe912f9f6cfd0e475</code></pre>
 
-<p>You can take that output, loop through each of those commit SHAs, grab the message for it, and test that message against a regular expression that looks for a pattern.</p>
+<p>この出力を受け取ってループさせて各コミットの SHA を取得し、個々のメッセージを取り出し、正規表現でそのメッセージを調べることができます。</p>
 
-<p>You have to figure out how to get the commit message from each of these commits to test. To get the raw commit data, you can use another plumbing command called <code>git cat-file</code>. I’ll go over all these plumbing commands in detail in Chapter 9; but for now, here’s what that command gives you:</p>
+<p>さて、これらのコミットからコミットメッセージを取り出す方法を見つけなければなりません。生のコミットデータを取得するには、別の低レベルコマンド <code>git cat-file</code> を使います。低レベルコマンドについては第 9 章で詳しく説明しますが、とりあえずはこのコマンドがどんな結果を返すのだけを示します。</p>
 
 <pre><code>$ git cat-file commit ca82a6
 tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
@@ -48,12 +48,12 @@ committer Scott Chacon &lt;schacon@gmail.com&gt; 1240030591 -0700
 
 changed the version number</code></pre>
 
-<p>A simple way to get the commit message from a commit when you have the SHA-1 value is to go to the first blank line and take everything after that. You can do so with the <code>sed</code> command on Unix systems:</p>
+<p>SHA-1 値がわかっているときにコミットからコミットメッセージを得るシンプルな方法は、空行を探してそれ以降をすべて取得するというものです。これには、Unix システムの <code>sed</code> コマンドが使えます。</p>
 
 <pre><code>$ git cat-file commit ca82a6 | sed &#39;1,/^$/d&#39;
 changed the version number</code></pre>
 
-<p>You can use that incantation to grab the commit message from each commit that is trying to be pushed and exit if you see anything that doesn’t match. To exit the script and reject the push, exit non-zero. The whole method looks like this:</p>
+<p>この呪文を使ってコミットメッセージを取得し、もし条件にマッチしないものがあれば終了させればよいのです。スクリプトを抜けてプッシュを却下するには、ゼロ以外の値で終了させます。以上を踏まえると、このメソッドは次のようになります。</p>
 
 <pre><code>$regex = /\[ref: (\d+)\]/
 
@@ -70,22 +70,22 @@ def check_message_format
 end
 check_message_format</code></pre>
 
-<p>Putting that in your <code>update</code> script will reject updates that contain commits that have messages that don’t adhere to your rule.</p>
+<p>これを <code>update</code> スクリプトに追加すると、ルールを守らないコミットメッセージが含まれるコミットのプッシュを却下するようになります。</p>
 
-<h4 id='enforcing_a_userbased_acl_system'>Enforcing a User-Based ACL System</h4>
+<h4 id='id178'>ユーザーベースのアクセス制御</h4>
 
-<p>Suppose you want to add a mechanism that uses an access control list (ACL) that specifies which users are allowed to push changes to which parts of your projects. Some people have full access, and others only have access to push changes to certain subdirectories or specific files. To enforce this, you’ll write those rules to a file named <code>acl</code> that lives in your bare Git repository on the server. You’ll have the <code>update</code> hook look at those rules, see what files are being introduced for all the commits being pushed, and determine whether the user doing the push has access to update all those files.</p>
+<p>アクセス制御リスト (ACL) を使って、ユーザーごとにプロジェクトのどの部分を変更できるのかを指定できるようにしてみましょう。全体にアクセスできるユーザーもいれば、特定のサブディレクトリやファイルだけにしか変更をプッシュできないユーザーもいる、といった仕組みです。これを実施するには、ルールを書いたファイル <code>acl</code> をサーバー上のベア Git リポジトリに置きます。<code>update</code> フックにこのファイルを読ませ、プッシュされたコミットにどのファイルが含まれているのかを調べ、そしてプッシュしたユーザーがそれらのファイルを変更する権限があるのかどうかを判断します。</p>
 
-<p>The first thing you’ll do is write your ACL. Here you’ll use a format very much like the CVS ACL mechanism: it uses a series of lines, where the first field is <code>avail</code> or <code>unavail</code>, the next field is a comma-delimited list of the users to which the rule applies, and the last field is the path to which the rule applies (blank meaning open access). All of these fields are delimited by a pipe (<code>|</code>) character.</p>
+<p>まずは ACL を作るところから始めましょう。ここでは、CVS の ACL と似た書式を使います。これは各項目を一行で表すもので、最初のフィールドは <code>avail</code> あるいは <code>unavail</code>、そして次の行がそのルールを適用するユーザーの一覧 (カンマ区切り)、そして最後のフィールドがそのルールを適用するパス (ブランクは全体へのアクセスを意味します) です。フィールドの区切りには、パイプ文字 (<code>|</code>) を使います。</p>
 
-<p>In this case, you have a couple of administrators, some documentation writers with access to the <code>doc</code> directory, and one developer who only has access to the <code>lib</code> and <code>tests</code> directories, and your ACL file looks like this:</p>
+<p>ここでは、全体にアクセスする管理者と <code>doc</code> ディレクトリにアクセスするドキュメント担当者、そして <code>lib</code> と <code>tests</code> サブディレクトリだけにアクセスできる開発者を設定します。ACL ファイルは次のようになります。</p>
 
 <pre><code>avail|nickh,pjhyett,defunkt,tpw
 avail|usinclair,cdickens,ebronte|doc
 avail|schacon|lib
 avail|schacon|tests</code></pre>
 
-<p>You begin by reading this data into a structure that you can use. In this case, to keep the example simple, you’ll only enforce the <code>avail</code> directives. Here is a method that gives you an associative array where the key is the user name and the value is an array of paths to which the user has write access:</p>
+<p>まずはこのデータを読み込んで、スクリプト内で使えるデータ構造にしてみましょう。例をシンプルにするために、ここでは <code>avail</code> ディレクティブだけを使います。次のメソッドは連想配列を返すものです。ユーザー名が配列のキー、そのユーザーが書き込み権を持つパスの配列が対応する値となります。</p>
 
 <pre><code>def get_acl_access_data(acl_file)
   # read in ACL data
@@ -102,7 +102,7 @@ avail|schacon|tests</code></pre>
   access
 end</code></pre>
 
-<p>On the ACL file you looked at earlier, this <code>get_acl_access_data</code> method returns a data structure that looks like this:</p>
+<p>先ほどの ACL ファイルをこの <code>get_acl_access_data</code> メソッドに渡すと、このようなデータ構造を返します。</p>
 
 <pre><code>{&quot;defunkt&quot;=&gt;[nil],
  &quot;tpw&quot;=&gt;[nil],
@@ -113,16 +113,16 @@ end</code></pre>
  &quot;usinclair&quot;=&gt;[&quot;doc&quot;],
  &quot;ebronte&quot;=&gt;[&quot;doc&quot;]}</code></pre>
 
-<p>Now that you have the permissions sorted out, you need to determine what paths the commits being pushed have modified, so you can make sure the user who’s pushing has access to all of them.</p>
+<p>これで権限がわかったので、あとはプッシュされた各コミットがどのパスを変更しようとしているのかを調べれば、そのユーザーがプッシュすることができるのかどうかを判断できます。</p>
 
-<p>You can pretty easily see what files have been modified in a single commit with the <code>--name-only</code> option to the <code>git log</code> command (mentioned briefly in Chapter 2):</p>
+<p>あるコミットでどのファイルが変更されるのかを知るのはとても簡単で、<code>git log</code> コマンドに <code>--name-only</code> オプションを指定するだけです (第 2 章で簡単に説明しました)。</p>
 
 <pre><code>$ git log -1 --name-only --pretty=format:&#39;&#39; 9f585d
 
 README
 lib/test.rb</code></pre>
 
-<p>If you use the ACL structure returned from the <code>get_acl_access_data</code> method and check it against the listed files in each of the commits, you can determine whether the user has access to push all of their commits:</p>
+<p><code>get_acl_access_data</code> メソッドが返す ACL のデータとこのファイルリストを付き合わせれば、そのユーザーがコミットをプッシュする権限があるかどうかを判断できます。</p>
 
 <pre><code># only allows certain users to modify certain subdirectories in a project
 def check_directory_perms
@@ -151,15 +151,15 @@ end
 
 check_directory_perms</code></pre>
 
-<p>Most of that should be easy to follow. You get a list of new commits being pushed to your server with <code>git rev-list</code>. Then, for each of those, you find which files are modified and make sure the user who’s pushing has access to all the paths being modified. One Rubyism that may not be clear is <code>path.index(access_path) == 0</code>, which is true if path begins with <code>access_path</code> — this ensures that <code>access_path</code> is not just in one of the allowed paths, but an allowed path begins with each accessed path.</p>
+<p>それほど難しい処理ではありません。まず最初に <code>git rev-list</code> でコミットの一覧を取得し、それぞれに対してどのファイルが変更されるのかを調べ、ユーザーがそのファイルを変更する権限があることを確かめています。Ruby を知らない人にはわかりにくいところがあるとすれば <code>path.index(access_path) == 0</code> でしょうか。これは、パスが <code>access_path</code> で始まるときに真となります。つまり、<code>access_path</code> がパスの一部に含まれるのではなく、パスがそれで始まっているということを確認しています。</p>
 
-<p>Now your users can’t push any commits with badly formed messages or with modified files outside of their designated paths.</p>
+<p>これで、まずい形式のコミットメッセージや権利のないファイルの変更を含むコミットはプッシュできなくなりました。</p>
 
-<h4 id='enforcing_fastforwardonly_pushes'>Enforcing Fast-Forward-Only Pushes</h4>
+<h4 id='fastforward_'>Fast-Forward なプッシュへの限定</h4>
 
-<p>The only thing left is to enforce fast-forward-only pushes. In Git versions 1.6 or newer, you can set the <code>receive.denyDeletes</code> and <code>receive.denyNonFastForwards</code> settings. But enforcing this with a hook will work in older versions of Git, and you can modify it to do so only for certain users or whatever else you come up with later.</p>
+<p>最後は、fast-forward なプッシュに限るという仕組みです。Git バージョン 1.6 以降には <code>receive.denyDeletes</code> および <code>receive.denyNonFastForwards</code> という設定項目がありますが、これをフックで記述しておけば、古いバージョンの Git でも動作します。また、特定のユーザーにだけこの制約を加えたいなどといった変更にも対応できます。</p>
 
-<p>The logic for checking this is to see if any commits are reachable from the older revision that aren’t reachable from the newer one. If there are none, then it was a fast-forward push; otherwise, you deny it:</p>
+<p>これを調べるには、旧リビジョンからたどれるすべてのコミットについて、新リビジョンから到達できないものがないかどうかを探します。もしひとつもなければ、それは fast-forward なプッシュです。ひとつでも見つかれば、却下することになります。</p>
 
 <pre><code># enforces fast-forward only pushes 
 def check_fast_forward
@@ -173,7 +173,7 @@ end
 
 check_fast_forward</code></pre>
 
-<p>Everything is set up. If you run <code>chmod u+x .git/hooks/update</code>, which is the file you into which you should have put all this code, and then try to push a non-fast-forwarded reference, you get something like this:</p>
+<p>これですべてがととのいました。これまでのコードを書き込んだファイルに対して <code>chmod u+x .git/hooks/update</code> を実行し、fast-forward ではない参照をプッシュしてみましょう。すると、こんなメッセージが表示されるでしょう。</p>
 
 <pre><code>$ git push -f origin master
 Counting objects: 5, done.
@@ -190,44 +190,44 @@ To git@gitserver:project.git
  ! [remote rejected] master -&gt; master (hook declined)
 error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
 
-<p>There are a couple of interesting things here. First, you see this where the hook starts running.</p>
+<p>この中には、いくつか興味深い点があります。まず、フックの実行が始まったときの次の表示に注目しましょう。</p>
 
 <pre><code>Enforcing Policies... 
 (refs/heads/master) (fb8c72) (c56860)</code></pre>
 
-<p>Notice that you printed that out to stdout at the very beginning of your update script. It’s important to note that anything your script prints to stdout will be transferred to the client.</p>
+<p>これは、スクリプトの先頭で標準出力に表示した内容でした。ここで重要なのは「スクリプトから標準出力に送った内容は、すべてクライアントにも送られる」ということです。</p>
 
-<p>The next thing you’ll notice is the error message.</p>
+<p>次に注目するのは、エラーメッセージです。</p>
 
 <pre><code>[POLICY] Cannot push a non fast-forward reference
 error: hooks/update exited with error code 1
 error: hook declined to update refs/heads/master</code></pre>
 
-<p>The first line was printed out by you, the other two were Git telling you that the update script exited non-zero and that is what is declining your push. Lastly, you have this:</p>
+<p>最初の行はスクリプトから出力したもので、その他の 2 行は Git が出力したものです。この 2 行では、スクリプトがゼロ以外の値で終了したためにプッシュが却下されたということを説明しています。最後に、次の部分に注目します。</p>
 
 <pre><code>To git@gitserver:project.git
  ! [remote rejected] master -&gt; master (hook declined)
 error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
 
-<p>You’ll see a remote rejected message for each reference that your hook declined, and it tells you that it was declined specifically because of a hook failure.</p>
+<p>フックで却下したすべての参照について、remote rejected メッセージが表示されます。これを見れば、フック内での処理のせいで却下されたのだというこｔがわかります。</p>
 
-<p>Furthermore, if the ref marker isn’t there in any of your commits, you’ll see the error message you’re printing out for that.</p>
+<p>さらに、もしコミットメッセージに適切な ref が含まれていなければ、それを示す次のようなエラーメッセージが表示されるでしょう。</p>
 
 <pre><code>[POLICY] Your message is not formatted correctly</code></pre>
 
-<p>Or if someone tries to edit a file they don’t have access to and push a commit containing it, they will see something similar. For instance, if a documentation author tries to push a commit modifying something in the <code>lib</code> directory, they see</p>
+<p>また、変更権限のないファイルを変更してそれを含むコミットをプッシュしようとしたときも、同様にエラーが表示されます。たとえば、ドキュメント担当者が <code>lib</code> ディレクトリ内の何かを変更しようとした場合のメッセージは次のようになります。</p>
 
 <pre><code>[POLICY] You do not have access to push to lib/test.rb</code></pre>
 
-<p>That’s all. From now on, as long as that <code>update</code> script is there and executable, your repository will never be rewound and will never have a commit message without your pattern in it, and your users will be sandboxed.</p>
+<p>以上です。この <code>update</code> スクリプトが動いてさえいれば、もう二度とリポジトリが汚されることはありません。コミットメッセージは決まりどおりのきちんとしたものになるし、ユーザーに変なところをさわられる心配もなくなります。</p>
 
-<h3 id='clientside_hooks'>Client-Side Hooks</h3>
+<h3 id='id179'>クライアントサイドフック</h3>
 
-<p>The downside to this approach is the whining that will inevitably result when your users’ commit pushes are rejected. Having their carefully crafted work rejected at the last minute can be extremely frustrating and confusing; and furthermore, they will have to edit their history to correct it, which isn’t always for the faint of heart.</p>
+<p>この方式の弱点は、プッシュが却下されたときにユーザーが泣き寝入りせざるを得なくなるということです。手間暇かけて仕上げた作業が最後の最後で却下されるというのは、非常にストレスがたまるし不可解です。プッシュするためには歴史を修正しなければならないのですが、気弱な人にとってそれはかなりつらいことです。</p>
 
-<p>The answer to this dilemma is to provide some client-side hooks that users can use to notify them when they’re doing something that the server is likely to reject. That way, they can correct any problems before committing and before those issues become more difficult to fix. Because hooks aren’t transferred with a clone of a project, you must distribute these scripts some other way and then have your users copy them to their <code>.git/hooks</code> directory and make them executable. You can distribute these hooks within the project or in a separate project, but there is no way to set them up automatically.</p>
+<p>このジレンマに対する答えとして、サーバーが却下するであろう作業をするときにそれをユーザーに伝えるためのクライアントサイドフックを用意します。そうすれば、何か問題があるときにそれをコミットする前に知ることができるので、取り返しのつかなくなる前に問題を修正することができます。プロジェクトをクローンしてもフックはコピーされないので、別の何らかの方法で各ユーザーにスクリプトを配布しなければなりません。各ユーザーはそれを <code>.git/hooks</code> にコピーし、実行可能にします。フックスクリプト自体をプロジェクトに含めたり別のプロジェクトにしたりすることはできますが、各自の環境でそれをフックとして自動的に設定することはできないのです。</p>
 
-<p>To begin, you should check your commit message just before each commit is recorded, so you know the server won’t reject your changes due to badly formatted commit messages. To do this, you can add the <code>commit-msg</code> hook. If you have it read the message from the file passed as the first argument and compare that to the pattern, you can force Git to abort the commit if there is no match:</p>
+<p>はじめに、コミットを書き込む直前にコミットメッセージをチェックしなければなりません。そして、サーバーに却下されないようにコミットメッセージの書式を調べるのです。そのためには <code>commit-msg</code> フックを使います。最初の引数で渡されたファイルからコミットメッセージを読み込んでパターンと比較し、もしマッチしなければ Git の処理を中断させます。</p>
 
 <pre><code>#!/usr/bin/env ruby
 message_file = ARGV[0]
@@ -240,18 +240,18 @@ if !$regex.match(message)
   exit 1
 end</code></pre>
 
-<p>If that script is in place (in <code>.git/hooks/commit-msg</code>) and executable, and you commit with a message that isn’t properly formatted, you see this:</p>
+<p>このスクリプトを適切な場所 (<code>.git/hooks/commit-msg</code>) に置いて実行可能にしておくと、不適切なメッセージを書いてコミットしようとしたときに次のような結果となります。</p>
 
 <pre><code>$ git commit -am &#39;test&#39;
 [POLICY] Your message is not formatted correctly</code></pre>
 
-<p>No commit was completed in that instance. However, if your message contains the proper pattern, Git allows you to commit:</p>
+<p>このとき、実際にはコミットされません。もしメッセージが適切な書式になっていれば、Git はコミットを許可します。</p>
 
 <pre><code>$ git commit -am &#39;test [ref: 132]&#39;
 [master e05c914] test [ref: 132]
  1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Next, you want to make sure you aren’t modifying files that are outside your ACL scope. If your project’s <code>.git</code> directory contains a copy of the ACL file you used previously, then the following <code>pre-commit</code> script will enforce those constraints for you:</p>
+<p>次に、ACL で決められた範囲以外のファイルを変更していないことを確認しましょう。先ほど使った ACL ファイルのコピーがプロジェクトの <code>.git</code> ディレクトリにあれば、次のような <code>pre-commit</code> スクリプトでチェックすることができます。</p>
 
 <pre><code>#!/usr/bin/env ruby
 
@@ -280,29 +280,29 @@ end
 
 check_directory_perms</code></pre>
 
-<p>This is roughly the same script as the server-side part, but with two important differences. First, the ACL file is in a different place, because this script runs from your working directory, not from your Git directory. You have to change the path to the ACL file from this</p>
+<p>大まかにはサーバーサイドのスクリプトと同じですが、重要な違いがふたつあります。まず、ACL ファイルの場所が違います。このスクリプトは作業ディレクトリから実行するものであり、Git ディレクトリから実行するものではないからです。ACL ファイルの場所を、先ほどの</p>
 
 <pre><code>access = get_acl_access_data(&#39;acl&#39;)</code></pre>
 
-<p>to this:</p>
+<p>から次のように変更しなければなりません。</p>
 
 <pre><code>access = get_acl_access_data(&#39;.git/acl&#39;)</code></pre>
 
-<p>The other important difference is the way you get a listing of the files that have been changed. Because the server-side method looks at the log of commits, and, at this point, the commit hasn’t been recorded yet, you must get your file listing from the staging area instead. Instead of</p>
+<p>もうひとつの違いは、変更されたファイルの一覧を取得する方法です。サーバーサイドのメソッドではコミットログを調べていました。しかしこの時点ではまだコミットが記録されていないので、ファイルの一覧はステージング・エリアから取得しなければなりません。つまり、先ほどの</p>
 
 <pre><code>files_modified = `git log -1 --name-only --pretty=format:&#39;&#39; #{ref}`</code></pre>
 
-<p>you have to use</p>
+<p>は次のようになります。</p>
 
 <pre><code>files_modified = `git diff-index --cached --name-only HEAD`</code></pre>
 
-<p>But those are the only two differences — otherwise, the script works the same way. One caveat is that it expects you to be running locally as the same user you push as to the remote machine. If that is different, you must set the <code>$user</code> variable manually.</p>
+<p>しかし、違うのはこの二点だけ。それ以外はまったく同じように動作します。ただ、このスクリプトは、ローカルで実行しているユーザーとリモートマシンにプッシュするときのユーザーが同じであることを前提にしています。もし異なる場合は、変数 <code>$user</code> を手動で設定しなければなりません。</p>
 
-<p>The last thing you have to do is check that you’re not trying to push non-fast-forwarded references, but that is a bit less common. To get a reference that isn’t a fast-forward, you either have to rebase past a commit you’ve already pushed up or try pushing a different local branch up to the same remote branch.</p>
+<p>最後に残ったのは fast-forward でないプッシュを止めることですが、これは多少特殊です。fast-forward でない参照を取得するには、すでにプッシュした過去のコミットにリベースするか、別のローカルブランチにリモートブランチと同じところまでプッシュしなければなりません。</p>
 
-<p>Because the server will tell you that you can’t push a non-fast-forward anyway, and the hook prevents forced pushes, the only accidental thing you can try to catch is rebasing commits that have already been pushed.</p>
+<p>サーバーサイドでは fast-forward ではないプッシュをできないようにしているので、それ以外にあり得るのは、すでにプッシュ済みのコミットをリベースしようとするときくらいです。</p>
 
-<p>Here is an example pre-rebase script that checks for that. It gets a list of all the commits you’re about to rewrite and checks whether they exist in any of your remote references. If it sees one that is reachable from one of your remote references, it aborts the rebase:</p>
+<p>それをチェックする pre-rebase スクリプトの例を示します。これは書き換えようとしているコミットの一覧を取得し、それがリモート参照の中に存在するかどうかを調べます。リモート参照から到達可能なコミットがひとつでもあれば、リベースを中断します。</p>
 
 <pre><code>#!/usr/bin/env ruby
 
@@ -326,13 +326,13 @@ target_shas.each do |sha|
   end
 end</code></pre>
 
-<p>This script uses a syntax that wasn’t covered in the Revision Selection section of Chapter 6. You get a list of commits that have already been pushed up by running this:</p>
+<p>このスクリプトでは、第 6 章の「リビジョンの選択」ではカバーしていない構文を使っています。既にプッシュ済みのコミットの一覧を得るために、次のコマンドを実行します。</p>
 
 <pre><code>git rev-list ^#{sha}^@ refs/remotes/#{remote_ref}</code></pre>
 
-<p>The <code>SHA^@</code> syntax resolves to all the parents of that commit. You’re looking for any commit that is reachable from the last commit on the remote and that isn’t reachable from any parent of any of the SHAs you’re trying to push up — meaning it’s a fast-forward.</p>
+<p><code>SHA^@</code> 構文は、そのコミットのすべての親を解決します。リモートの最後のコミットから到達可能で、これからプッシュしようとするコミットの親のいずれかからアクセスできないコミットを探します。</p>
 
-<p>The main drawback to this approach is that it can be very slow and is often unnecessary — if you don’t try to force the push with <code>-f</code>, the server will warn you and not accept the push. However, it’s an interesting exercise and can in theory help you avoid a rebase that you might later have to go back and fix.</p>
+<p>この方式の弱点は非常に時間がかかることで、多くの場合このチェックは不要です。<code>-f</code> つきで強制的にプッシュしようとしない限り、サーバーが警告を出してプッシュできないからです。しかし練習用の課題としてはおもしろいもので、あとでリベースを取り消してやりなおすはめになることを理屈上は防げるようになります。</p>
 
 <div id='nav'>
 <a href='ch7-3.html'>prev</a> | <a href='ch7-5.html'>next</a>

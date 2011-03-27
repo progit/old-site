@@ -1,0 +1,381 @@
+---
+layout: translation
+title: Pro Git 2.2 Basi di Git Registrare i cambiamenti al repository
+---
+<h2 id='registrare_i_cambiamenti_al_repository'>Registrare i cambiamenti al repository</h2>
+
+<p>In buona fede hai copiato un repository Git e hai la copia di lavoro dei file di questo progetto. Ora puoi apportare alcune modifiche ed inviare gli snapshots di questi cambiamenti nel tuo repository ogni volta che il progetto raggiunge uno stato che vuoi registrare.</p>
+
+<p>Ricorda che ogni file nella tua directory di lavoro è in una dei due stati seguenti: tracciato o non tracciato. I file tracciati sono i file presenti nell&#8217;ultimo snapshot; possono essere non modificati, modificati o parcheggiati (stage). I file non tracciati sono tutti gli altri - qualsiasi file nella tua directory di lavoro che non è presente nel tuo ultimo snapshot o nella tua area di staging. Quando cloni per la prima volta un repository, tutti i tuoi file sono tracciati e non modificati perché li hai appena prelevati e non hai modificato ancora niente.</p>
+
+<p>Quando modifichi i file, Git li vede come cambiati, perché li hai modificati rispetto all&#8217;ultimo commit. Parcheggi questi file e poi esegui il commit di tutti i cambiamenti presenti nell&#8217;area di stage, ed il ciclo si ripete. Questo ciclo di vita è illustrato nella Figura 2-1.</p>
+
+<p><center><img src="/figures/ch2/18333fig0201-tn.png"></center><br/> Figure 2-1. Il ciclo di vita dello stato dei tuoi file.</p>
+
+<h3 id='controlla_lo_stato_dei_tuoi_file'>Controlla lo stato dei tuoi file</h3>
+
+<p>Lo strumento principale che userai per determinare quali file sono in un certo stato è il comando git status. Se lanci questo comando direttamente dopo aver fatto una clonazione, dovresti vedere qualcosa di simile a:</p>
+
+<pre><code>$ git status
+# On branch master
+nothing to commit (working directory clean)</code></pre>
+
+<p>Questo significa che hai una directory di lavoro pulita — in altre parole, non c&#8217;è traccia di file modificati. Git inoltre non vede altri file non tracciati, altrimenti sarebbero elencati qui. Infine, il comando ci dice in quale ramo (branch) si è. Per ora, è sempre il master, che è il predefinito; non preoccuparti ora di questo. Il prossimo capitolo tratterà delle ramificazioni e dei riferimenti nel dettagli.</p>
+
+<p>Ora diciamo che hai aggiunto un nuovo file al tuo progetto, un semplice file README. Se il file non esisteva prima, e lanci <code>git status</code>, vedrai il tuo file non tracciato come segue:</p>
+
+<pre><code>$ vim README
+$ git status
+# On branch master
+# Untracked files:
+#   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+#
+#	README
+nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
+
+<p>Puoi vedere che il tuo nuovo file README non è tracciato, perché è sotto al titolo &#8220;Untracked files&#8221; nell&#8217;output degli stati. Untracked fondamentalmente significa che Git vede un file che non avevi nel precedente snapshot (commit); Git non inizierà ad includerlo negli snapshot dei tuoi commit fino a quando tu non glielo dirai esplicitamente. Si comporta così per evitare che tu accidentalmente includa file binari generati o qualsiasi altro tipo di file che non vuoi sia incluso. Se vuoi includere il file README, continua con il tracciamento dei file.</p>
+
+<h3 id='tracciare_nuovi_file'>Tracciare nuovi file</h3>
+
+<p>Per iniziare a tracciare un nuovo file, usa il comando <code>git add</code>. Per tracciare il file README, lancia questo comando:</p>
+
+<pre><code>$ git add README</code></pre>
+
+<p>Se lanci nuovamente il comando di stato, puoi vedere il tuo file README tracciato e parcheggiato:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#</code></pre>
+
+<p>Ti dice che è parcheggiato (in stage) perché è sotto al titolo &#8220;Changes to be committed&#8221;. Se fai ora il commit, la versione del file al momento in cui hai lanciato git add sarà quella che troverai nella storia dello snapshot. Ti ricordo che precedentemente è stato lanciato git init, poi hai dovuto lanciare git add (files) — che era l&#8217;inizio per tracciare i file nella tua directory. Il comando git add prende il nome del path di ogni file o directory; se è una directory, il comando aggiunge tutti i file in quella directory ricorsivamente.</p>
+
+<h3 id='parcheggiare_file_modificati'>Parcheggiare file modificati</h3>
+
+<p>Ora modifichiamo un file che è già stato tracciato. Se modifichi un file precedentemente tracciato chiamato <code>benchmarks.rb</code> e poi avvii nuovamente il comando <code>status</code>, otterrai qualcosa di simile a:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Il file benchmarks.rb appare sotto la sezione chiamata &#8220;Changed but not updated&#8221; — che significa che un file che è tracciato è stato modificato nella directory di lavoro ma non ancora messo in stage (parcheggiato). Per parcheggiarlo, avvia il comando <code>git add</code> (è un comando multifunzione — è usato per iniziare a tracciare nuovi file, per parcheggiare i file e per fare altre cose come eseguire la fusione dei file che entrano in conflitto dopo che sono stati risolti). Avvia dunque <code>git add</code> per parcheggiare ora il file benchmarks.rb, e avvia nuovamente <code>git status</code>:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Entrambi i file sono parcheggiati ed entreranno nel prossimo commit. A questo punto, supponendo che tu ti sia ricordato di una piccola modifica da fare a benchmarks.rb prima di fare il commit. Apri nuovamente il file ed esegui la modifica, e ora sei pronto per il commit. Come sempre, lanci <code>git status</code> ancora una volta:</p>
+
+<pre><code>$ vim benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Che succede? Ora benchmarks.rb è elencato sia in stage che non. Come è possibile? E&#8217; saltato fuori che Git ha parcheggiato il file esattamente come se tu avessi avviato il comando git add. Se esegui ora il commit, la versione di benchmarks.rb che verrà inviata nel commit sarà come quella di quando tu hai lanciato il comando git add, non la versione del file che appare nella tua directory di lavoro quando lanci git commit. Se modifichi un file dopo che hai lanciato <code>git add</code>, devi nuovamente avviare <code>git add</code> per parcheggiare l&#8217;ultima versione del file:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<h3 id='ignorare_file'>Ignorare file</h3>
+
+<p>Spesso, si ha una classe di file che non si vuole automaticamente aggiungere o far vedere come file non tracciati a Git. Ci sono generalmente alcuni file generati automaticamente come i file di log o i file prodotti dalla creazione di un sistema. In questi casi, puoi creare un file chiamato .gitignore con una lista di pattern corrispondente ad essi. Questo è un esempio di file .gitignore:</p>
+
+<pre><code>$ cat .gitignore
+*.[oa]
+*~</code></pre>
+
+<p>La prima linea dice a Git di ignorare qualsiasi file che finisce con .o o .a — file di oggetti o archivi che possono essere il prodotto di una compilazione del tuo codice. La seconda linea dice a Git di ignorare tutti i file che finiscono con la tilde (<code>~</code>), che è usata da alcuni editor di testo come Emacs per marcare i file temporanei. Puoi anche includere directory di log, tmp o pid; documentazioni generate automaticamente; e così via. Imposta un file .gitignore prima di di procedere è generalmente una buona idea, così si evita il rischio di eseguire accidentalmente dei commit dei file che non vuoi nel tuo repository Git.</p>
+
+<p>Le regole per i pattern che puoi mettere nel file .gitignore sono le seguenti:</p>
+
+<ul>
+<li>Linee nere o linee che iniziano con # sono ignorate.</li>
+
+<li>Standard glob pattern funziona.</li>
+
+<li>Puoi terminare i pattern con un diviso (<code>/</code>) per specificare una directory.</li>
+
+<li>Puoi negare un pattern aggiungendo all&#8217;inizio il punto di esclamazione (<code>!</code>).</li>
+</ul>
+
+<p>I glob pattern sono semplicemente espressioni regolari usate dalla shell. Un asterisco (<code>*</code>) corrisponde a zero o più caratteri; <code>[abc]</code> corrispondente ad ogni carattere all&#8217;interno delle parentesi (in questo caso a, b, o c); il punto di domanda (<code>?</code>) corrispondente ad un singolo carattere; ed i caratteri all&#8217;interno delle parentesi quadre separati dal segno meno (<code>[0-9]</code>) corrispondono ad ogni carattere all&#8217;interno del range impostato (in questo caso da 0 a 9).</p>
+
+<p>Questo è un altro esempio di file .gitignore:</p>
+
+<pre><code># un commento - questo è ignorato
+*.a       # no file .a
+!lib.a    # ma traccia lib.a, mentre vengono ignorati tutti i file .a come sopra
+/TODO     # ignora solamente il file TODO in root, non del tipo subdir/TODO
+build/    # ignora tutti i file nella directory build/
+doc/*.txt # ignora doc/note.txt, ma non doc/server/arch.txt</code></pre>
+
+<h3 id='visualizza_le_tue_modifiche_parcheggiate_e_non'>Visualizza le tue modifiche parcheggiate e non</h3>
+
+<p>Se il comando <code>git status</code> è troppo vago per te — vorrai conoscere esattamente cosa hai modificato, non solamente i file che hai cambiato — puoi usare il comando <code>git diff</code>. Scopriremo in maggior dettaglio <code>git diff</code> più avanti; ma probabilmente lo userai più spesso per rispondere a queste due domande: Cosa hai modificato ma non ancora parcheggiato? E cosa hai parcheggiato e che sta per mettere nel commit? Certamente, <code>git status</code> risponde a queste domande in generale, <code>git diff</code> ti mostra le linee esatte aggiunte e rimosse — la patch, per così dire.</p>
+
+<p>Nuovamente ti chiedo di modificare e parcheggiare il file README e poi modificare il file benchmarks.rb senza parcheggiarlo. Se lanci il comando <code>status</code>, vedrai nuovamente questo:</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#	new file:   README
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Per vedere cosa hai modificato ma non ancora parcheggiato, digita <code>git diff</code> senza altri argomenti:</p>
+
+<pre><code>$ git diff
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..da65585 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+           @commit.parents[0].parents[0].parents[0]
+         end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++
+         run_code(x, &#39;commits 2&#39;) do
+           log = git.commits(&#39;master&#39;, 15)
+           log.size</code></pre>
+
+<p>Questo comando compara cosa c&#8217;è nella tua directory di lavoro con quello che è nella tua area di stage. Il risultato ti dice i cambiamenti che hai fatto che non sono ancora stati parcheggiati.</p>
+
+<p>Se vuoi vedere cosa hai parcheggiato e che sarà inviato con il tuo prossimo commit, puoi usare <code>git diff --cached</code>. (Nella versione 1.6.1 e successive di Git, puoi usare anche <code>git diff --staged</code>, che dovrebbe essere più facile da ricordare.) Questo comando compara i tuoi cambiamenti nell&#8217;area di stage ed il tuo ultimo commit:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/README b/README
+new file mode 100644
+index 0000000..03902a1
+--- /dev/null
++++ b/README2
+@@ -0,0 +1,5 @@
++grit
++ by Tom Preston-Werner, Chris Wanstrath
++ http://github.com/mojombo/grit
++
++Grit is a Ruby library for extracting information from a Git repository</code></pre>
+
+<p>E&#8217; importante notare che <code>git diff</code> di per se non visualizza tutti i cambiamenti fatti dal tuo ultimo commit — solo i cambiamenti che ancora non sono parcheggiati. Questo può confondere, perché se hai messo in stage tutte le tue modifiche, <code>git diff</code> non darà nessun output.</p>
+
+<p>Per un altro esempio, se parcheggi il file benchmarks.rb e lo modifichi, puoi usare <code>git diff</code> per vedere i cambiamenti nel file che sono in stage e i cambiamenti che non sono parcheggiati:</p>
+
+<pre><code>$ git add benchmarks.rb
+$ echo &#39;# test line&#39; &gt;&gt; benchmarks.rb
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#
+#	modified:   benchmarks.rb
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#</code></pre>
+
+<p>Ora puoi usare <code>git diff</code> per vedere cosa non è ancora parcheggiato</p>
+
+<pre><code>$ git diff
+diff --git a/benchmarks.rb b/benchmarks.rb
+index e445e28..86b2f7c 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -127,3 +127,4 @@ end
+ main()
+
+ ##pp Grit::GitRuby.cache_client.stats
++# test line</code></pre>
+
+<p>e <code>git diff --cached</code> per vedere cosa hai parcheggiato precedentemente:</p>
+
+<pre><code>$ git diff --cached
+diff --git a/benchmarks.rb b/benchmarks.rb
+index 3cb747f..e445e28 100644
+--- a/benchmarks.rb
++++ b/benchmarks.rb
+@@ -36,6 +36,10 @@ def main
+          @commit.parents[0].parents[0].parents[0]
+        end
+
++        run_code(x, &#39;commits 1&#39;) do
++          git.commits.size
++        end
++
+        run_code(x, &#39;commits 2&#39;) do
+          log = git.commits(&#39;master&#39;, 15)
+          log.size</code></pre>
+
+<h3 id='eseguire_il_commit_delle_tue_modifiche'>Eseguire il commit delle tue modifiche</h3>
+
+<p>Ora la tua area di stage è impostata come volevi, puoi eseguire il commit delle tue modifiche. Ricorda che qualsiasi cosa che non è parcheggiata — qualsiasi file che hai creato o modificato e a cui non hai fatto <code>git add</code> — non andrà nel commit. Rimarranno come file modificati sul tuo disco. In questo caso, l&#8217;ultima volta che hai lanciato <code>git status</code>, hai visto che tutto era parcheggiato, così sei pronto ad inviare le tue modifiche con un commit. Il modo più semplice per eseguire il commit è di digitare <code>git commit</code>:</p>
+
+<pre><code>$ git commit</code></pre>
+
+<p>Facendo questo lanci l&#8217;editor che avevi scelto. (Questo è impostato nella tua shell dalla variabile di ambiente <code>$EDITOR</code> — generalmente vim o emacs, ovviamente puoi configurarlo con qualsiasi altro editor usando il comando <code>git config --global core.editor</code> come visto nel Capitolo 1).</p>
+
+<p>L&#8217;editor visualizzerà il seguente testo (questo è un esempio della schermata di Vim):</p>
+
+<pre><code># Please enter the commit message for your changes. Lines starting
+# with &#39;#&#39; will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       new file:   README
+#       modified:   benchmarks.rb
+~
+~
+~
+&quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
+
+<p>Puoi vedere che il messaggio predefinito del commit contiene l&#8217;ultimo output del comando <code>git status</code>, commentato, e la prima riga in alto è vuota. Puoi rimuovere questi commenti ed inserire il tuo messaggio, o puoi lasciarli così per aiutarti a ricordare cosa hai inviato. (Per avere una nota di ricordo più esplicita puoi passare l&#8217;opzione <code>-v</code> a <code>git commit</code>. Facendo questo metterai la differenza del tuo ultimo cambiamento nell&#8217;editor così potrai vedere esattamente cosa hai fatto.) Quando esci dall&#8217;editor, Git crea il tuo commit con un messaggio (con il commento ed il diff spogliato).</p>
+
+<p>In alternativa, puoi inserire il messaggio del tuo commit in linea con il comando <code>commit</code> specificando dopo di esso l&#8217;opzione -m, come segue:</p>
+
+<pre><code>$ git commit -m &quot;Story 182: Fix benchmarks for speed&quot;
+[master]: created 463dc4f: &quot;Fix benchmarks for speed&quot;
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+ create mode 100644 README</code></pre>
+
+<p>Ora hai creato il tuo primo commit! Puoi vedere che il commit ha riportato alcune informazioni sull&#8217;operazione: che ramo hai inviato (al master), che checksum SHA-1 ha il commit (<code>463dc4f</code>), quanti file sono stati modificati e le statistiche sulle linee aggiunte e rimosse nel commit.</p>
+
+<p>Ricorda che il commit registra lo snapshot che hai impostato nella tua area di staging. Qualsiasi cosa che non hai parcheggiato rimarrà come modificata; puoi fare un altro commit per aggiungere questi alla storia del progetto. Ogni volta che farai un commit, stai registrando una istantanea del tuo progetto che puoi ripristinare o comparare successivamente.</p>
+
+<h3 id='saltare_larea_di_staging'>Saltare l&#8217;area di staging</h3>
+
+<p>Anche se può essere estremamente utile per amministrare i commit esattamente come li vuoi, l&#8217;area di staging è molto più complessa di quanto tu possa averne bisogno nel lavoro normale. Se vuoi saltare l&#8217;area di parcheggio, Git fornisce una semplice scorciatoia. Passando l&#8217;opzione <code>-a</code> al comando <code>git commit</code> Git automaticamente parcheggia tutti i file che sono già stati tracciati facendo il commit, permettendoti di saltare la parte <code>git add</code>:</p>
+
+<pre><code>$ git status
+# On branch master
+#
+# Changed but not updated:
+#
+#	modified:   benchmarks.rb
+#
+$ git commit -a -m &#39;added new benchmarks&#39;
+[master 83e38c7] added new benchmarks
+ 1 files changed, 5 insertions(+), 0 deletions(-)</code></pre>
+
+<p>Nota come non hai bisogno, in questo caso, di lanciare <code>git add</code> sul file benchmarks.rb prima del commit.</p>
+
+<h3 id='rimuovere_file'>Rimuovere file</h3>
+
+<p>Per rimuovere un file con Git, hai bisogno di rimuoverlo dai file tracciati (più precisamente, rimuoverlo dall&#8217;area di staging) e poi di fare il commit. Il comando <code>git rm</code> fa questo ed inoltre rimuove il file dalla tua directory di lavoro così non lo vedrai come un file non tracciato la prossima volta.</p>
+
+<p>Se semplicemente rimuovi il file dalla directory di lavoro, sarà visto sotto l&#8217;area &#8220;Changed but not updated&#8221; (cioè, non parcheggiato) dell&#8217;output <code>git status</code>:</p>
+
+<pre><code>$ rm grit.gemspec
+$ git status
+# On branch master
+#
+# Changed but not updated:
+#   (use &quot;git add/rm &lt;file&gt;...&quot; to update what will be committed)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>Poi, se lanci <code>git rm</code>, parcheggia il file rimosso:</p>
+
+<pre><code>$ git rm grit.gemspec
+rm &#39;grit.gemspec&#39;
+$ git status
+# On branch master
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       deleted:    grit.gemspec
+#</code></pre>
+
+<p>La prossima volta che fai il commit, il file se ne andrà e non sarà più tracciato. Se modifichi il file e lo aggiungi nuovamente all&#8217;indice, devi forzarne la rimozione con l&#8217;opzione <code>-f</code>. Questa è una caratteristica di sicurezza per prevenire la rimozione accidentale dei dati che non sono ancora stati registrati in uno snapshot e che non possono essere recuperati da Git.</p>
+
+<p>Un&#8217;altra cosa utile che potresti voler fare è mantenere il file nel tuo albero di lavoro ma rimuoverlo dall&#8217;area di staging. In altre parole, vuoi mantenere il file sul tuo disco ma non vuoi che Git ne mantenga ancora traccia. Questo è particolarmente utile se ti dimentichi di aggiungere qualcosa al tuo file <code>.gitignore</code> ed accidentalmente lo aggiungi, come un lungo file di log od un gruppo di file <code>.a</code> compilati. Per fare questo, usa l&#8217;opzione <code>--cached</code>:</p>
+
+<pre><code>$ git rm --cached readme.txt</code></pre>
+
+<p>Puoi passare file, directory o glob pattern di file al comando <code>git rm</code>. Questo significa che puoi fare cose come</p>
+
+<pre><code>$ git rm log/\*.log</code></pre>
+
+<p>Nota la barra inversa (<code>\</code>) di fronte a <code>*</code>. Questo è necessario perché Git ha una sua espansione dei nomi di file in aggiunta all&#8217;espansione dei filename della tua shell. Questo comando rimuove tutti i file che hanno l&#8217;estensione <code>.log</code> nella directory <code>log/</code>. O puoi fare qualcosa di simile a:</p>
+
+<pre><code>$ git rm \*~</code></pre>
+
+<p>Questo comando rimuove tutti i file che finiscono con <code>~</code>.</p>
+
+<h3 id='movimenti_di_file'>Movimenti di file</h3>
+
+<p>A differenza di altri sistemi VCS, Git non traccia esplicitamente i movimenti di file. Se rinomini un file in Git, nessun metadata è immagazzinato in Git che ti dirà che hai rinominato il file. Come sempre, Git è abbastanza intelligente da capire il fatto — ci occuperemo di rilevare il movimento dei file dopo.</p>
+
+<p>Perciò crea un pò di confusione il fatto che Git abbia un comando <code>mv</code>. Se vuoi rinominare un file in Git, puoi lanciare qualcosa come</p>
+
+<pre><code>$ git mv file_from file_to</code></pre>
+
+<p>e questo lavora bene. Infatti, se lanci qualcosa come questo e guardi lo stato, vedrai che Git considera il file rinominato:</p>
+
+<pre><code>$ git mv README.txt README
+$ git status
+# On branch master
+# Your branch is ahead of &#39;origin/master&#39; by 1 commit.
+#
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#       renamed:    README.txt -&gt; README
+#</code></pre>
+
+<p>Ovviamente, questo è equivalente a lanciare qualcosa come:</p>
+
+<pre><code>$ mv README.txt README
+$ git rm README.txt
+$ git add README</code></pre>
+
+<p>Git capisce implicitamente che è stato rinominato, così non è un problema rinominare un file in questo modo o con il comando <code>mv</code>. L&#8217;unica reale differenza è che <code>mv</code> è un solo comando invece di tre — non è conveniente. Più importante è che tu puoi usare qualsiasi strumento per rinominare un file, ed aggiungere/togliere poi prima di un commit.</p>
+
+<div id='nav'>
+<a href='ch2-1.html'>prev</a> | <a href='ch2-3.html'>next</a>
+</div>

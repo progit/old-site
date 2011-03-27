@@ -1,0 +1,92 @@
+---
+layout: translation
+title: Pro Git 6.11 Инструменты Git Subtree Merging
+---
+<h2 id='subtree_merging'>Subtree Merging</h2>
+
+<p>Теперь, когда вы увидели сложности системы подмодулей, давайте посмотрим на альтернативный путь решения той же проблемы. Когда Git выполняет слияние, он смотрит на то, что требуется слить вместе и затем выбирает подходящую стратегию слияния. Если вы сливаете две ветви, Git использует <em>рекурсивную (recursive)</em> стратегию. Если вы объединяете более двух ветвей, Git выбирает стратегию <em>осьминога (octopus)</em>. Эти стратегии выбираются для вас автоматически потому, что рекурсивная стратегия может обрабатывать сложные трехсторонние ситуации слияния - например, более чем один общий предок - но она может объединять только две ветви. Объединение методом осьминога может обрабатывать множество ветвей, но является более осторожным, чтобы предотвратить сложные конфликты, так что, он выбирается стратегией по умолчанию, если вы пытаетесь объединить более двух ветвей.</p>
+
+<p>Now that you’ve seen the difficulties of the submodule system, let’s look at an alternate way to solve the same problem. When Git merges, it looks at what it has to merge together and then chooses an appropriate merging strategy to use. If you’re merging two branches, Git uses a <em>recursive</em> strategy. If you’re merging more than two branches, Git picks the <em>octopus</em> strategy. These strategies are automatically chosen for you because the recursive strategy can handle complex three-way merge situations — for example, more than one common ancestor — but it can only handle merging two branches. The octopus merge can handle multiple branches but is more cautious to avoid difficult conflicts, so it’s chosen as the default strategy if you’re trying to merge more than two branches.</p>
+
+<p>Однако, существуют другие стратеги, которые вы так же можете выбрать. Одна из них - объединение <em>поддеревьев</em>, и вы можете использовать ее для решения задачи с подпроектами. Тут вы увидите как выполнить то же внедрение rack как и в предыдущем разделе, но с использованием стратегии слияний поддеревьев.</p>
+
+<p>However, there are other strategies you can choose as well. One of them is the <em>subtree</em> merge, and you can use it to deal with the subproject issue. Here you’ll see how to do the same rack embedding as in the last section, but using subtree merges instead.</p>
+
+<p>Идея объединения поддеревьев в том, что вы имеете два проекта, и один из проектов отображается в подкаталог другого и наоборот. Когда вы задаете слияние поддеревьев, Git достаточно умен, чтобы понять то, что один проект является поддеревом другого и слить правильно - это довольно удивительно.</p>
+
+<p>The idea of the subtree merge is that you have two projects, and one of the projects maps to a subdirectory of the other one and vice versa. When you specify a subtree merge, Git is smart enough to figure out that one is a subtree of the other and merge appropriately — it’s pretty amazing.</p>
+
+<p>Сначала вы добавляете приложение Rack в ваш проект. Вы добавляете проект Rack как внешнюю ссылку в вашем собственном проекте, и затем переводите его в собственную ветку:</p>
+
+<p>You first add the Rack application to your project. You add the Rack project as a remote reference in your own project and then check it out into its own branch:</p>
+
+<pre><code>$ git remote add rack_remote git@github.com:schacon/rack.git
+$ git fetch rack_remote
+warning: no common commits
+remote: Counting objects: 3184, done.
+remote: Compressing objects: 100% (1465/1465), done.
+remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
+Receiving objects: 100% (3184/3184), 677.42 KiB | 4 KiB/s, done.
+Resolving deltas: 100% (1952/1952), done.
+From git@github.com:schacon/rack
+ * [new branch]      build      -&gt; rack_remote/build
+ * [new branch]      master     -&gt; rack_remote/master
+ * [new branch]      rack-0.4   -&gt; rack_remote/rack-0.4
+ * [new branch]      rack-0.9   -&gt; rack_remote/rack-0.9
+$ git checkout -b rack_branch rack_remote/master
+Branch rack_branch set up to track remote branch refs/remotes/rack_remote/master.
+Switched to a new branch &quot;rack_branch&quot;</code></pre>
+
+<p>Теперь у вас есть корень проекта Rack в вашей ветке <code>rack_branch</code> и ваш проект в ветке <code>master</code>. Если вы переключитесь на одну, а затем на другую, то увидете, что содержимое их корневых каталогов различно:</p>
+
+<p>Now you have the root of the Rack project in your <code>rack_branch</code> branch and your own project in the <code>master</code> branch. If you check out one and then the other, you can see that they have different project roots:</p>
+
+<pre><code>$ ls
+AUTHORS	       KNOWN-ISSUES   Rakefile      contrib	       lib
+COPYING	       README         bin           example	       test
+$ git checkout master
+Switched to branch &quot;master&quot;
+$ ls
+README</code></pre>
+
+<p>Допустим, вы хотите получить проект Rack в ваш <code>master</code>-проект как подкаталог. Вы можете сделать это в Git-те командой <code>git read-tree</code>. Вы узнаете больше про команду <code>read-tree</code> и ее друзей в Главе 9, но пока знайте, что она читает корень дерева одной ветки в вашу текущую рабочую область и рабочий каталог. Вам достаточно переключиться обратно в вашу ветвь <code>master</code>, и вытянуть ветвь <code>rack</code> в подкаталог <code>rack</code> ветви <code>master</code> вашего основного проекта:</p>
+
+<p>You want to pull the Rack project into your <code>master</code> project as a subdirectory. You can do that in Git with <code>git read-tree</code>. You’ll learn more about <code>read-tree</code> and its friends in Chapter 9, but for now know that it reads the root tree of one branch into your current staging area and working directory. You just switched back to your <code>master</code> branch, and you pull the <code>rack</code> branch into the <code>rack</code> subdirectory of your <code>master</code> branch of your main project:</p>
+
+<pre><code>$ git read-tree --prefix=rack/ -u rack_branch</code></pre>
+
+<p>Когда произведете фиксацию (командой <code>commit</code>), все будет выглядеть так, как-будто у вас все файлы Rack в этом подкаталоге - будто вы скопировали их туда из архива. Вызывает интерес то, что вы можете достаточно просто объединять изменения их одной ветвей в другую. Так, что если проект Rack изменится, вы сможете вытянуть ведущие изменения путем переключение в эту ветку и извлечения:</p>
+
+<p>When you commit, it looks like you have all the Rack files under that subdirectory — as though you copied them in from a tarball. What gets interesting is that you can fairly easily merge changes from one of the branches to the other. So, if the Rack project updates, you can pull in upstream changes by switching to that branch and pulling:</p>
+
+<pre><code>$ git checkout rack_branch
+$ git pull</code></pre>
+
+<p>Затем, вы можете слить эти изменения обратно в вашу главную ветвь. Можете использовать <code>git merge -s subtree</code> и это сработает правильно; но Git также объединит истории вместе, чего вы возможно не желаете. Для вытягивания изменений и подстановки сообщения коммита, используйте опции <code>--squash</code> и <code>--no-commit</code> вместе с опцией стратегии <code>-s subtree</code>:</p>
+
+<p>Then, you can merge those changes back into your master branch. You can use <code>git merge -s subtree</code> and it will work fine; but Git will also merge the histories together, which you probably don’t want. To pull in the changes and prepopulate the commit message, use the <code>--squash</code> and <code>--no-commit</code> options as well as the <code>-s subtree</code> strategy option:</p>
+
+<pre><code>$ git checkout master
+$ git merge --squash -s subtree --no-commit rack_branch
+Squash commit -- not updating HEAD
+Automatic merge went well; stopped before committing as requested</code></pre>
+
+<p>Все изменения из проекта Rack слиты и готовы для локальной фиксации. Вы так же можете сделать наоборот - внести изменения в подкаталог <code>rack</code> вашей главной ветви, и затем, слить их в вашу ветку <code>rack_branch</code> чтобы позже отправить их персоналу сопровождения или вытолкнуть их в основную ветвь разработки стороннего проекта.</p>
+
+<p>All the changes from your Rack project are merged in and ready to be committed locally. You can also do the opposite — make changes in the <code>rack</code> subdirectory of your master branch and then merge them into your <code>rack_branch</code> branch later to submit them to the maintainers or push them upstream.</p>
+
+<p>Для получения разности между тем, что у вас есть в подкаталоге <code>rack</code> и кодом в вашей ветке <code>rack_branch</code>, чтобы увидеть нужно ли вам объединять их, вы не можете использовать нормальную команду <code>diff</code>. Вместо этого вы должны выполнить <code>git diff-tree</code> с веткой, с которой вы хотите сравнить:</p>
+
+<p>To get a diff between what you have in your <code>rack</code> subdirectory and the code in your <code>rack_branch</code> branch — to see if you need to merge them — you can’t use the normal <code>diff</code> command. Instead, you must run <code>git diff-tree</code> with the branch you want to compare to:</p>
+
+<pre><code>$ git diff-tree -p rack_branch</code></pre>
+
+<p>Или, для сравнения того, что в вашем подкаталоге <code>rack</code> с тем, что в ветви <code>master</code> на сервере, из которого вы в последний раз извлекали, можете выполнить:</p>
+
+<p>Or, to compare what is in your <code>rack</code> subdirectory with what the <code>master</code> branch on the server was the last time you fetched, you can run</p>
+
+<pre><code>$ git diff-tree -p rack_remote/master</code></pre>
+
+<div id='nav'>
+<a href='ch6-10.html'>prev</a> | <a href='ch6-12.html'>next</a>
+</div>
