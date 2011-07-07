@@ -1,0 +1,86 @@
+---
+layout: translation
+title: Pro Git 3.1 Branching Pada Git Apakah Branch Itu
+---
+<h2 id='apakah_branch_itu'>Apakah Branch Itu</h2>
+
+<p>Untuk benar-benar mengerti cara Git melakukan branching, kita perlu kembali ke belakang dan membahas bagaimana Git menyimpan datanya. Seperti yang mungkin anda ingat dari Bab 1, Git tidak menyimpan data sebagai serangkaian kumpulan perubahan atau delta, melainkan sebagai serangkaian snapshot.</p>
+
+<p>Ketika anda melakukan commit dalam Git, Git menyimpan sebuah object commit yang berisi pointer ke snapshot dari konten yang anda staged, metadata pembuat (author) dan pesan (message), dan nol atau lebih pointer ke commit yang merupakan parent (induk) langsung dari commit ini: nol jika ini commit yang pertama, satu jika ini commit yang normal, dan beberapa jika ini commit yang dihasilkan dari gabungan antara dua atau lebih branch.</p>
+
+<p>Untuk memvisualisasikan ini, mari kita asumsikan anda memiliki direktori yang berisi tiga buah berkas, dan anda menambahkan mereka ke stage dan melakukan commit. Proses staging berkas melakukan checksum (dengan hash SHA-1 yang telah kita sebutkan di Bab 1), menyimpan versi berkas tersebut dalam repositori Git (Git merujuknya sebagai &#8216;blobs&#8217;), dan menambahkan checksum tersebut ke staging area:</p>
+
+<pre><code>$ git add README test.rb LICENSE
+$ git commit -m &#39;initial commit of my project&#39;</code></pre>
+
+<p>Ketika anda membuat commit dengan menjalankan <code>git commit</code>, Git melakukan checksum pada setiap subdirektori (dalam kasus ini, hanya direktori root dari proyek) dan menyimpan object tree tersebut dalam repositori Git. Git kemudian membuat object commit yang memiliki metadata dan pointer ke root dari project tree sehingga dapat membuat kembali snapshot tersebut bila diperlukan.</p>
+
+<p>Repositori Git anda sekarang berisi lima object: satu blob untuk setiap tiga berkas, satu tree yang berisi daftar isi direktori dan menentukan mana nama berkas yang disimpan blob, dan satu commit dengan pointer menunjuk ke root dari tree dan semua metadata dari commit. Secara konseptual, data dalam repositori Git anda tampak seperti Gambar 3-1.</p>
+
+<p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Gambar 3-1. Data repositori dari satu commit.</p>
+
+<p>Jika anda membuat beberapa perubahan dan melakukan commit lagi, commit berikutnya menyimpan pointer ke commit yang sebelumnya. Setelah dua commit berikutnya, historinya akan terlihat seperti Gambar 3-2.</p>
+
+<p><center><img src="/figures/ch3/18333fig0302-tn.png"></center><br/> Gambar 3-2. Object data dari Git untuk beberapa kali commit.</p>
+
+<p>Sebuah branch (cabang) di Git secara sederhana hanyalah pointer yang dapat bergerak ke salah satu commit. Nama default dari branch dalam Git adalah <code>master</code>. Ketika anda membuat commit di awal, anda diberikan sebuah branch master yang menunjuk ke commit terakhir yang anda buat. Setiap kali anda melakukan commit, ia bergerak maju secara otomatis.</p>
+
+<p><center><img src="/figures/ch3/18333fig0303-tn.png"></center><br/> Gambar 3-3. Branch menunjuk ke histori data commit.</p>
+
+<p>Apa yang terjadi jika anda membuat branch (cabang) baru? Nah, melakukan hal tersebut menciptakan sebuah pointer baru untuk bergerak. Katakanlah anda membuat branch baru yang bernama <code>testing</code>. Anda melakukan ini dengan perintah <code>git branch</code>:</p>
+
+<pre><code>$ git branch testing</code></pre>
+
+<p>Hal ini menciptakan sebuah pointer (penunjuk) baru pada commit yang sama dengan yang saat ini anda berada (lihat Gambar 3-4).</p>
+
+<p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Gambar 3-4. Beberapa branch menunjuk ke histori data commit.</p>
+
+<p>Bagaimana Git tahu di branch mana anda berada saat ini? Git menyimpan sebuah pointer khusus yang disebut HEAD. Perhatikan bahwa ini adalah jauh berbeda dari konsep HEAD di VCS lain yang mungkin pernah anda gunakan, seperti Subversion atau CVS. Dalam Git, HEAD ini adalah pointer ke branch lokal anda saat ini. Dalam kasus ini, anda masih berada di master. Perintah git branch hanya menciptakan sebuah branch baru — namun tidak dengan serta-merta beralih ke branch itu (lihat Gambar 3-5).</p>
+
+<p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Gambar 3-5. Berkas HEAD menunjuk ke branch dimana anda berada.</p>
+
+<p>Untuk beralih ke branch yang telah ada, anda dapat menjalankan perintah <code>git checkout</code>. Mari kita beralih ke branch testing yang baru saja dibuat:</p>
+
+<pre><code>$ git checkout testing</code></pre>
+
+<p>Ini memindahkan HEAD untuk menunjuk ke branch testing (lihat Gambar 3-6).</p>
+
+<p><center><img src="/figures/ch3/18333fig0306-tn.png"></center><br/> Gambar 3-6. HEAD menunjuk ke branch lain ketika anda berpindah branch.</p>
+
+<p>Apa pentingnya itu? Baiklah, mari kita lakukan commit lain:</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;made a change&#39;</code></pre>
+
+<p>Gambar 3-7 mengilustrasikan hasilnya.</p>
+
+<p><center><img src="/figures/ch3/18333fig0307-tn.png"></center><br/> Gambar 3-7. Branch yang ditunjuk oleh HEAD bergerak maju pada setiap kali commit.</p>
+
+<p>Hal ini menarik, karena sekarang branch testing anda telah bergerak maju, tetapi cabang master anda masih menunjuk ke commit dimana disitu anda menjalankan <code>git checkout</code> untuk beralih branch. Mari kita beralih kembali ke branch master:</p>
+
+<pre><code>$ git checkout master</code></pre>
+
+<p>Gambar 3-8 memperlihatkan hasilnya.</p>
+
+<p><center><img src="/figures/ch3/18333fig0308-tn.png"></center><br/> Gambar 3-8. HEAD bergerak ke branch lain ketika checkout.</p>
+
+<p>Perintah tersebut melakukan dua hal. Ia memindahkan pointer HEAD kembali menunjuk ke branch master, dan ia mengembalikan berkas-berkas dalam direktori kerja anda kembali ke snapshot yang ditunjuk oleh master. Ini juga berarti perubahan yang anda lakukan dari titik ini ke depan akan berubah arah dari versi lama dari proyek. Hal ini pada dasarnya melakukan pemutaran balik pekerjaan yang anda lakukan dalam branch testing anda untuk sementara sehingga anda dapat pergi ke arah yang berbeda.</p>
+
+<p>Mari buat sedikit perubahan dan lakukan commit lagi:</p>
+
+<pre><code>$ vim test.rb
+$ git commit -a -m &#39;made other changes&#39;</code></pre>
+
+<p>Sekarang histori proyek anda telah berubah arah (lihat Gambar 3-9). Anda membuat dan beralih ke suatu branch, melakukan beberapa pekerjaan di atasnya, dan kemudian beralih kembali ke branch utama anda dan melakukan pekerjaan lain. Kedua perubahan itu terisolasi dalam branch terpisah: anda dapat beralih antara branch dan menggabungkan (merge) mereka bersama-sama ketika anda siap. Dan anda melakukan semua itu dengan perintah <code>branch</code> dan <code>checkout</code> yang sederhana.</p>
+
+<p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Gambar 3-9. Histori dari branch yang berubah arah.</p>
+
+<p>Karena sebuah branch di Git dalam kenyataannya adalah sebuah berkas sederhana yang berisi 40 karakter SHA-1 checksum dari commit yang dituju, adalah hal yang murah untuk menciptakan dan menghancurkan branch. Membuat branch baru adalah sama cepatnya dan sama sederhananya seperti menulis 41 byte ke sebuah berkas (40 karakter dan sebuah newline).</p>
+
+<p>Hal ini kontras dengan cara yang dilakukan banyak VCS dalam branch, yang butuh menyalin semua berkas proyek ke direktori kedua. Ini dapat memakan waktu beberapa detik atau bahkan menit, tergantung pada ukuran proyek, sedangkan dalam Git proses ini selalu seketika. Dan lagi, karena kita merekam parent (induk) ketika melakukan commit, mencari dasar penggabungan yang tepat untuk menggabungkan dilakukan secara otomatis bagi kita dan biasanya sangat mudah dilakukan. Fitur-fitur ini membantu mendorong pengembang (developer) untuk membuat dan menggunakan cabang secara sering.</p>
+
+<p>Mari kita lihat mengapa anda harus melakukannya.</p>
+
+<div id='nav'>
+<a href='ch3-0.html'>prev</a> | <a href='ch3-2.html'>next</a>
+</div>

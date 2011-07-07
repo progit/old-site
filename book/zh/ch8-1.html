@@ -16,7 +16,7 @@ title: Pro Git 8.1 Git 与其他系统 Git 与 Subversion
 
 <p>避免修改历史再重新推送的做法，也不要同时推送到并行的 Git 仓库来试图与其他 Git 用户合作。Subersion 只能保存单一的线性提交历史，一不小心就会被搞糊涂。合作团队中同时有人用 SVN 和 Git，一定要确保所有人都使用 SVN 服务来协作——这会让生活轻松很多。</p>
 
-<h3 id='id379'>初始设定</h3>
+<h3 id='id390'>初始设定</h3>
 
 <p>为了展示功能，先要一个具有写权限的 SVN 仓库。如果想尝试这个范例，你必须复制一份其中的测试仓库。比较简单的做法是使用一个名为 <code>svnsync</code> 的工具。较新的 Subversion 版本中都带有该工具，它将数据编码为用于网络传输的格式。</p>
 
@@ -48,7 +48,7 @@ Committed revision 3.
 
 <p>别看这个操作只花掉几分钟，要是你想把源仓库复制到另一个远程仓库，而不是本地仓库，那将花掉接近一个小时，尽管项目中只有不到 100 次的提交。 Subversion 每次只复制一次修改，把它推送到另一个仓库里，然后周而复始——惊人的低效，但是我们别无选择。</p>
 
-<h3 id='id380'>入门</h3>
+<h3 id='id391'>入门</h3>
 
 <p>有了可以写入的 Subversion 仓库以后，就可以尝试一下典型的工作流程了。我们从 <code>git svn clone</code> 命令开始，它会把整个 Subversion 仓库导入到一个本地的 Git 仓库中。提醒一下，这里导入的是一个货真价实的 Subversion 仓库，所以应该把下面的 <code>file:///tmp/test-svn</code> 换成你所用的 Subversion 仓库的 URL：</p>
 
@@ -140,7 +140,7 @@ Date:   Sat May 2 22:06:44 2009 +0000
 
 <p>注意看，原本以 <code>97031e5</code> 开头的 SHA-1 校验值在提交完成以后变成了 <code>938b1a5</code> 。如果既要向 Git 远程服务器推送内容，又要推送到 Subversion 远程服务器，则必须先向 Subversion 推送（<code>dcommit</code>），因为该操作会改变所提交的数据内容。</p>
 
-<h3 id='id381'>拉取最新进展</h3>
+<h3 id='id392'>拉取最新进展</h3>
 
 <p>如果要与其他开发者协作，总有那么一天你推送完毕之后，其他人发现他们推送自己修改的时候（与你推送的内容）产生冲突。这些修改在你合并之前将一直被拒绝。在 <code>git svn</code> 里这种情况形似：</p>
 
@@ -246,7 +246,7 @@ r89 = 9b6fe0b90c5c9adf9165f700897518dbc54a7cbf (opera)</code></pre>
 
 <p>相当于在 Subversion 中的 <code>svn copy trunk branches/opera</code> 命令并且对 Subversion 服务器进行了相关操作。值得提醒的是它没有检出和转换到那个分支；如果现在进行提交，将提交到服务器上的 <code>trunk</code>， 而非 <code>opera</code>。</p>
 
-<h3 id='id382'>切换当前分支</h3>
+<h3 id='id393'>切换当前分支</h3>
 
 <p>Git 通过搜寻提交历史中 Subversion 分支的头部来决定 dcommit 的目的地——而它应该只有一个，那就是当前分支历史中最近一次包含 <code>git-svn-id</code> 的提交。</p>
 

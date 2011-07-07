@@ -109,7 +109,7 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
  lib/simplegit.rb |   25 +++++++++++++++++++++++++
  3 files changed, 54 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Comme vous pouvez le voir, l&#8217;option <code>--stat</code> affiche sous chaque entrée de validation une liste des fichiers modifiés, combien de fichiers ont été changés et combien de lignes ont été ajoutées ou retirées dans ces fichiers. Elle ajoute un résumé des information en fin de sortie. Une autre option utile est <code>--pretty</code>. Cette option modifie le journal vers un format différent. Quelques options incluses sont disponibles. L&#8217;option <code>oneline</code> affiche chaque commit sur une seule ligne, ce qui peut s&#8217;avérer utile lors de la revue d&#8217;un long journal. De plus, les options <code>short</code>, <code>full</code> et <code>fuller</code> montrent le résultat à peu de choses près dans le même format mais avec de plus en plus d&#8217;information :</p>
+<p>Comme vous pouvez le voir, l&#8217;option <code>--stat</code> affiche sous chaque entrée de validation une liste des fichiers modifiés, combien de fichiers ont été changés et combien de lignes ont été ajoutées ou retirées dans ces fichiers. Elle ajoute un résumé des informations en fin de sortie. Une autre option utile est <code>--pretty</code>. Cette option modifie le journal vers un format différent. Quelques options incluses sont disponibles. L&#8217;option <code>oneline</code> affiche chaque commit sur une seule ligne, ce qui peut s&#8217;avérer utile lors de la revue d&#8217;un long journal. De plus, les options <code>short</code>, <code>full</code> et <code>fuller</code> montrent le résultat à peu de choses près dans le même format mais avec de plus en plus d&#8217;information :</p>
 
 <pre><code>$ git log --pretty=oneline
 ca82a6dff817ec66f44342007202690a93763949 changed the version number
@@ -123,13 +123,13 @@ ca82a6d — Scott Chacon, 11 months ago : changed the version number
 085bb3b — Scott Chacon, 11 months ago : removed unnecessary test code
 a11bef0 — Scott Chacon, 11 months ago : first commit</code></pre>
 
-<p>Le tableau 2-1 liste les options de formattage les plus utiles.</p>
+<p>Le tableau 2-1 liste les options de formatage les plus utiles.</p>
 
-<pre><code>Option	Description du formattage
+<pre><code>Option	Description du formatage
 %H	Somme de contrôle du commit
 %h	Somme de contrôle abrégée du commit
 %T	Somme de contrôle de l&#39;arborescence
-%t	Somme de contrôle abrégée de l&#39;aborescence
+%t	Somme de contrôle abrégée de l&#39;arborescence
 %P	Sommes de contrôle des parents
 %p	Sommes de contrôle abrégées des parents
 %an	Nom de l&#39;auteur
@@ -163,7 +163,7 @@ a11bef0 — Scott Chacon, 11 months ago : first commit</code></pre>
 <pre><code>Option	Description
 -p	Affiche le patch appliqué par chaque commit
 --stat	Affiche les statistiques de chaque fichier pour chaque commit
---shortstat	N&#39;affiche que la ligne des modifiées/insérées/effacées le l&#39;option --stat
+--shortstat	N&#39;affiche que les ligne modifiées/insérées/effacées de l&#39;option --stat
 --name-only	Affiche la liste des fichiers modifiés après les informations du commit
 --name-status	Affiche la liste des fichiers affectés accompagnés des informations d&#39;ajout/modification/suppression
 --abbrev-commit	N&#39;affiche que les premiers caractères de la somme de contrôle SHA-1
@@ -173,7 +173,7 @@ a11bef0 — Scott Chacon, 11 months ago : first commit</code></pre>
 
 <h3 id='limiter_la_longueur_de_lhistorique'>Limiter la longueur de l&#8217;historique</h3>
 
-<p>En complément des options de formattage de sortie, git log est pourvu de certaines options de limitation utiles — des options qui permettent de restreindre la liste à un sous-ensemble de commits. Vous avez déjà vu une de ces options — l&#8217;option <code>-2</code> qui ne montre que le deux derniers commits. En fait, on peut utiliser <code>-&lt;n&gt;</code>, ou <code>n</code> correspond au nombre de commits que l&#8217;on cherche à visualiser en partant des plus récents. En vérité, il est peu probable que vous utilisiez cette option, parce que Git injecte par défaut sa sortie dans un outil de pagination qui permet de la visualiser page à page.</p>
+<p>En complément des options de formatage de sortie, git log est pourvu de certaines options de limitation utiles — des options qui permettent de restreindre la liste à un sous-ensemble de commits. Vous avez déjà vu une de ces options — l&#8217;option <code>-2</code> qui ne montre que le deux derniers commits. En fait, on peut utiliser <code>-&lt;n&gt;</code>, ou <code>n</code> correspond au nombre de commits que l&#8217;on cherche à visualiser en partant des plus récents. En vérité, il est peu probable que vous utilisiez cette option, parce que Git injecte par défaut sa sortie dans un outil de pagination qui permet de la visualiser page à page.</p>
 
 <p>Cependant, les options de limitation portant sur le temps, telles que <code>--since</code> (depuis) et <code>--until</code> (jusqu&#8217;à) sont très utiles. Par exemple, le commande suivante affiche la liste des commits des deux dernières semaines :</p>
 

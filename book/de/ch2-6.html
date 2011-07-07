@@ -132,7 +132,7 @@ a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
 
 <p>The most interesting option is <code>format</code>, which allows you to specify your own log output format. This is especially useful when you’re generating output for machine parsing — because you specify the format explicitly, you know it won’t change with updates to Git:</p>
 
-<p>Eines der interessantesten Formate ist <code>format</code>, das dir erlaubt, dein eigenes Format zu verwenden. Dies ist inbesondere nützlich, wenn du die Ausgabe in ein anderes Programm einlesen willst (da du das Format explizit angibst, kannst du sicher sein, daß es sich nicht ändert, wenn du Git auf eine neuere Version aktualisierst):</p>
+<p>Eines der interessantesten Formate ist <code>format</code>, das dir erlaubt, dein eigenes Format zu verwenden. Dies ist inbesondere nützlich, wenn du die Ausgabe in ein anderes Programm einlesen willst (da du das Format explizit angibst, kannst du sicher sein, dass es sich nicht ändert, wenn du Git auf eine neuere Version aktualisierst):</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
 ca82a6d - Scott Chacon, 11 months ago : changed the verison number
@@ -227,7 +227,7 @@ Option	Beschreibung
 
 <p>In addition to output-formatting options, git log takes a number of useful limiting options — that is, options that let you show only a subset of commits. You’ve seen one such option already — the <code>-2</code> option, which show only the last two commits. In fact, you can do <code>-&lt;n&gt;</code>, where <code>n</code> is any integer to show the last <code>n</code> commits. In reality, you’re unlikely to use that often, because Git by default pipes all output through a pager so you see only one page of log output at a time.</p>
 
-<p>Zusätzlich zu den Formatierungsoptionen für die Ausgabe akzeptiert <code>git log</code> eine Reihe nützlicher Optionen, um die Anzahl der ausgegebenen Commits zu einzuschränken. Eine solche Option ist dir bereits begegnet: die <code>-2</code> Option, die bewirkt, daß nur die letzten beiden Commits angezeigt werden. D.h., du kannst <code>-&lt;n&gt;</code> verwenden, wobei <code>n</code> irgendeine ganze Zahl sein kann. Im Alltag wirst du diese Option vermutlich nicht sehr oft verwenden, weil Git die Ausgabe standardmäßig durch einen Pager leitet (xxx) und nur jeweils eine Seite anzeigt.</p>
+<p>Zusätzlich zu den Formatierungsoptionen für die Ausgabe akzeptiert <code>git log</code> eine Reihe nützlicher Optionen, um die Anzahl der ausgegebenen Commits zu einzuschränken. Eine solche Option ist dir bereits begegnet: die <code>-2</code> Option, die bewirkt, dass nur die letzten beiden Commits angezeigt werden. D.h., du kannst <code>-&lt;n&gt;</code> verwenden, wobei <code>n</code> irgendeine ganze Zahl sein kann. Im Alltag wirst du diese Option vermutlich nicht sehr oft verwenden, weil Git die Ausgabe standardmäßig durch einen Pager leitet (xxx) und nur jeweils eine Seite anzeigt.</p>
 
 <p>However, the time-limiting options such as <code>--since</code> and <code>--until</code> are very useful. For example, this command gets the list of commits made in the last two weeks:</p>
 

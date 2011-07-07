@@ -1,110 +1,210 @@
 ---
 layout: translation
-title: Pro Git 6.4 Инструменты Git Stashing
+title: Pro Git 6.4 Инструменты Git Перезапись истории
 ---
-<h2 id='stashing'>Stashing</h2>
+<h2 id='_'>Перезапись истории</h2>
 
-<p>Often, when you’ve been working on part of your project, things are in a messy state and you want to switch branches for a bit to work on something else. The problem is, you don’t want to do a commit of half-done work just so you can get back to this point later. The answer to this issue is the <code>git stash</code> command.</p>
+<p>Неоднократно, во время работы с Git, вам может захотеться по какой-либо причине исправить свою историю коммитов. Одна из чудесных особенностей Git заключается в том, что он даёт возможность принять решение в самый последний момент. Вы можете решить какие файлы пойдут в какие коммиты перед тем как сделать коммит используя индекс, вы можете решить, что над чем-то ещё не стоило начинать работать и использовать команду <code>stash</code>. А также вы можете переписать уже сделанные коммиты так, как-будто они были сделаны как-то по-другому. В частности это может быть изменение порядка следования коммитов, изменение сообщений или изменение файлов в коммите, уплотнение и разделение коммитов, а также полное удаление некоторых коммитов — но только до того как вы поделитесь наработками с другими.</p>
 
-<p>Stashing takes the dirty state of your working directory — that is, your modified tracked files and staged changes — and saves it on a stack of unfinished changes that you can reapply at any time.</p>
+<p>В этом разделе вы узнаете как выполнять подобные полезные задачи и как сделать так, чтобы история коммитов выглядела так как вам хочется перед тем, как вы её опубликуете.</p>
 
-<h3 id='stashing_your_work'>Stashing Your Work</h3>
+<h3 id='__'>Изменение последнего коммита</h3>
 
-<p>To demonstrate, you’ll go into your project and start working on a couple of files and possibly stage one of the changes. If you run <code>git status</code>, you can see your dirty state:</p>
+<p>Изменение последнего коммита это, вероятно, наиболее типичный случай переписывания истории, который вы будете делать. Как правило, вам от вашего последнего коммита понадобятся две основные вещи: изменить сообщение коммита, или изменить только что записанный снимок состояния, добавив, изменив или удалив из него файлы.</p>
 
-<pre><code>$ git status
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+<p>Если вы всего лишь хотите изменить сообщение последнего коммита — это очень просто:</p>
+
+<pre><code>$ git commit --amend</code></pre>
+
+<p>Выполнив это, вы попадёте в свой текстовый редактор, в котором будет находиться сообщение последнего коммита, готовое к тому, чтобы его отредактировали. Когда вы сохраните текст и закроете редактор, Git создаст новый коммит с вашим сообщением и сделает его новым последним коммитом.</p>
+
+<p>Если вы сделали коммит и затем хотите изменить снимок состояния в коммите, добавив или изменив файлы, допустим, потому что вы забыли добавить только что созданный файл, когда делали коммит, то процесс выглядит в основном так же. Вы добавляете в индекс изменения, которые хотите, редактируя файл и выполняя для него <code>git add</code> или выполняя <code>git rm</code> для отслеживаемого файла, и затем <code>git commit --amend</code> возьмёт текущий индекс и сделает его снимком состояния нового коммита.</p>
+
+<p>Будьте осторожны используя этот приём, потому что <code>git commit --amend</code> меняет SHA-1 коммита. Тут как с маленьким перемещением (rebase) — не правьте последний коммит, если вы его уже куда-то отправили.</p>
+
+<h3 id='___'>Изменение сообщений нескольких коммитов</h3>
+
+<p>Чтобы изменить коммит, находящийся глубоко в истории, вам придётся перейти к использованию более сложных инструментов. В Git нет специального инструмента для редактирования истории, но вы можете использовать <code>rebase</code> для перемещения ряда коммитов на то же самое место, где они были изначально, а не куда-то в другое место. Используя инструмент для интерактивного перемещения, вы можете останавливаться на каждом коммите, который хотите изменить, и редактировать сообщение, добавлять файлы или делать что-то ещё. Интерактивное перемещение можно запустить добавив опцию <code>-i</code> к <code>git rebase</code>. Необходимо указать насколько далекие в истории коммиты вы хотите переписать, сообщив команде на какой коммит выполняется перемещение.</p>
+
+<p>Например, если вы хотите изменить сообщения последних трёх коммитов, или сообщения для только некоторых коммитов в этой группе, вам надо передать в <code>git rebase -i</code> в качестве аргумента родителя последнего коммита, который вы хотите изменить, то есть <code>HEAD~2^</code> или <code>HEAD~3</code>. Наверное проще запомнить <code>~3</code>, потому что вы пытаетесь отредактировать три последних коммита, но имейте в виду, что на самом деле вы обозначили четвёртый сверху коммит — родительский коммит, для того, который хотите отредактировать:</p>
+
+<pre><code>$ git rebase -i HEAD~3</code></pre>
+
+<p>Снова напомним, что эта команда для перемещения, то есть все коммиты в диапазоне <code>HEAD~3..HEAD</code> будут переписаны, вне зависимости от того меняли ли вы в них сообщение или нет. Не трогайте те коммиты, которые вы уже отправили на центральный сервер — сделав так, вы запутаете других разработчиков дав им разные версии одних и тех же изменений.</p>
+
+<p>Запуск этой команды выдаст вам в текстовом редакторе список коммитов, который будет выглядеть как-нибудь так:</p>
+
+<pre><code>pick f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+
+# Rebase 710f0f8..a5f4a0d onto 710f0f8
 #
-#      modified:   index.html
+# Commands:
+#  p, pick = use commit
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
 #
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#
-#      modified:   lib/simplegit.rb
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
 #</code></pre>
 
-<p>Now you want to switch branches, but you don’t want to commit what you’ve been working on yet; so you’ll stash the changes. To push a new stash onto your stack, run <code>git stash</code>:</p>
+<p>Важно отметить, что эти коммиты выведены в обратном порядке по сравнению с тем, как вы их обычно видите используя команду <code>log</code>. Запустив <code>log</code>, вы получите что-то типа следующего:</p>
 
-<pre><code>$ git stash
-Saved working directory and index state \
-  &quot;WIP on master: 049d078 added the index file&quot;
-HEAD is now at 049d078 added the index file
-(To restore them type &quot;git stash apply&quot;)</code></pre>
+<pre><code>$ git log --pretty=format:&quot;%h %s&quot; HEAD~3..HEAD
+a5f4a0d added cat-file
+310154e updated README formatting and added blame
+f7f3f6d changed my name a bit</code></pre>
 
-<p>Your working directory is clean:</p>
+<p>Обратите внимание на обратный порядок. Интерактивное перемещение выдаёт сценарий, который будет выполнен. Он начнётся с коммита, который вы указали в командной строке (<code>HEAD~3</code>), и воспроизведёт изменения сделанные каждым из этих коммитов сверху вниз. Наверху указан самый старый коммит, а не самый новый, потому что он будет воспроизведён первым.</p>
 
-<pre><code>$ git status
-# On branch master
-nothing to commit (working directory clean)</code></pre>
+<p>Вам надо отредактировать сценарий так, чтобы он останавливался на коммитах, которые вы хотите отредактировать. Чтобы сделать это, замените слово pick на слово edit для каждого коммита, на котором сценарий должен остановиться. Например, чтобы изменить сообщение только для третьего коммита, отредактируйте файл так, чтобы он выглядел следующим образом:</p>
 
-<p>At this point, you can easily switch branches and do work elsewhere; your changes are stored on your stack. To see which stashes you’ve stored, you can use <code>git stash list</code>:</p>
+<pre><code>edit f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file</code></pre>
 
-<pre><code>$ git stash list
-stash@{0}: WIP on master: 049d078 added the index file
-stash@{1}: WIP on master: c264051... Revert &quot;added file_size&quot;
-stash@{2}: WIP on master: 21d80a5... added number to log</code></pre>
+<p>Когда вы сохраните и выйдете из редактора, Git откатит вас назад к последнему коммиту в списке и выкинет вас в командную строку выдав следующее сообщение:</p>
 
-<p>In this case, two stashes were done previously, so you have access to three different stashed works. You can reapply the one you just stashed by using the command shown in the help output of the original stash command: <code>git stash apply</code>. If you want to apply one of the older stashes, you can specify it by naming it, like this: <code>git stash apply stash@{2}</code>. If you don’t specify a stash, Git assumes the most recent stash and tries to apply it:</p>
+<pre><code>$ git rebase -i HEAD~3
+Stopped at 7482e0d... updated the gemspec to hopefully work better
+You can amend the commit now, with
 
-<pre><code>$ git stash apply
-# On branch master
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+       git commit --amend
+
+Once you’re satisfied with your changes, run
+
+       git rebase --continue</code></pre>
+
+<p>В этой инструкции в точности сказано что надо сделать. Наберите</p>
+
+<pre><code>$ git commit --amend</code></pre>
+
+<p>Измените сообщение коммита и выйдите из редактора. Теперь выполните</p>
+
+<pre><code>$ git rebase --continue</code></pre>
+
+<p>Эта команда применит оставшиеся два коммита автоматически, и тогда всё. Если вы измените pick на edit для большего количества строк, то вы повторите эти шаги для каждого коммита, где вы напишите edit. Каждый раз Git будет останавливаться, давая вам исправить коммит, а потом, когда вы закончите, будет продолжать.</p>
+
+<h3 id='_'>Переупорядочение коммитов</h3>
+
+<p>Интерактивное перемещение можно также использовать для изменения порядка следования и для полного удаления коммитов. Если вы хотите удалить коммит &#8220;added cat-file&#8221; и поменять порядок, в котором идут два других коммита, измените сценарий для rebase с такого</p>
+
+<pre><code>pick f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file</code></pre>
+
+<p>на такой:</p>
+
+<pre><code>pick 310154e updated README formatting and added blame
+pick f7f3f6d changed my name a bit</code></pre>
+
+<p>Когда вы сохраните и выйдите из редактора, Git откатит вашу ветку к родительскому для этих трёх коммиту, применит <code>310154e</code>, затем <code>f7f3f6d</code>, а потом остановится. Вы фактически поменяли порядок следования коммитов и полностью удалили коммит &#8220;added cat-file&#8221;.</p>
+
+<h3 id='_'>Уплотнение коммитов</h3>
+
+<p>С помощью интерактивного перемещения также возможно взять несколько коммитов и сплющить их в один коммит. Сценарий выдаёт полезное сообщение с инструкциями для перемещения:</p>
+
+<pre><code>#
+# Commands:
+#  p, pick = use commit
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
 #
-#      modified:   index.html
-#      modified:   lib/simplegit.rb
+# If you remove a line here THAT COMMIT WILL BE LOST.
+# However, if you remove everything, the rebase will be aborted.
 #</code></pre>
 
-<p>You can see that Git re-modifies the files you uncommitted when you saved the stash. In this case, you had a clean working directory when you tried to apply the stash, and you tried to apply it on the same branch you saved it from; but having a clean working directory and applying it on the same branch aren’t necessary to successfully apply a stash. You can save a stash on one branch, switch to another branch later, and try to reapply the changes. You can also have modified and uncommitted files in your working directory when you apply a stash — Git gives you merge conflicts if anything no longer applies cleanly.</p>
+<p>Если вместо &#8220;pick&#8221; или &#8220;edit&#8221; указать &#8220;squash&#8221;, Git применит изменения и из этого коммита, и из предыдущего, а затем даст вам объединить сообщения для коммитов. Итак, чтобы сделать один коммит из трёх наших коммитов, надо сделать так, чтобы сценарий выглядел следующим образом:</p>
 
-<p>The changes to your files were reapplied, but the file you staged before wasn’t restaged. To do that, you must run the <code>git stash apply</code> command with a <code>--index</code> option to tell the command to try to reapply the staged changes. If you had run that instead, you’d have gotten back to your original position:</p>
+<pre><code>pick f7f3f6d changed my name a bit
+squash 310154e updated README formatting and added blame
+squash a5f4a0d added cat-file</code></pre>
 
-<pre><code>$ git stash apply --index
-# On branch master
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#      modified:   index.html
-#
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#
-#      modified:   lib/simplegit.rb
-#</code></pre>
+<p>Когда вы сохраните и выйдите из редактора, Git применит все три изменения, а затем опять выдаст вам редактор для того, чтобы объединить сообщения трёх коммитов:</p>
 
-<p>The apply option only tries to apply the stashed work — you continue to have it on your stack. To remove it, you can run <code>git stash drop</code> with the name of the stash to remove:</p>
+<pre><code># This is a combination of 3 commits.
+# The first commit&#39;s message is:
+changed my name a bit
 
-<pre><code>$ git stash list
-stash@{0}: WIP on master: 049d078 added the index file
-stash@{1}: WIP on master: c264051... Revert &quot;added file_size&quot;
-stash@{2}: WIP on master: 21d80a5... added number to log
-$ git stash drop stash@{0}
-Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)</code></pre>
+# This is the 2nd commit message:
 
-<p>You can also run <code>git stash pop</code> to apply the stash and then immediately drop it from your stack.</p>
+updated README formatting and added blame
 
-<h3 id='creating_a_branch_from_a_stash'>Creating a Branch from a Stash</h3>
+# This is the 3rd commit message:
 
-<p>If you stash some work, leave it there for a while, and continue on the branch from which you stashed the work, you may have a problem reapplying the work. If the apply tries to modify a file that you’ve since modified, you’ll get a merge conflict and will have to try to resolve it. If you want an easier way to test the stashed changes again, you can run <code>git stash branch</code>, which creates a new branch for you, checks out the commit you were on when you stashed your work, reapplies your work there, and then drops the stash if it applies successfully:</p>
+added cat-file</code></pre>
 
-<pre><code>$ git stash branch testchanges
-Switched to a new branch &quot;testchanges&quot;
-# On branch testchanges
-# Changes to be committed:
-#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
-#
-#      modified:   index.html
-#
-# Changed but not updated:
-#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
-#
-#      modified:   lib/simplegit.rb
-#
-Dropped refs/stash@{0} (f0dfc4d5dc332d1cee34a634182e168c4efc3359)</code></pre>
+<p>Когда вы это сохраните, у вас будет один коммит, который вносит изменения такие же как три бывших коммита.</p>
 
-<p>This is a nice shortcut to recover stashed work easily and work on it in a new branch.</p>
+<h3 id='_'>Разбиение коммита</h3>
+
+<p>Разбиение коммита — это отмена коммита, а затем индексирование изменений частями и добавление коммитов столько раз, сколько коммитов вы хотите получить. Например, предположим, что вы хотите разбить средний из наших трёх коммитов. Вместо &#8220;updated README formatting and added blame&#8221;, вы хотите получить два отдельных коммита: &#8220;updated README formatting&#8221; в качестве первого и &#8220;added blame&#8221; в качестве второго. Вы можете сделать это в сценарии <code>rebase -i</code> поставив &#8220;edit&#8221; в инструкции для коммита, который хотите разбить:</p>
+
+<pre><code>pick f7f3f6d changed my name a bit
+edit 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file</code></pre>
+
+<p>Теперь, когда сценарий выбросит вас в командную строку, отмените этот коммит с помощью <code>reset</code>, возьмите изменения, которые были сброшены и создайте из них несколько коммитов. Когда вы сохраните и выйдите из редактора, Git откатится к родителю первого коммита в списке, применит первый коммит (<code>f7f3f6d</code>), применит второй (<code>310154e</code>) и выбросит вас в консоль. Здесь вы можете сбросить этот коммит в смешанном режиме с помощью <code>git reset HEAD^</code> — это эффективно отменит этот коммит и оставит изменённые файлы непроиндексированными. Теперь вы можете добавлять файлы в индекс и делать коммиты, пока не получите несколько штук. Затем, когда закончите, выполните <code>git rebase --continue</code>:</p>
+
+<pre><code>$ git reset HEAD^
+$ git add README
+$ git commit -m &#39;updated README formatting&#39;
+$ git add lib/simplegit.rb
+$ git commit -m &#39;added blame&#39;
+$ git rebase --continue</code></pre>
+
+<p>Когда Git применит последний коммит (<code>a5f4a0d</code>) в сценарии, история будет выглядеть так:</p>
+
+<pre><code>$ git log -4 --pretty=format:&quot;%h %s&quot;
+1c002dd added cat-file
+9b29157 added blame
+35cfb2b updated README formatting
+f3cc40e changed my name a bit</code></pre>
+
+<p>Повторимся ещё раз, что эта операция меняет SHA всех коммитов в списке, так что убедитесь, что ни один из коммитов в этом списке вы не успели уже отправить в общий репозиторий.</p>
+
+<h3 id='__filterbranch'>Крайнее средство: filter-branch</h3>
+
+<p>Есть ещё один вариант переписывания истории, который можно использовать если надо переписать большое количество коммитов в автоматизируемой форме — например, везде поменять свой e-mail адрес или удалить файл из каждого коммита — это команда <code>filter-branch</code>. Она может переписать огромные периоды вашей истории, так что, возможно, вообще не стоит использовать её, если только ваш проект не успел ещё стать публичным и другие люди не успели ещё проделать работу на основе коммитов, которые вы собрались переписать. Однако, она может быть весьма полезной. Мы посмотрим на некоторые типичные варианты использования команды так, чтобы вы получили представление о тех вещах, на которые она способна.</p>
+
+<h4 id='____'>Удаление файла изо всех коммитов</h4>
+
+<p>Такое случается довольно часто. Кто-нибудь случайно добавляет в коммит огромный бинарный файл необдуманно выполнив <code>git add .</code>, и вы хотите удалить его отовсюду. Или, может быть, вы нечаянно добавили в коммит файл содержащий пароль, а теперь хотите сделать код этого проекта открытым. <code>filter-branch</code> — это тот инструмент, который вы наверняка захотите использовать, чтобы прочесать всю историю. Чтобы удалить файл с именем passwords.txt изо всей истории, используйте опцию <code>--tree-filter</code> для <code>filter-branch</code>:</p>
+
+<pre><code>$ git filter-branch --tree-filter &#39;rm -f passwords.txt&#39; HEAD
+Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
+Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
+
+<p>Опция <code>--tree-filter</code> выполняет указанную команду после выгрузки каждой версии проекта и затем заново делает коммит из результата. В нашем случае, мы удалили файл с именем passwords.txt из каждого снимка состояния независимо от того существовал ли он там или нет. Если вы хотите удалить все случайно добавленные резервные копии сделанные вашим текстовым редактором, выполните что-то типа <code>git filter-branch --tree-filter &#39;rm -f *~&#39; HEAD</code>.</p>
+
+<p>Вы увидите как Git переписывает деревья и коммиты, а в конце переставляет указатель ветки. Как правило, хороший вариант — делать это в тестовой ветке, а затем жёстко сбрасывать ветку master с помощью <code>reset --hard</code>, когда вы поймёте, что результат это то, чего вы действительно добивались. Чтобы запустить <code>filter-branch</code> для всех веток, можно передать команде параметр <code>--all</code>.</p>
+
+<h4 id='___'>Сделать подкаталог новым корнем</h4>
+
+<p>Предположим, вы импортировали репозиторий из другой системы управления версиями и в нём есть бессмысленные каталоги (trunk, tags, и др.). Если вы хотите сделать <code>trunk</code> новым корнем проекта, команда <code>filter-branch</code> может помочь вам сделать и это:</p>
+
+<pre><code>$ git filter-branch --subdirectory-filter trunk HEAD
+Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
+Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
+
+<p>Теперь всюду корневой каталог проекта будет в подкаталоге <code>trunk</code>. Git также автоматически удалит все коммиты, которые не затрагивают данный подкаталог.</p>
+
+<h4 id='__email_'>Глобальное именение e-mail адреса</h4>
+
+<p>Ещё один типичный случай это, когда вы забыли выполнить <code>git config</code>, чтобы задать своё имя и e-mail адрес перед тем как начать работать. Или, возможно, вы хотите открыть код своего проекта с работы и поменять все свои рабочие e-mail&#8217;ы на свой личный адрес. В любом случае, с помощью <code>filter-branch</code> вы с таким же успехом можете поменять адреса почты в нескольких коммитах за один раз. Вам надо быть аккуратным, чтобы не поменять и чужие адреса, поэтому используйте <code>--commit-filter</code>:</p>
+
+<pre><code>$ git filter-branch --commit-filter &#39;
+        if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;schacon@localhost&quot; ];
+        then
+                GIT_AUTHOR_NAME=&quot;Scott Chacon&quot;;
+                GIT_AUTHOR_EMAIL=&quot;schacon@example.com&quot;;
+                git commit-tree &quot;$@&quot;;
+        else
+                git commit-tree &quot;$@&quot;;
+        fi&#39; HEAD</code></pre>
+
+<p>Эта команда проходит по всем коммитам и переписывает их так, чтобы там был указан новый адрес. Так как коммиты содержат значения SHA-1 своих родителей, эта команда поменяет все SHA в вашей истории, а не только те, в которых есть указанный e-mail адрес.</p>
 
 <div id='nav'>
 <a href='ch6-3.html'>prev</a> | <a href='ch6-5.html'>next</a>

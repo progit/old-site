@@ -53,9 +53,9 @@ $ git commit -a -m &#39;nowa stopka [#53]&#39;</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0312-tn.png"></center><br/> Rysunek 3-12. Gałąź iss53 przesunęła się do przodu wraz z postępami w twojej pracy.</p>
 
-<p>Teraz właśnie otrzymujesz telefon, że na stronie wykryto błąd i musisz go natychmiast poprawić. Z Gitem nie musisz wprowadzać poprawki razem ze zmianami wykonanymi w ramach pracy nad <code>iss35</code>. Co więcej, nie będzie cię również kosztować wiele wysiłku przywrócenie katalogu roboczego do stanu sprzed tych zmian, tak, by nanieść poprawki na kod, który używany jest na serwerze produkcyjnym. Wszystko co musisz teraz zrobić, to przełączyć się z powrotem na gałąź master.</p>
+<p>Teraz właśnie otrzymujesz telefon, że na stronie wykryto błąd i musisz go natychmiast poprawić. Z Gitem nie musisz wprowadzać poprawki razem ze zmianami wykonanymi w ramach pracy nad <code>iss35</code>. Co więcej, nie będzie cię również kosztować wiele wysiłku przywrócenie katalogu roboczego do stanu sprzed tych zmian, tak, by nanieść poprawki na kod, który używany jest na serwerze produkcyjnym. Wszystko, co musisz teraz zrobić, to przełączyć się z powrotem na gałąź master.</p>
 
-<p>Jednakże nim to zrobisz, zauważ, że jeśli twój katalog roboczy lub poczekalnia zawierają niezatwierdzone zmiany, które są w konflikcie z gałęzią, do której chcesz się teraz przełączyć, Git nie pozwoli ci zmienić gałęzi. Przed przełączeniem gałęzi najlepiej jest doprowadzić katalog roboczy do czystego stanu. Istnieją sposoby pozwalające obejść to ograniczenie (mianowicie schowek oraz poprawianie zatwierdzonych już zmian) i zajmiemy się nimi później. Póki co, zatwierdziłeś wszystkie swoje zmiany, więc możesz przełączyć się na swoją gałąź master:</p>
+<p>Jednakże nim to zrobisz, zauważ, że, jeśli twój katalog roboczy lub poczekalnia zawierają niezatwierdzone zmiany, które są w konflikcie z gałęzią, do której chcesz się teraz przełączyć, Git nie pozwoli ci zmienić gałęzi. Przed przełączeniem gałęzi najlepiej jest doprowadzić katalog roboczy do czystego stanu. Istnieją sposoby pozwalające obejść to ograniczenie (mianowicie schowek oraz poprawianie zatwierdzonych już zmian) i zajmiemy się nimi później. Póki co, zatwierdziłeś wszystkie swoje zmiany, więc możesz przełączyć się na swoją gałąź master:</p>
 
 <pre><code>$ git checkout master
 Switched to branch &quot;master&quot;</code></pre>
@@ -122,11 +122,11 @@ Merge made by recursive.
 
 <p>Zamiast zwykłego przeniesienia wskaźnika gałęzi do przodu, Git tworzy nową migawkę, która jest wynikiem wspomnianego scalenia trójstronnego i automatycznie tworzy nowy zestaw zmian, wskazujący na ową migawkę (patrz Rysunek 3-17). Określane jest to mianem zmiany scalającej (ang. merge commit), która jest o tyle wyjątkowa, że posiada więcej niż jednego rodzica.</p>
 
-<p>Warto zaznaczyć, że Git sam określa najlepszego wspólnego przodka do wykorzystania jako punkt wyjściowy scalenia; różni się to od zachowania CVS czy Subversion (przed wersją 1.5), gdzie osoba scalająca zmiany musi punkt wyjściowy scalania znaleźć samodzielnie. Czyni to scalanie w Gicie znacznie łatwiejszym, niż w przypadku tych systemów.</p>
+<p>Warto zaznaczyć, że Git sam określa najlepszego wspólnego przodka do wykorzystania jako punkt wyjściowy scalenia; różni się to od zachowania CVS czy Subversion (przed wersją 1.5), gdzie osoba scalająca zmiany musi punkt wyjściowy scalania znaleźć samodzielnie. Czyni to scalanie w Gicie znacznie łatwiejszym, niż w przypadku tamtych systemów.</p>
 
 <p><center><img src="/figures/ch3/18333fig0317-tn.png"></center><br/> Rysunek 3-17. Git automatycznie tworzy nowy zestaw zmian zawierający scaloną pracę.</p>
 
-<p>Teraz kiedy twoja praca jest już scalona, nie potrzebujesz dłużej gałęzi <code>iss53</code>. Możesz ją usunąć, a następnie ręcznie zamknąć zgłoszenie w swoim systemie śledzenia zadań:</p>
+<p>Teraz, kiedy twoja praca jest już scalona, nie potrzebujesz dłużej gałęzi <code>iss53</code>. Możesz ją usunąć, a następnie ręcznie zamknąć zgłoszenie w swoim systemie śledzenia zadań:</p>
 
 <pre><code>$ git branch -d iss53</code></pre>
 

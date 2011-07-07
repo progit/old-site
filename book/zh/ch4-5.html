@@ -2,9 +2,9 @@
 layout: translation
 title: Pro Git 4.5 服务器上的 Git 公共访问
 ---
-<h2 id='id300'>公共访问</h2>
+<h2 id='id309'>公共访问</h2>
 
-<p>匿名的读取权限该怎么实现呢？也许除了内部私有的项目之外，你还需要托管一些开源项目。抑或你使用一些自动化的服务器来进行编译，或者一些经常变化的服务器群组，而又不想整天生成新的 SSH 密钥——总之，你需要简单的匿名读取权限。</p>
+<p>匿名的读取权限该怎么实现呢？也许除了内部私有的项目之外，你还需要托管一些开源项目。或者因为要用一些自动化的服务器来进行编译，或者有一些经常变化的服务器群组，而又不想整天生成新的 SSH 密钥 — 总之，你需要简单的匿名读取权限。</p>
 
 <p>或许对小型的配置来说最简单的办法就是运行一个静态 web 服务，把它的根目录设定为 Git 仓库所在的位置，然后开启本章第一节提到的 <code>post-update</code> 挂钩。这里继续使用之前的例子。假设仓库处于 <code>/opt/git</code> 目录，主机上运行着 Apache 服务。重申一下，任何 web 服务程序都可以达到相同效果；作为范例，我们将用一些基本的 Apache 设定来展示大体需要的步骤。</p>
 
@@ -14,7 +14,7 @@ title: Pro Git 4.5 服务器上的 Git 公共访问
 $ mv hooks/post-update.sample hooks/post-update
 $ chmod a+x hooks/post-update</code></pre>
 
-<p>假如使用的 Git 版本小于 1.6，那 <code>mv</code> 命令可以省略—— Git 是从较晚的版本才开始在挂钩实例的结尾添加 .sample 后缀名的。</p>
+<p>如果用的是 Git 1.6 之前的版本，则可以省略 <code>mv</code> 命令 — Git 是从较晚的版本才开始在挂钩实例的结尾添加 .sample 后缀名的。</p>
 
 <p><code>post-update</code> 挂钩是做什么的呢？其内容大致如下：</p>
 
@@ -22,9 +22,9 @@ $ chmod a+x hooks/post-update</code></pre>
 #!/bin/sh
 exec git-update-server-info</code></pre>
 
-<p>意思是当通过 SSH 向服务器推送时，Git 将运行这个命令来更新 HTTP 获取所需的文件。</p>
+<p>意思是当通过 SSH 向服务器推送时，Git 将运行这个 <code>git-update-server-info</code> 命令来更新匿名 HTTP 访问获取数据时所需要的文件。</p>
 
-<p>其次，在 Apache 配置文件中添加一个 VirtualHost 条目，把根文件（译注： DocumentRoot 参数）设定为 Git 项目的根目录。假定 DNS 服务已经配置好，会把 <code>.gitserver</code> 发送到任何你所在的主机来运行这些：</p>
+<p>接下来，在 Apache 配置文件中添加一个 VirtualHost 条目，把文档根目录设为 Git 项目所在的根目录。这里我们假定 DNS 服务已经配置好，会把对 <code>.gitserver</code> 的请求发送到这台主机：</p>
 
 <pre><code>&lt;VirtualHost *:80&gt;
     ServerName git.gitserver
@@ -35,7 +35,7 @@ exec git-update-server-info</code></pre>
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;</code></pre>
 
-<p>另外，需要把 <code>/opt/git</code> 目录的 Unix 用户组设定为 <code>www-data</code> ，这样 web 服务才可以读取仓库内容，因为 Apache 运行 CGI 脚本的模块（默认）使用的是该用户：</p>
+<p>另外，需要把 <code>/opt/git</code> 目录的 Unix 用户组设定为 <code>www-data</code> ，这样 web 服务才可以读取仓库内容，因为运行 CGI 脚本的 Apache 实例进程默认就是以该用户的身份起来的：</p>
 
 <pre><code>$ chgrp -R www-data /opt/git</code></pre>
 
@@ -43,7 +43,7 @@ exec git-update-server-info</code></pre>
 
 <pre><code>$ git clone http://git.gitserver/project.git</code></pre>
 
-<p>这一招可以让你在几分钟内为相当数量的用户架设好基于 HTTP 的读取权限。另一个提供非授权访问的简单方法是开启一个 Git 守护进程，不过这将要求该进程的常驻——下一节将是想走这条路的人准备的。</p>
+<p>这一招可以让你在几分钟内为相当数量的用户架设好基于 HTTP 的读取权限。另一个提供非授权访问的简单方法是开启一个 Git 守护进程，不过这将要求该进程作为后台进程常驻 — 接下来的这一节就要讨论这方面的细节。</p>
 
 <div id='nav'>
 <a href='ch4-4.html'>prev</a> | <a href='ch4-6.html'>next</a>

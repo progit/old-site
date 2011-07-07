@@ -13,7 +13,7 @@ title: Pro Git 3.3 Les branches avec Git Gestion de branches
 * master
   testing</code></pre>
 
-<p>Notez le caractère <code>*</code> qui préfixe la branche <code>master</code>. Ce caractère indique la branche qui a été extraite. Ceci signifie que si vous validez des modifications, la branche <code>master</code> avancera avec votre travail. Pour visualiser les dernière validations sur chaque branche, vous pouvez lancer le commande <code>git branch -v</code> :</p>
+<p>Notez le caractère <code>*</code> qui préfixe la branche <code>master</code>. Ce caractère indique la branche qui a été extraite. Ceci signifie que si vous validez des modifications, la branche <code>master</code> avancera avec votre travail. Pour visualiser les dernières validations sur chaque branche, vous pouvez lancer le commande <code>git branch -v</code> :</p>
 
 <pre><code>$ git branch -v
   prob53   93b412c fix javascript issue
@@ -26,7 +26,7 @@ title: Pro Git 3.3 Les branches avec Git Gestion de branches
   prob53
 * master</code></pre>
 
-<p>Comme vous avez déjà fusionné <code>prob53</code> auparavant, vous le voyez dans votre liste. Les branches de cette liste qui ne comportent pas l&#8217;étoile en préfixe peuvent généralement être effacées sans risque au moyen de <code>git branch -d</code> ; vous avez déjà incorporé leurs modifications dans une autre branche, et n&#8217;allez donc rien perdre.</p>
+<p>Comme vous avez déjà fusionné <code>prob53</code> auparavant, vous la voyez dans votre liste. Les branches de cette liste qui ne comportent pas l&#8217;étoile en préfixe peuvent généralement être effacées sans risque au moyen de <code>git branch -d</code> ; vous avez déjà incorporé leurs modifications dans une autre branche et n&#8217;allez donc rien perdre.</p>
 
 <p>Lancez <code>git branch --no-merged</code> pour visualiser les branches qui contiennent des travaux qui n&#8217;ont pas encore été fusionnés :</p>
 

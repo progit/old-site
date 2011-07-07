@@ -20,12 +20,12 @@ title: Pro Git 8.1 Git et les autres systèmes Git et Subversion
 
 <p>Pour montrer cette fonctionnalité, il faut un serveur svn sur lequel vous avez des droits en écriture. Pour copier ces exemples, faites une copie inscriptible de mon dépôt de test. Dans cette optique, vous pouvez utiliser un outil appelé <code>svnsync</code> qui est livré avec les versions les plus récentes de Subversion — il devrait être distribué avec les versions à partir de 1.4. Pour ces tests, j&#8217;ai créé sur Google code un nouveau dépôt Subversion qui était une copie partielle du projet <code>protobuf</code> qui est un outil qui encode les données structurées pour une transmission par réseau.</p>
 
-<p>En préparation, créez un nouveau dépôt local Subversion :</p>
+<p>En préparation, créez un nouveau dépôt local Subversion :</p>
 
 <pre><code>$ mkdir /tmp/test-svn
 $ svnadmin create /tmp/test-svn</code></pre>
 
-<p>Ensuite, autorisez tous les utilisateurs à changer les revprops — le moyen le plus simple consiste à ajouter un script pre-revprop-change que rend toujours 0 :</p>
+<p>Ensuite, autorisez tous les utilisateurs à changer les revprops — le moyen le plus simple consiste à ajouter un script pre-revprop-change que rend toujours 0 :</p>
 
 <pre><code>$ cat /tmp/test-svn/hooks/pre-revprop-change 
 #!/bin/sh
@@ -50,7 +50,7 @@ Committed revision 3.
 
 <h3 id='dmarrage'>Démarrage</h3>
 
-<p>Avec des droits en écriture sur un dépôt Subversion, vous voici prêt à expérimenter une méthode typique. Commençons par la commande <code>git svn clone</code> qui importe un dépôt Subversion complet dans un dépôt Git local. Souvenez-vous que si vous importez depuis un dépôt Subversion hébergé sur internet, il faut remplacer l&#8217;URL <code>file://tmp/test-svn</code> ci-dessous par l&#8217;URL de votre dépôt Subversion :</p>
+<p>Avec des droits en écriture sur un dépôt Subversion, vous voici prêt à expérimenter une méthode typique. Commençons par la commande <code>git svn clone</code> qui importe un dépôt Subversion complet dans un dépôt Git local. Souvenez-vous que si vous importez depuis un dépôt Subversion hébergé sur internet, il faut remplacer l&#8217;URL <code>file://tmp/test-svn</code> ci-dessous par l&#8217;URL de votre dépôt Subversion :</p>
 
 <pre><code>$ git svn clone file:///tmp/test-svn -T trunk -b branches -t tags
 Initialized empty Git repository in /Users/schacon/projects/testsvnsync/svn/.git/
@@ -70,11 +70,11 @@ Checked out HEAD:
 
 <p>Cela équivaut à lancer <code>git svn init</code> suivi de <code>git svn fetch</code> sur l&#8217;URL que vous avez fournie. Cela peut prendre un certain temps. Le projet de test ne contient que 75 commits et la taille du code n&#8217;est pas extraordinaire, ce qui prend juste quelques minutes. Cependant, Git doit extraire chaque version, une par une et les valider individuellement. Pour un projet contenant des centaines ou des milliers de commits, cela peut prendre littéralement des heures ou même des jours à terminer.</p>
 
-<p>La partie <code>-T trunk -b branches -t tags</code> indique à Git que ce dépôt Subversion suit les conventions de base en matière d&#8217;embranchement et de balisage. Si vous nommez votre trunk, vos branches ou vos balises différemment, vous pouvez modifier ces options. Comme cette organisation est la plus commune, ces options peuvent être simplement remplacées par <code>-s</code> qui signifie structure standard. La commande suivante est équivalente :</p>
+<p>La partie <code>-T trunk -b branches -t tags</code> indique à Git que ce dépôt Subversion suit les conventions de base en matière d&#8217;embranchement et de balisage. Si vous nommez votre trunk, vos branches ou vos balises différemment, vous pouvez modifier ces options. Comme cette organisation est la plus commune, ces options peuvent être simplement remplacées par <code>-s</code> qui signifie structure standard. La commande suivante est équivalente :</p>
 
 <pre><code>$ git svn clone file:///tmp/test-svn -s</code></pre>
 
-<p>À présent, vous disposez d&#8217;un dépôt Git valide qui a importé vos branches et vos balises :</p>
+<p>À présent, vous disposez d&#8217;un dépôt Git valide qui a importé vos branches et vos balises :</p>
 
 <pre><code>$ git branch -a
 * master
@@ -96,7 +96,7 @@ aee1ecc26318164f355a883f5d99cff0c852d3c4 refs/remotes/my-calc-branch
 1c4cb508144c513ff1214c3488abe66dcb92916f refs/remotes/tags/release-2.0.2rc1
 1cbd4904d9982f386d87f88fce1c24ad7c0f0471 refs/remotes/trunk</code></pre>
 
-<p>Pour un dépôt Git normal, cela ressemble plus à ceci :</p>
+<p>Pour un dépôt Git normal, cela ressemble plus à ceci :</p>
 
 <pre><code>$ git show-ref
 83e38c7a0af325a9722f2fdc56b10188806d83a1 refs/heads/master
@@ -104,19 +104,19 @@ aee1ecc26318164f355a883f5d99cff0c852d3c4 refs/remotes/my-calc-branch
 0a30dd3b0c795b80212ae723640d4e5d48cabdff refs/remotes/origin/master
 25812380387fdd55f916652be4881c6f11600d6f refs/remotes/origin/testing</code></pre>
 
-<p>Ici, vous disposez de deux serveurs distants : un nommé <code>gitserver</code> avec une branche <code>master</code> et un autre nommé <code>origin</code> avec deux branches <code>master</code> et <code>testing</code>.</p>
+<p>Ici, vous disposez de deux serveurs distants : un nommé <code>gitserver</code> avec une branche <code>master</code> et un autre nommé <code>origin</code> avec deux branches <code>master</code> et <code>testing</code>.</p>
 
 <p>Remarquez comme dans cet exemple de références distantes importées via <code>git svn</code>, les balises sont ajoutées comme des branches distantes et non comme des vraies balises Git. Votre importation Subversion indique plutôt qu&#8217;il a un serveur distant appelé <code>tags</code> présentant des branches.</p>
 
 <h3 id='valider_en_retour_sur_le_serveur_subversion'>Valider en retour sur le serveur Subversion</h3>
 
-<p>Comme vous disposez d&#8217;un dépôt en état de marche, vous pouvez commencer à travailler sur le projet et pousser vos commits en utilisant efficacement Git comme client SVN. Si vous éditez un des fichiers et le validez, vous créez un commit qui existe localement dans Git mais qui n&#8217;existe pas sur le serveur Subversion :</p>
+<p>Comme vous disposez d&#8217;un dépôt en état de marche, vous pouvez commencer à travailler sur le projet et pousser vos commits en utilisant efficacement Git comme client SVN. Si vous éditez un des fichiers et le validez, vous créez un commit qui existe localement dans Git mais qui n&#8217;existe pas sur le serveur Subversion :</p>
 
 <pre><code>$ git commit -am &#39;Ajout d&#39;instructions pour git-svn dans LISEZMOI&#39;
 [master 97031e5] Ajout d&#39;instructions pour git-svn dans LISEZMOI
  1 files changed, 1 insertions(+), 1 deletions(-)</code></pre>
 
-<p>Ensuite, vous avez besoin de pousser vos modifications en amont. Remarquez que cela modifie la manière de travailler par rapport à Subversion — vous pouvez réalisez plusieurs validations en mode déconnecté pour ensuite les pousser toutes en une fois sur le serveur Subversion. Pour pousser sur un serveur Subversion, il faut lancer la commande <code>git svn dcommit</code> :</p>
+<p>Ensuite, vous avez besoin de pousser vos modifications en amont. Remarquez que cela modifie la manière de travailler par rapport à Subversion — vous pouvez réalisez plusieurs validations en mode déconnecté pour ensuite les pousser toutes en une fois sur le serveur Subversion. Pour pousser sur un serveur Subversion, il faut lancer la commande <code>git svn dcommit</code> :</p>
 
 <pre><code>$ git svn dcommit
 Committing to file:///tmp/test-svn/trunk ...
@@ -127,7 +127,7 @@ r79 = 938b1a547c2cc92033b74d32030e86468294a5c8 (trunk)
 No changes between current HEAD and refs/remotes/trunk
 Resetting to the latest refs/remotes/trunk</code></pre>
 
-<p>Cette commande rassemble tous les commits que vous avez validés par dessus le code du serveur Subversion et réalise un commit sur le serveur pour chacun, puis réécrit l&#8217;historique Git local pour y ajouter un identifiant unique. Cette étape est à souligner car elle signifie que toutes les sommes de contrôle SHA-1 de vos commits locaux ont changé. C&#8217;est en partie pour cette raison que c&#8217;est une idée très périlleuse de vouloir travailler dans le même temps avec des serveurs Git distants. L&#8217;examen du dernier commit montre que le nouveau <code>git-svn-id</code> a été ajouté :</p>
+<p>Cette commande rassemble tous les commits que vous avez validés par dessus le code du serveur Subversion et réalise un commit sur le serveur pour chacun, puis réécrit l&#8217;historique Git local pour y ajouter un identifiant unique. Cette étape est à souligner car elle signifie que toutes les sommes de contrôle SHA-1 de vos commits locaux ont changé. C&#8217;est en partie pour cette raison que c&#8217;est une idée très périlleuse de vouloir travailler dans le même temps avec des serveurs Git distants. L&#8217;examen du dernier commit montre que le nouveau <code>git-svn-id</code> a été ajouté :</p>
 
 <pre><code>$ git log -1
 commit 938b1a547c2cc92033b74d32030e86468294a5c8
@@ -142,7 +142,7 @@ Date:   Sat May 2 22:06:44 2009 +0000
 
 <h3 id='tirer_des_modifications'>Tirer des modifications</h3>
 
-<p>Quand vous travaillez avec d&#8217;autres développeurs, il arrive à certains moments que ce qu&#8217;un développeur a poussé provoque un conflit lorsqu&#8217;un autre voudra pousser à son tour. Cette modification sera rejetée jusqu&#8217;à ce qu&#8217;elle soit fusionnée. Dans <code>git svn</code>, cela ressemble à ceci :</p>
+<p>Quand vous travaillez avec d&#8217;autres développeurs, il arrive à certains moments que ce qu&#8217;un développeur a poussé provoque un conflit lorsqu&#8217;un autre voudra pousser à son tour. Cette modification sera rejetée jusqu&#8217;à ce qu&#8217;elle soit fusionnée. Dans <code>git svn</code>, cela ressemble à ceci :</p>
 
 <pre><code>$ git svn dcommit
 Committing to file:///tmp/test-svn/trunk ...
@@ -150,7 +150,7 @@ Merge conflict during commit: Your file or directory &#39;README.txt&#39; is pro
 out-of-date: resource out of date; try updating at /Users/schacon/libexec/git-\
 core/git-svn line 482</code></pre>
 
-<p>Pour résoudre cette situation, vous pouvez lancer la commande <code>git svn rebase</code> qui tire depuis le serveur toute modification apparue entre temps et rebase votre travail sur le sommet de l&#8217;historique du serveur :</p>
+<p>Pour résoudre cette situation, vous pouvez lancer la commande <code>git svn rebase</code> qui tire depuis le serveur toute modification apparue entre temps et rebase votre travail sur le sommet de l&#8217;historique du serveur :</p>
 
 <pre><code>$ git svn rebase
        M      README.txt
@@ -158,7 +158,7 @@ r80 = ff829ab914e8775c7c025d741beb3d523ee30bc4 (trunk)
 First, rewinding head to replay your work on top of it...
 Applying: first user change</code></pre>
 
-<p>À présent, tout votre travail se trouve au delà de l&#8217;historique du serveur et vous pouvez effectivement réaliser un <code>dcommit</code> :</p>
+<p>À présent, tout votre travail se trouve au delà de l&#8217;historique du serveur et vous pouvez effectivement réaliser un <code>dcommit</code> :</p>
 
 <pre><code>$ git svn dcommit
 Committing to file:///tmp/test-svn/trunk ...
@@ -169,7 +169,7 @@ r81 = 456cbe6337abe49154db70106d1836bc1332deed (trunk)
 No changes between current HEAD and refs/remotes/trunk
 Resetting to the latest refs/remotes/trunk</code></pre>
 
-<p>Il est important de se souvenir qu&#8217;à la différence de Git qui requiert une fusion avec les modifications distantes non présentes localement avant de pouvoir pousser, <code>git svn</code> ne vous y contraint que si vos modifications provoquent un conflit. Si une autre personne pousse une modification à un fichier et que vous poussez une modification à un autre fichier, votre <code>dcommit</code> passera sans problème :</p>
+<p>Il est important de se souvenir qu&#8217;à la différence de Git qui requiert une fusion avec les modifications distantes non présentes localement avant de pouvoir pousser, <code>git svn</code> ne vous y contraint que si vos modifications provoquent un conflit. Si une autre personne pousse une modification à un fichier et que vous poussez une modification à un autre fichier, votre <code>dcommit</code> passera sans problème :</p>
 
 <pre><code>$ git svn dcommit
 Committing to file:///tmp/test-svn/trunk ...
@@ -202,7 +202,7 @@ Fast-forwarded master to refs/remotes/trunk.</code></pre>
 
 <p>Après vous être habitué à la manière de faire avec Git, vous souhaiterez sûrement créer des branches thématiques, travailler dessus, puis les fusionner. Si vous poussez sur un serveur Subversion via git svn, vous souhaiterez à chaque fois rebaser votre travail sur une branche unique au lieu de fusionner les branches ensemble. La raison principale en est que Subversion gère un historique linéaire et ne gère pas les fusions comme Git y excelle. De ce fait, git svn suit seulement le premier parent lorsqu&#8217;il convertit les instantanés en commits Subversion.</p>
 
-<p>Supposons que votre historique ressemble à ce qui suit. Vous avez créé une branche <code>experience</code>, avez réalisé deux validations puis les avez fusionnées dans master. Lors du <code>dcommit</code>, vous voyez le résultat suivant :</p>
+<p>Supposons que votre historique ressemble à ce qui suit. Vous avez créé une branche <code>experience</code>, avez réalisé deux validations puis les avez fusionnées dans master. Lors du <code>dcommit</code>, vous voyez le résultat suivant :</p>
 
 <pre><code>$ git svn dcommit
 Committing to file:///tmp/test-svn/trunk ...
@@ -233,7 +233,7 @@ Resetting to the latest refs/remotes/trunk</code></pre>
 
 <h4 id='crer_une_nouvelle_branche_svn'>Créer une nouvelle branche SVN</h4>
 
-<p>Pour créer une nouvelle branche dans Subversion, vous pouvez utiliser la commande <code>git svn branch [nom de la branche]</code> :</p>
+<p>Pour créer une nouvelle branche dans Subversion, vous pouvez utiliser la commande <code>git svn branch [nom de la branche]</code> :</p>
 
 <pre><code>Copying file:///tmp/test-svn/trunk at r87 to file:///tmp/test-svn/branches/opera...
 Found possible branch point: file:///tmp/test-svn/trunk =&gt; \
@@ -263,7 +263,7 @@ r89 = 9b6fe0b90c5c9adf9165f700897518dbc54a7cbf (opera)</code></pre>
 
 <h4 id='lhistorique_dans_le_style_subversion'>L&#8217;historique dans le style Subversion</h4>
 
-<p>Si vous êtes habitué à Subversion, vous pouvez lancer <code>git svn log</code> pour visualiser votre historique dans un format SVN :</p>
+<p>Si vous êtes habitué à Subversion, vous pouvez lancer <code>git svn log</code> pour visualiser votre historique dans un format SVN :</p>
 
 <pre><code>$ git svn log
 ------------------------------------------------------------------------
@@ -281,11 +281,11 @@ r85 | schacon | 2009-05-02 16:00:09 -0700 (Sat, 02 May 2009) | 2 lines
 
 updated the changelog</code></pre>
 
-<p>Deux choses importantes à connaître sur <code>git svn log</code> : premièrement, à la différence de la commande réelle <code>svn log</code> qui interroge le serveur, cette commande fonctionne hors connexion ; deuxièmement, elle ne montre que les commits qui ont été effectivement remontés sur le serveur Subversion. Les commits locaux qui n&#8217;ont pas encore été remontés via <code>dcommit</code> n&#8217;apparaissent pas, pas plus que ceux qui auraient été poussés sur le serveur par des tiers entre deux <code>git svn rebase</code>. Cela donne plutôt le dernier état connu des commits sur le serveur Subversion.</p>
+<p>Deux choses importantes à connaître sur <code>git svn log</code> : premièrement, à la différence de la commande réelle <code>svn log</code> qui interroge le serveur, cette commande fonctionne hors connexion ; deuxièmement, elle ne montre que les commits qui ont été effectivement remontés sur le serveur Subversion. Les commits locaux qui n&#8217;ont pas encore été remontés via <code>dcommit</code> n&#8217;apparaissent pas, pas plus que ceux qui auraient été poussés sur le serveur par des tiers entre deux <code>git svn rebase</code>. Cela donne plutôt le dernier état connu des commits sur le serveur Subversion.</p>
 
 <h4 id='les_annotations_svn'>Les annotations SVN</h4>
 
-<p>De la même manière que <code>git svn log</code> simule une commande <code>svn log</code> déconnectée, vous pouvez obtenir l&#8217;équivalent de <code>svn annotate</code> en lançant <code>git svn blame [FICHIER]</code>. Le résultat ressemble à ceci :</p>
+<p>De la même manière que <code>git svn log</code> simule une commande <code>svn log</code> déconnectée, vous pouvez obtenir l&#8217;équivalent de <code>svn annotate</code> en lançant <code>git svn blame [FICHIER]</code>. Le résultat ressemble à ceci :</p>
 
 <pre><code>$ git svn blame README.txt 
  2   temporal Protocol Buffers - Google&#39;s data interchange format
@@ -305,7 +305,7 @@ updated the changelog</code></pre>
 
 <h4 id='linformation_sur_la_serveur_svn'>L&#8217;information sur la serveur SVN</h4>
 
-<p>Vous pouvez aussi obtenir le même genre d&#8217;information que celle fournie par <code>svn info</code> en lançant <code>git svn info</code> :</p>
+<p>Vous pouvez aussi obtenir le même genre d&#8217;information que celle fournie par <code>svn info</code> en lançant <code>git svn info</code> :</p>
 
 <pre><code>$ git svn info
 Path: .
@@ -327,7 +327,7 @@ Last Changed Date: 2009-05-02 16:07:37 -0700 (Sat, 02 May 2009)</code></pre>
 
 <p>La première est <code>git svn create-ignore</code> qui crée automatiquement pour vous les fichiers <code>.gitignore</code> prêts pour l&#8217;inclusion dans votre prochaine validation.</p>
 
-<p>La seconde commande est <code>git svn show-ignore</code> qui affiche sur stdout les lignes nécessaires à un fichier <code>.gitignore</code> qu&#8217;il suffira de rediriger dans votre fichier d&#8217;exclusion de projet :</p>
+<p>La seconde commande est <code>git svn show-ignore</code> qui affiche sur stdout les lignes nécessaires à un fichier <code>.gitignore</code> qu&#8217;il suffira de rediriger dans votre fichier d&#8217;exclusion de projet :</p>
 
 <pre><code>$ git svn show-ignore &gt; .git/info/exclude</code></pre>
 
@@ -335,7 +335,7 @@ Last Changed Date: 2009-05-02 16:07:37 -0700 (Sat, 02 May 2009)</code></pre>
 
 <h3 id='rsum_sur_gitsvn'>Résumé sur Git-Svn</h3>
 
-<p>Les outils <code>git svn</code> sont utiles si vous êtes bloqué avec un serveur Subversion pour le moment ou si vous devez travailler dans un environnement de développement qui nécessite un serveur Subversion. Il faut cependant les considérer comme une version tronquée de Git ou vous pourriez rencontrer des problèmes de conversion synonymes de troubles pour vous et vos collaborateurs. Pour éviter tout problème, essayez de suivre les principes suivants :</p>
+<p>Les outils <code>git svn</code> sont utiles si vous êtes bloqué avec un serveur Subversion pour le moment ou si vous devez travailler dans un environnement de développement qui nécessite un serveur Subversion. Il faut cependant les considérer comme une version tronquée de Git ou vous pourriez rencontrer des problèmes de conversion synonymes de troubles pour vous et vos collaborateurs. Pour éviter tout problème, essayez de suivre les principes suivants :</p>
 
 <ul>
 <li>Garder un historique Git linéaire qui ne contient pas de commits de fusion issus de <code>git merge</code>. Rebasez tout travail réalisé en dehors de la branche principale sur celle-ci ; ne la fusionnez pas.</li>

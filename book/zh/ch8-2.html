@@ -6,13 +6,13 @@ title: Pro Git 8.2 Git 与其他系统 迁移到 Git
 
 <p>如果在其他版本控制系统中保存了某项目的代码而后决定转而使用 Git，那么该项目必须经历某种形式的迁移。本节将介绍 Git 中包含的一些针对常见系统的导入脚本，并将展示编写自定义的导入脚本的方法。</p>
 
-<h3 id='id383'>导入</h3>
+<h3 id='id394'>导入</h3>
 
 <p>你将学习到如何从专业重量级的版本控制系统中导入数据—— Subversion 和 Perforce —— 因为据我所知这二者的用户是（向 Git）转换的主要群体，而且 Git 为此二者附带了高质量的转换工具。</p>
 
 <h3 id='subversion'>Subversion</h3>
 
-<p>读过前一节有关 <code>git svn</code> 的内容以后，你应该能轻而易举的根据其中的指导来 <code>git svn clone</code> 一个仓库了；然后，停止 Subversion 的使用，向一个新 Git server 推送，并开始使用它。想保留历史记录，所画的时间应该不过就是从 Subversion 服务器拉取数据的时间（可能要等上好一会就是了）。</p>
+<p>读过前一节有关 <code>git svn</code> 的内容以后，你应该能轻而易举的根据其中的指导来 <code>git svn clone</code> 一个仓库了；然后，停止 Subversion 的使用，向一个新 Git server 推送，并开始使用它。想保留历史记录，所花的时间应该不过就是从 Subversion 服务器拉取数据的时间（可能要等上好一会就是了）。</p>
 
 <p>然而，这样的导入并不完美；而且还要花那么多时间，不如干脆一次把它做对！首当其冲的任务是作者信息。在 Subversion，每个提交者在都在主机上有一个用户名，记录在提交信息中。上节例子中多处显示了 <code>schacon</code> ，比如 <code>blame</code> 的输出以及 <code>git svn log</code>。如果想让这条信息更好的映射到 Git 作者数据里，则需要 从 Subversion 用户名到 Git 作者的一个映射关系。建立一个叫做 <code>user.txt</code> 的文件，用如下格式表示映射关系：</p>
 
@@ -65,7 +65,11 @@ $ rm -Rf .git/refs/remotes/tags</code></pre>
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
 
-<p>现在所有的旧分支都变成真正的 Git 分支，所有的旧标签也变成真正的 Git 标签。最后一项工作就是把新建的 Git 服务器添加为远程服务器并且向它推送。为了让所有的分支和标签都得到上传，我们使用这条命令：</p>
+<p>现在所有的旧分支都变成真正的 Git 分支，所有的旧标签也变成真正的 Git 标签。最后一项工作就是把新建的 Git 服务器添加为远程服务器并且向它推送。下面是新增远程服务器的例子：</p>
+
+<pre><code>$ git remote add origin git@my-git-server:myrepository.git</code></pre>
+
+<p>为了让所有的分支和标签都得到上传，我们使用这条命令：</p>
 
 <pre><code>$ git push origin --all</code></pre>
 
@@ -140,7 +144,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
 <p>至此导入已经完成，可以开始向新的 Git 服务器推送了。</p>
 
-<h3 id='id384'>自定导入脚本</h3>
+<h3 id='id395'>自定导入脚本</h3>
 
 <p>如果先前的系统不是 Subversion 或 Perforce 之一，先上网找一下有没有与之对应的导入脚本——导入 CVS，Clear Case，Visual Source Safe，甚至存档目录的导入脚本已经存在。假如这些工具都不适用，或者使用的工具很少见，抑或你需要导入过程具有更多可制定性，则应该使用 <code>git fast-import</code>。该命令从标准输入读取简单的指令来写入具体的 Git 数据。这样创建 Git 对象比运行纯 Git 命令或者手动写对象要简单的多（更多相关内容见第九章）。通过它，你可以编写一个导入脚本来从导入源读取必要的信息，同时在标准输出直接输出相关指示。你可以运行该脚本并把它的输出管道连接到 <code>git fast-import</code>。</p>
 
@@ -155,7 +159,7 @@ current</code></pre>
 
 <p>为了导入到一个 Git 目录，我们首先回顾一下 Git 储存数据的方式。你可能还记得，Git 本质上是一个 commit 对象的链表，每一个对象指向一个内容的快照。而这里需要做的工作就是告诉 <code>fast-import</code> 内容快照的位置，什么样的 commit 数据指向它们，以及它们的顺序。我们采取一次处理一个快照的策略，为每一个内容目录建立对应的 commit ，每一个 commit 与之前的建立链接。</p>
 
-<p>正如在第七章 &#8220;Git 执行策略一例&#8221; 一节中一样，我们将使用 Ruby 来编写这个脚本，因为它是我日常使用的语言而且阅读起来简单一些。你可以用任何其他熟悉的语言来重写这个例子——它仅需要把必要的信息打印到标准输出而已。同时，如果你在使用 Windows，这意味着你要特别留意不要在换行的时候引入回车符（译注：carriage returns，Windows换行时加入的符号，通常说的\r ）—— Git 的 fast-import 对仅使用换行符（LF）而非 Windows 的回车符（CRLF）要求非常严格。</p>
+<p>正如在第七章 &#8220;Git 执行策略一例&#8221; 一节中一样，我们将使用 Ruby 来编写这个脚本，因为它是我日常使用的语言而且阅读起来简单一些。你可以用任何其他熟悉的语言来重写这个例子——它仅需要把必要的信息打印到标准输出而已。同时，如果你在使用 Windows，这意味着你要特别留意不要在换行的时候引入回车符（译注：carriage returns，Windows 换行时加入的符号，通常说的 <code>\r</code> ）—— Git 的 fast-import 对仅使用换行符（LF）而非 Windows 的回车符（CRLF）要求非常严格。</p>
 
 <p>首先，进入目标目录并且找到所有子目录，每一个子目录将作为一个快照被导入为一个 commit。我们将依次进入每一个子目录并打印所需的命令来导出它们。脚本的主循环大致是这样：</p>
 

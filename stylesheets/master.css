@@ -4,6 +4,10 @@ body {
   color: #222;
 }
 
+a:visited {
+  color: #444;
+}
+
 .more { font-size: 0.7em;}
 
 img.right {
@@ -256,6 +260,10 @@ ul#toc ul  {
   list-style: none;
 }
 
+ul#toc a {
+  color: #333;
+}
+
 .book-ad a {
     color: #262;
     font-size: 1.5em;
@@ -268,4 +276,11 @@ ul#toc ul  {
 }
 #buy-book-toc img {
   width: 200px;
+}
+#follow {
+  padding: 10px;
+}
+#follow img {
+  float:left;
+  border: 0;
 }

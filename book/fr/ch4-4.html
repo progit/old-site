@@ -34,19 +34,19 @@ $ mkdir projet.git
 $ cd projet.git
 $ git --bare init</code></pre>
 
-<p>Alors, John, Josie ou Jessica peuvent pousser la première version de leur projet vers ce dépôt en l&#8217;ajoutant en tant que dépôt distant et en lui poussant une branche. Notons que quelqu&#8217;un doit se connecter au serveur et créer un dépôt nu pour chaque ajout de projet. Supposons que le nom du serveur soit <code>gitserver</code>. Si vous l&#8217;hébergez en interne et avez réglé le DNS pour faire pointer <code>gitserver</code> sur ce serveur, alors vous pouvez utiliser les commandes suivantes telle quelle :</p>
+<p>Alors, John, Josie ou Jessica peuvent pousser la première version de leur projet vers ce dépôt en l&#8217;ajoutant en tant que dépôt distant et en lui poussant une branche. Notons que quelqu&#8217;un doit se connecter au serveur et créer un dépôt nu pour chaque ajout de projet. Supposons que le nom du serveur soit <code>gitserveur</code>. Si vous l&#8217;hébergez en interne et avez réglé le DNS pour faire pointer <code>gitserver</code> sur ce serveur, alors vous pouvez utiliser les commandes suivantes telle quelle :</p>
 
 <pre><code># Sur l&#39;ordinateur de John
 $ cd monproject
 $ git init
 $ git add .
 $ git commit -m &#39;premiere validation&#39;
-$ git remote add origin git@gitserver:/opt/git/projet.git
+$ git remote add origin git@gitserveur:/opt/git/projet.git
 $ git push origin master</code></pre>
 
 <p>À présent, les autres utilisateurs peuvent cloner le dépôt et y pousser leurs modifications aussi simplement :</p>
 
-<pre><code>$ git clone git@gitserver:/opt/git/projet.git
+<pre><code>$ git clone git@gitserveur:/opt/git/projet.git
 $ vim LISEZMOI
 $ git commit -am &#39;correction fichier LISEZMOI&#39;
 $ git push origin master</code></pre>
@@ -67,9 +67,9 @@ $ git push origin master</code></pre>
 
 <p>À présent, l&#8217;utilisateur &#8216;git&#8217; ne peut plus utiliser la connexion SSH que pour pousser et tirer sur des dépôts Git, il ne peut plus ouvrir un shell. Si vous essayez, vous verrez un rejet de login :</p>
 
-<pre><code>$ ssh git@gitserver
+<pre><code>$ ssh git@gitserveur
 fatal: What do you think I am? A shell?
-Connection to gitserver closed.</code></pre>
+Connection to gitserveur closed.</code></pre>
 
 <div id='nav'>
 <a href='ch4-3.html'>prev</a> | <a href='ch4-5.html'>next</a>

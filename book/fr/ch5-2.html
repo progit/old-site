@@ -1,8 +1,8 @@
 ---
 layout: translation
-title: Pro Git 5.2 Git distribué Contribuer à un projet
+title: Pro Git 5.2 Git distribué Contribution à un projet
 ---
-<h2 id='contribuer__un_projet'>Contribuer à un projet</h2>
+<h2 id='contribution__un_projet'>Contribution à un projet</h2>
 
 <p>Vous savez ce que sont les différents modes de gestion et vous devriez connaître suffisamment l&#8217;utilisation de Git. Dans cette section, vous apprendrez les moyens les plus utilisés pour contribuer à un projet.</p>
 
@@ -32,27 +32,29 @@ lib/simplegit.rb:26: trailing whitespace.
 
 <p>En lançant cette commande avant chaque validation, vous pouvez vérifier que vous ne commettez pas d&#8217;erreurs d&#8217;espace qui pourraient ennuyer les autres développeurs.</p>
 
-<p>Ensuite, assurez-vous de faire de chaque validation une modification logiquement atomique. Si possible, rendez chaque modification digeste — ne codez pas pendant un week-end entier sur cinq sujets différents pour enfin les soumettre tous dans une énorme validation le lundi suivant. Même si vous ne validez pas du week-end, utilisez la zone d&#8217;index le lundi pour découper votre travail en au moins une validation par problème, avec un message utile par validation. Si certaines modifications touchent au même fichier, essayez d&#8217;utiliser <code>git add --patch</code> pour indexer partiellement des fichiers (cette fonctionnalité est traitée au chapitre 6). L&#8217;instantané final sera identique, que vous utilisiez une validation unique ou cinq petites validations, à condition que toutes les modifications soient intégrées à un moment, donc n&#8217;hésitez pas à rendre la vie plus simple à vos compagnons développeurs lorsqu&#8217;ils auront à vérifier vos modifications. Cette approche simplifie aussi le retrait ou l&#8217;inversion ultérieurs d&#8217;une modification en cas de besoin. Le chapitre 6 décrit justement quelques trucs et astuces do Git pour réécrire l&#8217;historique et indexer interactivement les fichiers — utilisez ces outils pour fabriquer un historique propre et compréhensible.</p>
+<p>Ensuite, assurez-vous de faire de chaque validation une modification logiquement atomique. Si possible, rendez chaque modification digeste — ne codez pas pendant un week-end entier sur cinq sujets différents pour enfin les soumettre tous dans une énorme validation le lundi suivant. Même si vous ne validez pas du week-end, utilisez la zone d&#8217;index le lundi pour découper votre travail en au moins une validation par problème, avec un message utile par validation. Si certaines modifications touchent au même fichier, essayez d&#8217;utiliser <code>git add --patch</code> pour indexer partiellement des fichiers (cette fonctionnalité est traitée au chapitre 6). L&#8217;instantané final sera identique, que vous utilisiez une validation unique ou cinq petites validations, à condition que toutes les modifications soient intégrées à un moment, donc n&#8217;hésitez pas à rendre la vie plus simple à vos compagnons développeurs lorsqu&#8217;ils auront à vérifier vos modifications. Cette approche simplifie aussi le retrait ou l&#8217;inversion ultérieurs d&#8217;une modification en cas de besoin. Le chapitre 6 décrit justement quelques trucs et astuces de Git pour réécrire l&#8217;historique et indexer interactivement les fichiers — utilisez ces outils pour fabriquer un historique propre et compréhensible.</p>
 
-<p>Le dernier point à soigner est le message de validation. S&#8217;habituer à écrire des messages de validation de qualité facilite grandement l&#8217;emploi et la collaboration avec Git. En règle générale, les messages doivent débuter par une ligne unique d&#8217;au plus 50 caractères décrivant concisément la modification, suivie d&#8217;un ligne vide, suivie d&#8217;une explication plus détaillée. Le projet Git exige que l&#8217;explication détaillée inclut la motivation de la modification en contrastant le nouveau comportement par rapport à l&#8217;ancien — c&#8217;est une bonne règle de rédaction. Un bonne règle consiste aussi à utiliser le présent de l&#8217;impératif ou des verbes substantivés dans le message. En d&#8217;autres termes, utilisez des ordres. Au lieu d&#8217;écrire « J&#8217;ai ajouté des tests pour » ou « En train d&#8217;ajouter des tests pour », utilisez juste « Ajoute des tests pour » ou « Ajout de tests pour ».</p>
+<p>Le dernier point à soigner est le message de validation. S&#8217;habituer à écrire des messages de validation de qualité facilite grandement l&#8217;emploi et la collaboration avec Git. En règle générale, les messages doivent débuter par une ligne unique d&#8217;au plus 50 caractères décrivant concisément la modification, suivie d&#8217;un ligne vide, suivie d&#8217;une explication plus détaillée. Le projet Git exige que l&#8217;explication détaillée inclut la motivation de la modification en contrastant le nouveau comportement par rapport à l&#8217;ancien — c&#8217;est une bonne règle de rédaction. Un bonne règle consiste aussi à utiliser le présent de l&#8217;impératif ou des verbes substantivés dans le message. En d&#8217;autres termes, utilisez des ordres. Au lieu d&#8217;écrire « J&#8217;ai ajouté des tests pour » ou « En train d&#8217;ajouter des tests pour », utilisez juste « Ajoute des tests pour » ou « Ajout de tests pour ».</p>
 
-<p>En anglais, voici ci-dessous un modèle écrit par Tim Pope at tpope.net :</p>
+<p>Voici ci-dessous un modèle tiré de celui écrit par Tim Pope at tpope.net :</p>
 
-<pre><code>Short (50 chars or less) summary of changes
+<pre><code>Court résumé des modifications( 50 caractères ou moins)
 
-More detailed explanatory text, if necessary.  Wrap it to about 72
-characters or so.  In some contexts, the first line is treated as the
-subject of an email and the rest of the text as the body.  The blank
-line separating the summary from the body is critical (unless you omit
-the body entirely); tools like rebase can get confused if you run the
-two together.
+Explication plus détaillée si nécessaire. Retour à la ligne vers 72
+    caractères. Dans certains contextes, la première ligne est traitée
+    comme le sujet d&#39;un e-mail et le reste comme le corps. La ligne
+    vide qui sépare le titre du corps est importante (à moins d&#39;omettre
+    totalement le corps). Des outils tels que rebase peuvent être gênés
+    si vous les laissez collés.
 
-Further paragraphs come after blank lines.
+    Paragraphes supplémentaires après des lignes vides.
 
- - Bullet points are okay, too
+     - les listes à puce sont acceptées aussi
 
- - Typically a hyphen or asterisk is used for the bullet, preceded by a
-   single space, with blank lines in between, but conventions vary here</code></pre>
+ - Typiquement, un tiret ou un astérisk précédés d&#39;un espace unique
+
+ unique, séparés par des lignes vides mais les conventions peuvent
+varier</code></pre>
 
 <p>Si tous vos messages de validation ressemblent à ceci, les choses seront beaucoup plus simples pour vous et les développeurs avec qui vous travaillez. Le projet Git montre des messages de commit bien formatés — je vous encourage à y lancer un <code>git log --no-merges</code> pour pouvoir voir comment rend un historique de messages bien formatés.</p>
 
@@ -60,7 +62,7 @@ Further paragraphs come after blank lines.
 
 <h3 id='cas_dune_petite_quipe_prive'>Cas d&#8217;une petite équipe privée</h3>
 
-<p>Le cas le plus probable que vous rencontrerez est celui du projet privé avec un ou deux autres développeurs. Par privé, j&#8217;entends source fermé non accessible au public en lecture. Vous et les autres développeurs aurez accès push au dépôt.</p>
+<p>Le cas le plus probable que vous rencontrerez est celui du projet privé avec un ou deux autres développeurs. Par privé, j&#8217;entends source fermé non accessible au public en lecture. Vous et les autres développeurs aurez accès en poussée au dépôt.</p>
 
 <p>Dans cet environnement, vous pouvez suivre une méthode similaire à ce que vous feriez en utilisant Subversion ou tout autre système centralisé. Vous bénéficiez toujours d&#8217;avantages tels que la validation hors-ligne et la gestion de branche et de fusion grandement simplifiée mais les étapes restent similaires. La différence principale reste que les fusions ont lieu du côté client plutôt que sur le serveur au moment de valider. Voyons à quoi pourrait ressembler la collaboration de deux développeurs sur un dépôt partagé. Le premier développeur, John, clone le dépôt, fait une modification et valide localement. Dans les exemples qui suivent, les messages de protocole sont remplacés par <code>...</code> pour les raccourcir .</p>
 
@@ -168,7 +170,7 @@ Your branch is behind &#39;origin/master&#39; by 2 commits, and can be fast-forw
 
 <p>Elle peut fusionner soit <code>origin/master</code> soit <code>prob54</code> en premier — les deux sont en avance, mais l&#8217;ordre n&#8217;importe pas. L&#8217;instantané final devrait être identique quelque soit l&#8217;ordre de fusion qu&#8217;elle choisit. Seul l&#8217;historique sera légèrement différent. Elle choisit de fusionner en premier <code>prob54</code> :</p>
 
-<pre><code>$ git merge issue54
+<pre><code>$ git merge prob54
 Updating fbff5bc..4af4298
 Fast forward
  LISEZMOI         |    1 +
@@ -323,7 +325,7 @@ To jessica@githost:simplegit.git
 
 <p>Contribuer à un projet public est assez différent. Il faut présenter le travail au mainteneur d&#8217;une autre manière parce que vous n&#8217;avez pas possibilité de mettre à jour directement des branches du projet. Ce premier exemple décrit un mode de contribution via des serveurs Git qui proposent facilement la duplication de dépôt. Les site repo.or.cz ou GitHub proposent cette méthode, et de nombreux mainteneurs s&#8217;attendent à ce style de contribution. Le chapitre suivant traite des projets qui préfèrent accepter les contributions sous forme de patch via e-mail.</p>
 
-<p>Premièrement, vous souhaiterez probablement cloner le dépôt principal, créer une nouvelle branche thématique pour le patch ou la série de patchs que seront votre contribution et commencer à travailler. La séquence ressemble globalement à ceci :</p>
+<p>Premièrement, vous souhaiterez probablement cloner le dépôt principal, créer une nouvelle branche thématique pour le patch ou la série de patchs que seront votre contribution et commencer à travailler. La séquence ressemble globalement à ceci :</p>
 
 <pre><code>$ git clone (url)
 $ cd projet
@@ -333,7 +335,7 @@ $ git commit
 $ (travail)
 $ git commit</code></pre>
 
-<p>Vous pouvez utiliser <code>rebase -i</code> pour réduire votre travail à une seule validation ou pour réarranger les modifications dans des commits qui rendront les patchs plus facile à relire pour le mainteneur — référez-vous au chapitre 6 pour plus d&#8217;information sur comment rebaser de manière interactive.</p>
+<p>Vous pouvez utiliser <code>rebase -i</code> pour réduire votre travail à une seule validation ou pour réarranger les modifications dans des commits qui rendront les patchs plus faciles à relire pour le mainteneur — référez-vous au chapitre 6 pour plus d&#8217;information sur comment rebaser de manière interactive.</p>
 
 <p>Lorsque votre branche de travail est prête et que vous êtes prêt à la fournir au mainteneur, rendez-vous sur la page du projet et cliquez sur le bouton &#8220;Fork&#8221; pour créer votre propre projet dupliqué sur lequel vous aurez les droits en écriture. Vous devez alors ajouter l&#8217;URL de ce nouveau dépôt en tant que second dépôt distant, dans notre cas nommé <code>macopie</code> :</p>
 
@@ -345,7 +347,7 @@ $ git commit</code></pre>
 
 <p>Une fois votre travail poussé sur votre copie du dépôt, vous devez notifier le mainteneur. Ce processus est souvent appelé une demande de tirage (pull request) et vous pouvez la générer soit via le site web — GitHub propose un bouton « pull request » qui envoie automatiquement un message au mainteneur — soit lancer la commande <code>git request-pull</code> et envoyer manuellement par e-mail le résultat au mainteneur de projet.</p>
 
-<p>La commande <code>request-pull</code> prend la branche de base dans laquelle vous souhaitez que votre branche thématique soit fusionnée et l&#8217;URL du dépôt Git depuis lequel vous souhaitez qu&#8217;elle soit tirée, et génère un résumé des modifications que vous demandez à faire tirer. Par exemple, si Jessica envoie à John une demande de tirage et qu&#8217;elle a fait deux validations dans la branche thématique qu&#8217;elle vient de pousser, elle peut lancer ceci :</p>
+<p>La commande <code>request-pull</code> prend en paramètres la branche de base dans laquelle vous souhaitez que votre branche thématique soit fusionnée et l&#8217;URL du dépôt Git depuis lequel vous souhaitez qu&#8217;elle soit tirée, et génère un résumé des modifications que vous demandez à faire tirer. Par exemple, si Jessica envoie à John une demande de tirage et qu&#8217;elle a fait deux validations dans la branche thématique qu&#8217;elle vient de pousser, elle peut lancer ceci :</p>
 
 <pre><code>$ git request-pull origin/master macopie
 The following changes since commit 1edee6b1d61823a2de3b09c160d7080b8d1b3a40:
@@ -454,7 +456,7 @@ index 76f47bc..f9815f1 100644
 
 <p>Vous pouvez maintenant éditer ces fichiers de patch pour ajouter plus d&#8217;information à destination de la liste de diffusion mais que vous ne souhaitez par voir apparaître dans le message de validation. Si vous ajoutez du texte entre la ligne <code>--</code> et le début du patch (la ligne <code>lib/simplegit.rb</code>), les développeurs peuvent le lire mais l&#8217;application du patch ne le prend pas en compte.</p>
 
-<p>Pour envoyer par e-mail ces fichiers, vous pouvez soit copier leur contenu dans votre application d&#8217;e-mail ou l&#8217;envoyer via une ligne de commande. Le copier-coller cause souvent des problèmes de formatage, spécialement avec les applications « intelligentes » qui ne préservent pas les retours à la ligne et les types d&#8217;espace. Heureusement, Git fournit un outil pour envoyer correctement les patchs formatés via IMAP, la méthode la plus facile. Je démontrerai comment envoyer un patch via Gmail qui s&#8217;avère être l&#8217;agent e-mail que j&#8217;utilise ; vous pourrez trouver des instruction détaillées pour de nombreuses application de mail à la fin du fichier susmentionné <code>Documentation/SubmittingPatches</code> du code source de Git.</p>
+<p>Pour envoyer par e-mail ces fichiers, vous pouvez soit copier leur contenu dans votre application d&#8217;e-mail ou l&#8217;envoyer via une ligne de commande. Le copier-coller cause souvent des problèmes de formatage, spécialement avec les applications « intelligentes » qui ne préservent pas les retours à la ligne et les types d&#8217;espace. Heureusement, Git fournit un outil pour envoyer correctement les patchs formatés via IMAP, la méthode la plus facile. Je démontrerai comment envoyer un patch via Gmail qui s&#8217;avère être l&#8217;agent e-mail que j&#8217;utilise ; vous pourrez trouver des instructions détaillées pour de nombreuses applications de mail à la fin du fichier susmentionné <code>Documentation/SubmittingPatches</code> du code source de Git.</p>
 
 <p>Premièrement, il est nécessaire de paramétrer la section imap de votre fichier <code>~/.gitconfig</code>. Vous pouvez positionner ces valeurs séparément avec une série de commandes <code>git config</code>, ou vous pouvez les ajouter manuellement. À la fin, le fichier de configuration doit ressembler à ceci :</p>
 
@@ -466,7 +468,7 @@ index 76f47bc..f9815f1 100644
   port = 993
   sslverify = false</code></pre>
 
-<p>Si votre serveur IMAP n&#8217;utilise pas SSL, les deux dernières lignes ne sont probablement pas nécessaires et le paramètre <code>host</code> commencera par <code>imap://</code> au lieu de <code>imaps://</code>. Quand c&#8217;est fait, vous pouvez utiliser la commande <code>git send-email</code> pour placer la série de patchs dans le répertoire Drafts du serveur IMAP spécifié :</p>
+<p>Si votre serveur IMAP n&#8217;utilise pas SSL, les deux dernières lignes ne sont probablement pas nécessaires et le paramètre <code>host</code> commencera par <code>imap://</code> au lieu de <code>imaps://</code>. Quand c&#8217;est fait, vous pouvez utiliser la commande <code>git send-email</code> pour placer la série de patchs dans le répertoire <em>Drafts</em> du serveur IMAP spécifié :</p>
 
 <pre><code>$ git send-email *.patch
 0001-Ajout-d-une-limite-la-fonction-de-log.patch
@@ -476,7 +478,7 @@ Emails will be sent from: Jessica Smith &lt;jessica@example.com&gt;
 Who should the emails be sent to? jessica@example.com
 Message-ID to be used as In-Reply-To for the first email? y</code></pre>
 
-<p>La première question demande l&#8217;adresse mail d&#8217;origine (avec par défaut celle saisie en config), tandis que la seconde demande les destinataires. Enfin la dernière question sert à indiquer que l&#8217;on souhaite poster la série de patch comme une réponse au premier patch de la série, créant ainsi un fil de discussion unique pour cette série. Ensuite, Git crache un certain nombre d&#8217;informations qui ressemblent à ceci pour chaque patch à envoyer :</p>
+<p>La première question demande l&#8217;adresse mail d&#8217;origine (avec par défaut celle saisie en config), tandis que la seconde demande les destinataires. Enfin la dernière question sert à indiquer que l&#8217;on souhaite poster la série de patchs comme une réponse au premier patch de la série, créant ainsi un fil de discussion unique pour cette série. Ensuite, Git crache un certain nombre d&#8217;informations qui ressemblent à ceci pour chaque patch à envoyer :</p>
 
 <pre><code>(mbox) Adding cc: Jessica Smith &lt;jessica@example.com&gt; from 
   \line &#39;From: Jessica Smith &lt;jessica@example.com&gt;&#39;
@@ -493,11 +495,11 @@ References: &lt;y&gt;
 
 Result: OK</code></pre>
 
-<p>À présent, vous devriez pouvoir vous rendre dans le répertoire Drafts, changer le champ destinataire pour celui de la liste de diffusion, y ajouter optionnelle ment en copie le mainteneur du projet ou le responsable et l&#8217;envoyer.</p>
+<p>À présent, vous devriez pouvoir vous rendre dans le répertoire Drafts, changer le champ destinataire pour celui de la liste de diffusion, y ajouter optionnellement en copie le mainteneur du projet ou le responsable et l&#8217;envoyer.</p>
 
 <h3 id='rsum'>Résumé</h3>
 
-<p>Ce chapitre a traité quelques unes des méthodes communes de gestion de types différents de projets Git que vous pourrez rencontrer et introduit un certain nombre de nouveaux outils pour vous aider à gérer ces processus. Dans la section suivante, nous allons voir comment travailler de l&#8217;autre côté de la barrière : en tant que mainteneur de projet Git. Vous apprendrez comment travailler comme dictateur bénévole ou gestionnaire d&#8217;intégration.</p>
+<p>Ce chapitre a traité quelques unes des méthodes communes de gestion de types différents de projets Git que vous pourrez rencontrer et a introduit un certain nombre de nouveaux outils pour vous aider à gérer ces processus. Dans la section suivante, nous allons voir comment travailler de l&#8217;autre côté de la barrière : en tant que mainteneur de projet Git. Vous apprendrez comment travailler comme dictateur bénévole ou gestionnaire d&#8217;intégration.</p>
 
 <div id='nav'>
 <a href='ch5-1.html'>prev</a> | <a href='ch5-3.html'>next</a>

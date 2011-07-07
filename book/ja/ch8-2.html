@@ -1,36 +1,36 @@
 ---
 layout: translation
-title: Pro Git 8.2 Gitとその他のシステムの連携 Migrating to Git
+title: Pro Git 8.2 Gitとその他のシステムの連携 Git への移行
 ---
-<h2 id='migrating_to_git'>Migrating to Git</h2>
+<h2 id='git_'>Git への移行</h2>
 
-<p>If you have an existing codebase in another VCS but you’ve decided to start using Git, you must migrate your project one way or another. This section goes over some importers that are included with Git for common systems and then demonstrates how to develop your own custom importer.</p>
+<p>別の VCS で管理している既存のコードベースを Git で管理しようと思ったら、何らかの方法でそのプロジェクトを移行しなければなりません。この節では、一般的なシステム上の Git に含まれているインポートツールについて説明します。そして、インポートツールを自作する方法も扱います。</p>
 
-<h3 id='importing'>Importing</h3>
+<h3 id='id184'>インポート</h3>
 
-<p>You’ll learn how to import data from two of the bigger professionally used SCM systems — Subversion and Perforce — both because they make up the majority of users I hear of who are currently switching, and because high-quality tools for both systems are distributed with Git.</p>
+<p>ここでは、業務のソースコード管理に使われる2大ツールである Subversion と Perforce からデータをインポートする方法を説明します。現在 Git への移行を考えている人たちの多くがこれらを使っていると聞いています。そのため、これらからのインポート要に、Git には高品質のツールが付属しています。</p>
 
 <h3 id='subversion'>Subversion</h3>
 
-<p>If you read the previous section about using <code>git svn</code>, you can easily use those instructions to <code>git svn clone</code> a repository; then, stop using the Subversion server, push to a new Git server, and start using that. If you want the history, you can accomplish that as quickly as you can pull the data out of the Subversion server (which may take a while).</p>
+<p>先ほどの節で <code>git svn</code> の使い方を読んでいれば、話は簡単です。まず <code>git svn clone</code> でリポジトリを作り、そして Subversion サーバーを使うのをやめ、新しい Git サーバーにプッシュし、あとはそれを使い始めればいいのです。これまでの歴史が欲しいのなら、それも Subversion サーバーからプルすることができます (多少時間がかかります)。</p>
 
-<p>However, the import isn’t perfect; and because it will take so long, you may as well do it right. The first problem is the author information. In Subversion, each person committing has a user on the system who is recorded in the commit information. The examples in the previous section show <code>schacon</code> in some places, such as the <code>blame</code> output and the <code>git svn log</code>. If you want to map this to better Git author data, you need a mapping from the Subversion users to the Git authors. Create a file called <code>users.txt</code> that has this mapping in a format like this:</p>
+<p>しかし、インポートは完全ではありません。また時間もかかるので、正しくやるのがいいでしょう。まず最初に問題になるのが作者 (author) の情報です。Subversion ではコミットした人すべてがシステム上にユーザーを持っており、それがコミット情報として記録されます。たとえば先ほどの節のサンプルで言うと <code>schacon</code> がそれで、<code>blame</code> の出力や <code>git svn log</code> の出力に含まれています。これをうまく Git の作者データとしてマップするには、Subversion のユーザーと Git の作者のマッピングが必要です。<code>users.txt</code> という名前のファイルを作り、このような書式でマッピングを記述します。</p>
 
 <pre><code>schacon = Scott Chacon &lt;schacon@geemail.com&gt;
 selse = Someo Nelse &lt;selse@geemail.com&gt;</code></pre>
 
-<p>To get a list of the author names that SVN uses, you can run this:</p>
+<p>SVN で使っている作者の一覧を取得するには、このようにします。</p>
 
 <pre><code>$ svn log --xml | grep author | sort -u | perl -pe &#39;s/.&gt;(.?)&lt;./$1 = /&#39;</code></pre>
 
-<p>That gives you the log output in XML format — you can look for the authors, create a unique list, and then strip out the XML. (Obviously this only works on a machine with <code>grep</code>, <code>sort</code>, and <code>perl</code> installed.) Then, redirect that output into your users.txt file so you can add the equivalent Git user data next to each entry.</p>
+<p>これは、まずログを XML フォーマットで出力します。その中から作者を捜して重複を省き、XML を除去します (ちょっと見ればわかりますが、これは <code>grep</code> や <code>sort</code>、そして <code>perl</code> といったコマンドが使える環境でないと動きません)。この出力を users.txt にリダイレクトし、そこに Git のユーザーデータを書き足していきます。</p>
 
-<p>You can provide this file to <code>git svn</code> to help it map the author data more accurately. You can also tell <code>git svn</code> not to include the metadata that Subversion normally imports, by passing <code>--no-metadata</code> to the <code>clone</code> or <code>init</code> command. This makes your <code>import</code> command look like this:</p>
+<p>このファイルを <code>git svn</code> に渡せば、作者のデータをより正確にマッピングできるようになります。また、Subversion が通常インポートするメタデータを含めないよう <code>git svn</code> に指示することもできます。そのためには <code>--no-metadata</code> を <code>clone</code> コマンドあるいは <code>init</code> コマンドに渡します。そうすると、 <code>import</code> コマンドは次のようになります。</p>
 
 <pre><code>$ git-svn clone http://my-project.googlecode.com/svn/ \
       --authors-file=users.txt --no-metadata -s my_project</code></pre>
 
-<p>Now you should have a nicer Subversion import in your <code>my_project</code> directory. Instead of commits that look like this</p>
+<p>これで、Subversion をちょっとマシにインポートした <code>my_project</code> ディレクトリができあがりました。コミットがこんなふうに記録されるのではなく、</p>
 
 <pre><code>commit 37efa680e8473b615de980fa935944215428a35a
 Author: schacon &lt;schacon@4c93b258-373f-11de-be05-5f7a86268029&gt;
@@ -41,7 +41,7 @@ Date:   Sun May 3 00:12:22 2009 +0000
     git-svn-id: https://my-project.googlecode.com/svn/trunk@94 4c93b258-373f-11de-
     be05-5f7a86268029</code></pre>
 
-<p>they look like this:</p>
+<p>次のように記録されています。</p>
 
 <pre><code>commit 03a8785f44c8ea5cdb0e8834b7c8e6c469be2ff2
 Author: Scott Chacon &lt;schacon@geemail.com&gt;
@@ -49,40 +49,40 @@ Date:   Sun May 3 00:12:22 2009 +0000
 
     fixed install - go to trunk</code></pre>
 
-<p>Not only does the Author field look a lot better, but the <code>git-svn-id</code> is no longer there, either.</p>
+<p>Author フィールドの見た目がずっとよくなっただけではなく、<code>git-svn-id</code> もなくなっています。</p>
 
-<p>You need to do a bit of <code>post-import</code> cleanup. For one thing, you should clean up the weird references that <code>git svn</code> set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.</p>
+<p>インポートした後に、ちょっとした後始末が必要です。たとえば、<code>git svn</code> が準備した変な参照などです。まずはタグを移動して、奇妙なリモートブランチではなくちゃんとしたタグとして扱えるようにします。そして、残りのブランチを移動してローカルで扱えるようにします。</p>
 
-<p>To move the tags to be proper Git tags, run</p>
+<p>タグを Git のタグとして扱うには、次のコマンドを実行します。</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/tags/* .git/refs/tags/
 $ rm -Rf .git/refs/remotes/tags</code></pre>
 
-<p>This takes the references that were remote branches that started with <code>tag/</code> and makes them real (lightweight) tags.</p>
+<p>これは、リモートブランチのうち <code>tag/</code> で始まる名前のものを、実際の (軽量な) タグに変えます。</p>
 
-<p>Next, move the rest of the references under <code>refs/remotes</code> to be local branches:</p>
+<p>次に、<code>refs/remotes</code> 以下にあるそれ以外の参照をローカルブランチに移動します。</p>
 
 <pre><code>$ cp -Rf .git/refs/remotes/* .git/refs/heads/
 $ rm -Rf .git/refs/remotes</code></pre>
 
-<p>Now all the old branches are real Git branches and all the old tags are real Git tags. The last thing to do is add your new Git server as a remote and push to it. Because you want all your branches and tags to go up, you can run this:</p>
+<p>これで、今まであった古いブランチはすべて Git のブランチとなり、古いタグもすべて Git のタグになりました。最後に残る作業は、新しい Git サーバーをリモートに追加してプッシュすることです。すべてのブランチやタグを一緒にプッシュするには、このようにします。</p>
 
 <pre><code>$ git push origin --all</code></pre>
 
-<p>All your branches and tags should be on your new Git server in a nice, clean import.</p>
+<p>これで、ブランチやタグも含めたすべてを、新しい Git サーバーにきれいにインポートできました。</p>
 
 <h3 id='perforce'>Perforce</h3>
 
-<p>The next system you’ll look at importing from is Perforce. A Perforce importer is also distributed with Git, but only in the <code>contrib</code> section of the source code — it isn’t available by default like <code>git svn</code>. To run it, you must get the Git source code, which you can download from git.kernel.org:</p>
+<p>次のインポート元としてとりあげるのは Perforce です。Perforce からのインポートツールも Git に同梱されていますが、本体ではなく <code>contrib</code> の中にあります。<code>git svn</code> のようにデフォルトで使えるわけではありません。このツールを使うには Git のソースコードを取得する必要があります。ソースコードは git.kernel.org からダウンロードできます。</p>
 
 <pre><code>$ git clone git://git.kernel.org/pub/scm/git/git.git
 $ cd git/contrib/fast-import</code></pre>
 
-<p>In this <code>fast-import</code> directory, you should find an executable Python script named <code>git-p4</code>. You must have Python and the <code>p4</code> tool installed on your machine for this import to work. For example, you’ll import the Jam project from the Perforce Public Depot. To set up your client, you must export the P4PORT environment variable to point to the Perforce depot:</p>
+<p>この <code>fast-import</code> ディレクトリにある実行可能な Python スクリプト <code>git-p4</code> が、それです。このツールを使うには、Python と <code>p4</code> ツールがマシンにインストールされていなければなりません。たとえば、Jam プロジェクトを Perforce Public Depot からインポートします。クライアントをセットアップするには、環境変数 P4PORT をエクスポートして Perforce depot の場所を指すようにしなければなりません。</p>
 
 <pre><code>$ export P4PORT=public.perforce.com:1666</code></pre>
 
-<p>Run the <code>git-p4 clone</code> command to import the Jam project from the Perforce server, supplying the depot and project path and the path into which you want to import the project:</p>
+<p><code>git-p4 clone</code> コマンドを実行して Jam プロジェクトを Perforce サーバーからインポートし、depot とプロジェクトそしてプロジェクトの取り込み先のパスを指定します。</p>
 
 <pre><code>$ git-p4 clone //public/jam/src@all /opt/p4import
 Importing from //public/jam/src@all into /opt/p4import
@@ -90,7 +90,7 @@ Reinitialized existing Git repository in /opt/p4import/.git/
 Import destination: refs/remotes/p4/master
 Importing revision 4409 (100%)</code></pre>
 
-<p>If you go to the <code>/opt/p4import</code> directory and run <code>git log</code>, you can see your imported work:</p>
+<p><code>/opt/p4import</code> ディレクトリに移動して <code>git log</code> を実行すると、インポートされた内容を見ることができます。</p>
 
 <pre><code>$ git log -2
 commit 1fd4ec126171790efd2db83548b85b1bbbc07dc2
@@ -112,7 +112,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
     [git-p4: depot-paths = &quot;//public/jam/src/&quot;: change = 3108]</code></pre>
 
-<p>You can see the <code>git-p4</code> identifier in each commit. It’s fine to keep that identifier there, in case you need to reference the Perforce change number later. However, if you’d like to remove the identifier, now is the time to do so — before you start doing work on the new repository. You can use <code>git filter-branch</code> to remove the identifier strings en masse:</p>
+<p><code>git-p4</code> という識別子が各コミットに含まれることがわかるでしょう。この識別子はそのままにしておいてもかまいません。後で万一 Perforce のチェンジ番号を参照しなければならなくなったときのために使えます。しかし、もし削除したいのならここで消しておきましょう。新しいリポジトリ上で何か作業を始める前のこの段階で。<code>git filter-branch</code> を使えば、この識別子を一括削除することができます。</p>
 
 <pre><code>$ git filter-branch --msg-filter &#39;
         sed -e &quot;/^\[git-p4:/d&quot;
@@ -120,7 +120,7 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 Rewrite 1fd4ec126171790efd2db83548b85b1bbbc07dc2 (123/123)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>If you run <code>git log</code>, you can see that all the SHA-1 checksums for the commits have changed, but the <code>git-p4</code> strings are no longer in the commit messages:</p>
+<p><code>git log</code> を実行すれば各コミットの SHA-1 チェックサムがすべて変わったことがわかります。そして <code>git-p4</code> 文字列はコミットメッセージから消えました。</p>
 
 <pre><code>$ git log -2
 commit 10a16d60cffca14d454a15c6164378f4082bc5b0
@@ -138,13 +138,13 @@ Date:   Tue Apr 22 20:51:34 2003 -0800
 
     Update derived jamgram.c</code></pre>
 
-<p>Your import is ready to push up to your new Git server.</p>
+<p>これで、インポートした内容を新しい Git サーバーにプッシュする準備がととのいました。</p>
 
-<h3 id='a_custom_importer'>A Custom Importer</h3>
+<h3 id='id185'>カスタムインポーター</h3>
 
-<p>If your system isn’t Subversion or Perforce, you should look for an importer online — quality importers are available for CVS, Clear Case, Visual Source Safe, even a directory of archives. If none of these tools works for you, you have a rarer tool, or you otherwise need a more custom importing process, you should use <code>git fast-import</code>. This command reads simple instructions from stdin to write specific Git data. It’s much easier to create Git objects this way than to run the raw Git commands or try to write the raw objects (see Chapter 9 for more information). This way, you can write an import script that reads the necessary information out of the system you’re importing from and prints straightforward instructions to stdout. You can then run this program and pipe its output through <code>git fast-import</code>.</p>
+<p>Subversion や Perforce 以外のシステムを使っている場合は、それ用のインポートツールを探さなければなりません。CVS、Clear Case、Visual Source Safe、あるいはアーカイブのディレクトリなどのためのツールはオンラインで公開されています。これらのツールがうまく動かなかったり手元で使っているバージョン管理ツールがもっとマイナーなものだったり、あるいはインポート処理で特殊な操作をしたりしたい場合は <code>git fast-import</code> を使います。このコマンドはシンプルな指示を標準入力から受け取って、特定の Git データを書き出します。生の Git コマンドを使ったり生のオブジェクトを書きだそうとしたりする (詳細は第 9 章を参照ください) よりもずっと簡単に Git オブジェクトを作ることができます。この方法を使えばインポートスクリプトを自作することができます。必要な情報を元のシステムから読み込み、単純な指示を標準出力に出せばよいのです。そして、このスクリプトの出力をパイプで <code>git fast-import</code> に送ります。</p>
 
-<p>To quickly demonstrate, you’ll write a simple importer. Suppose you work in current, you back up your project by occasionally copying the directory into a time-stamped <code>back_YYYY_MM_DD</code> backup directory, and you want to import this into Git. Your directory structure looks like this:</p>
+<p>手軽に試してみるために、シンプルなインポーターを書いてみましょう。currentで作業をしており、プロジェクトのバックアップはディレクトリまるごとのコピーで行っているものとします。バックアップディレクトリの名前は、タイムスタンプをもとに <code>back_YYYY_MM_DD</code> としています。これらを Git にインポートしてみましょう。ディレクトリの構造は、このようになっています。</p>
 
 <pre><code>$ ls /opt/import_from
 back_2009_01_02
@@ -153,31 +153,31 @@ back_2009_01_14
 back_2009_02_03
 current</code></pre>
 
-<p>In order to import a Git directory, you need to review how Git stores its data. As you may remember, Git is fundamentally a linked list of commit objects that point to a snapshot of content. All you have to do is tell <code>fast-import</code> what the content snapshots are, what commit data points to them, and the order they go in. Your strategy will be to go through the snapshots one at a time and create commits with the contents of each directory, linking each commit back to the previous one.</p>
+<p>Git のディレクトリにインポートするにはまず、これらのデータをどのように Git に格納するかをレビューしなければなりません。Git は基本的にはコミットオブジェクトのリンクリストであり、コミットオブジェクトがコンテンツのスナップショットを指しています。<code>fast-import</code> に指示しなければならないのは、コンテンツのスナップショットが何でどのコミットデータがそれを指しているのかということと、コミットデータを取り込む順番だけです。ここでは、スナップショットをひとつずつたどって各ディレクトリの中身をさすコミットオブジェクトを作り、それらを日付順にリンクさせるものとします。</p>
 
-<p>As you did in the &#8220;An Example Git Enforced Policy&#8221; section of Chapter 7, we’ll write this in Ruby, because it’s what I generally work with and it tends to be easy to read. You can write this example pretty easily in anything you’re familiar with — it just needs to print the appropriate information to stdout. And, if you are running on Windows, this means you&#8217;ll need to take special care to not introduce carriage returns at the end your lines — git fast-import is very particular about just wanting line feeds (LF) not the carriage return line feeds (CRLF) that Windows uses.</p>
+<p>第 7 章の「Git ポリシーの実施例」同様、ここでも Ruby を使って書きます。ふだんから使いなれており、きっと他の方にも読みやすいであろうからです。このサンプルをあなたの使いなれた言語で書き換えるのも簡単でしょう。単に適切な情報を標準出力に送るだけなのだから。また、Windows を使っている場合は、行末にキャリッジリターンを含めないように注意が必要です。git fast-import が想定している行末は LF だけであり、Windows で使われている CRLF は想定していません。</p>
 
-<p>To begin, you’ll change into the target directory and identify every subdirectory, each of which is a snapshot that you want to import as a commit. You’ll change into each subdirectory and print the commands necessary to export it. Your basic main loop looks like this:</p>
+<p>まず最初に対象ディレクトリに移動し、コミットとしてインポートするスナップショットとしてサブディレクトリを識別します。基本的なメインループは、このようになります。</p>
 
 <pre><code>last_mark = nil
 
-# loop through the directories
+# 各ディレクトリをループ
 Dir.chdir(ARGV[0]) do
   Dir.glob(&quot;*&quot;).each do |dir|
     next if File.file?(dir)
 
-    # move into the target directory
+    # 対象ディレクトリに移動
     Dir.chdir(dir) do 
       last_mark = print_export(dir, last_mark)
     end
   end
 end</code></pre>
 
-<p>You run <code>print_export</code> inside each directory, which takes the manifest and mark of the previous snapshot and returns the manifest and mark of this one; that way, you can link them properly. &#8220;Mark&#8221; is the <code>fast-import</code> term for an identifier you give to a commit; as you create commits, you give each one a mark that you can use to link to it from other commits. So, the first thing to do in your <code>print_export</code> method is generate a mark from the directory name:</p>
+<p>各ディレクトリ内で実行している <code>print_export</code> は、前のスナップショットの内容とマークを受け取ってこのディレクトリの内容とマークを返します。このようにして、それぞれを適切にリンクさせます。「マーク」とは <code>fast-import</code> 用語で、コミットに対する識別子を意味します。コミットを作成するときにマークをつけ、それを使って他のコミットとリンクさせます。つまり、<code>print_export</code> メソッドで最初にやることは、ディレクトリ名からマークを生成することです。</p>
 
 <pre><code>mark = convert_dir_to_mark(dir)</code></pre>
 
-<p>You’ll do this by creating an array of directories and using the index value as the mark, because a mark must be an integer. Your method looks like this:</p>
+<p>これを行うには、まずディレクトリの配列を作り、そのインデックスの値をマークとして使います。マークは整数値でなければならないからです。メソッドの中身はこのようになります。</p>
 
 <pre><code>$marks = []
 def convert_dir_to_mark(dir)
@@ -187,11 +187,11 @@ def convert_dir_to_mark(dir)
   ($marks.index(dir) + 1).to_s
 end</code></pre>
 
-<p>Now that you have an integer representation of your commit, you need a date for the commit metadata. Because the date is expressed in the name of the directory, you’ll parse it out. The next line in your <code>print_export</code> file is</p>
+<p>これで各コミットを整数値で表せるようになりました。次に必要なのは、コミットのメタデータ用の日付です。日付はディレクトリ名で表されているので、ここから取得します。<code>print_export</code> ファイルで次にすることは、これです。</p>
 
 <pre><code>date = convert_dir_to_date(dir)</code></pre>
 
-<p>where <code>convert_dir_to_date</code> is defined as</p>
+<p><code>convert_dir_to_date</code> の定義は次のようになります。</p>
 
 <pre><code>def convert_dir_to_date(dir)
   if dir == &#39;current&#39;
@@ -203,30 +203,30 @@ end</code></pre>
   end
 end</code></pre>
 
-<p>That returns an integer value for the date of each directory. The last piece of meta-information you need for each commit is the committer data, which you hardcode in a global variable:</p>
+<p>これは、各ディレクトリの日付に対応する整数値を返します。コミットのメタ情報として必要な最後の情報はコミッターのデータで、これはグローバル変数にハードコードします。</p>
 
 <pre><code>$author = &#39;Scott Chacon &lt;schacon@example.com&gt;&#39;</code></pre>
 
-<p>Now you’re ready to begin printing out the commit data for your importer. The initial information states that you’re defining a commit object and what branch it’s on, followed by the mark you’ve generated, the committer information and commit message, and then the previous commit, if any. The code looks like this:</p>
+<p>これで、コミットのデータをインポーターに流せるようになりました。最初の情報で示しているのは、今定義しているのがコミットオブジェクトであることとどのブランチにいるのかを表す宣言です。その後に先ほど生成したマークが続き、さらにコミッターの情報とコミットメッセージが続いた後にひとつ前のコミットが (もし存在すれば) 続きます。コードはこのようになります。</p>
 
-<pre><code># print the import information
+<pre><code># インポート情報の表示
 puts &#39;commit refs/heads/master&#39;
 puts &#39;mark :&#39; + mark
 puts &quot;committer #{$author} #{date} -0700&quot;
 export_data(&#39;imported from &#39; + dir)
 puts &#39;from :&#39; + last_mark if last_mark</code></pre>
 
-<p>You hardcode the time zone (-0700) because doing so is easy. If you’re importing from another system, you must specify the time zone as an offset. The commit message must be expressed in a special format:</p>
+<p>タイムゾーン (-0700) をハードコードしているのは、そのほうがお手軽だったからです。別のシステムからインポートする場合は、タイムゾーンを適切に指定しなければなりません。コミットメッセージは、次のような特殊な書式にする必要があります。</p>
 
 <pre><code>data (size)\n(contents)</code></pre>
 
-<p>The format consists of the word data, the size of the data to be read, a newline, and finally the data. Because you need to use the same format to specify the file contents later, you create a helper method, <code>export_data</code>:</p>
+<p>まず最初に「data」という単語、そして読み込むデータのサイズ、改行、最後にデータがきます。同じ書式は後でファイルのコンテンツを指定するときにも使うので、ヘルパーメソッド <code>export_data</code> を作ります。</p>
 
 <pre><code>def export_data(string)
   print &quot;data #{string.size}\n#{string}&quot;
 end</code></pre>
 
-<p>All that’s left is to specify the file contents for each snapshot. This is easy, because you have each one in a directory — you can print out the <code>deleteall</code> command followed by the contents of each file in the directory. Git will then record each snapshot appropriately:</p>
+<p>残っているのは、各スナップショットが持つファイルのコンテンツを指定することです。今回の場合はどれも一つのディレクトリにまとまっているので簡単です。<code>deleteall</code> コマンドを表示し、それに続けてディレクトリ内の各ファイルの中身を表示すればよいのです。そうすれば、Git が各スナップショットを適切に記録します。</p>
 
 <pre><code>puts &#39;deleteall&#39;
 Dir.glob(&quot;**/*&quot;).each do |file|
@@ -234,15 +234,15 @@ Dir.glob(&quot;**/*&quot;).each do |file|
   inline_data(file)
 end</code></pre>
 
-<p>Note: Because many systems think of their revisions as changes from one commit to another, fast-import can also take commands with each commit to specify which files have been added, removed, or modified and what the new contents are. You could calculate the differences between snapshots and provide only this data, but doing so is more complex — you may as well give Git all the data and let it figure it out. If this is better suited to your data, check the <code>fast-import</code> man page for details about how to provide your data in this manner.</p>
+<p>注意: 多くのシステムではリビジョンを「あるコミットと別のコミットの差分」と考えているので、fast-importでもその形式でコマンドを受け取ることができます。つまりコミットを指定するときに、追加/削除/変更されたファイルと新しいコンテンツの中身で指定できるということです。各スナップショットの差分を算出してそのデータだけを渡すこともできますが、処理が複雑になります。すべてのデータを渡して、Git に差分を算出させたほうがよいでしょう。もし差分を渡すほうが手元のデータに適しているようなら、<code>fast-import</code> のマニュアルで詳細な方法を調べましょう。</p>
 
-<p>The format for listing the new file contents or specifying a modified file with the new contents is as follows:</p>
+<p>新しいファイルの内容、あるいは変更されたファイルと変更後の内容を表す書式は次のようになります。</p>
 
 <pre><code>M 644 inline path/to/file
 data (size)
 (file contents)</code></pre>
 
-<p>Here, 644 is the mode (if you have executable files, you need to detect and specify 755 instead), and inline says you’ll list the contents immediately after this line. Your <code>inline_data</code> method looks like this:</p>
+<p>この 644 はモード (実行可能ファイルがある場合は、そのファイルについては 755 を指定する必要があります) を表し、inline とはファイルの内容をこの次の行に続けて指定するという意味です。<code>inline_data</code> メソッドは、このようになります。</p>
 
 <pre><code>def inline_data(file, code = &#39;M&#39;, mode = &#39;644&#39;)
   content = File.read(file)
@@ -250,17 +250,17 @@ data (size)
   export_data(content)
 end</code></pre>
 
-<p>You reuse the <code>export_data</code> method you defined earlier, because it’s the same as the way you specified your commit message data.</p>
+<p>先ほど定義した <code>export_data</code> メソッドを再利用することができます。この書式はコミットメッセージの書式と同じだからです。</p>
 
-<p>The last thing you need to do is to return the current mark so it can be passed to the next iteration:</p>
+<p>最後に必要となるのは、現在のマークを返して次の処理に渡せるようにすることです。</p>
 
 <pre><code>return mark</code></pre>
 
-<p>NOTE: If you are running on Windows you&#8217;ll need to make sure that you add one extra step. As metioned before, Windows uses CRLF for new line characters while git fast-import expects only LF. To get around this problem and make git fast-import happy, you need to tell ruby to use LF instead of CRLF:</p>
+<p>注意: Windows 上で動かす場合はさらにもう一手間必要です。先述したように、Windows の改行文字は CRLF ですが git fast-import は LF にしか対応していません。この問題に対応して git fast-import をうまく動作させるには、CRLF ではなく LF を使うよう ruby に指示しなければなりません。</p>
 
 <pre><code>$stdout.binmode</code></pre>
 
-<p>That’s it. If you run this script, you’ll get content that looks something like this:</p>
+<p>これで終わりです。このスクリプトを実行すれば、次のような結果が得られます。</p>
 
 <pre><code>$ ruby import.rb /opt/import_from 
 commit refs/heads/master
@@ -285,7 +285,7 @@ data 16
 new version one
 (...)</code></pre>
 
-<p>To run the importer, pipe this output through <code>git fast-import</code> while in the Git directory you want to import into. You can create a new directory and then run <code>git init</code> in it for a starting point, and then run your script:</p>
+<p>インポーターを動かすには、この出力をパイプで <code>git fast-import</code> に渡します。これは、インポート先の Git ディレクトリで実行します。新しいディレクトリを作成してそこで <code>git init</code> を実行し、そしてスクリプトを実行することになります。</p>
 
 <pre><code>$ git init
 Initialized empty Git repository in /opt/import_to/.git/
@@ -314,7 +314,7 @@ pack_report: pack_open_windows        =          1 /          1
 pack_report: pack_mapped              =       1356 /       1356
 ---------------------------------------------------------------------</code></pre>
 
-<p>As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run <code>git log</code> to see your new history:</p>
+<p>ご覧のとおり、処理が正常に完了すると、処理内容に関する統計情報が表示されます。この場合は、全部で 18 のオブジェクトからなる 5 つのコミットが 1 つのブランチにインポートされたことがわかります。では、<code>git log</code> で新しい歴史を確認しましょう。</p>
 
 <pre><code>$ git log -2
 commit 10bfe7d22ce15ee25b60a824c8982157ca593d41
@@ -329,7 +329,7 @@ Date:   Tue Feb 3 01:00:00 2009 -0700
 
     imported from back_2009_02_03</code></pre>
 
-<p>There you go — a nice, clean Git repository. It’s important to note that nothing is checked out — you don’t have any files in your working directory at first. To get them, you must reset your branch to where <code>master</code> is now:</p>
+<p>きれいな Git リポジトリができていますね。ここで重要なのは、この時点ではまだ何もチェックアウトされていないということです。作業ディレクトリには何もファイルがありません。ファイルを取得するには、ブランチをリセットして <code>master</code> の現在の状態にしなければなりません。</p>
 
 <pre><code>$ ls
 $ git reset --hard master
@@ -337,7 +337,7 @@ HEAD is now at 10bfe7d imported from current
 $ ls
 file.rb  lib</code></pre>
 
-<p>You can do a lot more with the <code>fast-import</code> tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the <code>contrib/fast-import</code> directory of the Git source code; one of the better ones is the <code>git-p4</code> script I just covered.</p>
+<p><code>fast-import</code> ツールにはさらに多くの機能があります。さまざまなモードを処理したりバイナリデータを扱ったり、複数のブランチやそのマージ、タグ、進捗状況表示などです。より複雑なシナリオのサンプルは Git のソースコードの <code>contrib/fast-import</code> ディレクトリにあります。先ほど取り上げた <code>git-p4</code> スクリプトがよい例となるでしょう。</p>
 
 <div id='nav'>
 <a href='ch8-1.html'>prev</a> | <a href='ch8-3.html'>next</a>

@@ -1,125 +1,70 @@
 ---
 layout: translation
-title: Pro Git 4.9 服务器上的 Git Git 托管服务
+title: Pro Git 4.9 服务器上的 Git Git 守护进程
 ---
-<h2 id='git_'>Git 托管服务</h2>
+<h2 id='git_'>Git 守护进程</h2>
 
-<p>如果不想经历自己架设 Git 服务器的麻烦，网络上有几个专业的仓库托管服务可供选择。这样做有几大优点：托管账户的建立通常比较省时，方便项目的启动，而且不涉及服务其的维护和监控。即使内部创建并运行了自己的服务器，为开源的代码使用一个公共托管站点还是有好处——让开源社区更方便的找到该项目并给予帮助。</p>
+<p>对于提供公共的，非授权的只读访问，我们可以抛弃 HTTP 协议，改用 Git 自己的协议，这主要是出于性能和速度的考虑。Git 协议远比 HTTP 协议高效，因而访问速度也快，所以它能节省很多用户的时间。</p>
 
-<p>目前，可供选择的托管服务数量繁多，各有利弊。在 Git 官方 wiki 上的 Githosting 页面有一个持续更新的托管服务列表：</p>
+<p>重申一下，这一点只适用于非授权的只读访问。如果建在防火墙之外的服务器上，那么它所提供的服务应该只是那些公开的只读项目。如果是在防火墙之内的服务器上，可用于支撑大量参与人员或自动系统（用于持续集成或编译的主机）只读访问的项目，这样可以省去逐一配置 SSH 公钥的麻烦。</p>
 
-<pre><code>http://git.or.cz/gitwiki/GitHosting</code></pre>
+<p>但不管哪种情形，Git 协议的配置设定都很简单。基本上，只要以守护进程的形式运行该命令即可：</p>
 
-<p>由于本书无法全部一一介绍它们，而本人（译注：指本书作者 Scott Chacon ）刚好在其中之一工作，我们将在这一节介绍一下在 GitHub 建立账户和开启新项目的过程。为你提供一个使用托管服务的大致印象。</p>
+<pre><code>git daemon --reuseaddr --base-path=/opt/git/ /opt/git/</code></pre>
 
-<p>GitHub 是到目前为止最大的开源 Git 托管服务，并且是少数同时提供公共托管和私人托管服务的站点之一，所以你可以在一个站点同时保存开源和商业代码。事实上，本书正是私下使用 GitHub 合写的。（译注：而本书的翻译也是在 GitHub 上进行公共合作的）。</p>
+<p>这里的 <code>--reuseaddr</code> 选项表示在重启服务前，不等之前的连接超时就立即重启。而 <code>--base-path</code> 选项则允许克隆项目时不必给出完整路径。最后面的路径告诉 Git 守护进程允许开放给用户访问的仓库目录。假如有防火墙，则需要为该主机的 9418 端口设置为允许通信。</p>
 
-<h3 id='github'>GitHub</h3>
+<p>以守护进程的形式运行该进程的方法有很多，但主要还得看用的是什么操作系统。在 Ubuntu 主机上，可以用 Upstart 脚本达成。编辑该文件：</p>
 
-<p>GitHub 和大多数的代码托管站点在处理项目命名空间的方式上略有不同。GitHub 的设计更侧重于用户，而不是而不是全部基于项目。意谓本人在 GitHub 上托管一个 <code>grit</code> 项目的话，它将不会出现在 <code>github.com/grit</code>，而是在 <code>github.com/shacon/grit</code> （译注：作者在 GitHub 上的用户名是 shacon）。不存在所谓某个项目的官方版本，所以假如第一作者放弃了某个项目，它可以无缝转移到其它用户的旗下。</p>
+<pre><code>/etc/event.d/local-git-daemon</code></pre>
 
-<p>GitHub 同时也是一个向使用私有仓库的用户收取费用的商业公司，不过所有人都可以快捷的得到一个免费账户并且在上面托管任意多的开源项目。我们将快速介绍一下该过程。</p>
+<p>加入以下内容：</p>
 
-<h3 id='id301'>建立账户</h3>
+<pre><code>start on startup
+stop on shutdown
+exec /usr/bin/git daemon \
+    --user=git --group=git \
+    --reuseaddr \
+    --base-path=/opt/git/ \
+    /opt/git/
+respawn</code></pre>
 
-<p>第一个必要必要步骤是注册一个免费的账户。访问 Pricing and Signup （价格与注册）页面 <code>http://github.com/plans</code> 并点击 Free acount （免费账户）的 &#8220;Sign Up（注册）&#8221; 按钮（见图 4-2），进入注册页面。 The first thing you need to do is set up a free user account. If you visit the Pricing and Signup page at <code>http://github.com/plans</code> and click the &#8220;Sign Up&#8221; button on the Free account (see figure 4-2), you’re taken to the signup page.</p>
+<p>出于安全考虑，强烈建议用一个对仓库只有读取权限的用户身份来运行该进程 — 只需要简单地新建一个名为 <code>git-ro</code> 的用户（译注：新建用户默认对仓库文件不具备写权限，但这取决于仓库目录的权限设定。务必确认 <code>git-ro</code> 对仓库只能读不能写。），并用它的身份来启动进程。这里为了简化，后面我们还是用之前运行 Gitosis 的用户 &#8216;git&#8217;。</p>
 
-<p><center><img src="/figures/ch4/18333fig0402-tn.png"></center><br/> Figure 4-2. GitHub 服务简介页面</p>
+<p>这样一来，当你重启计算机时，Git 进程也会自动启动。要是进程意外退出或者被杀掉，也会自行重启。在设置完成后，不重启计算机就启动该守护进程，可以运行：</p>
 
-<p>这里要求选择一个系统中尚未存在的用户名，提供一个与之相连的电邮地址，以及一个密码（见图 4-3）。</p>
+<pre><code>initctl start local-git-daemon</code></pre>
 
-<p><center><img src="/figures/ch4/18333fig0403-tn.png"></center><br/> Figure 4-3. The GitHub user signup form</p>
+<p>而在其他操作系统上，可以用 <code>xinetd</code>，或者 <code>sysvinit</code> 系统的脚本，或者其他类似的脚本 — 只要能让那个命令变为守护进程并可监控。</p>
 
-<p>如果事先有准备，可以顺便提供 SSH 公钥。我们在前文中的&#8221;小型安装&#8221; 一节介绍过生成新公钥的方法。把生成的钥匙对中的公钥粘贴到 SSH Public Key （SSH 公钥）文本框中。点击 &#8220;explain ssh keys&#8221; 链接可以获取在所有主流操作系统上完成该步骤的介绍。 点击 &#8220;I agree，sign me up （同意条款，让我注册）&#8221; 按钮就能进入新用户的控制面板（见图 4-4）。</p>
+<p>接下来，我们必须告诉 Gitosis 哪些仓库允许通过 Git 协议进行匿名只读访问。如果每个仓库都设有各自的段落，可以分别指定是否允许 Git 进程开放给用户匿名读取。比如允许通过 Git 协议访问 iphone_project，可以把下面两行加到 <code>gitosis.conf</code> 文件的末尾：</p>
 
-<p><center><img src="/figures/ch4/18333fig0404-tn.png"></center><br/> Figure 4-4. GitHub 用户面板</p>
+<pre><code>[repo iphone_project]
+daemon = yes</code></pre>
 
-<p>然后就可以建立新仓库了。</p>
+<p>在提交和推送完成后，运行中的 Git 守护进程就会响应来自 9418 端口对该项目的访问请求。</p>
 
-<h3 id='id302'>建立新仓库</h3>
+<p>如果不考虑 Gitosis，单单起了 Git 守护进程的话，就必须到每一个允许匿名只读访问的仓库目录内，创建一个特殊名称的空文件作为标志：</p>
 
-<p>点击用户面板上仓库旁边的 &#8220;create a new one（新建）&#8221; 连接。进入 Create a New Repository （新建仓库）表格（见图 4-5）。</p>
+<pre><code>$ cd /path/to/project.git
+$ touch git-daemon-export-ok</code></pre>
 
-<p><center><img src="/figures/ch4/18333fig0405-tn.png"></center><br/> Figure 4-5. 在 GitHub 建立新仓库</p>
+<p>该文件的存在，表明允许 Git 守护进程开放对该项目的匿名只读访问。</p>
 
-<p>唯一必做的仅仅是提供一个项目名称，当然也可以添加一点描述。搞定这些以后，点 &#8220;Create Repository（建立仓库）&#8221; 按钮。新仓库就建立起来了（见图4-6）。</p>
+<p>Gitosis 还能设定哪些项目允许放在 GitWeb 上显示。先打开 GitWeb 的配置文件 <code>/etc/gitweb.conf</code>，添加以下四行：</p>
 
-<p><center><img src="/figures/ch4/18333fig0406-tn.png"></center><br/> Figure 4-6. GitHub 项目头信息</p>
+<pre><code>$projects_list = &quot;/home/git/gitosis/projects.list&quot;;
+$projectroot = &quot;/home/git/repositories&quot;;
+$export_ok = &quot;git-daemon-export-ok&quot;;
+@git_base_url_list = (&#39;git://gitserver&#39;);</code></pre>
 
-<p>由于还没有提交代码，GitHub 会展示如何创建一个新项目，如何推送一个现存项目，以及如何从一个公共的 Subversion 仓库导入项目（译注：这简直是公开挖 google code 和 sourceforge 的墙角）（见图 4-7）。</p>
+<p>接下来，只要配置各个项目在 Gitosis 中的 <code>gitweb</code> 参数，便能达成是否允许 GitWeb 用户浏览该项目。比如，要让 iphone_project 项目在 GitWeb 里出现，把 <code>repo</code> 的设定改成下面的样子：</p>
 
-<p><center><img src="/figures/ch4/18333fig0407-tn.png"></center><br/> Figure 4-7. 新仓库指南</p>
+<pre><code>[repo iphone_project]
+daemon = yes
+gitweb = yes</code></pre>
 
-<p>该指南和本书前文中的介绍类似。要把一个非 Git 项目变成 Git 项目，运行</p>
-
-<pre><code>$ git init
-$ git add .
-$ git commit -m &#39;initial commit&#39;</code></pre>
-
-<p>一旦拥有一个本地 Git 仓库，把 GitHub 添加为远程仓库并推送 master 分支：</p>
-
-<pre><code>$ git remote add origin git@github.com:testinguser/iphone_project.git
-$ git push origin master</code></pre>
-
-<p>这时该项目就托管在 GitHub 上了。你可以把它的 URL 发给每个希望分享该工程的人。本例的 URL 是 <code>http://github.com/testinguser/iphone_project</code>。你将在项目页面的头部发现有两个 Git URL（见图 4-8）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0408-tn.png"></center><br/> Figure 4-8. 项目开头的公共 URL 和私有 URL 。</p>
-
-<p>Public Clone URL（公共克隆 URL）是一个公开的，只读的 Git URL，任何人都可以通过它克隆该项目。可以随意的散播这个 URL，发步到个人网站之类的地方。</p>
-
-<p>Your Clone URL（私用克隆 URL）是一个给予 SSH 的读写 URL，只有使用与上传的 SSH 公钥对应的密钥来连接时，才能通过它进行读写操作。其他用户访问项目页面的时候看不到该URL——只有公共的那个。</p>
-
-<h3 id='_subversion_'>从 Subversion 中导入项目</h3>
-
-<p>如果想把某个公共 Subversion 项目导入 Git，GitHub 可以帮忙。在指南的最后有一个指向导入 Subversion 页面的链接。点击它，可以得到一个表格，它包含着有关导入流程的信息以及一个用来粘贴公共 Subversion 项目连接的文本框（见图 4-9）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0409-tn.png"></center><br/> Figure 4-9. Subversion 导入界面</p>
-
-<p>如果项目很大，采用非标准结构，或者是私有的，那么该流程将不适用。在第七章，你将了解到手动导入复杂工程的方法。</p>
-
-<h3 id='id303'>开始合作</h3>
-
-<p>现在把团队里其他的人也加进来。如果 John，Josie 和 Jessica 都在 GitHub 注册了账户，要给他们向仓库推送的访问权，可以把它们加为项目合作者。这样他们的公钥就能用来向仓库推送了。</p>
-
-<p>点击项目页面上方的 &#8220;edit（编辑）&#8221; 按钮或者顶部的 Admin （管理）标签进入项目管理页面（见图 4-10）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0410-tn.png"></center><br/> Figure 4-10. GitHub 管理页面</p>
-
-<p>为了给另一个用户添加项目的写权限，点击 &#8220;Add another collaborator（添加另一个合作者）&#8221; 链接。一个新文本框会出现，用来输入用户名。在输入用户名的同时将会跳出一个帮助提示，显示出可能匹配的用户名。找到正确的用户名以后，点 Add （添加）按钮，把它变成该项目的合作者（见图 4-11）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0411-tn.png"></center><br/> Figure 4-11. 为项目添加合作者</p>
-
-<p>添加完合作者以后，就可以在 Repository Collaborators （仓库合作者）区域看到他们的列表（见图 4-12）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0412-tn.png"></center><br/> Figure 4-12. 项目合作者列表</p>
-
-<p>如果需要取消某人的访问权，点击 &#8220;revoke （撤销）&#8221;，他的推送权限就被删除了。在未来的项目中，可以通过复制现存项目的权限设定来得到相同的合作者群组。</p>
-
-<h3 id='id304'>项目页面</h3>
-
-<p>在推送或从 Subversion 导入项目之后，你会得到一个类似图 4-13 的项目主页。</p>
-
-<p><center><img src="/figures/ch4/18333fig0413-tn.png"></center><br/> Figure 4-13. GitHub 项目主页</p>
-
-<p>其他人访问你的项目时，他们会看到该页面。它包含了该项目不同方面的标签。Commits 标签将按时间展示逆序的 commit 列表，与 <code>git log</code> 命令的输出类似。Network 标签展示所有 fork 了该项目并做出贡献的用户的关系图。Downloads 标签允许你上传项目的二进制文件，并提供了指向该项目所有标记过的位置的 tar/zip 打包下载连接。Wiki 标签提供了一个用来撰写文档或其他项目相关信息的 wiki。Graphs 标签包含了一些可视化的项目信息与数据。刚开始进入的 Source 标签页面列出了项目的主目录；并且在下方自动展示 README 文件的内容（如果该文件存在的话）。该标签还包含了最近一次提交的相关信息。</p>
-
-<h3 id='forking'>派生（forking）项目</h3>
-
-<p>如果想向一个自己没有推送权限的项目贡献代码，GitHub 提倡使用派生（forking）。在你发现一个感兴趣的项目，打算在上面 Hack 一把的时候，可以点击页面上方的 &#8220;fork（派生）&#8221; 按钮，GitHub 会为你的用户复制一份该项目，这样你就可以向它推送内容了。</p>
-
-<p>使用这个办法，项目维护者不用操心为了推送权限把其他人加为合作者的麻烦。大家可以派生一个项目副本并进行推送，而后项目的主要维护者可以把这些副本添加为远程仓库，从中拉取更新的内容进行合并。</p>
-
-<p>要派生一个项目，到该项目的页面（本例中是 mojombo/chronic）点击上面的 &#8220;fork&#8221; 按钮（见图 4-14）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0414-tn.png"></center><br/> Figure 4-14. 点击 &#8220;fork&#8221; 按钮来获得任意项目的可写副本</p>
-
-<p>几秒钟以后，你将进入新建的项目页面，显示出该项目是派生自另一个项目的副本（见图 4-15）。</p>
-
-<p><center><img src="/figures/ch4/18333fig0415-tn.png"></center><br/> Figure 4-15. 你派生的项目副本</p>
-
-<h3 id='github_'>GitHub 小节</h3>
-
-<p>GitHub 就介绍这么多，不过意识到做到这些是多么快捷十分重要。不过几分钟的时间，你就能创建一个账户，添加一个新的项目并开始推送。如果你的项目是开源的，它还同时获得了对庞大的开发者社区的可视性，社区成员可能会派生它并做出贡献。退一万步讲，这至少是个快速开始尝试 Git 的好办法。</p>
+<p>在提交并推送过之后，GitWeb 就会自动开始显示 iphone_project 项目的细节和历史。</p>
 
 <div id='nav'>
 <a href='ch4-8.html'>prev</a> | <a href='ch4-10.html'>next</a>

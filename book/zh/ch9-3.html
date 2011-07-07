@@ -86,7 +86,7 @@ fatal: Refusing to point HEAD outside of refs/</code></pre>
 
 <p>这就是 lightweight tag 的全部 —— 一个永远不会发生变化的分支。 annotated tag 要更复杂一点。如果你创建一个 annotated tag，Git 会创建一个 tag 对象，然后写入一个指向指向它而不是直接指向 commit 的 reference。你可以这样创建一个 annotated tag（<code>-a</code> 参数表明这是一个 annotated tag）：</p>
 
-<pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m &#39;test tag&#39;</code></pre>
+<pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 -m &#39;test tag&#39;</code></pre>
 
 <p>这是所创建对象的 SHA-1 值：</p>
 
@@ -107,7 +107,7 @@ test tag</code></pre>
 
 <pre><code>$ git cat-file blob junio-gpg-pub</code></pre>
 
-<p>来查看 Git 源代码里的公钥. Linux kernel 也有一个不是指向 commit 对象的 tag —— 第一个 tag 是在导入源代码的时候创建的，它指向初始 tree （initial tree，译者注）。</p>
+<p>来查看 Git 源代码仓库中的公钥. Linux kernel 也有一个不是指向 commit 对象的 tag —— 第一个 tag 是在导入源代码的时候创建的，它指向初始 tree （initial tree，译者注）。</p>
 
 <h3 id='remotes'>Remotes</h3>
 

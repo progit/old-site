@@ -58,7 +58,7 @@ v1.4</code></pre>
 
 <p>The <code>-m</code> specifies a tagging message, which is stored with the tag. If you don’t specify a message for an annotated tag, Git launches your editor so you can type it in.</p>
 
-<p>Die Option <code>-m</code> gibt dabei wiederum die Meldung an, die zum Tag hinzugefügt wird. Wenn du keine Meldung angibst, startet Git wie üblich deinen Editor, so daß du eine Meldung eingeben kannst.</p>
+<p>Die Option <code>-m</code> gibt dabei wiederum die Meldung an, die zum Tag hinzugefügt wird. Wenn du keine Meldung angibst, startet Git wie üblich deinen Editor, so dass du eine Meldung eingeben kannst.</p>
 
 <p>You can see the tag data along with the commit that was tagged by using the <code>git show</code> command:</p>
 
@@ -96,7 +96,7 @@ user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
 
 <p>If you run <code>git show</code> on that tag, you can see your GPG signature attached to it:</p>
 
-<p>Wenn du jetzt <code>git show</code> auf diesen Tag anwendest, siehst du, daß der Tag deine GPG Signatur kennt:</p>
+<p>Wenn du jetzt <code>git show</code> auf diesen Tag anwendest, siehst du, dass der Tag deine GPG Signatur kennt:</p>
 
 <pre><code>$ git show v1.5
 tag v1.5
@@ -202,13 +202,13 @@ a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
 
 <p>Now, suppose you forgot to tag the project at v1.2, which was at the &#8220;updated rakefile&#8221; commit. You can add it after the fact. To tag that commit, you specify the commit checksum (or part of it) at the end of the command:</p>
 
-<p>Nehmen wir außerdem an, daß du vergessen hast, Version v1.2 des Projektes zu taggen, und daß dies der Commit &#8220;updated rakefile&#8221; gewesen ist. Du kannst diesen jetzt im Nachhinein taggen, indem du die Checksumme des Commits (oder einen Teil davon) am Ende des Befehls angibst:</p>
+<p>Nehmen wir außerdem an, dass du vergessen hast, Version v1.2 des Projektes zu taggen, und dass dies der Commit &#8220;updated rakefile&#8221; gewesen ist. Du kannst diesen jetzt im Nachhinein taggen, indem du die Checksumme des Commits (oder einen Teil davon) am Ende des Befehls angibst:</p>
 
 <pre><code>$ git tag -a v1.2 9fceb02</code></pre>
 
 <p>You can see that you’ve tagged the commit:</p>
 
-<p>Du siehst jetzt, daß du einen Tag für den Commit angelegt hast:</p>
+<p>Du siehst jetzt, dass du einen Tag für den Commit angelegt hast:</p>
 
 <pre><code>$ git tag 
 v0.1

@@ -1,160 +1,127 @@
 ---
 layout: translation
-title: Pro Git 6.3 Инструменты Git Interactive Staging
+title: Pro Git 6.3 Инструменты Git Прятанье
 ---
-<h2 id='interactive_staging'>Interactive Staging</h2>
+<h2 id='id206'>Прятанье</h2>
 
-<p>Git comes with a couple of scripts that make some command-line tasks easier. Here, you’ll look at a few interactive commands that can help you easily craft your commits to include only certain combinations and parts of files. These tools are very helpful if you modify a bunch of files and then decide that you want those changes to be in several focused commits rather than one big messy commit. This way, you can make sure your commits are logically separate changesets and can be easily reviewed by the developers working with you. If you run <code>git add</code> with the <code>-i</code> or <code>--interactive</code> option, Git goes into an interactive shell mode, displaying something like this:</p>
+<p>Часто возникает такая ситуация, что пока вы работаете над частью своего проекта, всё находится в беспорядочном состоянии, а вам нужно переключить ветки, чтобы немного поработать над чем-то другим. Проблема в том, что вы не хотите делать коммит с наполовину доделанной работой, только для того, чтобы позже можно было вернуться в это же состояние. Ответ на эту проблему — команда <code>git stash</code>.</p>
 
-<pre><code>$ git add -i
-           staged     unstaged path
-  1:    unchanged        +0/-1 TODO
-  2:    unchanged        +1/-1 index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb
+<p>Прятанье поглощает грязное состояние рабочего каталога, то есть изменённые отслеживаемые файлы и изменения в индексе, и сохраняет их в стек незавершённых изменений, которые вы потом в любое время можете снова применить.</p>
 
-*** Commands ***
-  1: status     2: update      3: revert     4: add untracked
-  5: patch      6: diff        7: quit       8: help
-What now&gt; </code></pre>
+<h3 id='__'>Прятанье своих трудов</h3>
 
-<p>You can see that this command shows you a much different view of your staging area — basically the same information you get with <code>git status</code> but a bit more succinct and informative. It lists the changes you’ve staged on the left and unstaged changes on the right.</p>
+<p>Чтобы продемонстрировать как это работает, предположим, что вы идёте к своему проекту и начинаете работать над парой файлов и, возможно, добавляете в индекс одно из изменений. Если вы выполните <code>git status</code>, вы увидите грязное состояние проекта:</p>
 
-<p>After this comes a Commands section. Here you can do a number of things, including staging files, unstaging files, staging parts of files, adding untracked files, and seeing diffs of what has been staged.</p>
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#      modified:   index.html
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#</code></pre>
 
-<h3 id='staging_and_unstaging_files'>Staging and Unstaging Files</h3>
+<p>Теперь вы хотите поменять ветку, но не хотите делать коммит с тем, над чем вы ещё работаете; тогда вы прячете эти изменения. Чтобы создать новую &#8220;заначку&#8221;, выполните <code>git stash</code>:</p>
 
-<p>If you type <code>2</code> or <code>u</code> at the <code>What now&gt;</code> prompt, the script prompts you for which files you want to stage:</p>
+<pre><code>$ git stash
+Saved working directory and index state \
+  &quot;WIP on master: 049d078 added the index file&quot;
+HEAD is now at 049d078 added the index file
+(To restore them type &quot;git stash apply&quot;)</code></pre>
 
-<pre><code>What now&gt; 2
-           staged     unstaged path
-  1:    unchanged        +0/-1 TODO
-  2:    unchanged        +1/-1 index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb
-Update&gt;&gt;</code></pre>
+<p>Ваш рабочий каталог чист:</p>
 
-<p>To stage the TODO and index.html files, you can type the numbers:</p>
+<pre><code>$ git status
+# On branch master
+nothing to commit (working directory clean)</code></pre>
 
-<pre><code>Update&gt;&gt; 1,2
-           staged     unstaged path
-* 1:    unchanged        +0/-1 TODO
-* 2:    unchanged        +1/-1 index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb
-Update&gt;&gt;</code></pre>
+<p>В данный момент, вы легко можете переключить ветки и поработать где-то ещё; ваши изменения сохранены в стеке. Чтобы посмотреть, что у вас есть припрятанного, используйте <code>git stash list</code>:</p>
 
-<p>The <code>*</code> next to each file means the file is selected to be staged. If you press Enter after typing nothing at the <code>Update&gt;&gt;</code> prompt, Git takes anything selected and stages it for you:</p>
+<pre><code>$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051... Revert &quot;added file_size&quot;
+stash@{2}: WIP on master: 21d80a5... added number to log</code></pre>
 
-<pre><code>Update&gt;&gt; 
-updated 2 paths
+<p>В нашем случае, две &#8220;заначки&#8221; были сделаны ранее, так что у вас теперь три разных припрятанных работы. Вы можете снова применить ту, которую только что спрятали, с помощью команды показанной в справке в выводе первоначальной команды <code>stash</code>: <code>git stash apply</code>. Если вы хотите применить одну из старых заначек, можете сделать это указав её имя так: <code>git stash apply stash@{2}</code>. Если не указывать ничего, Git будет подразумевать, что вы хотите применить последнюю спрятанную работу:</p>
 
-*** Commands ***
-  1: status     2: update      3: revert     4: add untracked
-  5: patch      6: diff        7: quit       8: help
-What now&gt; 1
-           staged     unstaged path
-  1:        +0/-1      nothing TODO
-  2:        +1/-1      nothing index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
+<pre><code>$ git stash apply
+# On branch master
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#      modified:   index.html
+#      modified:   lib/simplegit.rb
+#</code></pre>
 
-<p>Now you can see that the TODO and index.html files are staged and the simplegit.rb file is still unstaged. If you want to unstage the TODO file at this point, you use the <code>3</code> or <code>r</code> (for revert) option:</p>
+<p>Как видите, Git восстановил изменения в файлах, которые вы отменили, когда использовали команду <code>stash</code>. В нашем случае, у вас был чистый рабочий каталог, когда вы восстанавливали спрятанные изменения, и к тому же вы делали это на той же ветке, на которой находились во время прятанья. Но наличие чистого рабочего каталога и применение на той же ветке не обязательны для <code>git stash apply</code>. Вы можете спрятать изменения на одной ветке, переключиться позже на другую ветку и попытаться восстановить изменения. У вас в рабочем каталоге также могут быть изменённые и недокоммиченные файлы во время применения спрятанного — Git выдаст вам конфликты слияния, если что-то уже не может быть применено чисто.</p>
 
-<pre><code>*** Commands ***
-  1: status     2: update      3: revert     4: add untracked
-  5: patch      6: diff        7: quit       8: help
-What now&gt; 3
-           staged     unstaged path
-  1:        +0/-1      nothing TODO
-  2:        +1/-1      nothing index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb
-Revert&gt;&gt; 1
-           staged     unstaged path
-* 1:        +0/-1      nothing TODO
-  2:        +1/-1      nothing index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb
-Revert&gt;&gt; [enter]
-reverted one path</code></pre>
+<p>Изменения в файлах были восстановлены, но файлы в индексе — нет. Чтобы добиться такого, необходимо выполнить команду <code>git stash apply</code> с опцией <code>--index</code>, тогда команда попытается применить изменения в индексе. Если бы вы выполнили команду так, а не как раньше, то получили бы исходное состояние:</p>
 
-<p>Looking at your Git status again, you can see that you’ve unstaged the TODO file:</p>
+<pre><code>$ git stash apply --index
+# On branch master
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#      modified:   index.html
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#</code></pre>
 
-<pre><code>*** Commands ***
-  1: status     2: update      3: revert     4: add untracked
-  5: patch      6: diff        7: quit       8: help
-What now&gt; 1
-           staged     unstaged path
-  1:    unchanged        +0/-1 TODO
-  2:        +1/-1      nothing index.html
-  3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
+<p>Всё что делает опция apply это пытается применить спрятанную работу — то, что вы спрятали, всё ещё будет находиться в стеке. Чтобы удалить спрятанное, выполните <code>git stash drop</code> с именем &#8220;заначки&#8221;, которую нужно удалить:</p>
 
-<p>To see the diff of what you’ve staged, you can use the <code>6</code> or <code>d</code> (for diff) command. It shows you a list of your staged files, and you can select the ones for which you would like to see the staged diff. This is much like specifying <code>git diff --cached</code> on the command line:</p>
+<pre><code>$ git stash list
+stash@{0}: WIP on master: 049d078 added the index file
+stash@{1}: WIP on master: c264051... Revert &quot;added file_size&quot;
+stash@{2}: WIP on master: 21d80a5... added number to log
+$ git stash drop stash@{0}
+Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)</code></pre>
 
-<pre><code>*** Commands ***
-  1: status     2: update      3: revert     4: add untracked
-  5: patch      6: diff        7: quit       8: help
-What now&gt; 6
-           staged     unstaged path
-  1:        +1/-1      nothing index.html
-Review diff&gt;&gt; 1
-diff --git a/index.html b/index.html
-index 4d07108..4335f49 100644
---- a/index.html
-+++ b/index.html
-@@ -16,7 +16,7 @@ Date Finder
+<p>Также можно выполнить <code>git stash pop</code>, чтобы применить спрятанные изменения и сразу же удалить их из стека.</p>
 
- &lt;p id=&quot;out&quot;&gt;...&lt;/p&gt;
+<h3 id='___'>Откат применения спрятанных изменений</h3>
 
--&lt;div id=&quot;footer&quot;&gt;contact : support@github.com&lt;/div&gt;
-+&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+<p>При некоторых сценариях использования, может понадобиться применить спрятанные изменения, поработать, а потом отменить изменения, внесённые командой <code>stash apply</code>. Git не предоставляет команды <code>stash unapply</code>, но можно добиться того же эффекта получив сначала патч для спрятанных изменений, а потом применив его в перевёрнутом виде:</p>
 
- &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
+<pre><code>$ git stash show -p stash@{0} | git apply -R</code></pre>
 
-<p>With these basic commands, you can use the interactive add mode to deal with your staging area a little more easily.</p>
+<p>Снова, если вы не указываете параметр для stash, Git подразумевает то, что было спрятано последним:</p>
 
-<h3 id='staging_patches'>Staging Patches</h3>
+<pre><code>$ git stash show -p | git apply -R</code></pre>
 
-<p>It’s also possible for Git to stage certain parts of files and not the rest. For example, if you make two changes to your simplegit.rb file and want to stage one of them and not the other, doing so is very easy in Git. From the interactive prompt, type <code>5</code> or <code>p</code> (for patch). Git will ask you which files you would like to partially stage; then, for each section of the selected files, it will display hunks of the file diff and ask if you would like to stage them, one by one:</p>
+<p>Если хотите, сделайте псевдоним и добавьте в свой git команду <code>stash-unapply</code>. Например, так:</p>
 
-<pre><code>diff --git a/lib/simplegit.rb b/lib/simplegit.rb
-index dd5ecc4..57399e0 100644
---- a/lib/simplegit.rb
-+++ b/lib/simplegit.rb
-@@ -22,7 +22,7 @@ class SimpleGit
-   end
+<pre><code>$ git config --global alias.stash-unapply &#39;!git stash show -p | git apply -R&#39;
+$ git stash
+$ #... work work work
+$ git stash-unapply</code></pre>
 
-   def log(treeish = &#39;master&#39;)
--    command(&quot;git log -n 25 #{treeish}&quot;)
-+    command(&quot;git log -n 30 #{treeish}&quot;)
-   end
+<h3 id='____'>Создание ветки из спрятанных изменений</h3>
 
-   def blame(path)
-Stage this hunk [y,n,a,d,/,j,J,g,e,?]? </code></pre>
+<p>Если вы спрятали какие-то наработки и оставили их на время, а в это время продолжили работать на той же ветке, то у вас могут возникнуть трудности с восстановлением спрятанной работы. Если apply попытается изменить файл, который вы редактировали после прятанья, то возникнет конфликт слияния, который надо будет разрешить. Если нужен более простой способ снова потестировать спрятанную работу, можно выполнить команду <code>git stash branch</code>, которая создаст вам новую ветку с началом из того коммита, на котором вы находились во время прятанья, восстановит в ней вашу работу и затем удалит спрятанное, если оно применилось успешно:</p>
 
-<p>You have a lot of options at this point. Typing <code>?</code> shows a list of what you can do:</p>
+<pre><code>$ git stash branch testchanges
+Switched to a new branch &quot;testchanges&quot;
+# On branch testchanges
+# Changes to be committed:
+#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+#
+#      modified:   index.html
+#
+# Changed but not updated:
+#   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+#
+#      modified:   lib/simplegit.rb
+#
+Dropped refs/stash@{0} (f0dfc4d5dc332d1cee34a634182e168c4efc3359)</code></pre>
 
-<pre><code>Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
-y - stage this hunk
-n - do not stage this hunk
-a - stage this and all the remaining hunks in the file
-d - do not stage this hunk nor any of the remaining hunks in the file
-g - select a hunk to go to
-/ - search for a hunk matching the given regex
-j - leave this hunk undecided, see next undecided hunk
-J - leave this hunk undecided, see next hunk
-k - leave this hunk undecided, see previous undecided hunk
-K - leave this hunk undecided, see previous hunk
-s - split the current hunk into smaller hunks
-e - manually edit the current hunk
-? - print help</code></pre>
-
-<p>Generally, you’ll type <code>y</code> or <code>n</code> if you want to stage each hunk, but staging all of them in certain files or skipping a hunk decision until later can be helpful too. If you stage one part of the file and leave another part unstaged, your status output will look like this:</p>
-
-<pre><code>What now&gt; 1
-           staged     unstaged path
-  1:    unchanged        +0/-1 TODO
-  2:        +1/-1      nothing index.html
-  3:        +1/-1        +4/-0 lib/simplegit.rb</code></pre>
-
-<p>The status of the simplegit.rb file is interesting. It shows you that a couple of lines are staged and a couple are unstaged. You’ve partially staged this file. At this point, you can exit the interactive adding script and run <code>git commit</code> to commit the partially staged files.</p>
-
-<p>Finally, you don’t need to be in interactive add mode to do the partial-file staging — you can start the same script by using <code>git add -p</code> or <code>git add --patch</code> on the command line.</p>
+<p>Это сокращение удобно для того, чтобы легко восстановить свою работу, а затем поработать над ней в новой ветке.</p>
 
 <div id='nav'>
 <a href='ch6-2.html'>prev</a> | <a href='ch6-4.html'>next</a>

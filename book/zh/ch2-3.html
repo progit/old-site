@@ -2,9 +2,9 @@
 layout: translation
 title: Pro Git 2.3 Git 基础 查看提交历史
 ---
-<h2 id='id243'>查看提交历史</h2>
+<h2 id='id252'>查看提交历史</h2>
 
-<p>在提交了若干更新之后，又或者克隆了某个项目，想回顾下提交历史，可以使用 <code>git log</code> 命令。</p>
+<p>在提交了若干更新之后，又或者克隆了某个项目，想回顾下提交历史，可以使用 <code>git log</code> 命令查看。</p>
 
 <p>接下来的例子会用我专门用于演示的 simplegit 项目，运行下面的命令获取该项目源代码：</p>
 
@@ -17,7 +17,7 @@ commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
 commit 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
@@ -37,12 +37,12 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
 
 <p>我们常用 <code>-p</code> 选项展开显示每次提交的内容差异，用 <code>-2</code> 则仅显示最近的两次更新：</p>
 
-<pre><code>$ git log –p -2
+<pre><code>$ git log -p -2
 commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
 diff --git a/Rakefile b/Rakefile
 index a874b73..8f94139 100644
@@ -82,7 +82,7 @@ commit ca82a6dff817ec66f44342007202690a93763949
 Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
 Date:   Mon Mar 17 21:52:11 2008 -0700
 
-    changed the verison number
+    changed the version number
 
  Rakefile |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
@@ -107,19 +107,17 @@ Date:   Sat Mar 15 10:31:28 2008 -0700
  lib/simplegit.rb |   25 +++++++++++++++++++++++++
  3 files changed, 54 insertions(+), 0 deletions(-)</code></pre>
 
-<p>每个提交都列出了修改过的文件，以及其中添加和移除的行数，并在最后列出所有增减行数小计。</p>
-
-<p>还有个常用的 <code>--pretty</code> 选项，可以指定使用完全不同于默认格式的方式展示提交历史。比如用 <code>oneline</code> 将每个提交放在一行显示，这在提交数很大时非常有用。另外还有 <code>short</code>，<code>full</code> 和 <code>fuller</code> 可以用，展示的信息或多或少有些不同，请自己动手实践一下看看效果如何。</p>
+<p>每个提交都列出了修改过的文件，以及其中添加和移除的行数，并在最后列出所有增减行数小计。还有个常用的 <code>--pretty</code> 选项，可以指定使用完全不同于默认格式的方式展示提交历史。比如用 <code>oneline</code> 将每个提交放在一行显示，这在提交数很大时非常有用。另外还有 <code>short</code>，<code>full</code> 和 <code>fuller</code> 可以用，展示的信息或多或少有些不同，请自己动手实践一下看看效果如何。</p>
 
 <pre><code>$ git log --pretty=oneline
-ca82a6dff817ec66f44342007202690a93763949 changed the verison number
+ca82a6dff817ec66f44342007202690a93763949 changed the version number
 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7 removed unnecessary test code
 a11bef06a3f659402fe7563abf99ad00de2209e6 first commit</code></pre>
 
 <p>但最有意思的是 <code>format</code>，可以定制要显示的记录格式，这样的输出便于后期编程提取分析，像这样：</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h - %an, %ar : %s&quot;
-ca82a6d - Scott Chacon, 11 months ago : changed the verison number
+ca82a6d - Scott Chacon, 11 months ago : changed the version number
 085bb3b - Scott Chacon, 11 months ago : removed unnecessary test code
 a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 
@@ -142,19 +140,19 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 %cr	提交日期，按多久以前的方式显示
 %s	提交说明</code></pre>
 
-<p>你一定奇怪_作者（author）_和_提交者（committer）_之间究竟有何差别，其实作者指的是实际作出修改的人，提交者指的是最后将此工作成果提交到仓库的人。所以，当你为某个项目发布补丁，然后某个核心成员将你的补丁并入项目时，你就是作者，而那个核心成员就是提交者。我们会在第五章再详细介绍两者之间的细致差别。</p>
+<p>你一定奇怪_作者（author）_和_提交者（committer）_之间究竟有何差别，其实作者指的是实际作出修改的人，提交者指的是最后将此工作成果提交到仓库的人。所以，当你为某个项目发布补丁，然后某个核心成员将你的补丁并入项目时，你就是作者，而那个核心成员就是提交者。我们会在第五章再详细介绍两者之间的细微差别。</p>
 
 <p>用 oneline 或 format 时结合 <code>--graph</code> 选项，可以看到开头多出一些 ASCII 字符串表示的简单图形，形象地展示了每个提交所在的分支及其分化衍合情况。在我们之前提到的 Grit 项目仓库中可以看到：</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h %s&quot; --graph
 * 2d3acf9 ignore errors from SIGCHLD on trap
 *  5e3ee11 Merge branch &#39;master&#39; of git://github.com/dustin/grit
-|\  
+|\
 | * 420eac9 Added a method for getting the current branch.
 * | 30e367c timeout code and tests
 * | 5a09431 add timeout protection to grit
 * | e1193f8 support for heads with slashes in them
-|/  
+|/
 * d6016bc require time for xmlschema
 *  11d191e Merge branch &#39;defunkt&#39; into local</code></pre>
 
@@ -171,9 +169,9 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 --graph 显示 ASCII 图形表示的分支合并历史。
 --pretty 使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。</code></pre>
 
-<h3 id='id244'>限制输出长度</h3>
+<h3 id='id253'>限制输出长度</h3>
 
-<p>除了定制输出格式的选项之外，<code>git log</code> 还有许多非常实用的限制输出长度的选项，也就是只输出部分提交信息。之前我们已经看到过 <code>-2</code> 了，它只显示最近的两条提交，实际上，这是 <code>-&lt;n&gt;</code> 选项的写法，其中的 <code>n</code> 可以是任何自然数，表示仅显示最近的若干条提交。不过实践中我们是不太用这个选项的，Git 在输出所有提交时会自动调用分页程序（pager），要看更早的更新只需翻到下页即可。</p>
+<p>除了定制输出格式的选项之外，<code>git log</code> 还有许多非常实用的限制输出长度的选项，也就是只输出部分提交信息。之前我们已经看到过 <code>-2</code> 了，它只显示最近的两条提交，实际上，这是 <code>-&lt;n&gt;</code> 选项的写法，其中的 <code>n</code> 可以是任何自然数，表示仅显示最近的若干条提交。不过实践中我们是不太用这个选项的，Git 在输出所有提交时会自动调用分页程序（less），要看更早的更新只需翻到下页即可。</p>
 
 <p>另外还有按照时间作限制的选项，比如 <code>--since</code> 和 <code>--until</code>。下面的命令列出所有最近两周内的提交：</p>
 
@@ -196,7 +194,7 @@ a11bef0 - Scott Chacon, 11 months ago : first commit</code></pre>
 
 <p>来看一个实际的例子，如果要查看 Git 仓库中，2008 年 10 月期间，Junio Hamano 提交的但未合并的测试脚本（位于项目的 t/ 目录下的文件），可以用下面的查询命令：</p>
 
-<pre><code>$ git log --pretty=&quot;%h:%s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
+<pre><code>$ git log --pretty=&quot;%h - %s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
    --before=&quot;2008-11-01&quot; --no-merges -- t/
 5610e3b - Fix testcase failure when extended attribute
 acd3b9e - Enhance hold_lock_file_for_{update,append}()
@@ -207,7 +205,7 @@ b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
 
 <p>Git 项目有 20,000 多条提交，但我们给出搜索选项后，仅列出了其中满足条件的 6 条。</p>
 
-<h3 id='id245'>使用图形化工具查阅提交历史</h3>
+<h3 id='id254'>使用图形化工具查阅提交历史</h3>
 
 <p>有时候图形化工具更容易展示历史提交的变化，随 Git 一同发布的 gitk 就是这样一种工具。它是用 Tcl/Tk 写成的，基本上相当于 <code>git log</code> 命令的可视化版本，凡是 <code>git log</code> 可以用的选项也都能用在 gitk 上。在项目工作目录中输入 gitk 命令后，就会启动图 2-2 所示的界面。</p>
 

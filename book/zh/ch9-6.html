@@ -2,11 +2,11 @@
 layout: translation
 title: Pro Git 9.6 Git 内部原理 传输协议
 ---
-<h2 id='id388'>传输协议</h2>
+<h2 id='id399'>传输协议</h2>
 
 <p>Git 可以以两种主要的方式跨越两个仓库传输数据：基于HTTP协议之上，和 <code>file://</code>, <code>ssh://</code>, 和 <code>git://</code> 等智能传输协议。这一节带你快速浏览这两种主要的协议操作过程。</p>
 
-<h3 id='id389'>哑协议</h3>
+<h3 id='id400'>哑协议</h3>
 
 <p>Git 基于HTTP之上传输通常被称为哑协议，这是因为它在服务端不需要有针对 Git 特有的代码。这个获取过程仅仅是一系列GET请求，客户端可以假定服务端的Git仓库中的布局。让我们以 simplegit 库来看看 <code>http-fetch</code> 的过程：</p>
 
@@ -84,11 +84,11 @@ Getting pack 816a9b2334da9953e530f27bcac22082a9f5b835
 walk 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
 walk a11bef06a3f659402fe7563abf99ad00de2209e6</code></pre>
 
-<h3 id='id390'>智能协议</h3>
+<h3 id='id401'>智能协议</h3>
 
 <p>这个HTTP方法是很简单但效率不是很高。使用智能协议是传送数据的更常用的方法。这些协议在远端都有Git智能型进程在服务 － 它可以读出本地数据并计算出客户端所需要的，并生成合适的数据给它，这有两类传输数据的进程：一对用于上传数据和一对用于下载。</p>
 
-<h4 id='id391'>上传数据</h4>
+<h4 id='id402'>上传数据</h4>
 
 <p>为了上传数据至远端， Git 使用 <code>send-pack</code> 和 <code>receive-pack</code> 进程。这个 <code>send-pack</code> 进程运行在客户端上，它连接至远端运行的 <code>receive-pack</code> 进程。</p>
 
@@ -115,7 +115,7 @@ walk a11bef06a3f659402fe7563abf99ad00de2209e6</code></pre>
 
 <pre><code>000Aunpack ok</code></pre>
 
-<h4 id='id392'>下载数据</h4>
+<h4 id='id403'>下载数据</h4>
 
 <p>当你在下载数据时， <code>fetch-pack</code> 和 <code>upload-pack</code> 进程就起作用了。客户端启动 <code>fetch-pack</code> 进程，连接至远端的 <code>upload-pack</code> 进程，以协商后续数据传输过程。</p>
 

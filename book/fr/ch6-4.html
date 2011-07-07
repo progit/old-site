@@ -1,38 +1,38 @@
 ---
 layout: translation
-title: Pro Git 6.4 Git Tools Rewriting History
+title: Pro Git 6.4 Utilitaires Git Réécrire l&#8217;historique
 ---
-<h2 id='rewriting_history'>Rewriting History</h2>
+<h2 id='rcrire_lhistorique'>Réécrire l&#8217;historique</h2>
 
-<p>Many times, when working with Git, you may want to revise your commit history for some reason. One of the great things about Git is that it allows you to make decisions at the last possible moment. You can decide what files go into which commits right before you commit with the staging area, you can decide that you didn’t mean to be working on something yet with the stash command, and you can rewrite commits that already happened so they look like they happened in a different way. This can involve changing the order of the commits, changing messages or modifying files in a commit, squashing together or splitting apart commits, or removing commits entirely — all before you share your work with others.</p>
+<p>Bien souvent, lorsque vous travaillez avec Git, vous souhaitez modifier votre historique de consignation pour une raison quelconque. Une des choses merveilleuses de Git est qu&#8217;il vous permet de prendre des décisions le plus tard possible. Vous pouvez décider quels fichiers vont dans quel commit avant que vous ne consigniez la zone d&#8217;attente, vous pouvez décider que vous ne voulez pas encore montrer que vous travailler sur quelque chose avec les remises, et vous pouvez réécrire les commits afin déjà sauvegardé pour qu&#8217;ils ressemblent à quelque chose d&#8217;autre. Cela peut signifier changer l&#8217;ordre des commits, modifier les messages ou modifier les fichiers appartenant au commit, rassembler ou séparer des commits, ou supprimer complètement des commits; tout ceci avant de les partager avec les autres.</p>
 
-<p>In this section, you’ll cover how to accomplish these very useful tasks so that you can make your commit history look the way you want before you share it with others.</p>
+<p>Danc cette section, nous expliquerons comment accomplir ces tâches très utiles pour que vous pussiez faire ressembler votre historique de consignation de la manière que vous voulez avant de le partager avec autrui.</p>
 
-<h3 id='changing_the_last_commit'>Changing the Last Commit</h3>
+<h3 id='modifier_la_dernire_consignation'>Modifier la dernière consignation</h3>
 
-<p>Changing your last commit is probably the most common rewriting of history that you’ll do. You’ll often want to do two basic things to your last commit: change the commit message, or change the snapshot you just recorded by adding, changing and removing files.</p>
+<p>Modifier votre dernière consignation est probablement la plus habituelle réécriture de l&#8217;historique que vous allez faire. Vous voudrez souvent faire deux choses basiques à votre dernier commit : modifier le message de consignation, ou changer le contenu que vous avez enregistré en ajoutant, modifiant ou supprimant des fichiers.</p>
 
-<p>If you only want to modify your last commit message, it’s very simple:</p>
+<p>Si vous voulez seulement modifier votre dernier message de consignation, c&#8217;est vraiment simple :</p>
 
 <pre><code>$ git commit --amend</code></pre>
 
-<p>That drops you into your text editor, which has your last commit message in it, ready for you to modify the message. When you save and close the editor, the editor writes a new commit containing that message and makes it your new last commit.</p>
+<p>Cela vous ouvre votre éditeur de texte contenant votre dernier message, prêt à être modifié. Lorsque vous sauvegardez et fermez l&#8217;éditeur, Git enregistre la nouvelle consignation contenant le message et en fait votre dernier commit.</p>
 
-<p>If you’ve committed and then you want to change the snapshot you committed by adding or changing files, possibly because you forgot to add a newly created file when you originally committed, the process works basically the same way. You stage the changes you want by editing a file and running <code>git add</code> on it or <code>git rm</code> to a tracked file, and the subsequent <code>git commit --amend</code> takes your current staging area and makes it the snapshot for the new commit.</p>
+<p>Si vous avez vouler modifier le contenu de votre consignation, en ajoutant ou modifiant des fichiers, sûrement parce que vous avez oublié d&#8217;ajouter les fichiers nouvellement créés quand vous avez consigné la première fois, la procédure fonctionne grosso-modo de la même manière. Vous mettez les modifications que vous voulez en attente en exécutant <code>git add</code> ou <code>git rm</code>, et le prochain <code>git commit --amend</code> prendra votre zone d&#8217;attente courante et en fera le contenu de votre nouvelle consignation.</p>
 
-<p>You need to be careful with this technique because amending changes the SHA-1 of the commit. It’s like a very small rebase — don’t amend your last commit if you’ve already pushed it.</p>
+<p>Vous devez être prudent avec cette technique car votre modification modifie également le SHA-1 du commit. Cela ressemble à un tout petit <code>rebase</code>. Ne modifiez pas votre dernière consignation si vous l&#8217;avez déjà publié !</p>
 
-<h3 id='changing_multiple_commit_messages'>Changing Multiple Commit Messages</h3>
+<h3 id='modifier_plusieurs_messages_de_consignation'>Modifier plusieurs messages de consignation</h3>
 
-<p>To modify a commit that is farther back in your history, you must move to more complex tools. Git doesn’t have a modify-history tool, but you can use the rebase tool to rebase a series of commits onto the HEAD they were originally based on instead of moving them to another one. With the interactive rebase tool, you can then stop after each commit you want to modify and change the message, add files, or do whatever you wish. You can run rebase interactively by adding the <code>-i</code> option to <code>git rebase</code>. You must indicate how far back you want to rewrite commits by telling the command which commit to rebase onto.</p>
+<p>Pour modifier une consignation qui est plus loin dans votre historique, vous devez utilisez des outils plus complexes. Git ne contient pas d&#8217;outil de modification d&#8217;historique, mais vous pouvez utiliser l&#8217;outil <code>rebase</code> pour rebaser une suite de commits depuis la branche HEAD plutôt que de les déplacer vers une autre branche. Avec l&#8217;outil rebase interactif, vous pouvez vous arrêter après chaque commit que vous voulez modifiez et changer le message, ajouter des fichiers ou quoique ce soit que vous voulez. Vous pouvez exécuter rebase interactivement en ajoutant l&#8217;option <code>-i</code> à <code>git rebase</code>. Vous devez indiquer jusqu&#8217;à quand remonter dans votre historique en donnant à la commande le commit sur lequel vous voulez vous rebaser.</p>
 
-<p>For example, if you want to change the last three commit messages, or any of the commit messages in that group, you supply as an argument to <code>git rebase -i</code> the parent of the last commit you want to edit, which is <code>HEAD~2^</code> or <code>HEAD~3</code>. It may be easier to remember the <code>~3</code> because you’re trying to edit the last three commits; but keep in mind that you’re actually designating four commits ago, the parent of the last commit you want to edit:</p>
+<p>Par exemple, si vous voulez modifier les 3 derniers messages de consignation, ou n&#8217;importe lequel des messages dans ce groupe, vous fournissez à <code>git rebase -i</code> le parent du dernier commit que vous voulez éditer, qui est <code>HEAD~2^</code> or <code>HEAD~3</code>. Il peut être plus facile de ce souvenir de <code>~3</code>, car vous essayer de modifier les 3 derniers commits, mais gardez à l&#8217;esprit que vous désignez le 4e, le parent du dernier commit que vous voulez modifier :</p>
 
 <pre><code>$ git rebase -i HEAD~3</code></pre>
 
-<p>Remember again that this is a rebasing command — every commit included in the range <code>HEAD~3..HEAD</code> will be rewritten, whether you change the message or not. Don’t include any commit you’ve already pushed to a central server — doing so will confuse other developers by providing an alternate version of the same change.</p>
+<p>Souvenez-vous également que ceci est une commande de rebasement, chaque commit include dans l&#8217;intervalle <code>HEAD~3..HEAD</code> sera réécrit, que vous changiez le message ou non. N&#8217;incluez pas dans cette commande de commit que vous avez déjà poussé sur un serveur central. Le faire entrainera la confusion chez les autres développeurs en leur fournissant une version altérée des mêmes modifications.</p>
 
-<p>Running this command gives you a list of commits in your text editor that looks something like this:</p>
+<p>Exécuter cette commande vous donne la liste des consignations dans votre éditeur de texte, ce qui ressemble à :</p>
 
 <pre><code>pick f7f3f6d changed my name a bit
 pick 310154e updated README formatting and added blame
@@ -49,22 +49,22 @@ pick a5f4a0d added cat-file
 # However, if you remove everything, the rebase will be aborted.
 #</code></pre>
 
-<p>It’s important to note that these commits are listed in the opposite order than you normally see them using the <code>log</code> command. If you run a <code>log</code>, you see something like this:</p>
+<p>Il est important de signaler que les commits sont listés dans l&#8217;ordre opposé que vous voyez normalement en utilisant la commande <code>log</code>. Si vous exécutez la commande <code>log</code>, vous verrez quelque chose de ce genre :</p>
 
 <pre><code>$ git log --pretty=format:&quot;%h %s&quot; HEAD~3..HEAD
 a5f4a0d added cat-file
 310154e updated README formatting and added blame
 f7f3f6d changed my name a bit</code></pre>
 
-<p>Notice the reverse order. The interactive rebase gives you a script that it’s going to run. It will start at the commit you specify on the command line (<code>HEAD~3</code>) and replay the changes introduced in each of these commits from top to bottom. It lists the oldest at the top, rather than the newest, because that’s the first one it will replay.</p>
+<p>Remarquez l&#8217;ordre inverse. Le rebasage interactif va créer un script à exécuter. Il commencera au commit que vous spécifiez sur la ligne de commande (<code>HEAD~3</code>) et refait les modifications introduites dans chacun des commits du début à la fin. Il ordonne donc le plus vieux au début, plutôt que le plus récent, car c&#8217;est celui qu&#8217;il refera en premier.</p>
 
-<p>You need to edit the script so that it stops at the commit you want to edit. To do so, change the word pick to the word edit for each of the commits you want the script to stop after. For example, to modify only the third commit message, you change the file to look like this:</p>
+<p>Vous devez éditer le script afin qu&#8217;il s&#8217;arrête au commit que vous voulez modifier. Pour cela, remplacer le mot &#8220;pick&#8221; par le mot &#8220;edit&#8221; pour chaque commit après lequel vous voulez que le script s&#8217;arrête. Par exemple, pour modifier uniquement le message du troisième commit, vous modifiez le fichier pour ressembler à :</p>
 
 <pre><code>edit f7f3f6d changed my name a bit
 pick 310154e updated README formatting and added blame
 pick a5f4a0d added cat-file</code></pre>
 
-<p>When you save and exit the editor, Git rewinds you back to the last commit in that list and drops you on the command line with the following message:</p>
+<p>Au moment où vous sauvegardez et quittez l&#8217;éditeur, Git revient au dernier commit de cette liste et vous laisse sur une ligne de commande avec le message suivant :</p>
 
 <pre><code>$ git rebase -i HEAD~3
 Stopped at 7482e0d... updated the gemspec to hopefully work better
@@ -76,34 +76,34 @@ Once you’re satisfied with your changes, run
 
        git rebase --continue</code></pre>
 
-<p>These instructions tell you exactly what to do. Type</p>
+<p>Ces instructions vous disent exactement quoi faire. Entrez :</p>
 
 <pre><code>$ git commit --amend</code></pre>
 
-<p>Change the commit message, and exit the editor. Then, run</p>
+<p>Modifiez le message de commit et quittez l&#8217;éditeur. Puis exécutez :</p>
 
 <pre><code>$ git rebase --continue</code></pre>
 
-<p>This command will apply the other two commits automatically, and then you’re done. If you change pick to edit on more lines, you can repeat these steps for each commit you change to edit. Each time, Git will stop, let you amend the commit, and continue when you’re finished.</p>
+<p>Cette commande appliquera les deux autres commits automatiquement, c&#8217;est fait. Si vous remplacez &#8220;pick&#8221; en &#8220;edit&#8221; sur plusieurs lignes, vous pouvez répéter ces étapes pour chaque commit que vous avez remplacé pour modification. Chaque fois, Git s&#8217;arrêtera, vous laissant modifier le commit et continuera lorsque vous aurez fini.</p>
 
-<h3 id='reordering_commits'>Reordering Commits</h3>
+<h3 id='rordonner_les_commits'>Réordonner les commits</h3>
 
-<p>You can also use interactive rebases to reorder or remove commits entirely. If you want to remove the &#8220;added cat-file&#8221; commit and change the order in which the other two commits are introduced, you can change the rebase script from this</p>
+<p>Vous pouvez également utilisez les rebasages interactifs afin de réordonner ou supprimer entièrement des commits. Si vous voulez supprimer le commit &#8220;added cat-file&#8221; et modifier l&#8217;ordre dans lequel les deux autres commits se trouvent dans l&#8217;historique, vous pouvez modifier le script de rebasage :</p>
 
 <pre><code>pick f7f3f6d changed my name a bit
 pick 310154e updated README formatting and added blame
 pick a5f4a0d added cat-file</code></pre>
 
-<p>to this:</p>
+<p>afin qu&#8217;il ressemble à ceci :</p>
 
 <pre><code>pick 310154e updated README formatting and added blame
 pick f7f3f6d changed my name a bit</code></pre>
 
-<p>When you save and exit the editor, Git rewinds your branch to the parent of these commits, applies <code>310154e</code> and then <code>f7f3f6d</code>, and then stops. You effectively change the order of those commits and remove the &#8220;added cat-file&#8221; commit completely.</p>
+<p>Lorsque vous sauvegardez et quittez l&#8217;éditeur, Git remet votre branche au niveau du parent de ces commits, applique <code>310154e</code> puis <code>f7f3f6d</code> et s&#8217;arrête. Vous venez de modifier l&#8217;ordre de ces commits et de supprimer entièrement le commit &#8220;added cat-file&#8221;.</p>
 
-<h3 id='squashing_a_commit'>Squashing a Commit</h3>
+<h3 id='rassembler_des_commits'>Rassembler des commits</h3>
 
-<p>It’s also possible to take a series of commits and squash them down into a single commit with the interactive rebasing tool. The script puts helpful instructions in the rebase message:</p>
+<p>Il est également possible de prendre une série de commits et de les rassembler en un seul avec l&#8217;outil de rebasage interactif. Le script affiche des instructions utiles dans le message de rebasage :</p>
 
 <pre><code>#
 # Commands:
@@ -115,13 +115,13 @@ pick f7f3f6d changed my name a bit</code></pre>
 # However, if you remove everything, the rebase will be aborted.
 #</code></pre>
 
-<p>If, instead of &#8220;pick&#8221; or &#8220;edit&#8221;, you specify &#8220;squash&#8221;, Git applies both that change and the change directly before it and makes you merge the commit messages together. So, if you want to make a single commit from these three commits, you make the script look like this:</p>
+<p>Si, à la place de &#8220;pick&#8221; ou &#8220;edit&#8221;, vous spécifiez &#8220;squash&#8221;, Git applique cette modification et la modification juste précédente et fusionne les messages de consignation. Donc, si vous voulez faire un seul commit de ces trois consignations, vous faites en sorte que le script ressemble à ceci :</p>
 
 <pre><code>pick f7f3f6d changed my name a bit
 squash 310154e updated README formatting and added blame
 squash a5f4a0d added cat-file</code></pre>
 
-<p>When you save and exit the editor, Git applies all three changes and then puts you back into the editor to merge the three commit messages:</p>
+<p>Lorsque vous sauvegardez et quittez l&#8217;éditeur, Git applique ces trois modifications et vous remontre l&#8217;éditeur contenant maintenant la fusion des 3 messages de consignation :</p>
 
 <pre><code># This is a combination of 3 commits.
 # The first commit&#39;s message is:
@@ -135,17 +135,17 @@ updated README formatting and added blame
 
 added cat-file</code></pre>
 
-<p>When you save that, you have a single commit that introduces the changes of all three previous commits.</p>
+<p>Lorsque vous sauvegardez cela, vous obtenez un seul commit amenant les modifications des trois commits précédents.</p>
 
-<h3 id='splitting_a_commit'>Splitting a Commit</h3>
+<h3 id='diviser_un_commit'>Diviser un commit</h3>
 
-<p>Splitting a commit undoes a commit and then partially stages and commits as many times as commits you want to end up with. For example, suppose you want to split the middle commit of your three commits. Instead of &#8220;updated README formatting and added blame&#8221;, you want to split it into two commits: &#8220;updated README formatting&#8221; for the first, and &#8220;added blame&#8221; for the second. You can do that in the <code>rebase -i</code> script by changing the instruction on the commit you want to split to &#8220;edit&#8221;:</p>
+<p>Pour diviser un commit, il doit être défait, puis partiellement mis en zone d&#8217;attente et consigner autant de fois que vous voulez pour en finir avec lui. Par exemple, supposons que vous voulez diviser le commit du milieu dans l&#8217;exemple des trois commits précédents. Plutôt que &#8220;updated README formatting and added blame&#8221;, vous voulez le diviser en deux commits : &#8220;updated README formatting&#8221; pour le premier, et &#8220;added blame&#8221; pour le deuxième. Vous pouvez le faire avec le script <code>rebase -i</code> en remplaçant l&#8217;instruction sur le commit que vous voulez divisez en &#8220;edit&#8221; :</p>
 
 <pre><code>pick f7f3f6d changed my name a bit
 edit 310154e updated README formatting and added blame
 pick a5f4a0d added cat-file</code></pre>
 
-<p>Then, when the script drops you to the command line, you reset that commit, take the changes that have been reset, and create multiple commits out of them. When you save and exit the editor, Git rewinds to the parent of the first commit in your list, applies the first commit (<code>f7f3f6d</code>), applies the second (<code>310154e</code>), and drops you to the console. There, you can do a mixed reset of that commit with <code>git reset HEAD^</code>, which effectively undoes that commit and leaves the modified files unstaged. Now you can stage and commit files until you have several commits, and run <code>git rebase --continue</code> when you’re done:</p>
+<p>Puis, lorsque le script vous laissera accès à la ligne de commande, vous annulerez (reset) ce commit, vous reprendrez les modifications que vous voulez pour créer plusieurs commits. En reprenant l&#8217;exemple, lorsque vous sauvegardez et quittez l&#8217;éditeur, Git revient au parent de votre premier commit de votre liste, applique le premier commit (<code>f7f3f6d</code>), applique le deuxième (<code>310154e</code>), et vous laisse accès à la console. Là, vous pouvez faire une réinitialisation mélangée (mixed reset) de ce commit avec <code>git reset HEAD^</code>, qui défait ce commit et laisse les fichiers modifiés non mis en attente. Maintenant, vous pouvez mettre en attente et consigner les fichiers sur plusieurs consignations, et exécuter <code>git rebase --continue</code> quand vous avez fini :</p>
 
 <pre><code>$ git reset HEAD^
 $ git add README
@@ -154,7 +154,7 @@ $ git add lib/simplegit.rb
 $ git commit -m &#39;added blame&#39;
 $ git rebase --continue</code></pre>
 
-<p>Git applies the last commit (<code>a5f4a0d</code>) in the script, and your history looks like this:</p>
+<p>Git applique le dernier commit (<code>a5f4a0d</code>) de votre script, et votre historique ressemblera alors à :</p>
 
 <pre><code>$ git log -4 --pretty=format:&quot;%h %s&quot;
 1c002dd added cat-file
@@ -162,37 +162,37 @@ $ git rebase --continue</code></pre>
 35cfb2b updated README formatting
 f3cc40e changed my name a bit</code></pre>
 
-<p>Once again, this changes the SHAs of all the commits in your list, so make sure no commit shows up in that list that you’ve already pushed to a shared repository.</p>
+<p>Une fois encore, ceci modifie les empreintes SHA de tous les commits dans votre liste, soyez donc sûr qu&#8217;aucun commit de cette liste ait été poussé dans un dépôt partagé.</p>
 
-<h3 id='the_nuclear_option_filterbranch'>The Nuclear Option: filter-branch</h3>
+<h3 id='loption_nuclaire__filterbranch'>L&#8217;option nucléaire : filter-branch</h3>
 
-<p>There is another history-rewriting option that you can use if you need to rewrite a larger number of commits in some scriptable way — for instance, changing your e-mail address globally or removing a file from every commit. The command is <code>filter-branch</code>, and it can rewrite huge swaths of your history, so you probably shouldn’t use it unless your project isn’t yet public and other people haven’t based work off the commits you’re about to rewrite. However, it can be very useful. You’ll learn a few of the common uses so you can get an idea of some of the things it’s capable of.</p>
+<p>Il existe une autre option de la réécriture d&#8217;historique que vous pouvez utiliser si vous avez besoin de réécrire un grand nombre de commits d&#8217;une manière scriptable; par exemple, modifier globalement votre adresse mail ou supprimer un fichier de tous les commits. La commande est <code>filter-branch</code>, et elle peut réécrire des pans entiers de votre historique, vous ne devriez donc pas l&#8217;utiliser à moins que votre projet ne soit pas encore public ou que personne n&#8217;a encore travaillé sur les commits que vous allez réécrire. Cependant, cela peut être très utile. Vous allez maintenant apprendre quelques usages communs pour vous donner une idée de ses capacités.</p>
 
-<h4 id='removing_a_file_from_every_commit'>Removing a File from Every Commit</h4>
+<h4 id='supprimer_un_fichier_de_chaque_commit'>Supprimer un fichier de chaque commit</h4>
 
-<p>This occurs fairly commonly. Someone accidentally commits a huge binary file with a thoughtless <code>git add .</code>, and you want to remove it everywhere. Perhaps you accidentally committed a file that contained a password, and you want to make your project open source. <code>filter-branch</code> is the tool you probably want to use to scrub your entire history. To remove a file named passwords.txt from your entire history, you can use the <code>--tree-filter</code> option to <code>filter-branch</code>:</p>
+<p>Cela arrive asser fréquemment. Quelqu&#8217;un a accidentellement commité un énorme fichier binaire avec une commande <code>git add .</code> irréfléchie, and vous voulez le supprimer partout. Vous avez peut-être consigné un fichier contenant un mot de passe, et que vous voulez rendre votre projet open source. <code>filter-branch</code> est l&#8217;outil que vous voulez probablement utiliser pour nettoyer votre historique entier. Pour supprimer un fichier nommé &#8220;passwords.txt&#8221; de tout votre historique, vous pouvez utiliser l&#8217;option <code>--tree-filter</code> de <code>filter-branch</code> :</p>
 
 <pre><code>$ git filter-branch --tree-filter &#39;rm -f passwords.txt&#39; HEAD
 Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>The <code>--tree-filter</code> option runs the specified command after each checkout of the project and then recommits the results. In this case, you remove a file called passwords.txt from every snapshot, whether it exists or not. If you want to remove all accidentally committed editor backup files, you can run something like <code>git filter-branch --tree-filter &#39;rm -f *~&#39; HEAD</code>.</p>
+<p>L&#8217;option <code>--tree-filter</code> exécute la commande spécifiée pour chaque commit et les reconsigne ensuite Dans le cas présent, vous supprimez le fichier nommé &#8220;passwords.txt&#8221; de chaque contenu, qu&#8217;il existait ou non. Si vous voulez supprimez tous les fichiers temporaires des éditeurs consignés accidentellement, vous pouvez exécuter une commande telle que <code>git filter-branch --tree-filter &#39;rm -f *~&#39; HEAD</code>.</p>
 
-<p>You’ll be able to watch Git rewriting trees and commits and then move the branch pointer at the end. It’s generally a good idea to do this in a testing branch and then hard-reset your master branch after you’ve determined the outcome is what you really want. To run <code>filter-branch</code> on all your branches, you can pass <code>--all</code> to the command.</p>
+<p>Vous pourrez alors regarder Git réécrire l&#8217;arbre des commits et reconsigner à chaque fois, pour finir en modifiant la référence de la branche. C&#8217;est généralement une bonne idée de le faire dans un branche de test puis de faire une forte réinitialisation (hard-reset) de votre branche <code>master</code> si le résultat vous convient. Pour exécuter <code>filter-branch</code> sur toutes vos branches, vous pouvez ajouter <code>--all</code> à la commande.</p>
 
-<h4 id='making_a_subdirectory_the_new_root'>Making a Subdirectory the New Root</h4>
+<h4 id='faire_dun_sousrpertoire_la_nouvelle_racine'>Faire d&#8217;un sous-répertoire la nouvelle racine</h4>
 
-<p>Suppose you’ve done an import from another source control system and have subdirectories that make no sense (trunk, tags, and so on). If you want to make the <code>trunk</code> subdirectory be the new project root for every commit, <code>filter-branch</code> can help you do that, too:</p>
+<p>Supposons que vous avez importer votre projet depuis un autre système de gestion de configuration et que vous avez des sous-répertoires qui n&#8217;ont aucun sens (trunk, tags, etc). Si vous voulez faire en sorte que le sous-répertoire <code>trunk</code> soit la nouvelle racine de votre projet pour tous les commits, <code>filter-branch</code> peut aussi vous aider à le faire :</p>
 
 <pre><code>$ git filter-branch --subdirectory-filter trunk HEAD
 Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>Now your new project root is what was in the <code>trunk</code> subdirectory each time. Git will also automatically remove commits that did not affect the subdirectory.</p>
+<p>Maintenant votre nouvelle racine est remplacé par le contenu du répertoire <code>trunk</code>. De plus, Git supprimera automatiquement les commits qui n&#8217;affectent pas ce sous-répertoire.</p>
 
-<h4 id='changing_email_addresses_globally'>Changing E-Mail Addresses Globally</h4>
+<h4 id='modifier_globalement_ladresse_mail'>Modifier globalement l&#8217;adresse mail</h4>
 
-<p>Another common case is that you forgot to run <code>git config</code> to set your name and e-mail address before you started working, or perhaps you want to open-source a project at work and change all your work e-mail addresses to your personal address. In any case, you can change e-mail addresses in multiple commits in a batch with <code>filter-branch</code> as well. You need to be careful to change only the e-mail addresses that are yours, so you use <code>--commit-filter</code>:</p>
+<p>Un autre cas habituel est que vous oubliez d&#8217;exécuter <code>git config</code> pour configurer votre nom et votre adresse mail avant de commencer à travailler, ou vous voulez peut-être rendre un projet du boulot open source et donc changer votre adresse professionnelle pour celle personnelle. Dans tous les cas, vous pouvez modifier l&#8217;adresse mail dans plusieurs commits avec un script <code>filter-branch</code> Vous devez faire attention de ne changer que votre adresse mail, utilisez donc <code>--commit-filter</code> :</p>
 
 <pre><code>$ git filter-branch --commit-filter &#39;
         if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;schacon@localhost&quot; ];
@@ -204,7 +204,7 @@ Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
                 git commit-tree &quot;$@&quot;;
         fi&#39; HEAD</code></pre>
 
-<p>This goes through and rewrites every commit to have your new address. Because commits contain the SHA-1 values of their parents, this command changes every commit SHA in your history, not just those that have the matching e-mail address.</p>
+<p>Cela passe sur chaque commit et le réécrit pour avoir votre nouvelle adresse. Mais puisque les commits contiennent l&#8217;empreinte SHA-1 de leur parent, cette commande modifie tous les commits dans votre historique, pas seulement ceux correspondant à votre adresse mail.</p>
 
 <div id='nav'>
 <a href='ch6-3.html'>prev</a> | <a href='ch6-5.html'>next</a>

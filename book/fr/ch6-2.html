@@ -1,10 +1,10 @@
 ---
 layout: translation
-title: Pro Git 6.2 Git Tools Interactive Staging
+title: Pro Git 6.2 Utilitaires Git Mise en attente interactive
 ---
-<h2 id='interactive_staging'>Interactive Staging</h2>
+<h2 id='mise_en_attente_interactive'>Mise en attente interactive</h2>
 
-<p>Git comes with a couple of scripts that make some command-line tasks easier. Here, you’ll look at a few interactive commands that can help you easily craft your commits to include only certain combinations and parts of files. These tools are very helpful if you modify a bunch of files and then decide that you want those changes to be in several focused commits rather than one big messy commit. This way, you can make sure your commits are logically separate changesets and can be easily reviewed by the developers working with you. If you run <code>git add</code> with the <code>-i</code> or <code>--interactive</code> option, Git goes into an interactive shell mode, displaying something like this:</p>
+<p>Git propose quelques scripts qui rendent les opérations en ligne de commande plus simple. Nous allons à présent découvrir des commandes interactives vous permettant de choisir les fichiers ou une partie d&#8217;un fichier à incorporer à un commit. Ces outils sont particulièrement pratiques si vous modifiez un large périmètre de fichiers et que vous souhaitez les commiter séparement plutôt que massivement. De la sorte, vous vous assurez que vos commits sont des ensembles cohérents et qu&#8217;ils peuvent être facilement revus par vos collaborateurs. Si vous exécutez <code>git add</code> avec l&#8217;option <code>-i</code> ou <code>--interactive</code>, Git rentre en mode interactif, affichant quelque chose comme :</p>
 
 <pre><code>$ git add -i
            staged     unstaged path
@@ -17,13 +17,13 @@ title: Pro Git 6.2 Git Tools Interactive Staging
   5: patch      6: diff        7: quit       8: help
 What now&gt; </code></pre>
 
-<p>You can see that this command shows you a much different view of your staging area — basically the same information you get with <code>git status</code> but a bit more succinct and informative. It lists the changes you’ve staged on the left and unstaged changes on the right.</p>
+<p>Vous vous apercevrez que cette commande propose une vue bien différente de votre zone d&#8217;attente; en gros, c&#8217;est la même information que vous auriez obtenue avec <code>git status</code> mais en plus succint et plus instructif. Cela liste les modifications que vous avez mises en attente à gauche, et celles en cours à droite.</p>
 
-<p>After this comes a Commands section. Here you can do a number of things, including staging files, unstaging files, staging parts of files, adding untracked files, and seeing diffs of what has been staged.</p>
+<p>En dessous vient la section des commandes (*** Commands <strong><em>). Vous pourrez y faire bon nombre de choses, notamment mettre en attente des fichiers, les enlever de la zone d&#8217;attente, mettre en attente des parties de fichiers, ajouter des fichiers non indexés, et vérifier les différences de ce que vous avez mis en attente.</em></strong></p>
 
-<h3 id='staging_and_unstaging_files'>Staging and Unstaging Files</h3>
+<h3 id='mettre_en_attente_des_fichiers'>Mettre en attente des fichiers</h3>
 
-<p>If you type <code>2</code> or <code>u</code> at the <code>What now&gt;</code> prompt, the script prompts you for which files you want to stage:</p>
+<p>Si vous tapez <code>2</code> ou <code>u</code> au prompt <code>What now&gt;</code>, le script vous demande quels fichiers vous voulez mettre en attente :</p>
 
 <pre><code>What now&gt; 2
            staged     unstaged path
@@ -32,7 +32,7 @@ What now&gt; </code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>To stage the TODO and index.html files, you can type the numbers:</p>
+<p>Pour mettre en attente les fichiers TODO et index.html, vous pouvez taper ces nombres :</p>
 
 <pre><code>Update&gt;&gt; 1,2
            staged     unstaged path
@@ -41,7 +41,7 @@ Update&gt;&gt;</code></pre>
   3:    unchanged        +5/-1 lib/simplegit.rb
 Update&gt;&gt;</code></pre>
 
-<p>The <code>*</code> next to each file means the file is selected to be staged. If you press Enter after typing nothing at the <code>Update&gt;&gt;</code> prompt, Git takes anything selected and stages it for you:</p>
+<p>Le caractère <code>*</code> au début de la ligne de chaque fichier indique que celui-ci est sélectionné. Si vous tapez Entrée sur une invite <code>Update&gt;&gt;</code> vide, Git prend tout ce qui est sélectionné et le met en attente pour vous :</p>
 
 <pre><code>Update&gt;&gt; 
 updated 2 paths
@@ -55,7 +55,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>Now you can see that the TODO and index.html files are staged and the simplegit.rb file is still unstaged. If you want to unstage the TODO file at this point, you use the <code>3</code> or <code>r</code> (for revert) option:</p>
+<p>À présent, vous pouvez voir que les fichiers TODO et index.html sont mis en attente (staged en anglais) et que simplgit.rb ne l&#8217;est toujours pas. Si vous souhaitez enlever de la zone d&#8217;attente le fichier TODO, utilisez <code>3</code> (ou <code>r</code> pour revert en anglais) :</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -73,7 +73,7 @@ Revert&gt;&gt; 1
 Revert&gt;&gt; [enter]
 reverted one path</code></pre>
 
-<p>Looking at your Git status again, you can see that you’ve unstaged the TODO file:</p>
+<p>Un aperçu rapide à votre statut Git et vous pouvez voir que vous avez enlever de la zone d&#8217;attente le fichier TODO :</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -84,7 +84,7 @@ What now&gt; 1
   2:        +1/-1      nothing index.html
   3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
 
-<p>To see the diff of what you’ve staged, you can use the <code>6</code> or <code>d</code> (for diff) command. It shows you a list of your staged files, and you can select the ones for which you would like to see the staged diff. This is much like specifying <code>git diff --cached</code> on the command line:</p>
+<p>Pour voir la modification que vous avez mise en attente, utilisez <code>6</code> ou <code>d</code> (pour diff en anglais). Cela vous affiche la liste des fichiers en attente et vous pouvez choisir ceux pour lesquels vous voulez consulter la différence. C&#8217;est équivalent à <code>git diff --cached</code> en ligne de commande :</p>
 
 <pre><code>*** Commands ***
   1: status     2: update      3: revert     4: add untracked
@@ -106,11 +106,11 @@ index 4d07108..4335f49 100644
 
  &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
 
-<p>With these basic commands, you can use the interactive add mode to deal with your staging area a little more easily.</p>
+<p>Avec ces commandes élémentaires, vous pouvez utiliser l&#8217;ajout interactif pour manipuler votre zone d&#8217;attente un peu plus facilement.</p>
 
-<h3 id='staging_patches'>Staging Patches</h3>
+<h3 id='patches_de_staging'>Patches de Staging</h3>
 
-<p>It’s also possible for Git to stage certain parts of files and not the rest. For example, if you make two changes to your simplegit.rb file and want to stage one of them and not the other, doing so is very easy in Git. From the interactive prompt, type <code>5</code> or <code>p</code> (for patch). Git will ask you which files you would like to partially stage; then, for each section of the selected files, it will display hunks of the file diff and ask if you would like to stage them, one by one:</p>
+<p>Git est également capable de mettre en attente certaines parties d&#8217;un fichier. Par exemple, si vous modifiez en 2 endroits votre fichier simplegit.rb et que vous souhaitez mettre en attente l&#8217;une d&#8217;entre elles seulement, cela peut se faire très aisément avec Git. En mode interactif, tapez <code>5</code> ou <code>p</code> (pour patch en anglais). Git vous demandera quels fichiers vous voulez mettre en attente partiellement, puis, pour chaque section des fichiers sélectionnés, il affichera les parties de fichiers où il y a des différences et vous demandera si vous souhaitez les mettre en attente, un par un :</p>
 
 <pre><code>diff --git a/lib/simplegit.rb b/lib/simplegit.rb
 index dd5ecc4..57399e0 100644
@@ -127,24 +127,24 @@ index dd5ecc4..57399e0 100644
    def blame(path)
 Stage this hunk [y,n,a,d,/,j,J,g,e,?]? </code></pre>
 
-<p>You have a lot of options at this point. Typing <code>?</code> shows a list of what you can do:</p>
+<p>A cette étape, vous disposez de bon nombre d&#8217;options. <code>?</code> vous liste les actions possibles, voici une traduction :</p>
 
-<pre><code>Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
-y - stage this hunk
-n - do not stage this hunk
-a - stage this and all the remaining hunks in the file
-d - do not stage this hunk nor any of the remaining hunks in the file
-g - select a hunk to go to
-/ - search for a hunk matching the given regex
-j - leave this hunk undecided, see next undecided hunk
-J - leave this hunk undecided, see next hunk
-k - leave this hunk undecided, see previous undecided hunk
-K - leave this hunk undecided, see previous hunk
-s - split the current hunk into smaller hunks
-e - manually edit the current hunk
-? - print help</code></pre>
+<pre><code>Mettre en attente cette partie [y,n,a,d,/,j,J,g,e,?]? ?
+y - mettre en attente cette partie
+n - ne pas mettre en attente cette partie
+a - mettre en attente cette partie et toutes celles restantes dans ce fichier
+d - ne pas mettre en attente cette partie ni aucune de celles restantes dans ce fichier
+g - sélectionner un partie à voir
+/ - chercher une partie correspondant à la regexp donnée
+j - laisser cette partie non décidée, voir la prochaine partie non encore décidée
+J - laisser cette partie non décidée, voir la prochaine partie
+k - laisser cette partie non décidée, voir la partie non encore décidée précendente
+K - laisser cette partie non décidée, voir la partie précédente
+s - couper la partie courante en parties plus petites
+e - modifier manuellement la partie courante
+? - afficher l&#39;aide</code></pre>
 
-<p>Generally, you’ll type <code>y</code> or <code>n</code> if you want to stage each hunk, but staging all of them in certain files or skipping a hunk decision until later can be helpful too. If you stage one part of the file and leave another part unstaged, your status output will look like this:</p>
+<p>En règle générale, vous choisirez <code>y</code> ou <code>n</code> pour mettre en attente ou non chacun des blocs, mais tout mettre en attente pour certains fichiers ou remettre à plus tard le choix pour un bloc peut également être utile. Si vous mettez en attente une partie d&#8217;un fichier et laissez une autre partie non en attente, vous statut ressemblera à peu près à ceci :</p>
 
 <pre><code>What now&gt; 1
            staged     unstaged path
@@ -152,9 +152,9 @@ e - manually edit the current hunk
   2:        +1/-1      nothing index.html
   3:        +1/-1        +4/-0 lib/simplegit.rb</code></pre>
 
-<p>The status of the simplegit.rb file is interesting. It shows you that a couple of lines are staged and a couple are unstaged. You’ve partially staged this file. At this point, you can exit the interactive adding script and run <code>git commit</code> to commit the partially staged files.</p>
+<p>Le statut pour le fichier simplegit.rb est intéressant. Il vous montre que quelques lignes sont en attente et d&#8217;autres non. Vous avez mis partiellement ce fichier en attente. Dès lors, vous pouvez quitter l&#8217;ajout interactif et exécuter <code>git commit</code> pour commiter les fichiers partiellement en attente.</p>
 
-<p>Finally, you don’t need to be in interactive add mode to do the partial-file staging — you can start the same script by using <code>git add -p</code> or <code>git add --patch</code> on the command line.</p>
+<p>Enfin, vous pouvez vous passer du mode interactif pour mettre partiellement un fichier en attente; vous pouvez faire de même avec <code>git add -p</code> ou <code>git add --patch</code> en ligne de commande.</p>
 
 <div id='nav'>
 <a href='ch6-1.html'>prev</a> | <a href='ch6-3.html'>next</a>

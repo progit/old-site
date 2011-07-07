@@ -18,7 +18,7 @@ title: Pro Git 1.5 使い始める 最初のGitの構成
 
 <p>Windows環境下では、Gitは<code>$HOME</code>ディレクトリ（ほとんどのユーザーは<code>C:\Documents and Settings\$USER</code>)（訳者注：環境変数<code>USERPROFILE</code>で指定される）の中の<code>.gitconfig</code>ファイルを検索に行きます。また、インストーラー時にWidnowsシステムにGitをインストールすると決めたところにある、MSysのルートとの相対位置であったとしても、/etc/gitconfigも見に行きます。</p>
 
-<h3 id='id18'>個人の識別情報</h3>
+<h3 id='id17'>個人の識別情報</h3>
 
 <p>Gitをインストールしたときに最初にすべきことは、ユーザー名とE-mailアドレスを設定することです。全てのGitのコミットはこの情報を用いるため、これは重要で、次々とまわすコミットに永続的に焼き付けられます：</p>
 
@@ -27,7 +27,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>また、もし<code>--global</code>オプションを指定するのであれば、Gitはその後、そのシステム上で行なう（訳者注：あるユーザーの）全ての操作に対して常にこの情報を使うようになるため、この操作を行なう必要はたった一度だけです。もし、違う名前とE-mailアドレスを特定のプロジェクトで上書きしたいのであれば、そのプロジェクトの（訳者注：Gitディレクトリの）中で、<code>--global</code>オプション無しでこのコマンドを実行することができます。</p>
 
-<h3 id='id19'>エディター</h3>
+<h3 id='id18'>エディター</h3>
 
 <p>今や、個人の識別情報が設定され、Gitがメッセージのタイプをさせる必要があるときに使う、標準のテキストエディターを設定できます。標準では、Gitはシステムのデフォルト・エディターを使います。これは大抵の場合、ViかVimです。Emacsのような違うテキスト・エディターを使いたい場合は、次のようにします：</p>
 
@@ -41,7 +41,7 @@ $ git config --global user.email johndoe@example.com</code></pre>
 
 <p>Gitはkdiff3、tkdiff、meld、xxdiff、emerge、vimdiff、gvimdiff、ecmerge、opendiffを確かなマージ・ツールとして扱えます。カスタム・ツールもまた設定できますが、これをする事に関しての詳細な情報は第7章を参照してください。</p>
 
-<h3 id='id20'>設定の確認</h3>
+<h3 id='id19'>設定の確認</h3>
 
 <p>設定を確認したい場合は、その時点でGitが見つけられる全ての設定を一覧するコマンドである<code>git config --list</code>を使う事ができます：</p>
 

@@ -20,7 +20,7 @@ title: Pro Git 4.7 Git sur le serveur Gitosis
 $ cd gitosis
 $ sudo python setup.py install</code></pre>
 
-<p>La dernière commande installe deux exécutables que Gitosis utilisera. Ensuite, Gitosis veut gérer ses dépôts sous <code>/home/git</code>, ce qui est parfait. Mais vous avez déjà installé vos dépots sous <code>/opt/git</code>, donc au lieu de tout reconfigurer, créez un lien symbolique :</p>
+<p>La dernière commande installe deux exécutables que Gitosis utilisera. Ensuite, Gitosis veut gérer ses dépôts sous <code>/home/git</code>, ce qui est parfait. Mais vous avez déjà installé vos dépôts sous <code>/opt/git</code>, donc au lieu de tout reconfigurer, créez un lien symbolique :</p>
 
 <pre><code>$ ln -s /opt/git /home/git/repositories</code></pre>
 
@@ -42,21 +42,21 @@ $ sudo python setup.py install</code></pre>
 Initialized empty Git repository in /opt/git/gitosis-admin.git/
 Reinitialized existing Git repository in /opt/git/gitosis-admin.git/</code></pre>
 
-<p>Cela permet à l&#8217;utilisateur disposant de cette clef de modifier les dépôt Git qui contrôle le paramétrage de Gitosis. Ensuite, il faudra positionner manuellement le bit « execute » du script <code>post-update</code> du dépôt de contrôle nouvellement créé.</p>
+<p>Cela permet à l&#8217;utilisateur disposant de cette clef de modifier le dépôt Git qui contrôle le paramétrage de Gitosis. Ensuite, il faudra positionner manuellement le bit « execute » du script <code>post-update</code> du dépôt de contrôle nouvellement créé.</p>
 
 <pre><code>$ sudo chmod 755 /opt/git/gitosis-admin.git/hooks/post-update</code></pre>
 
 <p>Vous voilà prêt. Si tout est réglé correctement, vous pouvez essayer de vous connecter par SSH au serveur en tant que l&#8217;utilisateur pour lequel vous avez ajouté la clef publique lors de l&#8217;initialisation de Gitosis.. Vous devriez voir quelque chose comme :</p>
 
-<pre><code>$ ssh git@gitserver
+<pre><code>$ ssh git@gitserveur
 PTY allocation request failed on channel 0
 fatal: unrecognized command &#39;gitosis-serve schacon@quaternion&#39;
-  Connection to gitserver closed.</code></pre>
+  Connection to gitserveur closed.</code></pre>
 
 <p>Cela signifie que Gitosis vous a bien reconnu mais vous a rejeté car vous ne lancez pas de commandes Git. Lançons donc une vraie commande Git en clonant le dépôt de contrôle Gitosis :</p>
 
 <pre><code># sur votre ordinateur local
-$ git clone git@gitserver:gitosis-admin.git</code></pre>
+$ git clone git@gitserveur:gitosis-admin.git</code></pre>
 
 <p>Vous avez à présent un répertoire <code>gitosis-admin</code> qui contient deux entrées :</p>
 
@@ -66,7 +66,7 @@ $ find .
 ./keydir
 ./keydir/scott.pub</code></pre>
 
-<p>Le fichier <code>gitosis.conf</code> est le fichier de configuration qui permet de spécifier les utilisateurs, les dépôts et les permissions. le répertoire <code>keydir</code> stocke les clefs publiques de tous les utilisateurs qui peuvent avoir un accès à vos dépôts — un fichier par utilisateur. Le nom du fichier dans <code>keydir</code> (dans l&#8217;exemple précédent, <code>scott.pub</code>) sera différent pour vous — Gitosis utilise le nom issu de la description à la fin de la clef publique qui a été importée par le script <code>gitosis-init</code>.</p>
+<p>Le fichier <code>gitosis.conf</code> est le fichier de configuration qui permet de spécifier les utilisateurs, les dépôts et les permissions. Le répertoire <code>keydir</code> stocke les clefs publiques de tous les utilisateurs qui peuvent avoir un accès à vos dépôts — un fichier par utilisateur. Le nom du fichier dans <code>keydir</code> (dans l&#8217;exemple précédent, <code>scott.pub</code>) sera différent pour vous — Gitosis utilise le nom issu de la description à la fin de la clef publique qui a été importée par le script <code>gitosis-init</code>.</p>
 
 <p>Le fichier <code>gitosis.conf</code> contient la configuration du projet <code>gitosis-admin</code> cloné à l&#8217;instant :</p>
 
@@ -79,7 +79,7 @@ members = scott</code></pre>
 
 <p>Il indique que l&#8217;utilisateur « scott » — l&#8217;utilisateur dont la clef publique a servi à initialiser Gitosis — est le seul à avoir accès au projet <code>gitosis-admin</code>.</p>
 
-<p>A présent, ajoutons un nouveau projet. Ajoutons une nouvelle section appelée <code>mobile</code> où vous listez les développeurs de votre équipe mobile et les projets auquels ces développeurs ont accès. Comme « scott » est le seul utilisateur déclaré pour l&#8217;instant, vous devrez l&#8217;ajouter comme membre unique et vous créerez un nouveau projet appelé <code>iphone_projet</code> pour commencer :</p>
+<p>A présent, ajoutons un nouveau projet. Ajoutons une nouvelle section appelée <code>mobile</code> où vous listez les développeurs de votre équipe mobile et les projets auxquels ces développeurs ont accès. Comme « scott » est le seul utilisateur déclaré pour l&#8217;instant, vous devrez l&#8217;ajouter comme membre unique et vous créerez un nouveau projet appelé <code>iphone_projet</code> pour commencer :</p>
 
 <pre><code>[group mobile]
 writable = iphone_projet
@@ -98,9 +98,9 @@ Total 3 (delta 1), reused 0 (delta 0)
 To git@gitserver:/opt/git/gitosis-admin.git
    fb27aec..8962da8  master -&gt; master</code></pre>
 
-<p>Vous pouvez pousser vers le nouveau <code>iphone_projet</code> en ajoutant votre serveur comme dépôt distant dans votre dépôt local de projet et en poussant. Vous n&#8217;avez plus besoin de créer manuellement un dépôt nu sur le serveur pour les nouveaux projets. Gitosis les crée automatiquement dès qu&#8217;il voit le premier push :</p>
+<p>Vous pouvez pousser vers le nouveau <code>iphone_projet</code> en ajoutant votre serveur comme dépôt distant dans votre dépôt local de projet et en poussant. Vous n&#8217;avez plus besoin de créer manuellement un dépôt nu sur le serveur pour les nouveaux projets. Gitosis les crée automatiquement dès qu&#8217;il voit la première poussée :</p>
 
-<pre><code>$ git remote add origin git@gitserver:iphone_projet.git
+<pre><code>$ git remote add origin git@gitserveur:iphone_projet.git
 $ git push origin master
 Initialized empty Git repository in /opt/git/iphone_projet.git/
 Counting objects: 3, done.

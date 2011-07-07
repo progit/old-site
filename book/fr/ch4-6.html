@@ -29,7 +29,7 @@ $ sudo cp -Rf gitweb /var/www/</code></pre>
 <p>Notez que vous devez indiquer où trouver les dépôts Git au moyen de la variable <code>GITWEB_PROJECTROOT</code>. Maintenant, il faut paramétrer dans Apache l&#8217;utilisation de CGI pour ce script, en spécifiant un nouveau VirtualHost :</p>
 
 <pre><code>&lt;VirtualHost *:80&gt;
-    ServerName gitserver
+    ServerName gitserveur
     DocumentRoot /var/www/gitweb
     &lt;Directory /var/www/gitweb&gt;
         Options ExecCGI +FollowSymLinks +SymLinksIfOwnerMatch
@@ -41,7 +41,7 @@ $ sudo cp -Rf gitweb /var/www/</code></pre>
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;</code></pre>
 
-<p>Une fois de plus, GitWeb peut être géré par tout serveur Web capable de prendre en charge CGI. La mise en place ne devrait pas être plus difficile avec un autre serveur. Après redémarrage du serveur, vous devriez être capable de visiter <code>http://gitserver/</code> pour visualiser vos dépôts en ligne et de cloner et tirer depuis ces dépôts par HTTP sur <code>http://git.gitserver</code>.</p>
+<p>Une fois de plus, GitWeb peut être géré par tout serveur Web capable de prendre en charge CGI. La mise en place ne devrait pas être plus difficile avec un autre serveur. Après redémarrage du serveur, vous devriez être capable de visiter <code>http://gitserveur/</code> pour visualiser vos dépôts en ligne et de cloner et tirer depuis ces dépôts par HTTP sur <code>http://git.gitserveur</code>.</p>
 
 <div id='nav'>
 <a href='ch4-5.html'>prev</a> | <a href='ch4-7.html'>next</a>

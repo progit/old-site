@@ -2,11 +2,11 @@
 layout: translation
 title: Pro Git 9.7 Git 内部原理 维护及数据恢复
 ---
-<h2 id='id393'>维护及数据恢复</h2>
+<h2 id='id404'>维护及数据恢复</h2>
 
 <p>你时不时的需要进行一些清理工作 ── 如减小一个仓库的大小，清理导入的库，或是恢复丢失的数据。本节将描述这类使用场景。</p>
 
-<h3 id='id394'>维护</h3>
+<h3 id='id405'>维护</h3>
 
 <p>Git 会不定时地自动运行称为 &#8220;auto gc&#8221; 的命令。大部分情况下该命令什么都不处理。不过要是存在太多松散对象 (loose object, 不在 packfile 中的对象) 或 packfile，Git 会进行调用 <code>git gc</code> 命令。 <code>gc</code> 指垃圾收集 (garbage collect)，此命令会做很多工作：收集所有松散对象并将它们存入 packfile，合并这些 packfile 进一个大的 packfile，然后将不被任何 commit 引用并且已存在一段时间 (数月) 的对象删除。</p>
 
@@ -38,7 +38,7 @@ cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
 
 <p>请留意文件最后以 <code>^</code> 开头的那一行。这表示该行上一行的那个标签是一个 annotated 标签，而该行正是那个标签所指向的 commit 。</p>
 
-<h3 id='id395'>数据恢复</h3>
+<h3 id='id406'>数据恢复</h3>
 
 <p>在使用 Git 的过程中，有时会不小心丢失 commit 信息。这一般出现在以下情况下：强制删除了一个分支而后又想重新使用这个分支，hard-reset 了一个分支从而丢弃了分支的部分 commit。如果这真的发生了，有什么办法把丢失的 commit 找回来呢？</p>
 
@@ -97,11 +97,9 @@ ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>酷！这样有了一个跟原来 <code>master</code> 一样的 <code>recover-branch</code> 分支，最新的两个 commit 又找回来了。</p>
+<p>酷！这样有了一个跟原来 <code>master</code> 一样的 <code>recover-branch</code> 分支，最新的两个 commit 又找回来了。接着，假设引起 commit 丢失的原因并没有记录在 reflog 中 ── 可以通过删除 <code>recover-branch</code> 和 reflog 来模拟这种情况。这样最新的两个 commit 不会被任何东西引用到：</p>
 
-<p>接着，假设引起 commit 丢失的原因并没有记录在 reflog 中 ── 可以通过删除 <code>recover-branch</code> 和 reflog 来模拟这种情况。这样最新的两个 commit 不会被任何东西引用到：</p>
-
-<pre><code>$ git branch –D recover-branch
+<pre><code>$ git branch -D recover-branch
 $ rm -Rf .git/logs/</code></pre>
 
 <p>因为 reflog 数据是保存在 <code>.git/logs/</code> 目录下的，这样就没有 reflog 了。现在要怎样恢复 commit 呢？办法之一是使用 <code>git fsck</code> 工具，该工具会检查仓库的数据完整性。如果指定 <code>--ful</code> 选项，该命令显示所有未被其他对象引用 (指向) 的所有对象：</p>
@@ -114,7 +112,7 @@ dangling blob 7108f7ecb345ee9d0084193f147cdad4d2998293</code></pre>
 
 <p>本例中，可以从 dangling commit 找到丢失了的 commit。用相同的方法就可以恢复它，即创建一个指向该 SHA 的分支。</p>
 
-<h3 id='id396'>移除对象</h3>
+<h3 id='id407'>移除对象</h3>
 
 <p>Git 有许多过人之处，不过有一个功能有时却会带来问题：<code>git clone</code> 会将包含每一个文件的所有历史版本的整个项目下载下来。如果项目包含的仅仅是源代码的话这并没有什么坏处，毕竟 Git 可以非常高效地压缩此类数据。不过如果有人在某个时刻往项目中添加了一个非常大的文件，那们即便他在后来的提交中将此文件删掉了，所有的签出都会下载这个大文件。因为历史记录中引用了这个文件，它会一直存在着。</p>
 

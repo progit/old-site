@@ -4,9 +4,7 @@ title: Pro Git 9.2 Git 内部原理 Git 对象
 ---
 <h2 id='git_'>Git 对象</h2>
 
-<p>Git 是一套内容寻址文件系统。很不错。不过这是什么意思呢？</p>
-
-<p>这种说法的意思是，从内部来看，Git 是简单的 key-value 数据存储。它允许插入任意类型的内容，并会返回一个键值，通过该键值可以在任何时候再取出该内容。可以通过底层命令 <code>hash-object</code> 来示范这点，传一些数据给该命令，它会将数据保存在 <code>.git</code> 目录并返回表示这些数据的键值。首先初使化一个 Git 仓库并确认 <code>objects</code> 目录是空的：</p>
+<p>Git 是一套内容寻址文件系统。很不错。不过这是什么意思呢？这种说法的意思是，从内部来看，Git 是简单的 key-value 数据存储。它允许插入任意类型的内容，并会返回一个键值，通过该键值可以在任何时候再取出该内容。可以通过底层命令 <code>hash-object</code> 来示范这点，传一些数据给该命令，它会将数据保存在 <code>.git</code> 目录并返回表示这些数据的键值。首先初使化一个 Git 仓库并确认 <code>objects</code> 目录是空的：</p>
 
 <pre><code>$ mkdir test
 $ cd test
@@ -88,7 +86,7 @@ blob</code></pre>
 
 <p>从概念上来讲，Git 保存的数据如图 9-1 所示。</p>
 
-<p><center><img src="/figures/ch9/18333fig0901-tn.png"></center><br/> Figure 9-1. Git 对象模型的简化版</p>
+<p><center><img src="/figures/ch9/18333fig0901-tn.png"></center><br/> 图 9-1. Git 对象模型的简化版</p>
 
 <p>你可以自己创建 tree 。通常 Git 根据你的暂存区域或 index 来创建并写入一个 tree 。因此要创建一个 tree 对象的话首先要通过将一些文件暂存从而创建一个 index 。可以使用 plumbing 命令 <code>update-index</code> 为一个单独文件 ── test.txt 文件的第一个版本 ──　创建一个 index　。通过该命令人为的将 test.txt 文件的首个版本加入到了一个新的暂存区域中。由于该文件原先并不在暂存区域中 (甚至就连暂存区域也还没被创建出来呢) ，必须传入 <code>--add</code> 参数;由于要添加的文件并不在当前目录下而是在数据库中，必须传入 <code>--cacheinfo</code> 参数。同时指定了文件模式，SHA-1 值和文件名：</p>
 
@@ -135,7 +133,7 @@ $ git cat-file -p 3c4e9cd789d88d8d89c1073707c3585e41b0e614
 
 <p>如果从刚写入的新 tree 对象创建一个工作目录，将得到位于工作目录顶级的两个文件和一个名为 <code>bak</code> 的子目录，该子目录包含了 test.txt 文件的第一个版本。可以将 Git 用来包含这些内容的数据想象成如图 9-2 所示的样子。</p>
 
-<p><center><img src="/figures/ch9/18333fig0902-tn.png"></center><br/> Figure 9-2. 当前 Git 数据的内容结构</p>
+<p><center><img src="/figures/ch9/18333fig0902-tn.png"></center><br/> 图 9-2. 当前 Git 数据的内容结构</p>
 
 <h3 id='commit__'>commit (提交) 对象</h3>
 
@@ -211,9 +209,9 @@ Date:   Fri May 22 18:09:34 2009 -0700
 
 <p>如果你按照以上描述进行了操作，可以得到如图 9-3 所示的对象图。</p>
 
-<p><center><img src="/figures/ch9/18333fig0903-tn.png"></center><br/> Figure 9-3. Git 目录下的所有对象</p>
+<p><center><img src="/figures/ch9/18333fig0903-tn.png"></center><br/> 图 9-3. Git 目录下的所有对象</p>
 
-<h3 id='id386'>对象存储</h3>
+<h3 id='id397'>对象存储</h3>
 
 <p>之前我提到当存储数据内容时，同时会有一个文件头被存储起来。我们花些时间来看看 Git 是如何存储对象的。你将看来如何通过 Ruby 脚本语言存储一个 blob 对象 (这里以字符串 &#8220;what is up, doc?&#8221; 为例) 。使用 <code>irb</code> 命令进入 Ruby 交互式模式：</p>
 

@@ -6,17 +6,17 @@ title: Pro Git 4.5 Git sur le serveur Accès public
 
 <p>Et si vous voulez permettre des accès anonymes en lecture ? Peut-être souhaitez-vous héberger un projet open source au lieu d&#8217;un projet interne privé. Ou peut-être avez-vous quelques serveurs de compilation ou d&#8217;intégration continue qui changent souvent et vous ne souhaitez pas avoir à regénérer des clefs SSH tout le temps — vous avez besoin d&#8217;un accès en lecture seule simple.</p>
 
-<p>Le moyen le plus simple pour des petites installations est probablement d&#8217;installer un serveur web statique dont la racine pointe sur vos dépôts Git puis d&#8217;activer le ???hook??? <code>post-update</code> mentionné à la première partie de ce chapitre. Reprenons l&#8217;exemple précédent. Supposons que vos dépôts soient dans le répertoire <code>/opt/git</code> et qu&#8217;un serveur Apache soit installé sur la machine. Vous pouvez bien sur utiliser n&#8217;importe quel serveur web mais nous utiliserons Apache pour montrer la configuration nécessaire.</p>
+<p>Le moyen le plus simple pour des petites installations est probablement d&#8217;installer un serveur web statique dont la racine pointe sur vos dépôts Git puis d&#8217;activer le crochet <code>post-update</code> mentionné à la première partie de ce chapitre. Reprenons l&#8217;exemple précédent. Supposons que vos dépôts soient dans le répertoire <code>/opt/git</code> et qu&#8217;un serveur Apache soit installé sur la machine. Vous pouvez bien sûr utiliser n&#8217;importe quel serveur web mais nous utiliserons Apache pour montrer la configuration nécessaire.</p>
 
-<p>Premièrement, il faut activer le ???hook??? :</p>
+<p>Premièrement, il faut activer le crochet :</p>
 
 <pre><code>$ cd projet.git
 $ mv hooks/post-update.sample hooks/post-update
 $ chmod a+x hooks/post-update</code></pre>
 
-<p>Si vous utilisez une version de Git antérieure à 1.6, la commande <code>mv</code> n&#8217;est pas nécessaire car Git n&#8217;a commencé à utiliser le nommage des exemples de ???hook??? en utilisant le postfixe .sample que récemment.</p>
+<p>Si vous utilisez une version de Git antérieure à 1.6, la commande <code>mv</code> n&#8217;est pas nécessaire car Git n&#8217;a commencé à utiliser le nommage des exemples de crochet en utilisant le postfixe .sample que récemment.</p>
 
-<p>Quelle est l&#8217;action de ce ???hook??? <code>post-update</code> ? Il contient simplement ceci :</p>
+<p>Quelle est l&#8217;action de ce crochet <code>post-update</code> ? Il contient simplement ceci :</p>
 
 <pre><code>$ cat .git/hooks/post-update 
 #!/bin/sh
@@ -24,10 +24,10 @@ exec git-update-server-info</code></pre>
 
 <p>Cela signifie que lorsque vous poussez vers le serveur via SSH, Git lance cette commande pour mettre à jour les fichiers nécessaires lorsqu&#8217;on tire par HTTP.</p>
 
-<p>Ensuite, il faut ajouter dans la configuration Apache une entrée VirtualHost dont la racine pointe sur vos dépôts Git. Ici, nous supposerons que vous avez réglé un DNS avec résolution générique qui renvoit <code>*.gitserver</code> vers la machine qui héberge ce système :</p>
+<p>Ensuite, il faut ajouter dans la configuration Apache une entrée VirtualHost dont la racine pointe sur vos dépôts Git. Ici, nous supposerons que vous avez réglé un DNS avec résolution générique qui renvoit <code>*.gitserveur</code> vers la machine qui héberge ce système :</p>
 
 <pre><code>&lt;VirtualHost *:80&gt;
-    ServerName git.gitserver
+    ServerName git.gitserveur
     DocumentRoot /opt/git
     &lt;Directory /opt/git/&gt;
         Order allow, deny
@@ -41,7 +41,7 @@ exec git-update-server-info</code></pre>
 
 <p>Après avoir redémarré Apache, vous devriez être capable de cloner vos dépôts en spécifiant l&#8217;URL de votre projet :</p>
 
-<pre><code>$ git clone http://git.gitserver/projet.git</code></pre>
+<pre><code>$ git clone http://git.gitserveur/projet.git</code></pre>
 
 <p>Ainsi, vous pouvez donner accès en lecture seule à tous vos projets à un grand nombre d&#8217;utilisateurs en quelques minutes. Une autre option simple pour fournir un accès public non-authentifié consiste à lancer un daemon Git, bien que cela requiert de daemoniser le processus ─ nous traiterons cette option dans un chapitre ultérieur si vous préférez cette option.</p>
 

@@ -6,16 +6,16 @@ title: Pro Git 3.1 Les branches avec Git Ce qu&#8217;est une branche
 
 <p>Pour réellement comprendre comment Git gère les branches, nous devons revenir en arrière et examiner de plus près comment Git stocke ses données. Comme vous pouvez vous en souvenir du chapitre 1, Git ne stocke pas ses données comme une série de changesets ou deltas, mais comme une série d&#8217;instantanés.</p>
 
-<p>Lors qu&#8217;on valide dans Git, Git stock un objet commit qui contient un pointeur vers l&#8217;instantané du contenu qui a été indexé, les méta-données d&#8217;auteur et de message, et zéro ou plusieurs pointeurs vers le ou les commits qui sont les parents directs de ce commit : zéro parent pour la première validation, un parent pour un commit normal, et des parents multiples pour des commits qui sont le résultat de la fusion d&#8217;une ou plusieurs branches.</p>
+<p>Lorsqu&#8217;on valide dans Git, Git stocke un objet commit qui contient un pointeur vers l&#8217;instantané du contenu qui a été indexé, les méta-données d&#8217;auteur et de message et zéro ou plusieurs pointeurs vers le ou les commits qui sont les parents directs de ce commit : zéro parent pour la première validation, un parent pour un commit normal et des parents multiples pour des commits qui sont le résultat de la fusion d&#8217;une ou plusieurs branches.</p>
 
-<p>Pour visualiser ce concept, supposons un répertoire contenant trois fichiers, ces trois fichiers étant indexés puis validés. Indexer les fichiers signifie calculer la somme de contrôle pour chacun (la fonction de hachage SHA-1 mentionnée au chapitre 1), stocker cette version du fichier dans le dépôt Git (Git les nomme blobs), et ajouter la somme de contrôle à la zone d&#8217;index :</p>
+<p>Pour visualiser ce concept, supposons un répertoire contenant trois fichiers, ces trois fichiers étant indexés puis validés. Indexer les fichiers signifie calculer la somme de contrôle pour chacun (la fonction de hachage SHA-1 mentionnée au chapitre 1), stocker cette version du fichier dans le dépôt Git (Git les nomme blobs) et ajouter la somme de contrôle à la zone d&#8217;index :</p>
 
-<pre><code>$ git add LISEZMOI test.rb LICENSE
+<pre><code>$ git add LISEZMOI test.rb LICENCE
 $ git commit -m &#39;commit initial de mon projet&#39;</code></pre>
 
 <p>Lorsque vous créez le commit en lançant la commande <code>git commit</code>, Git calcule la somme de contrôle de chaque répertoire (ici, seulement pour le répertoire racine) et stocke ces objets arbres dans le dépôt Git. Git crée alors un objet commit qui contient les méta-données et un pointeur vers l&#8217;arbre projet d&#8217;origine de manière à pouvoir recréer l&#8217;instantané si besoin.</p>
 
-<p>Votre dépôt Git contient à présent cinq objets : un blob pour le contenu de chacun des trois fichiers, un arbre qui liste les contenus des répertoires et spécifie quels noms de fichier sont attachés à quels blobs, et un objet commit avec le pointeur vers l&#8217;arbre d&#8217;origine et toutes les méta-données attachées au commit. Conceptuellement, les données contenues dans votre dépôt git ressemblent à la Figure 3-1.</p>
+<p>Votre dépôt Git contient à présent cinq objets : un blob pour le contenu de chacun des trois fichiers, un arbre qui liste les contenus des répertoires et spécifie quels noms de fichier sont attachés à quels blobs et un objet commit avec le pointeur vers l&#8217;arbre d&#8217;origine et toutes les méta-données attachées au commit. Conceptuellement, les données contenues dans votre dépôt git ressemblent à la Figure 3-1.</p>
 
 <p><center><img src="/figures/ch3/18333fig0301-tn.png"></center><br/> Figure 3-1. Données d&#8217;un unique commit.</p>
 
@@ -35,11 +35,11 @@ $ git commit -m &#39;commit initial de mon projet&#39;</code></pre>
 
 <p><center><img src="/figures/ch3/18333fig0304-tn.png"></center><br/> Figure 3-4. Branches multiples pointant dans l&#8217;historique des données de commit.</p>
 
-<p>Comment Git connaît-il la branche sur laquelle vous vous trouvez ? Il conserve un pointeur spécial appelé HEAD. Remarquez que sous cette appellation se cache un concept très différent de celui utilisé dans les autres VCSs tels que Subversion ou CVS. Dans Git, c&#8217;est un pointeur sur la branche locale où vous vous trouvez. Dans notre cas, vous vous trouvez toujours sur master. La commande git branch n&#8217;a fait que créer une nouvelle branche — elle n&#8217;a pas fait basculer la copie de travail vers cette branche (Cf. figure 3-5).</p>
+<p>Comment Git connaît-il la branche sur laquelle vous vous trouvez ? Il conserve un pointeur spécial appelé HEAD. Remarquez que sous cette appellation se cache un concept très différent de celui utilisé dans les autres VCS tels que Subversion ou CVS. Dans Git, c&#8217;est un pointeur sur la branche locale où vous vous trouvez. Dans notre cas, vous vous trouvez toujours sur master. La commande git branch n&#8217;a fait que créer une nouvelle branche — elle n&#8217;a pas fait basculer la copie de travail vers cette branche (Cf. figure 3-5).</p>
 
 <p><center><img src="/figures/ch3/18333fig0305-tn.png"></center><br/> Figure 3-5. fichier HEAD pointant sur la branche active</p>
 
-<p>Pour basculer vers une branche existant, il suffit de lancer la commande <code>git checkout</code>. Basculons vers la nouvelle branche testing :</p>
+<p>Pour basculer vers une branche existante, il suffit de lancer la commande <code>git checkout</code>. Basculons vers la nouvelle branche testing :</p>
 
 <pre><code>$ git checkout testing</code></pre>
 
@@ -71,13 +71,13 @@ $ git commit -a -m &#39;petite modification&#39;</code></pre>
 <pre><code>$ vim test.rb
 $ git commit -a -m &#39;autres modifications&#39;</code></pre>
 
-<p>Maintenant, l&#8217;historique du projet a divergé (voir figure 3-9). Vous avez créé une branche et basculé dessus, avez réalisé des modifications, puis avez rebasculé sur la branche principale et réalisé d&#8217;autre modifications. Ces deux modifications sont isolées dans des branches séparées. Vous pouvez basculer d&#8217;une branche à l&#8217;autre et les fusionner quand vous êtes prêt. Vous avez fait tout ceci avec de simples commandes <code>branch</code> et <code>checkout</code>.</p>
+<p>Maintenant, l&#8217;historique du projet a divergé (voir figure 3-9). Vous avez créé une branche et basculé dessus, avez réalisé des modifications, puis avez rebasculé sur la branche principale et réalisé d&#8217;autres modifications. Ces deux modifications sont isolées dans des branches séparées. Vous pouvez basculer d&#8217;une branche à l&#8217;autre et les fusionner quand vous êtes prêt. Vous avez fait tout ceci avec de simples commandes <code>branch</code> et <code>checkout</code>.</p>
 
 <p><center><img src="/figures/ch3/18333fig0309-tn.png"></center><br/> Figure 3-9. Les historiques de branche ont divergé.</p>
 
 <p>Parce que dans Git, une branche n&#8217;est en fait qu&#8217;un simple fichier contenant les 40 caractères de la somme de contrôle SHA-1 du commit sur lequel elle pointe, les branches ne coûtent rien à créer et détruire. Créer une branche est aussi rapide qu&#8217;écrire un fichier de 41 caractères (40 caractères plus un retour chariot).</p>
 
-<p>C&#8217;est une différence de taille avec la manière dont la plupart des VCSs gèrent les branches, qui implique de copier tous les fichiers du projet dans un second répertoire. Cela peut durer plusieurs secondes ou même quelques minutes selon la taille du projet, alors que pour Git, le processus est toujours instantané. De plus, comme nous enregistrons les parents quand nous validons les modifications, la détermination de l&#8217;ancêtre commun pour la fusion est réalisée automatiquement, et de manière très facile. Ces fonctionnalités encouragent naturellement les développeurs à créer et utiliser souvent des branches.</p>
+<p>C&#8217;est une différence de taille avec la manière dont la plupart des VCS gèrent les branches, qui implique de copier tous les fichiers du projet dans un second répertoire. Cela peut durer plusieurs secondes ou même quelques minutes selon la taille du projet, alors que pour Git, le processus est toujours instantané. De plus, comme nous enregistrons les parents quand nous validons les modifications, la détermination de l&#8217;ancêtre commun pour la fusion est réalisée automatiquement et de manière très facile. Ces fonctionnalités encouragent naturellement les développeurs à créer et utiliser souvent des branches.</p>
 
 <p>Voyons pourquoi vous devriez en faire autant.</p>
 

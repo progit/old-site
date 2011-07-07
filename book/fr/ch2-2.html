@@ -33,7 +33,7 @@ $ git status
 #	LISEZMOI
 nothing added to commit but untracked files present (use &quot;git add&quot; to track)</code></pre>
 
-<p>Vous pouvez constater que votre nouveau fichier LISEZMOI n&#8217;est pas en suivi de version, car il apparaît dans la section &#8220;Untracked files&#8221; de l&#8217;état de la copie de travail. &#8220;Untracked&#8221; signifie simplement que Git détecte un fichier qui n&#8217;était pas présent dans le dernier instantané ; Git ne la placera sous suivi en version que quand vous lui indiquer de le faire. Ce comportement permet de ne pas placer accidentellement sous suivi de version des fichiers binaires générés ou d&#8217;autres fichiers que vous ne voulez pas inclure. Mais vous voulez inclure le fichier LISEZMOI dans l&#8217;instantané, alors commençons à suivre ce fichier.</p>
+<p>Vous pouvez constater que votre nouveau fichier LISEZMOI n&#8217;est pas en suivi de version, car il apparaît dans la section &#8220;Untracked files&#8221; de l&#8217;état de la copie de travail. &#8220;Untracked&#8221; signifie simplement que Git détecte un fichier qui n&#8217;était pas présent dans le dernier instantané ; Git ne le placera sous suivi en version que quand vous lui indiquerez de le faire. Ce comportement permet de ne pas placer accidentellement sous suivi de version des fichiers binaires générés ou d&#8217;autres fichiers que vous ne voulez pas inclure. Mais vous voulez inclure le fichier LISEZMOI dans l&#8217;instantané, alors commençons à suivre ce fichier.</p>
 
 <h3 id='placer_de_nouveaux_fichiers_sous_suivi_de_version'>Placer de nouveaux fichiers sous suivi de version</h3>
 
@@ -274,7 +274,7 @@ index 3cb747f..e445e28 100644
 ~
 &quot;.git/COMMIT_EDITMSG&quot; 10L, 283C</code></pre>
 
-<p>Vous constatez que le message de validation par défaut contient une ligne vide suivie en commentaire le résultat de la commande <code>git status</code>. Vous pouvez effacer ces lignes de commentaire et saisir votre propre message de validation, ou vous pouvez les laisser en place vous aider à vous rappeler de ce que vous êtes en train de valider (pour un rappel plus explicite de ce que vous avez modifié, vous pouvez aussi passer l&#8217;option <code>-v</code> à la commande <code>git commit</code>. Cette option place le résultat du diff en commentaire dans l&#8217;éditeur pour vous permettre de visualiser exactement ce que vous avez modifié). Quand vous quittez l&#8217;éditeur (après avoir sauvegardé le message), Git crée votre validation avec ce message de validation (après avoir retiré les commentaires et le diff).</p>
+<p>Vous constatez que le message de validation par défaut contient une ligne vide suivie en commentaire le résultat de la commande <code>git status</code>. Vous pouvez effacer ces lignes de commentaire et saisir votre propre message de validation, ou vous pouvez les laisser en place vous aider à vous rappeler de ce que vous êtes en train de valider (pour un rappel plus explicite de ce que vous avez modifié, vous pouvez aussi passer l&#8217;option <code>-v</code> à la commande <code>git commit</code>. Cette option place le résultat du diff en commentaire dans l&#8217;éditeur pour vous permettre de visualiser exactement ce que vous avez modifié). Quand vous quittez l&#8217;éditeur (après avoir sauvegardé le message), Git crée votre commit avec ce message de validation (après avoir retiré les commentaires et le diff).</p>
 
 <p>D&#8217;une autre manière, vous pouvez spécifier votre message de validation en ligne avec la commande <code>commit</code> en le saisissant après l&#8217;option <code>-m</code>, de cette manière :</p>
 
@@ -343,7 +343,7 @@ $ git status
 
 <pre><code>$ git rm log/\*.log</code></pre>
 
-<p>Notez bien l&#8217;antislash (<code>\</code>) devant <code>*</code>. Il est nécessaire d&#8217;échapper le caractère <code>*</code> car Git utilise sa propre expansion de nom de fichier en addition de l&#8217;expansion du shell. Cette commande efface tous le fichiers avec l&#8217;extension <code>.log</code> présents dans le répertoire <code>log/</code>. Vous pouvez aussi lancer une commande telle que :</p>
+<p>Notez bien l&#8217;antislash (<code>\</code>) devant <code>*</code>. Il est nécessaire d&#8217;échapper le caractère <code>*</code> car Git utilise sa propre expansion de nom de fichier en addition de l&#8217;expansion du shell. Cette commande efface tous les fichiers avec l&#8217;extension <code>.log</code> présents dans le répertoire <code>log/</code>. Vous pouvez aussi lancer une commande telle que :</p>
 
 <pre><code>$ git rm \*~</code></pre>
 

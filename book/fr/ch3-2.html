@@ -1,8 +1,8 @@
 ---
 layout: translation
-title: Pro Git 3.2 Les branches avec Git Brancher et fusionner - les bases
+title: Pro Git 3.2 Les branches avec Git Brancher et fusionner : les bases
 ---
-<h2 id='brancher_et_fusionner__les_bases'>Brancher et fusionner - les bases</h2>
+<h2 id='brancher_et_fusionner_les_bases'>Brancher et fusionner : les bases</h2>
 
 <p>Suivons un exemple simple de branche et fusion dans une utilisation que vous feriez dans le monde réel. Vous feriez les étapes suivantes :</p>
 
@@ -21,7 +21,7 @@ title: Pro Git 3.2 Les branches avec Git Brancher et fusionner - les bases
 
 <li>Créer une branche et y développer le correctif</li>
 
-<li>Après qu&#8217;il a été testé, fusionner la branche de correctif et pousser le résultat à la production</li>
+<li>Après un test, fusionner la branche de correctif et pousser le résultat à la production</li>
 
 <li>Rebasculer à la branche initiale et continuer le travail</li>
 </ol>
@@ -73,7 +73,7 @@ $ git commit -a -m &quot;correction d&#39;une adresse mail incorrecte&quot;
 
 <p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> Figure 3-13. Branche de correctif basée à partir de la branche master.</p>
 
-<p>Vous pouvez lancer vos tests, vous assurer que la correction est efficace, et la fusionner dans la branche master pour la déployer en production. Vous réalisez ceci au moyen de la commande <code>git merge</code> :</p>
+<p>Vous pouvez lancer vos tests, vous assurer que la correction est efficace et la fusionner dans la branche master pour la déployer en production. Vous réalisez ceci au moyen de la commande <code>git merge</code> :</p>
 
 <pre><code>$ git checkout master
 $ git merge correctif
@@ -84,7 +84,7 @@ Fast forward
 
 <p>Vous noterez la mention &#8220;Fast forward&#8221; qui signifie avance rapide dans cette fusion. Comme le commit pointé par la branche que vous avez fusionné était directement descendant du commit sur lequel vous vous trouvez, Git a avancé le pointeur en avant. Autrement dit, lorsque l&#8217;on cherche à fusionner un commit qui peut être joint en suivant l&#8217;historique depuis le commit d&#8217;origine, Git avance simplement le pointeur car il n&#8217;y a pas de travaux divergeant à réellement fusionner — ceci s&#8217;appelle l&#8217;avance rapide.</p>
 
-<p>Votre modification est maintenant dans l&#8217;instantané du commit pointé par la branche <code>master</code>, et vous pouvez déployer votre modification (voir figure 3-14)</p>
+<p>Votre modification est maintenant dans l&#8217;instantané du commit pointé par la branche <code>master</code> et vous pouvez déployer votre modification (voir figure 3-14)</p>
 
 <p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> Figure 3-14. Après la fusion, votre branche master pointe au même endroit que la correction.</p>
 
@@ -93,7 +93,7 @@ Fast forward
 <pre><code>$ git branch -d correctif
 Deleted branch correctif (3a0874c).</code></pre>
 
-<p>Maintenant, il est temps de basculer sur la branch &#8220;travaux en cours&#8221; sur le problème #53 et de continuer à travailler dessus (voir figure 3-15) :</p>
+<p>Maintenant, il est temps de basculer sur la branche &#8220;travaux en cours&#8221; sur le problème #53 et de continuer à travailler dessus (voir figure 3-15) :</p>
 
 <pre><code>$ git checkout prob53
 Switched to branch &quot;prob53&quot;
@@ -122,7 +122,7 @@ Merge made by recursive.
 
 <p>Au lieu de simplement d&#8217;avancer le pointeur de branche, Git crée un nouvel instantané qui résulte de la fusion à trois branches et crée automatiquement un nouveau commit qui pointe dessus (voir figure 3-17). On appelle ceci un commit de fusion, qui est spécial en ce qu&#8217;il comporte plus d&#8217;un parent.</p>
 
-<p>Il est à noter que que Git détermine par lui-même le meilleur ancêtre commun à utiliser comme base de fusion ; ce comportement est très différent de celui de CVS ou Subversion (antérieur à la version 1.5), où le développeur en charge de la fusion doit trouver par lui-même la meilleure base de fusion. Cela rend la fusion tellement plus facile dans Git que dans les autres systèmes.</p>
+<p>Il est à noter que Git détermine par lui-même le meilleur ancêtre commun à utiliser comme base de fusion ; ce comportement est très différent de celui de CVS ou Subversion (antérieur à la version 1.5), où le développeur en charge de la fusion doit trouver par lui-même la meilleure base de fusion. Cela rend la fusion tellement plus facile dans Git que dans les autres systèmes.</p>
 
 <p><center><img src="/figures/ch3/18333fig0317-tn.png"></center><br/> Figure 3-17. Git crée automatiquement un nouvel objet commit qui contient le travail fusionné.</p>
 
@@ -151,7 +151,7 @@ index.html: needs merge
 #	unmerged:   index.html
 #</code></pre>
 
-<p>Tout ce qui comporte des conflits de fusion et n&#8217;a pas été résolu est listé comme <code>unmerged</code>. Git ajoute des marques de conflit standard dans les fichiers qui comportent des conflit, pour que vous puissiez les ouvrir et résoudre les conflits manuellement. Votre fichier contient des sections qui ressemblent à ceci :</p>
+<p>Tout ce qui comporte des conflits de fusion et n&#8217;a pas été résolu est listé comme <code>unmerged</code>. Git ajoute des marques de conflit standard dans les fichiers qui comportent des conflits, pour que vous puissiez les ouvrir et résoudre les conflits manuellement. Votre fichier contient des sections qui ressemblent à ceci :</p>
 
 <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html
 &lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
@@ -167,7 +167,7 @@ index.html: needs merge
 please contact us at email.support@github.com
 &lt;/div&gt;</code></pre>
 
-<p>Cette résolution comporte des parties de chaque section, et les lignes <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, et <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> ont été complètement effacées. Après avoir résolu chacune de ces sections dans chaque fichier comportant un conflit, lancez <code>git add</code> sur chaque fichier pour le marquer comme résolu. Préparer le fichier en zone de préparation suffit à le marquer résolu pour Git. Si vous souhaitez utiliser un outil graphique pour résoudre ces problèmes, vous pouvez lancer <code>git mergetool</code> qui démarre l&#8217;outil graphique de fusion approprié et vous permet de naviguer dans les conflits :</p>
+<p>Cette résolution comporte des parties de chaque section et les lignes <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code> et <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> ont été complètement effacées. Après avoir résolu chacune de ces sections dans chaque fichier comportant un conflit, lancez <code>git add</code> sur chaque fichier pour le marquer comme résolu. Préparer le fichier en zone de préparation suffit à le marquer résolu pour Git. Si vous souhaitez utiliser un outil graphique pour résoudre ces problèmes, vous pouvez lancer <code>git mergetool</code> qui démarre l&#8217;outil graphique de fusion approprié et vous permet de naviguer dans les conflits :</p>
 
 <pre><code>$ git mergetool
 merge tool candidates: kdiff3 tkdiff xxdiff meld gvimdiff opendiff emerge vimdiff
@@ -205,7 +205,7 @@ Conflicts:
 # and try again.
 #</code></pre>
 
-<p>Vous pouvez modifier ce message pour inclure les détails sur la résolution du conflit si vous pensez que cela peut être utile lors d&#8217;une revue ultérieure es— pourquoi vous avez fait ceci si ce n&#8217;est pas clair.</p>
+<p>Vous pouvez modifier ce message pour inclure les détails sur la résolution du conflit si vous pensez que cela peut être utile lors d&#8217;une revue ultérieure — pourquoi vous avez fait ceci si ce n&#8217;est pas clair.</p>
 
 <div id='nav'>
 <a href='ch3-1.html'>prev</a> | <a href='ch3-3.html'>next</a>

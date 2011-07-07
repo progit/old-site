@@ -1,51 +1,51 @@
 ---
 layout: translation
-title: Pro Git 7.2 Customizing Git Git Attributes
+title: Pro Git 7.2 Personnalisation de Git Attributs Git
 ---
-<h2 id='git_attributes'>Git Attributes</h2>
+<h2 id='attributs_git'>Attributs Git</h2>
 
-<p>Some of these settings can also be specified for a path, so that Git applies those settings only for a subdirectory or subset of files. These path-specific settings are called Git attributes and are set either in a <code>.gitattributes</code> file in one of your directories (normally the root of your project) or in the <code>.git/info/attributes</code> file if you don’t want the attributes file committed with your project.</p>
+<p>Certains de ces réglages peuvent aussi s&#8217;appliquer sur un chemin, de telle sorte que Git ne les applique que sur un sous-répertoire ou un sous-ensemble de fichiers. Ces réglages par chemin sont appelés attributs Git et sont définis soit dans une fichier <code>.gitattributes</code> dans un répertoire (normalement la racine du projet), soit dans un fichier <code>.git/info/attributes</code> si vous ne souhaitez pas que la fichier de description des attributs fasse partie du projet.</p>
 
-<p>Using attributes, you can do things like specify separate merge strategies for individual files or directories in your project, tell Git how to diff non-text files, or have Git filter content before you check it into or out of Git. In this section, you’ll learn about some of the attributes you can set on your paths in your Git project and see a few examples of using this feature in practice.</p>
+<p>Les attributs permettent de spécifier des stratégies de fusion différentes pour certains fichiers ou répertoires dans votre projet, d&#8217;indiquer à Git la manière de calculer les différences pour certains fichiers non-texte, ou de faire filtrer à Git le contenu avant qu&#8217;il ne soit validé ou extrait. Dans ce chapitre, nous traiterons certains attributs applicables aux chemins et détaillerons quelques exemples de leur utilisation en pratique.</p>
 
-<h3 id='binary_files'>Binary Files</h3>
+<h3 id='fichiers_binaires'>Fichiers binaires</h3>
 
-<p>One cool trick for which you can use Git attributes is telling Git which files are binary (in cases it otherwise may not be able to figure out) and giving Git special instructions about how to handle those files. For instance, some text files may be machine generated and not diffable, whereas some binary files can be diffed — you’ll see how to tell Git which is which.</p>
+<p>Un des trucs malins auxquels les attributs Git sont utilisés est d&#8217;indiquer à Git quels fichiers sont binaires (dans les cas où il ne pourrait pas le deviner par lui-même) et de lui donner les instructions spécifiques pour les traiter. Par exemple, certains fichiers peuvent être générés par machine et impossible à traiter par diff, tandis que pour certains autres fichiers binaires, les différences peuvent être calculées. Nous détaillerons comment indiquer à Git l&#8217;un et l&#8217;autre.</p>
 
-<h4 id='identifying_binary_files'>Identifying Binary Files</h4>
+<h4 id='identification_des_fichiers_binaires'>Identification des fichiers binaires</h4>
 
-<p>Some files look like text files but for all intents and purposes are to be treated as binary data. For instance, Xcode projects on the Mac contain a file that ends in <code>.pbxproj</code>, which is basically a JSON (plain text javascript data format) dataset written out to disk by the IDE that records your build settings and so on. Although it’s technically a text file, because it’s all ASCII, you don’t want to treat it as such because it’s really a lightweight database — you can’t merge the contents if two people changed it, and diffs generally aren’t helpful. The file is meant to be consumed by a machine. In essence, you want to treat it like a binary file.</p>
+<p>Certains fichiers ressemblent à des fichiers texte mais doivent en tout état de cause être traités comme des fichiers binaires. Par exemple, les projets Xcode sous Mac contiennent un fichier finissant en <code>.pbxproj</code>, qui est en fait un jeu de données JSON (format de données en texte javascript) enregistré par l&#8217;application EDI pour y sauver les réglages entre autres de compilation. Bien que ce soit techniquement un fichier texte en ASCII, il n&#8217;y a aucun intérêt à le gérer comme tel parce que c&#8217;est en fait une mini base de données. Il est impossible de fusionner les contenus si deux utilisateurs le modifient et les calculs de différence par défaut sont inutiles. Ce fichier n&#8217;est destiné qu&#8217;à être manipulé par un programme En résumé, ce fichier doit être considéré comme un fichier binaire.</p>
 
-<p>To tell Git to treat all <code>pbxproj</code> files as binary data, add the following line to your <code>.gitattributes</code> file:</p>
+<p>Pour indiquer à Git de traiter tous les fichiers <code>pbxproj</code> comme binaires, ajoutez la ligne suivante à votre fichier <code>.gitattributes</code> :</p>
 
 <pre><code>*.pbxproj -crlf -diff</code></pre>
 
-<p>Now, Git won’t try to convert or fix CRLF issues; nor will it try to compute or print a diff for changes in this file when you run git show or git diff on your project. In the 1.6 series of Git, you can also use a macro that is provided that means <code>-crlf -diff</code>:</p>
+<p>À présent, Git n&#8217;essaiera pas de convertir ou de corriger les problèmes des CRLF, ni de calculer ou d&#8217;afficher les différences pour ces fichiers quand vous lancez git show ou git diff sur votre projet. Dans la branche 1.6 de Git, vous pouvez aussi utiliser une macro fournie qui signifie <code>-crlf -diff</code> :</p>
 
 <pre><code>*.pbxproj binary</code></pre>
 
-<h4 id='diffing_binary_files'>Diffing Binary Files</h4>
+<h4 id='comparaison_de_fichiers_binaires'>Comparaison de fichiers binaires</h4>
 
-<p>In the 1.6 series of Git, you can use the Git attributes functionality to effectively diff binary files. You do this by telling Git how to convert your binary data to a text format that can be compared via the normal diff.</p>
+<p>Dans la branche 1.6 de Git, vous pouvez utiliser la fonctionnalité des attributs Git pour effectivement comparer les fichiers binaires. Pour ce faire, indiquez à Git comment convertir vos données binaires en format texte qui peut être comparé via un diff normal.</p>
 
-<p>Because this is a pretty cool and not widely known feature, I’ll go over a few examples. First, you’ll use this technique to solve one of the most annoying problems known to humanity: version-controlling Word documents. Everyone knows that Word is the most horrific editor around; but, oddly, everyone uses it. If you want to version-control Word documents, you can stick them in a Git repository and commit every once in a while; but what good does that do? If you run <code>git diff</code> normally, you only see something like this:</p>
+<p>Comme c&#8217;est une fonctionnalité plutôt cool et peu connue, nous allons en voir quelques exemples. Premièrement, nous utiliserons cette technique pour résoudre un des problèmes les plus ennuyeux de l&#8217;humanité : gérer en contrôle de version les document Word. Tout le monde convient que Word est l&#8217;éditeur de texte le plus horrible qui existe, mais bizarrement, tout le monde persiste à l&#8217;utiliser. Si vous voulez gérer en version des documents Word, vous pouvez les coller dans un dépôt Git et les valider de temps à autre. Mais qu&#8217;est-ce que ça vous apporte ? Si vous lancez <code>git diff</code> normalement, vous verrez quelque chose comme :</p>
 
 <pre><code>$ git diff 
 diff --git a/chapter1.doc b/chapter1.doc
 index 88839c4..4afcb7c 100644
 Binary files a/chapter1.doc and b/chapter1.doc differ</code></pre>
 
-<p>You can’t directly compare two versions unless you check them out and scan them manually, right? It turns out you can do this fairly well using Git attributes. Put the following line in your <code>.gitattributes</code> file:</p>
+<p>Vous ne pouvez pas comparer directement les versions à moins de les extraire et de les parcourir manuellement. En fait, vous pouvez faire la même chose plutôt bien en utilisant les attributs Git. Ajoutez la ligne suivante dans votre fichier <code>.gitattributes</code> :</p>
 
 <pre><code>*.doc diff=word</code></pre>
 
-<p>This tells Git that any file that matches this pattern (.doc) should use the &#8220;word&#8221; filter when you try to view a diff that contains changes. What is the &#8220;word&#8221; filter? You have to set it up. Here you’ll configure Git to use the <code>strings</code> program to convert Word documents into readable text files, which it will then diff properly:</p>
+<p>Cette ligne indique à Git que tout fichier correspondant au patron (.doc) doit utiliser le filtre <code>word</code> pour visualiser le diff des modifications. Qu&#8217;est-ce que le filtre « word » ? Nous devons le définir. Vous allez configurer Git à utiliser le programme <code>strings</code> pour convertir les documents Word en fichiers texte lisibles qu&#8217;il pourra alors comparer correctement :</p>
 
 <pre><code>$ git config diff.word.textconv strings</code></pre>
 
-<p>Now Git knows that if it tries to do a diff between two snapshots, and any of the files end in <code>.doc</code>, it should run those files through the &#8220;word&#8221; filter, which is defined as the <code>strings</code> program. This effectively makes nice text-based versions of your Word files before attempting to diff them.</p>
+<p>À présent, Git sait que s&#8217;il essaie de faire un diff entre deux instantanés et qu&#8217;un des fichiers finit en <code>.doc</code>, il devrait faire passer ces fichiers par le filtre <code>word</code> définit comme le programme <code>strings</code>. Cette méthode fait effectivement des jolies versions texte de vos fichiers Word avant d&#8217;essayer de les comparer.</p>
 
-<p>Here’s an example. I put Chapter 1 of this book into Git, added some text to a paragraph, and saved the document. Then, I ran <code>git diff</code> to see what changed:</p>
+<p>Voici un exemple. J&#8217;ai mis le chapitre 1 de ce livre dans Git, ajouté du texte à un paragraphe et sauvegardé le document. Puis, j&#8217;ai lancé <code>git diff</code> pour visualiser ce qui a changé :</p>
 
 <pre><code>$ git diff
 diff --git a/chapter1.doc b/chapter1.doc
@@ -60,89 +60,89 @@ index c1c8a0a..b93c9e4 100644
 +s going on, modify stuff and contribute changes. If the book spontaneously 
 +Let&#39;s see if this works.</code></pre>
 
-<p>Git successfully and succinctly tells me that I added the string &#8220;Let’s see if this works&#8221;, which is correct. It’s not perfect — it adds a bunch of random stuff at the end — but it certainly works. If you can find or write a Word-to-plain-text converter that works well enough, that solution will likely be incredibly effective. However, <code>strings</code> is available on most Mac and Linux systems, so it may be a good first try to do this with many binary formats.</p>
+<p>Git réussit à m&#8217;indiquer succinctement que j&#8217;ai ajouté la chaîne « <em>Let&#8217;s see if this works</em> », ce qui est correct. Ce n&#8217;est pas parfait, car il y a toujours un tas de données aléatoires à la fin, mais c&#8217;est suffisant. Si vous êtes capable d&#8217;écrire un convertisseur Word vers texte qui fonctionne suffisamment bien, cette solution peut s&#8217;avérer très efficace. Cependant, <code>strings</code> est disponible sur la plupart des systèmes Mac et Linux et peut donc constituer un bon début pour de nombreux formats binaires.</p>
 
-<p>Another interesting problem you can solve this way involves diffing image files. One way to do this is to run JPEG files through a filter that extracts their EXIF information — metadata that is recorded with most image formats. If you download and install the <code>exiftool</code> program, you can use it to convert your images into text about the metadata, so at least the diff will show you a textual representation of any changes that happened:</p>
+<p>Un autre problème intéressant concerne la comparaison de fichiers d&#8217;images. Une méthode consiste à faire passer les fichiers JPEG à travers un filtre qui extrait les données EXIF, les méta-données enregistrées avec la plupart de formats d&#8217;image. Si vous téléchargez et installez le programme <code>exiftool</code>, vous pouvez l&#8217;utiliser pour convertir vos images en texte de méta-données de manière que le diff puisse au moins montrer une représentation textuelle des modifications pratiquées :</p>
 
 <pre><code>$ echo &#39;*.png diff=exif&#39; &gt;&gt; .gitattributes
 $ git config diff.exif.textconv exiftool</code></pre>
 
-<p>If you replace an image in your project and run <code>git diff</code>, you see something like this:</p>
+<p>Si vous remplacez une image dans votre projet et lancez <code>git diff</code>, vous verrez ceci :</p>
 
 <pre><code>diff --git a/image.png b/image.png
 index 88839c4..4afcb7c 100644
 --- a/image.png
 +++ b/image.png
 @@ -1,12 +1,12 @@
- ExifTool Version Number         : 7.74
--File Size                       : 70 kB
--File Modification Date/Time     : 2009:04:21 07:02:45-07:00
-+File Size                       : 94 kB
-+File Modification Date/Time     : 2009:04:21 07:02:43-07:00
- File Type                       : PNG
- MIME Type                       : image/png
--Image Width                     : 1058
--Image Height                    : 889
-+Image Width                     : 1056
-+Image Height                    : 827
- Bit Depth                       : 8
- Color Type                      : RGB with Alpha</code></pre>
+ ExifTool Version Number         : 7.74
+-File Size                       : 70 kB
+-File Modification Date/Time     : 2009:04:21 07:02:45-07:00
++File Size                       : 94 kB
++File Modification Date/Time     : 2009:04:21 07:02:43-07:00
+ File Type                       : PNG
+ MIME Type                       : image/png
+-Image Width                     : 1058
+-Image Height                    : 889
++Image Width                     : 1056
++Image Height                    : 827
+ Bit Depth                       : 8
+ Color Type                      : RGB with Alpha</code></pre>
 
-<p>You can easily see that the file size and image dimensions have both changed.</p>
+<p>Vous pouvez réaliser rapidement que la taille du fichier et les dimensions des images ont toutes deux changé.</p>
 
-<h3 id='keyword_expansion'>Keyword Expansion</h3>
+<h3 id='expansion_des_motscls'>Expansion des mots-clés</h3>
 
-<p>SVN- or CVS-style keyword expansion is often requested by developers used to those systems. The main problem with this in Git is that you can’t modify a file with information about the commit after you’ve committed, because Git checksums the file first. However, you can inject text into a file when it’s checked out and remove it again before it’s added to a commit. Git attributes offers you two ways to do this.</p>
+<p>L&#8217;expansion de mots-clés dans le style de CVS ou de SVN est souvent une fonctionnalité demandée par les développeurs qui y sont habitués. Le problème principal de ce système avec Git et que vous ne pouvez pas modifier un fichier avec l&#8217;information concernant le commit après la validation parce que Git calcule justement la somme de contrôle sur son contenu. Cependant, vous pouvez injecter des informations textuelles dans un fichier au moment où il est extrait et les retirer avant qu&#8217;il ne soit ajouté à une validation. Les attributs Git vous fournissent deux manières de le faire.</p>
 
-<p>First, you can inject the SHA-1 checksum of a blob into an <code>$Id$</code> field in the file automatically. If you set this attribute on a file or set of files, then the next time you check out that branch, Git will replace that field with the SHA-1 of the blob. It’s important to notice that it isn’t the SHA of the commit, but of the blob itself:</p>
+<p>Premièrement, vous pouvez injecter automatiquement la somme de contrôle SHA-1 d&#8217;un blob dans un champ <code>$Id$</code> d&#8217;un fichier. Si vous positionnez cet attribut pour un fichier ou un ensemble de fichiers, la prochaine fois que vous extrairez cette branche, Git remplacera chaque champ avec le SHA-1 du blob. Il est à noter que ce n&#8217;est pas le SHA du commit mais celui du blob lui-même :</p>
 
 <pre><code>$ echo &#39;*.txt ident&#39; &gt;&gt; .gitattributes
 $ echo &#39;$Id$&#39; &gt; test.txt</code></pre>
 
-<p>The next time you check out this file, Git injects the SHA of the blob:</p>
+<p>À la prochaine extraction de ce fichier, Git injecte le SHA du blob :</p>
 
 <pre><code>$ rm text.txt
 $ git checkout -- text.txt
 $ cat test.txt 
 $Id: 42812b7653c7b88933f8a9d6cad0ca16714b9bb3 $</code></pre>
 
-<p>However, that result is of limited use. If you’ve used keyword substitution in CVS or Subversion, you can include a datestamp — the SHA isn’t all that helpful, because it’s fairly random and you can’t tell if one SHA is older or newer than another.</p>
+<p>Néanmoins, ce résultat n&#8217;a que peu d&#8217;intérêt. Si vous avez utilisé la substitution avec CVS ou Subversion, il est possible d&#8217;inclure la date. Le code SHA n&#8217;est pas des plus utiles car il est plutôt aléatoire et ne vous permet pas de distinguer si tel SHA est plus récent ou ancien que tel autre.</p>
 
-<p>It turns out that you can write your own filters for doing substitutions in files on commit/checkout. These are the &#8220;clean&#8221; and &#8220;smudge&#8221; filters. In the <code>.gitattributes</code> file, you can set a filter for particular paths and then set up scripts that will process files just before they’re committed (&#8220;clean&#8221;, see Figure 7-2) and just before they’re checked out (&#8220;smudge&#8221;, see Figure 7-3). These filters can be set to do all sorts of fun things.</p>
+<p>Il apparaît que vous pouvez écrire vos propres filtres pour réaliser des substitutions dans les fichiers lors des validations/extractions. Ces filtres s&#8217;appellent « <em>clean</em> » et « <em>smudge</em> ». Dans le fichier <code>.gitattributes</code>, vous pouvez indiquer un filtre pour des chemins particuliers puis créer des scripts qui traiterons ces fichiers avant qu&#8217;ils soient validés (« <em>clean</em> », voir figure 7-2) et juste avant qu&#8217;il soient extraits (« <em>smudge</em> », voir figure 7-3). Ces filtres peuvent servir à faire toutes sortes de choses attrayantes.</p>
 
-<p><center><img src="/figures/ch7/18333fig0702-tn.png"></center><br/> Figure 7-2. The “smudge” filter is run on checkout.</p>
+<p><center><img src="/figures/ch7/18333fig0702-tn.png"></center><br/> Figure 7-2. Le filtre « <em>smudge</em> » est lancé lors d&#8217;une extraction.</p>
 
-<p><center><img src="/figures/ch7/18333fig0703-tn.png"></center><br/> Figure 7-3. The “clean” filter is run when files are staged.</p>
+<p><center><img src="/figures/ch7/18333fig0703-tn.png"></center><br/> Figure 7-3. Le filtre « <em>clean</em> » est lancé lorsque les fichiers sont indexés.</p>
 
-<p>The original commit message for this functionality gives a simple example of running all your C source code through the <code>indent</code> program before committing. You can set it up by setting the filter attribute in your <code>.gitattributes</code> file to filter <code>*.c</code> files with the &#8220;indent&#8221; filter:</p>
+<p>Le message de validation d&#8217;origine pour cette fonctionnalité donne un exemple simple permettant de passer tout votre code C par le programme <code>indent</code> avant de valider. Vous pouvez le faire en réglant l&#8217;attribut <code>filter</code> dans votre fichier <code>.gitattributes</code> pour filtrer les fichiers <code>*.c</code> avec le filtre « indent » :</p>
 
 <pre><code>*.c     filter=indent</code></pre>
 
-<p>Then, tell Git what the &#8220;indent&#8221;&#8221; filter does on smudge and clean:</p>
+<p>Ensuite, indiquez à Git ce que le filtre « indent » fait sur smudge et clean :</p>
 
 <pre><code>$ git config --global filter.indent.clean indent
 $ git config --global filter.indent.smudge cat</code></pre>
 
-<p>In this case, when you commit files that match <code>*.c</code>, Git will run them through the indent program before it commits them and then run them through the <code>cat</code> program before it checks them back out onto disk. The <code>cat</code> program is basically a no-op: it spits out the same data that it gets in. This combination effectively filters all C source code files through <code>indent</code> before committing.</p>
+<p>Dans ce cas, quand vous validez des fichiers qui correspondent à <code>*.c</code>, Git les fera passer par le programme <code>indent</code> avant de les valider et les fera passer par le programme <code>cat</code> avant de les extraire sur votre disque. Le programme <code>cat</code> ne fait rien : il se contente de régurgiter les données telles qu&#8217;il les a lues. Cette combinaison filtre effectivement tous les fichiers de code source C par <code>indent</code> avant leur validation.</p>
 
-<p>Another interesting example gets <code>$Date$</code> keyword expansion, RCS style. To do this properly, you need a small script that takes a filename, figures out the last commit date for this project, and inserts the date into the file. Here is a small Ruby script that does that:</p>
+<p>Un autre exemple intéressant fournit l&#8217;expansion du mot-clé <code>$Date$</code> dans le style RCS. Pour le réaliser correctement, vous avez besoin d&#8217;un petit script qui prend un nom de fichier, calcule la date de la dernière validation pour le projet et l&#8217;insère dans le fichier. Voici un petit script Ruby qui le fait :</p>
 
 <pre><code>#! /usr/bin/env ruby
 data = STDIN.read
 last_date = `git log --pretty=format:&quot;%ad&quot; -1`
 puts data.gsub(&#39;$Date$&#39;, &#39;$Date: &#39; + last_date.to_s + &#39;$&#39;)</code></pre>
 
-<p>All the script does is get the latest commit date from the <code>git log</code> command, stick that into any <code>$Date$</code> strings it sees in stdin, and print the results — it should be simple to do in whatever language you’re most comfortable in. You can name this file <code>expand_date</code> and put it in your path. Now, you need to set up a filter in Git (call it <code>dater</code>) and tell it to use your <code>expand_date</code> filter to smudge the files on checkout. You’ll use a Perl expression to clean that up on commit:</p>
+<p>Tout ce que le script fait, c&#8217;est récupérer la date de la dernière validation à partir de la commande <code>git log</code>, la coller dans toutes les chaînes <code>$Date$</code> qu&#8217;il trouve et afficher le résultat. Ce devrait être simple dans n&#8217;importe quel langage avec lequel vous êtes à l&#8217;aise. Si vous appelez ce fichier <code>expand_date</code> et que vous le placez dans votre chemin. À présent, il faut paramétrer un filtre dans Git (appelons le <code>dater</code>) et lui indiquer d&#8217;utiliser le filtre <code>expand_date</code> en tant que <code>smudge</code> sur les fichiers à extraire. Nous utiliserons une expression Perl pour nettoyer lors d&#8217;une validation :</p>
 
 <pre><code>$ git config filter.dater.smudge expand_date
 $ git config filter.dater.clean &#39;perl -pe &quot;s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/&quot;&#39;</code></pre>
 
-<p>This Perl snippet strips out anything it sees in a <code>$Date$</code> string, to get back to where you started. Now that your filter is ready, you can test it by setting up a file with your <code>$Date$</code> keyword and then setting up a Git attribute for that file that engages the new filter:</p>
+<p>Cette commande Perl extrait tout ce qu&#8217;elle trouve dans une chaîne <code>$Date$</code> et la réinitialise. Le filtre prêt, on peut le tester en écrivant le mot-clé <code>$Date$</code> dans un fichier, puis en créant un attribut Git pour ce fichier qui fait référence au nouveau filtre :</p>
 
 <pre><code>$ echo &#39;# $Date$&#39; &gt; date_test.txt
 $ echo &#39;date*.txt filter=dater&#39; &gt;&gt; .gitattributes</code></pre>
 
-<p>If you commit those changes and check out the file again, you see the keyword properly substituted:</p>
+<p>Si vous validez ces modifications et extrayez le fichier à nouveau, vous remarquez le mot-clé correctement substitué :</p>
 
 <pre><code>$ git add date_test.txt .gitattributes
 $ git commit -m &quot;Testing date expansion in Git&quot;
@@ -151,51 +151,51 @@ $ git checkout date_test.txt
 $ cat date_test.txt
 # $Date: Tue Apr 21 07:26:52 2009 -0700$</code></pre>
 
-<p>You can see how powerful this technique can be for customized applications. You have to be careful, though, because the <code>.gitattributes</code> file is committed and passed around with the project but the driver (in this case, <code>dater</code>) isn’t; so, it won’t work everywhere. When you design these filters, they should be able to fail gracefully and have the project still work properly.</p>
+<p>Vous pouvez voir à quel point cette technique peut être puissante pour des applications personnalisées. Il faut rester néanmoins vigilant car le fichier <code>.gitattributes</code> est validé et inclus dans le projet tandis que le gestionnaire (ici, <code>dater</code>) ne l&#8217;est pas. Du coup, ça ne marchera pas partout. Lorsque vous créez ces filtres, ils devraient pouvoir avoir un mode dégradé qui n&#8217;empêche pas le projet de fonctionner.</p>
 
-<h3 id='exporting_your_repository'>Exporting Your Repository</h3>
+<h3 id='export_dun_dpt'>Export d&#8217;un dépôt</h3>
 
-<p>Git attribute data also allows you to do some interesting things when exporting an archive of your project.</p>
+<p>Les données d&#8217;attribut Git permettent aussi de faire des choses intéressantes quand vous exportez une archive du projet.</p>
 
 <h4 id='exportignore'>export-ignore</h4>
 
-<p>You can tell Git not to export certain files or directories when generating an archive. If there is a subdirectory or file that you don’t want to include in your archive file but that you do want checked into your project, you can determine those files via the <code>export-ignore</code> attribute.</p>
+<p>Vous pouvez dire à Git de ne pas exporter certains fichiers ou répertoires lors de la génération d&#8217;archive. S&#8217;il y a un sous-répertoire ou un fichier que vous ne souhaitez pas inclure dans le fichier archive mais que vous souhaitez extraire dans votre projet, vous pouvez indiquer ce fichier via l&#8217;attribut <code>export-ignore</code>.</p>
 
-<p>For example, say you have some test files in a <code>test/</code> subdirectory, and it doesn’t make sense to include them in the tarball export of your project. You can add the following line to your Git attributes file:</p>
+<p>Par exemple, disons que vous avez des fichiers de test dans le sous-répertoire <code>test/</code> et que ce n&#8217;est pas raisonnable de les inclure dans l&#8217;archive d&#8217;export de votre projet. Vous pouvez ajouter la ligne suivante dans votre fichier d&#8217;attribut Git :</p>
 
 <pre><code>test/ export-ignore</code></pre>
 
-<p>Now, when you run git archive to create a tarball of your project, that directory won’t be included in the archive.</p>
+<p>À présent, quand vous lancez git archive pour créer une archive <code>tar</code> de votre projet, ce répertoire ne sera plus inclus dans l&#8217;archive.</p>
 
 <h4 id='exportsubst'>export-subst</h4>
 
-<p>Another thing you can do for your archives is some simple keyword substitution. Git lets you put the string <code>$Format:$</code> in any file with any of the <code>--pretty=format</code> formatting shortcodes, many of which you saw in Chapter 2. For instance, if you want to include a file named <code>LAST_COMMIT</code> in your project, and the last commit date was automatically injected into it when <code>git archive</code> ran, you can set up the file like this:</p>
+<p>Une autre chose à faire pour vos archives est une simple substitution de mots-clés. Git vous permet de placer la chaîne <code>$Format:$</code> dans n&#8217;importe quel fichier avec n&#8217;importe quel code de format du type <code>--pretty=format</code> que vous avez pu voir au chapitre 2. Par exemple, si vous voulez inclure un fichier appelé <code>LAST_COMMIT</code> dans votre projet et y injecter automatiquement la date de dernière validation lorsque <code>git archive</code> est lancé, vous pouvez créer un fichier comme ceci :</p>
 
 <pre><code>$ echo &#39;Last commit date: $Format:%cd$&#39; &gt; LAST_COMMIT
 $ echo &quot;LAST_COMMIT export-subst&quot; &gt;&gt; .gitattributes
 $ git add LAST_COMMIT .gitattributes
 $ git commit -am &#39;adding LAST_COMMIT file for archives&#39;</code></pre>
 
-<p>When you run <code>git archive</code>, the contents of that file when people open the archive file will look like this:</p>
+<p>Quand vous lancez <code>git archive</code>, le contenu de ce fichier inclus dans l&#8217;archive ressemblera à ceci :</p>
 
 <pre><code>$ cat LAST_COMMIT
 Last commit date: $Format:Tue Apr 21 08:38:48 2009 -0700$</code></pre>
 
-<h3 id='merge_strategies'>Merge Strategies</h3>
+<h3 id='stratgies_de_fusion'>Stratégies de fusion</h3>
 
-<p>You can also use Git attributes to tell Git to use different merge strategies for specific files in your project. One very useful option is to tell Git to not try to merge specific files when they have conflicts, but rather to use your side of the merge over someone else’s.</p>
+<p>Vous pouvez aussi utiliser les attributs Git pour indiquer à Git d&#8217;utiliser des stratégies de fusion différenciées pour des fichiers spécifiques dans votre projet. Une option très utile est d&#8217;indiquer à Git de ne pas essayer de fusionner des fichiers spécifiques quand ils rencontrent des conflits mais plutôt d&#8217;utiliser prioritairement votre version du fichier.</p>
 
-<p>This is helpful if a branch in your project has diverged or is specialized, but you want to be able to merge changes back in from it, and you want to ignore certain files. Say you have a database settings file called database.xml that is different in two branches, and you want to merge in your other branch without messing up the database file. You can set up an attribute like this:</p>
+<p>C&#8217;est très utile si une branche de votre projet a divergé ou s&#8217;est spécialisée, mais que vous souhaitez pouvoir fusionner les modifications qu&#8217;elle porte et vous voulez ignorer certains fichiers. Supposons que vous avez un fichier de paramètres de base de données appelé database.xml différent sur deux branches et vous voulez les fusionner sans corrompre le fichier de base de données. Vous pouvez déclarer un attribut comme ceci :</p>
 
 <pre><code>database.xml merge=ours</code></pre>
 
-<p>If you merge in the other branch, instead of having merge conflicts with the database.xml file, you see something like this:</p>
+<p>Si vous fusionnez dans une autre branche, plutôt que de rencontrer des conflits de fusion avec le fichier database.xml, vous verrez quelque chose comme :</p>
 
 <pre><code>$ git merge topic
 Auto-merging database.xml
 Merge made by recursive.</code></pre>
 
-<p>In this case, database.xml stays at whatever version you originally had.</p>
+<p>Dans ce cas, database.xml reste dans l&#8217;état d&#8217;origine, quel qu&#8217;il soit.</p>
 
 <div id='nav'>
 <a href='ch7-1.html'>prev</a> | <a href='ch7-3.html'>next</a>

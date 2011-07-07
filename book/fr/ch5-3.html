@@ -1,12 +1,12 @@
 ---
 layout: translation
-title: Pro Git 5.3 Git distribué Maintenir un projet
+title: Pro Git 5.3 Git distribué Maintenance d&#8217;un projet
 ---
-<h2 id='maintenir_un_projet'>Maintenir un projet</h2>
+<h2 id='maintenance_dun_projet'>Maintenance d&#8217;un projet</h2>
 
 <p>En plus de savoir comment contribuer efficacement à un projet, vous aurez probablement besoin de savoir comment en maintenir un. Cela peut consister à accepter et appliquer les patchs générés via <code>format-patch</code> et envoyés par e-mail, ou à intégrer des modifications dans des branches distantes de dépôts distants. Que vous mainteniez le dépôt de référence ou que vous souhaitiez aider en vérifiant et approuvant les patchs, vous devez savoir comment accepter les contributions d&#8217;une manière limpide pour vos contributeurs et soutenable à long terme pour vous.</p>
 
-<h3 id='travailler_dans_des_branches_thmatiques'>Travailler dans des branches thématiques</h3>
+<h3 id='travail_dans_des_branches_thmatiques'>Travail dans des branches thématiques</h3>
 
 <p>Quand vous vous apprêtez à intégrer des contributions, un bonne idée consiste à les essayer d&#8217;abord dans une branche thématique, une branche temporaire spécifiquement créée pour essayer cette nouveauté. De cette manière, il est plus facile de rectifier un patch à part et de le laisser s&#8217;il ne fonctionne pas jusqu&#8217;à ce que vous disposiez de temps pour y travailler. Si vous créez une simple branche nommée d&#8217;après le thème de la modification que vous allez essayer, telle que <code>ruby_client</code> ou quelque chose d&#8217;aussi descriptif, vous pouvez vous en souvenir simplement plus tard. Le mainteneur du projet Git a l&#8217;habitude d&#8217;utiliser des espaces de nommage pour ses branches, tels que <code>sc/ruby_client</code>, où <code>sc</code> représente les initiales de la personne qui a contribué les modifications. Comme vous devez vous en souvenir, on crée une branche à part du master de la manière suivante :</p>
 
@@ -18,11 +18,11 @@ title: Pro Git 5.3 Git distribué Maintenir un projet
 
 <p>Vous voilà maintenant prêt à ajouter les modifications sur cette branche thématique et à déterminer si c&#8217;est prêt à être fusionné dans les branches au long cours.</p>
 
-<h3 id='appliquer_des_patchs__partir_demail'>Appliquer des patchs à partir d&#8217;e-mail</h3>
+<h3 id='application_des_patchs__partir_demail'>Application des patchs à partir d&#8217;e-mail</h3>
 
 <p>Si vous recevez par e-mail un patch que vous devez intégrer à votre projet, vous avez besoin d&#8217;appliquer le patch dans une branche thématique pour l&#8217;évaluer. Il existe deux méthodes pour appliquer un patch envoyé par e-mail : <code>git apply</code> et <code>git am</code>.</p>
 
-<h4 id='appliquer_un_patch_avec_apply'>Appliquer un patch avec apply</h4>
+<h4 id='application_dun_patch_avec_apply'>Application d&#8217;un patch avec apply</h4>
 
 <p>Si vous avez reçu le patch de quelqu&#8217;un qui l&#8217;a généré avec la commande <code>git diff</code> ou <code>diff</code> Unix, vous pouvez l&#8217;appliquer avec la commande <code>git apply</code>. Si le patch a été sauvé comme fichier <code>/tmp/patch-ruby-client.patch</code>, vous pouvez l&#8217;appliquer comme ceci :</p>
 
@@ -38,7 +38,7 @@ error: ticgit.gemspec: patch does not apply</code></pre>
 
 <p>S&#8217;il n&#8217;y pas de message, le patch devrait s&#8217;appliquer proprement. Cette commande se termine avec un statut non-nul si la vérification échoue et vous pouvez donc l&#8217;utiliser dans des scripts.</p>
 
-<h4 id='appliquer_un_patch_avec_am'>Appliquer un patch avec am</h4>
+<h4 id='application_dun_patch_avec_am'>Application d&#8217;un patch avec am</h4>
 
 <p>Si le contributeur est un utilisateur de Git qui a été assez gentil d&#8217;utiliser la commande <code>format-patch</code> pour générer ses patchs, votre travail sera facilité car le patch contient alors déjà l&#8217;information d&#8217;auteur et le message de validation. Si possible, encouragez vos contributeurs à utiliser <code>format-patch</code> au lieu de <code>patch</code> pour générer les patchs qu&#8217;ils vous adressent. Vous ne devriez avoir à n&#8217;utiliser <code>git apply</code> que pour les vrais patchs.</p>
 
@@ -71,7 +71,7 @@ Ajout d&#39;une limite à la fonction de log
 
 Limite la fonctionnalité de log aux 20 premières lignes</code></pre>
 
-<p>L&#8217;information <code>Commit</code> indique la personne qui appliqué le patch et la date d&#8217;application. L&#8217;information <code>Author</code> indique la personne qui a créé le patch et la date de création.</p>
+<p>L&#8217;information <code>Commit</code> indique la personne qui a appliqué le patch et la date d&#8217;application. L&#8217;information <code>Author</code> indique la personne qui a créé le patch et la date de création.</p>
 
 <p>Il reste la possibilité que le patch ne s&#8217;applique pas proprement. Peut-être votre branche principale a déjà trop divergé de la branche sur laquelle le patch a été construit, ou le patch dépend d&#8217;un autre patch qui n&#8217;a pas encore été appliqué. Dans ce cas, le processus de <code>git am</code> échouera et vous demandera ce que vous souhaitez faire :</p>
 
@@ -116,7 +116,7 @@ Apply? [y]es/[n]o/[e]dit/[v]iew patch/[a]ccept all </code></pre>
 
 <p>Quand tous les patchs pour votre sujet ont été appliqués et validés dans votre branche, vous pouvez choisir si et comment vous souhaitez les intégrer dans une branche au long cours.</p>
 
-<h3 id='vrifier_des_branches_distantes'>Vérifier des branches distantes</h3>
+<h3 id='vrification_des_branches_distantes'>Vérification des branches distantes</h3>
 
 <p>Si votre contribution a été fournie par un utilisateur de Git qui a mis en place son propre dépôt public sur lequel il a poussé ses modifications et vous a envoyé l&#8217;URL du dépôt et le nom de la branche distante, vous pouvez les ajouter en tant que dépôt distant et réaliser les fusions localement.</p>
 
@@ -143,7 +143,7 @@ Merge made by recursive.</code></pre>
 
 <p>Vous avez maintenant une branche thématique qui contient les contributions. De ce point, vous pouvez déterminer ce que vous souhaitez en faire. Cette section revisite quelques commandes qui vont vous permettre de faire une revue de ce que vous allez exactement introduire si vous fusionnez dans la branche principale.</p>
 
-<p>Faire une revue de tous les commits dans cette branche s&#8217;avère souvent d&#8217;une grande aide. Vous pouvez exclure les commits des la branche master en ajoutant l&#8217;option <code>--not</code> devant le nom de la branche. Par exemple, si votre contributeur vous envoie deux patchs et que vous créez une branche appelée <code>contrib</code> et y appliquez ces patchs, vous pouvez lancer ceci :</p>
+<p>Faire une revue de tous les commits dans cette branche s&#8217;avère souvent d&#8217;une grande aide. Vous pouvez exclure les commits de la branche master en ajoutant l&#8217;option <code>--not</code> devant le nom de la branche. Par exemple, si votre contributeur vous envoie deux patchs et que vous créez une branche appelée <code>contrib</code> et y appliquez ces patchs, vous pouvez lancer ceci :</p>
 
 <pre><code>$ git log contrib --not master
 commit 5b6235bd297351589efc4d73316f0a68d484f118
@@ -180,15 +180,15 @@ $ git diff 36c7db </code></pre>
 
 <pre><code>$ git diff master...contrib</code></pre>
 
-<p>Cette commande ne vous montre que les modifications que votre branche thématique a introduites depuis sont ancêtre commun avec master. C&#8217;est une syntaxe très utile à se souvenir.</p>
+<p>Cette commande ne vous montre que les modifications que votre branche thématique a introduites depuis son ancêtre commun avec master. C&#8217;est une syntaxe très utile à se souvenir.</p>
 
-<h3 id='intgrer_les_contributions'>Intégrer les contributions</h3>
+<h3 id='intgration_des_contributions'>Intégration des contributions</h3>
 
 <p>Lorsque tout le travail de votre branche thématique est prêt à être intégré dans la branche principale, il reste à savoir comment le faire. De plus, il faut connaître le mode de gestion que vous souhaitez pour votre projet. Vous avez de nombreux choix et je vais en traiter quelques uns.</p>
 
-<h4 id='les_modes_de_fusion'>Les modes de fusion</h4>
+<h4 id='modes_de_fusion'>Modes de fusion</h4>
 
-<p>Un mode simple fusionne votre travail dans la branche <code>master</code>. Dans ce scénario, vous avez une branche <code>master</code> qui contient le code stable. Quand vous avez des modifications prêtes dans une branche thématique, vous la fusionnez dans votre branche master puis effacez la branche thématique, et ainsi de suite. Si vous avez un dépôt contenant deux branches nommées <code>ruby_client</code> et <code>php_client</code> qui ressemble à la figure 5-19 et fusionné <code>ruby_client</code> en premier, suivi de <code>php_client</code>, alors votre historique ressemblera à la fin à la figure 5-20.</p>
+<p>Un mode simple fusionne votre travail dans la branche <code>master</code>. Dans ce scénario, vous avez une branche <code>master</code> qui contient le code stable. Quand vous avez des modifications prêtes dans une branche thématique, vous la fusionnez dans votre branche master puis effacez la branche thématique, et ainsi de suite. Si vous avez un dépôt contenant deux branches nommées <code>ruby_client</code> et <code>php_client</code> qui ressemble à la figure 5-19 et que vous fusionnez <code>ruby_client</code> en premier, suivi de <code>php_client</code>, alors votre historique ressemblera à la fin à la figure 5-20.</p>
 
 <p><center><img src="/figures/ch5/18333fig0519-tn.png"></center><br/> Figure 5-19. Historique avec quelques branches thématiques.</p>
 
@@ -196,9 +196,9 @@ $ git diff 36c7db </code></pre>
 
 <p>C&#8217;est probablement le mode le plus simple mais cela peut s&#8217;avérer problématique si vous avez à gérer des dépôts ou des projets plus gros.</p>
 
-<p>Si vous avez des plus de développeurs ou un projet plus important, vous souhaiterez probablement utiliser un cycle à fusion à au moins deux étapes. Dans ce scénario, vous avez deux branches au long cours, <code>master</code> et <code>develop</code>, dans lequel vous déterminez que <code>master</code> est mis à jour seulement lors d&#8217;une version vraiment stable et tout le nouveau code est intégré dans la branche <code>develop</code>. Vous poussez régulièrement ces deux branches sur le dépôt public. Chaque fois que vous avez une nouvelle branche thématique à fusionner (figure 5-21), vous la fusionnez dans <code>develop</code> (figure 5-22). Puis, lorsque vous balisez une version majeure, vous mettez <code>master</code> à niveau avec l&#8217;état stable de <code>develop</code> en avance rapide (figure 5-23).</p>
+<p>Si vous avez plus de développeurs ou un projet plus important, vous souhaiterez probablement utiliser un cycle à fusion à au moins deux étapes. Dans ce scénario, vous avez deux branches au long cours, <code>master</code> et <code>develop</code>, dans lequel vous déterminez que <code>master</code> est mis à jour seulement lors d&#8217;une version vraiment stable et tout le nouveau code est intégré dans la branche <code>develop</code>. Vous poussez régulièrement ces deux branches sur le dépôt public. Chaque fois que vous avez une nouvelle branche thématique à fusionner (figure 5-21), vous la fusionnez dans <code>develop</code> (figure 5-22). Puis, lorsque vous balisez une version majeure, vous mettez <code>master</code> à niveau avec l&#8217;état stable de <code>develop</code> en avance rapide (figure 5-23).</p>
 
-<p><center><img src="/figures/ch5/18333fig0521-tn.png"></center><br/> Figure 5-21. Avant la fusion d&#8217;un branche thématique.</p>
+<p><center><img src="/figures/ch5/18333fig0521-tn.png"></center><br/> Figure 5-21. Avant la fusion d&#8217;une branche thématique.</p>
 
 <p><center><img src="/figures/ch5/18333fig0522-tn.png"></center><br/> Figure 5-22. Après la fusion d&#8217;une branche thématique.</p>
 
@@ -208,9 +208,9 @@ $ git diff 36c7db </code></pre>
 
 <p>Vous pouvez aussi continuer ce concept avec une branche d&#8217;intégration où tout le travail est fusionné. Alors, quand la base de code sur cette branche est stable et que les tests passent, vous la fusionnez dans la branche develop. Quand cela s&#8217;est avéré stable pendant un certain temps, vous mettez à jour la branche master en avance rapide.</p>
 
-<h4 id='les_gestions_avec_nombreuses_fusions'>Les gestions avec nombreuses fusions</h4>
+<h4 id='gestions_avec_nombreuses_fusions'>Gestions avec nombreuses fusions</h4>
 
-<p>Le projet Git dispose de quatre branches au long cours : <code>master</code>, <code>next</code> et <code>pu</code> (proposed updates : propositions) pour les nouveaux travaux et <code>maint</code> pour les backport de maintenance. Quand une nouvelle contribution est proposée, elle est collectée dans des branches thématiques dans le dépôt du mainteneur d&#8217;une manière similaire à ce que j&#8217;ai décrit (voir figure 5-24). A ce point, les fonctionnalités sont évaluées pour déterminer si elles sont stables et prêtes à être consommées ou si elles nécessitent un peaufinage. Si elles sont stables, elles sont fusionnées dans <code>next</code> et cette branche est poussée sur le serveur public pour que tout le monde puisse essayer les fonctionnalités intégrées ensemble.</p>
+<p>Le projet Git dispose de quatre branches au long cours : <code>master</code>, <code>next</code>, <code>pu</code> (proposed updates : propositions) pour les nouveaux travaux et <code>maint</code> pour les backports de maintenance. Quand une nouvelle contribution est proposée, elle est collectée dans des branches thématiques dans le dépôt du mainteneur d&#8217;une manière similaire à ce que j&#8217;ai décrit (voir figure 5-24). A ce point, les fonctionnalités sont évaluées pour déterminer si elles sont stables et prêtes à être consommées ou si elles nécessitent un peaufinage. Si elles sont stables, elles sont fusionnées dans <code>next</code> et cette branche est poussée sur le serveur public pour que tout le monde puisse essayer les fonctionnalités intégrées ensemble.</p>
 
 <p><center><img src="/figures/ch5/18333fig0524-tn.png"></center><br/> Figure 5-24. Série complexe de branches thématiques contribuées en parallèle.</p>
 
@@ -224,7 +224,7 @@ $ git diff 36c7db </code></pre>
 
 <p>D&#8217;autres mainteneurs préfèrent rebaser ou sélectionner les contributions sur le sommet de la branche master, plutôt de les fusionner, de manière à conserver un historique à peu près linéaire. Lorsque plusieurs modifications sont présentes dans une branche thématique et que vous souhaitez les intégrer, vous vous placez sur cette branche et vous lancer la commande rebase pour reconstruire les modifications à partir du sommet courant de la branche <code>master</code> (ou <code>develop</code>, ou autre). Si cela fonctionne correctement, vous pouvez faire une avance rapide sur votre branche <code>master</code> et vous obtenez au final un historique de projet linéaire.</p>
 
-<p>L&#8217;autre moyen de déplacer des modifications introduites dans une branche vers une autre consiste à les sélectionner (<code>cherry-pick</code>). Une sélection dans Git ressemble à un rebasage appliqué à un commit unique. Cela consiste à prendre le patch qui a été introduit lors d&#8217;une validation et à essayer de l&#8217;appliquer sur la branche sur laquelle on se trouve. C&#8217;est très utile si on a un certain nombre de commits sur une branche thématique et que l&#8217;on veut n&#8217;en intégrer qu&#8217;un seul, ou si on n&#8217;a qu&#8217;un commit sur une branche thématique et qu&#8217;on préfère le sélectionner plutôt que de lancer rebase. Par exemple, supposons que vous avez un projet ressemblant à la figure 5-26.</p>
+<p>L&#8217;autre moyen de déplacer des modifications introduites dans une branche vers une autre consiste à les sélectionner (<code>cherry-pick</code>). Une sélection dans Git ressemble à un rebasage appliqué à un commit unique. Cela consiste à prendre le patch qui a été introduit lors d&#8217;une validation et à essayer de l&#8217;appliquer sur la branche sur laquelle on se trouve. C&#8217;est très utile si on a un certain nombre de commits sur une branche thématique et que l&#8217;on veut n&#8217;en intégrer qu&#8217;un seul, ou si on n&#8217;a qu&#8217;un commit sur une branche thématique et qu&#8217;on préfère le sélectionner plutôt que de lancer rebase. Par exemple, supposons que vous ayez un projet ressemblant à la figure 5-26.</p>
 
 <p><center><img src="/figures/ch5/18333fig0526-tn.png"></center><br/> Figure 5-26. Historique d&#8217;exemple avant une sélection.</p>
 
@@ -241,7 +241,7 @@ Finished one cherry-pick.
 
 <p>Maintenant, vous pouvez effacer votre branche thématique et abandonner les commits que vous n&#8217;avez pas tirés dans master.</p>
 
-<h3 id='baliser_vos_publications'>Baliser vos publications</h3>
+<h3 id='balisage_de_vos_publications'>Balisage de vos publications</h3>
 
 <p>Quand vous décidez d&#8217;arrêter une publication de votre projet, vous souhaiterez probablement baliser le projet pour pouvoir recréer cette version dans le futur. Vous pouvez créer une nouvelle balise telle que décrite au chapitre 2. Si vous décidez de signer la balise en tant que mainteneur, la commande ressemblera à ceci :</p>
 
@@ -274,9 +274,9 @@ sub   2048g/45D02282 2009-02-09 [expires: 2010-02-09]</code></pre>
 
 <p>Il pourra alors utiliser cette clé pour vérifier vos balises signées. Si de plus, vous incluez des instructions d&#8217;utilisation pour la vérification de signature dans le message de balisage, l&#8217;utilisateur aura accès à ces informations en lançant la commande <code>git show &lt;balise&gt;</code>.</p>
 
-<h3 id='gnrer_un_nom_de_rvision'>Générer un nom de révision</h3>
+<h3 id='gnration_dun_nom_de_rvision'>Génération d&#8217;un nom de révision</h3>
 
-<p>Comme Git ne fournit pas par nature de nombres croissants tels que « r123 » à chaque validation, la commande <code>git describe</code> permet de générer un nom humainement lisible pour chaque commit. Git concatène la nom de la balise la plus proche, le nombre de validations depuis cette balise et un code SHA-1 partiel du commit que l&#8217;on cherche à définir :</p>
+<p>Comme Git ne fournit pas par nature de nombres croissants tels que « r123 » à chaque validation, la commande <code>git describe</code> permet de générer un nom humainement lisible pour chaque commit. Git concatène la nom de la balise la plus proche, le nombre de validations depuis cette balise et un code SHA-1 partiel du commit que l&#8217;on cherche à définir :</p>
 
 <pre><code>$ git describe master
 v1.6.2-rc1-20-g8c5b85c</code></pre>
@@ -285,7 +285,7 @@ v1.6.2-rc1-20-g8c5b85c</code></pre>
 
 <p>La commande <code>git describe</code> repose sur les balises annotées (balises créées avec les options <code>-a</code> ou <code>-s</code>). Les balises de publication doivent donc être créées de cette manière si vous souhaitez utiliser <code>git describe</code> pour garantir que les commits seront décrits correctement. vous pouvez aussi utiliser ces noms comme cible lors d&#8217;une extraction ou d&#8217;une commande <code>show</code>, bien qu&#8217;ils reposent sur le SHA-1 abrégé et pourraient ne pas rester valide indéfiniment. Par exemple, le noyau Linux a sauté dernièrement de 8 à 10 caractères pour assurer l&#8217;unicité des objets SHA-1 et les anciens noms <code>git describe</code> sont par conséquent devenus invalides.</p>
 
-<h3 id='prparer_une_publication'>Préparer une publication</h3>
+<h3 id='prparation_dune_publication'>Préparation d&#8217;une publication</h3>
 
 <p>Maintenant, vous voulez publier une version. Une des étapes consiste à créer une archive du dernier instantané de votre code pour les pauvres hères qui n&#8217;utilisent pas Git. La commande dédiée à cette action est <code>git archive</code> :</p>
 
@@ -299,7 +299,7 @@ v1.6.2-rc1-20-g8c5b85c.tar.gz</code></pre>
 
 <p>Voilà deux belles archives tar.gz et zip de votre projet prêtes à être téléchargées sur un site web ou envoyées par e-mail.</p>
 
-<h3 id='le_shortlog'>Le Shortlog</h3>
+<h3 id='shortlog'>Shortlog</h3>
 
 <p>Il est temps d&#8217;envoyer une annonce à la liste de diffusion des annonces relatives à votre projet. Une manière simple d&#8217;obtenir rapidement une sorte de liste des modifications depuis votre dernière version ou e-mail est d&#8217;utiliser la commande <code>git shortlog</code>. Elle résume toutes le validations dans l&#8217;intervalle qui vous lui spécifiez. Par exemple, ce qui suit vous donne un résumé de toutes les validations depuis votre dernière version si celle-ci se nomme v1.0.1 :</p>
 

@@ -1,96 +1,69 @@
 ---
 layout: translation
-title: Pro Git 6.7 Инструменты Git Debugging with Git
+title: Pro Git 6.7 Инструменты Git Слияние поддеревьев
 ---
-<h2 id='debugging_with_git'>Debugging with Git</h2>
+<h2 id='_'>Слияние поддеревьев</h2>
 
-<p>Git also provides a couple of tools to help you debug issues in your projects. Because Git is designed to work with nearly any type of project, these tools are pretty generic, but they can often help you hunt for a bug or culprit when things go wrong.</p>
+<p>Теперь, когда вы увидели сложности системы подмодулей, давайте посмотрим на альтернативный путь решения той же проблемы. Когда Git выполняет слияние, он смотрит на то, что требуется слить воедино и потом выбирает подходящую стратегию слияния. Если вы сливаете две ветви, Git использует <em>рекурсивную</em> (recursive) стратегию. Если вы объединяете более двух ветвей, Git выбирает стратегию <em>осьминога</em> (octopus). Эти стратегии выбираются за вас автоматически потому, что рекурсивная стратегия может обрабатывать сложные трёхсторонние ситуации слияния — например, более чем один общий предок — но она может сливать только две ветви. Слияние методом осьминога может справиться с множеством веток, но является более осторожным, чтобы предотвратить сложные конфликты, так что этот метод является стратегией по умолчанию при слиянии более двух веток.</p>
 
-<h3 id='file_annotation'>File Annotation</h3>
+<p>Однако, существуют другие стратегии, которые вы также можете выбрать. Одна из них — слияние <em>поддеревьев</em> (subtree), и вы можете использовать его для решения задачи с подпроектами. Сейчас вы увидите как выполнить то же встраивание rack как и в предыдущем разделе, но с использованием стратегии слияния поддеревьев.</p>
 
-<p>If you track down a bug in your code and want to know when it was introduced and why, file annotation is often your best tool. It shows you what commit was the last to modify each line of any file. So, if you see that a method in your code is buggy, you can annotate the file with <code>git blame</code> to see when each line of the method was last edited and by whom. This example uses the <code>-L</code> option to limit the output to lines 12 through 22:</p>
+<p>Идея слияния поддеревьев в том, что вы имеете два проекта, и один из проектов отображается в подкаталог другого и наоборот. Если вы зададите в качестве стратегии слияния метод subtree, то Git будет достаточно умным, чтобы понять, что один из проектов является поддеревом другого и выполнит слияние в соответствии с этим. И это довольно удивительно.</p>
 
-<pre><code>$ git blame -L 12,22 simplegit.rb 
-^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 12)  def show(tree = &#39;master&#39;)
-^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 13)   command(&quot;git show #{tree}&quot;)
-^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 14)  end
-^4832fe2 (Scott Chacon  2008-03-15 10:31:28 -0700 15)
-9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 16)  def log(tree = &#39;master&#39;)
-79eaf55d (Scott Chacon  2008-04-06 10:15:08 -0700 17)   command(&quot;git log #{tree}&quot;)
-9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 18)  end
-9f6560e4 (Scott Chacon  2008-03-17 21:52:20 -0700 19) 
-42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 20)  def blame(path)
-42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 21)   command(&quot;git blame #{path}&quot;)
-42cf2861 (Magnus Chacon 2008-04-13 10:45:01 -0700 22)  end</code></pre>
+<p>Сначала добавьте приложение Rack в свой проект. Добавьте проект Rack как внешнюю ссылку в свой собственный проект, и затем поместите его в собственную ветку:</p>
 
-<p>Notice that the first field is the partial SHA-1 of the commit that last modified that line. The next two fields are values extracted from that commit—the author name and the authored date of that commit — so you can easily see who modified that line and when. After that come the line number and the content of the file. Also note the <code>^4832fe2</code> commit lines, which designate that those lines were in this file’s original commit. That commit is when this file was first added to this project, and those lines have been unchanged since. This is a tad confusing, because now you’ve seen at least three different ways that Git uses the <code>^</code> to modify a commit SHA, but that is what it means here.</p>
+<pre><code>$ git remote add rack_remote git@github.com:schacon/rack.git
+$ git fetch rack_remote
+warning: no common commits
+remote: Counting objects: 3184, done.
+remote: Compressing objects: 100% (1465/1465), done.
+remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
+Receiving objects: 100% (3184/3184), 677.42 KiB | 4 KiB/s, done.
+Resolving deltas: 100% (1952/1952), done.
+From git@github.com:schacon/rack
+ * [new branch]      build      -&gt; rack_remote/build
+ * [new branch]      master     -&gt; rack_remote/master
+ * [new branch]      rack-0.4   -&gt; rack_remote/rack-0.4
+ * [new branch]      rack-0.9   -&gt; rack_remote/rack-0.9
+$ git checkout -b rack_branch rack_remote/master
+Branch rack_branch set up to track remote branch refs/remotes/rack_remote/master.
+Switched to a new branch &quot;rack_branch&quot;</code></pre>
 
-<p>Another cool thing about Git is that it doesn’t track file renames explicitly. It records the snapshots and then tries to figure out what was renamed implicitly, after the fact. One of the interesting features of this is that you can ask it to figure out all sorts of code movement as well. If you pass <code>-C</code> to <code>git blame</code>, Git analyzes the file you’re annotating and tries to figure out where snippets of code within it originally came from if they were copied from elsewhere. Recently, I was refactoring a file named <code>GITServerHandler.m</code> into multiple files, one of which was <code>GITPackUpload.m</code>. By blaming <code>GITPackUpload.m</code> with the <code>-C</code> option, I could see where sections of the code originally came from:</p>
+<p>Теперь у вас есть корень проекта Rack в ветке <code>rack_branch</code> и ваш проект в ветке <code>master</code>. Если вы переключитесь на одну ветку, а затем на другую, то увидете, что содержимое их корневых каталогов различно:</p>
 
-<pre><code>$ git blame -C -L 141,153 GITPackUpload.m 
-f344f58d GITServerHandler.m (Scott 2009-01-04 141) 
-f344f58d GITServerHandler.m (Scott 2009-01-04 142) - (void) gatherObjectShasFromC
-f344f58d GITServerHandler.m (Scott 2009-01-04 143) {
-70befddd GITServerHandler.m (Scott 2009-03-22 144)         //NSLog(@&quot;GATHER COMMI
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 145)
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 146)         NSString *parentSha;
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 147)         GITCommit *commit = [g
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 148)
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 149)         //NSLog(@&quot;GATHER COMMI
-ad11ac80 GITPackUpload.m    (Scott 2009-03-24 150)
-56ef2caf GITServerHandler.m (Scott 2009-01-05 151)         if(commit) {
-56ef2caf GITServerHandler.m (Scott 2009-01-05 152)                 [refDict setOb
-56ef2caf GITServerHandler.m (Scott 2009-01-05 153)</code></pre>
+<pre><code>$ ls
+AUTHORS	       KNOWN-ISSUES   Rakefile      contrib	       lib
+COPYING	       README         bin           example	       test
+$ git checkout master
+Switched to branch &quot;master&quot;
+$ ls
+README</code></pre>
 
-<p>This is really useful. Normally, you get as the original commit the commit where you copied the code over, because that is the first time you touched those lines in this file. Git tells you the original commit where you wrote those lines, even if it was in another file.</p>
+<p>Допустим, вы хотите поместить проект Rack в подкаталог своего проекта в ветке <code>master</code>. Вы можете сделать это в Git&#8217;е командой <code>git read-tree</code>. Вы узнаете больше про команду <code>read-tree</code> и её друзей в Главе 9, а пока достаточно знать, что она считывает корень дерева одной ветки в индекс и рабочий каталог. Вам достаточно переключиться обратно на ветку <code>master</code>, и вытянуть ветвь <code>rack</code> в подкаталог <code>rack</code> вашего основного проекта из ветки <code>master</code>:</p>
 
-<h3 id='binary_search'>Binary Search</h3>
+<pre><code>$ git read-tree --prefix=rack/ -u rack_branch</code></pre>
 
-<p>Annotating a file helps if you know where the issue is to begin with. If you don’t know what is breaking, and there have been dozens or hundreds of commits since the last state where you know the code worked, you’ll likely turn to <code>git bisect</code> for help. The <code>bisect</code> command does a binary search through your commit history to help you identify as quickly as possible which commit introduced an issue.</p>
+<p>После того как вы сделаете коммит, все файлы проекта Rack будут находиться в этом подкаталоге — будто вы скопировали их туда из архива. Интересно то, что вы можете довольно легко слить изменения из одной ветки в другую. Так, что если проект Rack изменится, вы сможете вытянуть изменения из основного проекта, переключившись в его ветку и выполнив <code>git pull</code>:</p>
 
-<p>Let’s say you just pushed out a release of your code to a production environment, you’re getting bug reports about something that wasn’t happening in your development environment, and you can’t imagine why the code is doing that. You go back to your code, and it turns out you can reproduce the issue, but you can’t figure out what is going wrong. You can bisect the code to find out. First you run <code>git bisect start</code> to get things going, and then you use <code>git bisect bad</code> to tell the system that the current commit you’re on is broken. Then, you must tell bisect when the last known good state was, using <code>git bisect good [good_commit]</code>:</p>
+<pre><code>$ git checkout rack_branch
+$ git pull</code></pre>
 
-<pre><code>$ git bisect start
-$ git bisect bad
-$ git bisect good v1.0
-Bisecting: 6 revisions left to test after this
-[ecb6e1bc347ccecc5f9350d878ce677feb13d3b2] error handling on repo</code></pre>
+<p>Затем, вы можете слить эти изменения обратно в вашу главную ветку. Можно использовать <code>git merge -s subtree</code> — это сработает правильно, но тогда Git кроме того объединит вместе истории, чего вы, вероятно, не хотите. Чтобы получить изменения и заполнить сообщение коммита, используйте опции <code>--squash</code> и <code>--no-commit</code> вместе с опцией стратегии <code>-s subtree</code>:</p>
 
-<p>Git figured out that about 12 commits came between the commit you marked as the last good commit (v1.0) and the current bad version, and it checked out the middle one for you. At this point, you can run your test to see if the issue exists as of this commit. If it does, then it was introduced sometime before this middle commit; if it doesn’t, then the problem was introduced sometime after the middle commit. It turns out there is no issue here, and you tell Git that by typing <code>git bisect good</code> and continue your journey:</p>
+<pre><code>$ git checkout master
+$ git merge --squash -s subtree --no-commit rack_branch
+Squash commit -- not updating HEAD
+Automatic merge went well; stopped before committing as requested</code></pre>
 
-<pre><code>$ git bisect good
-Bisecting: 3 revisions left to test after this
-[b047b02ea83310a70fd603dc8cd7a6cd13d15c04] secure this thing</code></pre>
+<p>Все изменения из проекта Rack слиты и готовы для локальной фиксации. Вы также можете сделать наоборот — внести изменения в подкаталог <code>rack</code> вашей ветки <code>master</code>, и затем слить их в ветку <code>rack_branch</code>, чтобы позже представить их мейнтейнерам или отправить их в основной репозиторий проекта с помощью <code>git push</code>.</p>
 
-<p>Now you’re on another commit, halfway between the one you just tested and your bad commit. You run your test again and find that this commit is broken, so you tell Git that with <code>git bisect bad</code>:</p>
+<p>Для получения разности между тем, что у вас есть в подкаталоге <code>rack</code> и кодом в вашей ветке <code>rack_branch</code>, чтобы увидеть нужно ли вам объединять их, вы не можете использовать нормальную команду <code>diff</code>. Вместо этого вы должны выполнить <code>git diff-tree</code> с веткой, с которой вы хотите сравнить:</p>
 
-<pre><code>$ git bisect bad
-Bisecting: 1 revisions left to test after this
-[f71ce38690acf49c1f3c9bea38e09d82a5ce6014] drop exceptions table</code></pre>
+<pre><code>$ git diff-tree -p rack_branch</code></pre>
 
-<p>This commit is fine, and now Git has all the information it needs to determine where the issue was introduced. It tells you the SHA-1 of the first bad commit and show some of the commit information and which files were modified in that commit so you can figure out what happened that may have introduced this bug:</p>
+<p>Или, для сравнения того, что в вашем подкаталоге <code>rack</code> с тем, что было в ветке <code>master</code> на сервере во время последнего обновления, можно выполнить:</p>
 
-<pre><code>$ git bisect good
-b047b02ea83310a70fd603dc8cd7a6cd13d15c04 is first bad commit
-commit b047b02ea83310a70fd603dc8cd7a6cd13d15c04
-Author: PJ Hyett &lt;pjhyett@example.com&gt;
-Date:   Tue Jan 27 14:48:32 2009 -0800
-
-    secure this thing
-
-:040000 040000 40ee3e7821b895e52c1695092db9bdc4c61d1730
-f24d3c6ebcfc639b1a3814550e62d60b8e68a8e4 M  config</code></pre>
-
-<p>When you’re finished, you should run <code>git bisect reset</code> to reset your HEAD to where you were before you started, or you’ll end up in a weird state:</p>
-
-<pre><code>$ git bisect reset</code></pre>
-
-<p>This is a powerful tool that can help you check hundreds of commits for an introduced bug in minutes. In fact, if you have a script that will exit 0 if the project is good or non-0 if the project is bad, you can fully automate <code>git bisect</code>. First, you again tell it the scope of the bisect by providing the known bad and good commits. You can do this by listing them with the <code>bisect start</code> command if you want, listing the known bad commit first and the known good commit second:</p>
-
-<pre><code>$ git bisect start HEAD v1.0
-$ git bisect run test-error.sh</code></pre>
-
-<p>Doing so automatically runs <code>test-error.sh</code> on each checked-out commit until Git finds the first broken commit. You can also run something like <code>make</code> or <code>make tests</code> or whatever you have that runs automated tests for you.</p>
+<pre><code>$ git diff-tree -p rack_remote/master</code></pre>
 
 <div id='nav'>
 <a href='ch6-6.html'>prev</a> | <a href='ch6-8.html'>next</a>

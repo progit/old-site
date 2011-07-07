@@ -20,7 +20,7 @@ title: Pro Git 4.9 Git sur le serveur Git hébergé
 
 <p>GitHub est aussi une société commerciale qui facture les comptes qui utilisent des dépôts privés, mais tout le monde peut rapidement obtenir un compte gratuit pour héberger autant de projets libres que désiré. Nous allons détailler comment faire.</p>
 
-<h3 id='crer_un_compte_utilisateur'>Créer un compte utilisateur</h3>
+<h3 id='cration_dun_compte_utilisateur'>Création d&#8217;un compte utilisateur</h3>
 
 <p>La première chose à faire, c&#8217;est de créer un compte utilisateur gratuit. Visitez la page « Prix et inscription » à <code>http://github.com/plans</code> et cliquez sur le bouton « Créer un compte gratuit » de la zone « Gratuit pour l&#8217;open source » (voir figure 4-2) qui vous amène à la page d&#8217;enregistrement.</p>
 
@@ -30,7 +30,7 @@ title: Pro Git 4.9 Git sur le serveur Git hébergé
 
 <p><center><img src="/figures/ch4/18333fig0403-tn.png"></center><br/> Figure 4-3. La page d&#8217;enregistrement de GitHub</p>
 
-<p>Si vous l&#8217;avez, c&#8217;est le bon moment pour ajouter votre clef publique SSH. Nous avons détaillé comment en générer précédemment au chapitre « Les petites installations ». Copiez le contenu de la clef publique et collez-le dans la boîte à texte « Clés SSH publiques ». En cliquant sur « Besoin d&#8217;aide avec les clés publiques? », vous aurez accès aux instructions (en anglais) pour créer des clefs sur la majorité des systèmes d&#8217;exploitation. Cliquez sur « Créer un compte » pour avoir accès au tableau de bord du nouvel utilisateur (voir figure 4-4).</p>
+<p>Si vous l&#8217;avez, c&#8217;est le bon moment pour ajouter votre clef publique SSH. Nous avons détaillé comment en générer précédemment au chapitre « Petites installations ». Copiez le contenu de la clef publique et collez-le dans la boîte à texte « Clés SSH publiques ». En cliquant sur « Besoin d&#8217;aide avec les clés publiques? », vous aurez accès aux instructions (en anglais) pour créer des clefs sur la majorité des systèmes d&#8217;exploitation. Cliquez sur « Créer un compte » pour avoir accès au tableau de bord du nouvel utilisateur (voir figure 4-4).</p>
 
 <p><center><img src="/figures/ch4/18333fig0404-tn.png"></center><br/> Figure 4-4. Le tableau de bord d&#8217;utilisateur de GitHub</p>
 
@@ -77,9 +77,9 @@ $ git push origin master</code></pre>
 
 <p>Si votre projet est très gros, ne suit pas les standards de nommage ou est privé, cette méthone risque de ne pas fonctionner. Au chapitre 7, nous traiterons des imports manuels plus compliqués de projets.</p>
 
-<h3 id='ajouter_des_collaborateurs'>Ajouter des collaborateurs</h3>
+<h3 id='ajout_des_collaborateurs'>Ajout des collaborateurs</h3>
 
-<p>Ajoutons le reste de l&#8217;équipe. Si John, Josie et Jessica ouvrent tous un compte sur GitHub, et que vous souhaitez leur donner un accès écriture à votre dépôt, vous pouvez les ajouter à votre projet comme collaborateurs. Cela leur permettra de pousser leur travail sur le dépôt avec leurs clefs privées.</p>
+<p>Ajoutons le reste de l&#8217;équipe. Si John, Josie et Jessica ouvrent tous un compte sur GitHub, et que vous souhaitez leur donner un accès en écriture à votre dépôt, vous pouvez les ajouter à votre projet comme collaborateurs. Cela leur permettra de pousser leur travail sur le dépôt avec leurs clefs privées.</p>
 
 <p>Cliquez le bouton « Admin » dans l&#8217;entête du projet pour accéder à la page d&#8217;administration de votre projet GitHub (voir figure 4-10).</p>
 
@@ -103,7 +103,7 @@ $ git push origin master</code></pre>
 
 <p>Lorsqu&#8217;on visite votre projet, on voit cette page. Elle contient des onglets vers différentes vues des projets. L&#8217;onglet « Contributions » affiche une liste des validations dans l&#8217;ordre chronologique inverse, similaire à ce qu&#8217;afficherait la commande <code>git log</code>. L&#8217;onglet « Réseau » affiche tous les utilisateurs ayant dupliqué votre projet et contribué. L&#8217;onglet « Téléchagements » vous permet de télécharger les éxécutables du projet ou de fournir des archives des sources de votre projet à des points balisés. L&#8217;onglet « Wiki » fournit un wiki ou vous pouvez commencer à écrire la documentation ou d&#8217;autres informations du projet. L&#8217;onglet « Graphiques » permet de visualiser les contributions et les statistiques. L&#8217;onglet principal « Source » sur lequel vous arrivez par défaut affiche le contenu du répertoire principal du projet et met en forme dessous le fichier README s&#8217;il en contient un. Cet onglet affiche aussi un boîte contenant les informations de la dernière validation.</p>
 
-<h3 id='dupliquer_des_projets'>Dupliquer des projets</h3>
+<h3 id='duplication_de_projets'>Duplication de projets</h3>
 
 <p>Si vous souhaitez contribuer à un projet auquel vous n&#8217;avez pas accès en écriture, GitHub encourage à dupliquer le projet. Si le projet vous semble intéressant et que vous souhaitez le modifier, vous pouvez cliquer sur le bouton « Fork » (dupliquer) visible dans l&#8217;entête du projet pour faire copier ce projet par GitHub vers votre utilisateur pour que vous puissiez pousser dessus.</p>
 

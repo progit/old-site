@@ -38,11 +38,11 @@ defunkt   git://github.com/defunkt/grit.git
 koke      git://github.com/koke/grit.git
 origin    git@github.com:mojombo/grit.git</code></pre>
 
-<p>Cela signifie que nous pouvons tirer très facilement des contributions depuis certains utilisateurs. Mais il est à noter que seul le dépot distant origin utilise une URL SSH, ce qui signifie que c&#8217;est le seul sur lequel je peux pousser (nous traiterons de ceci au chapitre 4).</p>
+<p>Cela signifie que nous pouvons tirer très facilement des contributions depuis certains utilisateurs. Mais il est à noter que seul le dépôt distant origin utilise une URL SSH, ce qui signifie que c&#8217;est le seul sur lequel je peux pousser (nous traiterons de ceci au chapitre 4).</p>
 
 <h3 id='ajouter_des_dpts_distants'>Ajouter des dépôts distants</h3>
 
-<p>J&#8217;ai expliqué et donné des exemples d&#8217;ajout de dépôts distants dans les chapitres précédents, mais voici spécifiquement comment faire. Pour ajouter un nouveau dépot distant Git comme nom court auquel il est facile de faire référence, lancez <code>git remote add [nomcourt] [url]</code> :</p>
+<p>J&#8217;ai expliqué et donné des exemples d&#8217;ajout de dépôts distants dans les chapitres précédents, mais voici spécifiquement comment faire. Pour ajouter un nouveau dépôt distant Git comme nom court auquel il est facile de faire référence, lancez <code>git remote add [nomcourt] [url]</code> :</p>
 
 <pre><code>$ git remote
 origin
@@ -78,15 +78,15 @@ From git://github.com/paulboone/ticgit
 
 <h3 id='pousser_son_travail_sur_un_dpt_distant'>Pousser son travail sur un dépôt distant</h3>
 
-<p>Lorsque votre dépôt vous semble prêt à être partagé, il faut le pousser en amont. La commande pour le faire est simple : <code>git push [nom-distant] [nom-de-branche]</code>. Si vous souhaitez pousser votre branche master vers le serveur <code>origin</code> (pour rappel, cloner un dépot définit automatiquement ces noms pour vous), alors vous pouvez lancez ceci pour pousser votre travail vers le serveur amont :</p>
+<p>Lorsque votre dépôt vous semble prêt à être partagé, il faut le pousser en amont. La commande pour le faire est simple : <code>git push [nom-distant] [nom-de-branche]</code>. Si vous souhaitez pousser votre branche master vers le serveur <code>origin</code> (pour rappel, cloner un dépôt définit automatiquement ces noms pour vous), alors vous pouvez lancez ceci pour pousser votre travail vers le serveur amont :</p>
 
 <pre><code>$ git push origin master</code></pre>
 
-<p>Cette commande ne fonctionne que si vous avez cloné depuis un serveur sur lequel vous avez des droits d&#8217;accès en écriture et si personne n&#8217;a poussé dans l&#8217;intervalle. Si vous et quelqu&#8217;un d&#8217;autre clonez un dépot au même moment et que cette autre personne pousse ses modifications et qu&#8217;après vous tentez de pousser les votres, votre poussée sera rejetée à juste titre. Vous devrez tout d&#8217;abord tirer les modifications de l&#8217;autre personne et les fusionner avec les votres avant de pouvoir pousser. Référez-vous au chapitre 3 pour de plus amples informations sur les techniques pour pousser vers un serveur distant.</p>
+<p>Cette commande ne fonctionne que si vous avez cloné depuis un serveur sur lequel vous avez des droits d&#8217;accès en écriture et si personne n&#8217;a poussé dans l&#8217;intervalle. Si vous et quelqu&#8217;un d&#8217;autre clonez un dépôt au même moment et que cette autre personne pousse ses modifications et qu&#8217;après vous tentez de pousser les vôtres, votre poussée sera rejetée à juste titre. Vous devrez tout d&#8217;abord tirer les modifications de l&#8217;autre personne et les fusionner avec les vôtres avant de pouvoir pousser. Référez-vous au chapitre 3 pour de plus amples informations sur les techniques pour pousser vers un serveur distant.</p>
 
 <h3 id='inspecter_un_dpt_distant'>Inspecter un dépôt distant</h3>
 
-<p>Si vous souhaitez visualiser plus d&#8217;information à propos d&#8217;un dépôt distant particulier, vous pouvez utiliser le commande <code>git remote show [nom-distant]</code>. Si vous lancez cette commande avec un nom court particulier, tel que <code>origin</code>, vous obtenez quelque chose comme :</p>
+<p>Si vous souhaitez visualiser plus d&#8217;informations à propos d&#8217;un dépôt distant particulier, vous pouvez utiliser la commande <code>git remote show [nom-distant]</code>. Si vous lancez cette commande avec un nom court particulier, tel que <code>origin</code>, vous obtenez quelque chose comme :</p>
 
 <pre><code>$ git remote show origin
 * remote origin
@@ -97,9 +97,9 @@ From git://github.com/paulboone/ticgit
     master
     ticgit</code></pre>
 
-<p>Cela donne la liste des URL pour le dépot distant ainsi que la liste des branches distantes suivi. Cette commande vous informe que si vous êtes sur la branch master et si vous lancez <code>git pull</code>, il va automatiquement fusionner la branche master du dépot distant après avoir récupéré toutes les références sur le serveur distant. Cela donne aussi la liste des autres références qu&#8217;il aura tirées.</p>
+<p>Cela donne le liste des URL pour le dépôt distant ainsi que la liste des branches distantes suivies. Cette commande vous informe que si vous êtes sur la branche master et si vous lancez <code>git pull</code>, il va automatiquement fusionner la branche master du dépôt distant après avoir récupéré toutes les références sur le serveur distant. Cela donne aussi la liste des autres références qu&#8217;il aura tirées.</p>
 
-<p>Le résutat ci-dessus est un exemple simple mais réaliste de dépot distant. Lors d&#8217;une utilisation plus intense de Git, la commande <code>git remote show</code> fournira beaucoup d&#8217;information :</p>
+<p>Le résultat ci-dessus est un exemple simple mais réaliste de dépôt distant. Lors d&#8217;une utilisation plus intense de Git, la commande <code>git remote show</code> fournira beaucoup d&#8217;information :</p>
 
 <pre><code>$ git remote show origin
 * remote origin
@@ -127,7 +127,7 @@ From git://github.com/paulboone/ticgit
 
 <h3 id='retirer_et_dplacer_des_branches_distantes'>Retirer et déplacer des branches distantes</h3>
 
-<p>Si vous souhaitez renommer une référence, dans les versions récentes de Git, vous pouvez lancer <code>git remote rename</code> pour modifier le nom court d&#8217;un dépot distant. Par exemple, si vous souhaitez renommer <code>pb</code> en <code>paul</code>, vous pouvez le faire avec <code>git remote rename</code> :</p>
+<p>Si vous souhaitez renommer une référence, dans les versions récentes de Git, vous pouvez lancer <code>git remote rename</code> pour modifier le nom court d&#8217;un dépôt distant. Par exemple, si vous souhaitez renommer <code>pb</code> en <code>paul</code>, vous pouvez le faire avec <code>git remote rename</code> :</p>
 
 <pre><code>$ git remote rename pb paul
 $ git remote
