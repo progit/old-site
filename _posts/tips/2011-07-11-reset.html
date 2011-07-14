@@ -5,15 +5,16 @@ title: Reset Demystified
 
 <p>One of the topics that I didn't cover in depth in the Pro Git book is the
 <code>reset</code> command.  Most of the reason for this, honestly, is that
-I never personally really understood the command beyond the handful of
+I never strongly understood the command beyond the handful of
 specific use cases that I needed it for.  I knew what the command did, but
 not really how it was designed to work.</p>
 
-<p>Since then I have become more comfortable with the command, thanks to
-<a href="http://blog.plover.com/prog/git-reset.html"> X's article </a>
-re-phrasing the content of the difficult to parse manpage. After
-reading that explaination of the command, I now personally feel more comfortable
-using <code>reset</code> and enjoy trying to help others feel the same way.</p>
+<p>Since then I have become more comfortable with the command, largely thanks to
+<a href="http://blog.plover.com/prog/git-reset.html">Mark Dominus's article</a>
+re-phrasing the content of the man-page, which I always found very difficult to
+follow. After reading that explanation of the command, I now personally feel
+more comfortable using <code>reset</code> and enjoy trying to help others feel
+the same way.</p>
 
 <p>This post assumes some basic understanding of how Git branching works. If you
 don't really know what HEAD and the Index are on a basic level, you might want to
@@ -26,7 +27,11 @@ read chapters 2 and 3 of this book before reading this post.</p>
 <p>The way I now like to think about <code>reset</code> and <code>checkout</code>
 is through the mental frame of Git being a content manager of three different
 trees. By 'tree' here I really mean "collection of files", not specifically the
-data structure. Git as a system manages and manipulates three trees in it's
+data structure. (Some Git developers will get a bit mad at me here, because there
+are a few cases where the Index doesn't exactly act like a tree, but for our purposes
+it is easier - forgive me).</p>
+
+<p>Git as a system manages and manipulates three trees in it's
 normal operation. Each of these is covered in the book, but let's review them.</p>
 
 
@@ -146,7 +151,7 @@ of files.</p>
 
 <center><img width="400px" src="/images/reset/workflow.png"/></center><br/>
 
-<p>Let's visulize this process.  Say you go into a new directory with a single
+<p>Let's visualize this process.  Say you go into a new directory with a single
 file in it. We'll call this V1 of the file and we'll indicate it in blue.
 Now we run <code>git init</code>, which will create a Git repository with a
 HEAD reference that points to an unborn branch (aka, <i>nothing</i>)</p>
@@ -177,7 +182,7 @@ through the same process. First we change the file in our working directory.</p>
 <center><img width="500px" src="/images/reset/ex5.png"/></center><br/>
 
 <p>If we run <code>git status</code> right now we'll see the file in red as
-"changed but not updated" because that entry is different in our Index and our
+"changed but not updated" because that entry differs between our Index and our
 Working Directory. Next we run <code>git add</code> on it to stage it into our
 Index.<p>
 
@@ -296,6 +301,9 @@ trees in a specific order, stopping when you tell it to.
   <li>#3) THEN, make the Working Directory look like that
 </ul>
 
+<p>There are also <code>--merge</code> and <code>--keep</code> options, but
+I would rather keep things simpler for now - that will be for another article.</p>
+
 <p>Boom. You are now a <code>reset</code> master.</p>
 
 <h2>Reset with a Path</h2>
@@ -344,6 +352,11 @@ reverted the content of the file to <b>v1</b>, ran <code>git add</code> on it,
 then reverted it back to to <b>v3</b> again.  If we run <code>git commit</code>,
 it will record a change that reverts that file back to <b>v1</b>, even though
 we never actually had it in our Working Directory again.</p>
+
+<p>It's also pretty interesting to note that like <code>git add --patch</code>,
+the <code>reset</code> command will accept a <code>--patch</code> option to
+unstage content on a hunk-by-hunk basis.  So you can selectively unstage or
+revert content.</p>
 
 <h2>A fun example</h2>
 
@@ -431,14 +444,18 @@ it is also not working directory safe and it also does not move HEAD.  The only
 difference is that <code>reset</code> will a file name will not accept <code>--hard</code>,
 so you can't actually run that.</p>
 
+<p>Also, like <code>git reset</code> and <code>git add</code>, <code>checkout</code>
+will accept a <code>--patch</code> option to allow you to selectively revert file
+contents on a hunk-by-hunk basis.</p>
+
 <h2>Cheaters Gonna Cheat</h2>
 
-<p>So hopefully now you understand and feel more comfortable with the
+<p>Hopefully now you understand and feel more comfortable with the
 <code>reset</code> command, but are probably still a little confused about how
 exactly it differs from <code>checkout</code> and could not possibly remember
 all the rules of the different invocations.</p>
 
-<p>So, to help you out, I've created something that I pretty much hate, which
+<p>So to help you out, I've created something that I pretty much hate, which
 is a table. However, if you've followed the article at all, it may be a useful
 cheat sheet or reminder. The table shows each class of the <code>reset</code>
 and <code>checkout</code> commands and which of the three trees it updates.</p>
