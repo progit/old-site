@@ -395,7 +395,7 @@ you to look like <code>[branch]</code>, but there are two important differences.
 
 <p>First, unlike <code>reset --hard</code>, <code>checkout</code> is working
 directory safe in this invocation.  It will check to make sure it's not blowing
-away files that have changes to them.  Actually, this is a subtle differnce,
+away files that have changes to them.  Actually, this is a subtle difference,
 because it will update all of the working directory except the files you've
 modified if it can - it will do a trivial merge between what you're checking
 out and what's already there.  In this case, <code>reset --hard</code> will
