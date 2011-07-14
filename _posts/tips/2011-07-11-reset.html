@@ -65,23 +65,23 @@ Here is an example of getting the actual directory listing and SHA checksums
 for each file in the HEAD snapshot:</p>
 
 <pre>
-  $ cat .git/HEAD 
-  ref: refs/heads/master
+$ cat .git/HEAD 
+ref: refs/heads/master
 
-  $ cat .git/refs/heads/master 
-  e9a570524b63d2a2b3a7c3325acf5b89bbeb131e
+$ cat .git/refs/heads/master 
+e9a570524b63d2a2b3a7c3325acf5b89bbeb131e
 
-  $ git cat-file -p e9a570524b63d2a2b3a7c3325acf5b89bbeb131e
-  tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
-  author Scott Chacon <schacon@gmail.com> 1301511835 -0700
-  committer Scott Chacon <schacon@gmail.com> 1301511835 -0700
+$ git cat-file -p e9a570524b63d2a2b3a7c3325acf5b89bbeb131e
+tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+author Scott Chacon <schacon@gmail.com> 1301511835 -0700
+committer Scott Chacon <schacon@gmail.com> 1301511835 -0700
 
-  initial commit
+initial commit
 
-  $ git ls-tree -r cfda3bf379e4f8dba8717dee55aab78aef7f4daf
-  100644 blob a906cb2a4a904a152...   README
-  100644 blob 8f94139338f9404f2...   Rakefile
-  040000 tree 99f1a6d12cb4b6f19...   lib
+$ git ls-tree -r cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+100644 blob a906cb2a4a904a152...   README
+100644 blob 8f94139338f9404f2...   Rakefile
+040000 tree 99f1a6d12cb4b6f19...   lib
 </pre>
 
 <h3 class="subtitle">
@@ -100,35 +100,10 @@ to think of it as <b>the Index is the snapshot of your next commit</b>.
 </p>
 
 <pre>
-    File Name: README
-     Blob SHA: 45dc653de6860faeb30581cd7654f9a51fc2c443
-    File Size: 135
-    File Mode: 33188
-        mtime: 1301512685
-        ctime: 1301512685
-        Inode: 15472643
-          UID: 501
-          GID: 0
-
-    File Name: Rakefile
-     Blob SHA: ea3fe2ac46e92bf38dc824128e3eddd397f537e3
-    File Size: 604
-    File Mode: 33188
-        mtime: 1301512703
-        ctime: 1301512703
-        Inode: 15472659
-          UID: 501
-          GID: 0
-
-    File Name: lib/simplegit.rb
-     Blob SHA: 47c6340d6459e05787f644c2447d2595f5d3a54b
-    File Size: 355
-    File Mode: 33188
-        mtime: 1301507599
-        ctime: 1301507599
-        Inode: 15445705
-          UID: 501
-          GID: 0
+$ git ls-files -s
+100644 a906cb2a4a904a152e80877d4088654daad0c859 0	README
+100644 8f94139338f9404f26296befa88755fc2598c289 0	Rakefile
+100644 47c6340d6459e05787f644c2447d2595f5d3a54b 0	lib/simplegit.rb
 </pre>
 
 <h3 class="subtitle">
@@ -142,6 +117,17 @@ are placed into actual files on your filesystem so they're easily edited by
 you. <b>The Working Directory is your scratch space, used to easily modify file
 content.</b>
 </p>
+
+<pre>
+$ tree
+.
+├── README
+├── Rakefile
+└── lib
+    └── simplegit.rb
+
+1 directory, 3 files
+</pre>
 
 <h2>The Workflow</h2>
 
