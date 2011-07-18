@@ -151,8 +151,8 @@ end
 def links(pages)
   pages.sort.map do |page, data|
     d = page.scan(/ch(.*?).html/).first.first
-    "<a href=\"#{page}\">#{d}</a> (#{data[:count]}) "
-  end
+    "<span class=\"pagelink\"><a href=\"#{page}\">#{d}</a> (#{data[:count]})</span>\n"
+  end.join(' ')
 end
 
 def generate_pages(lang, chapter, content)

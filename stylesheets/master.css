@@ -395,5 +395,38 @@ table.rdata tr td.no-wd {
   padding-left: 10px;
 }
 
-.commands-index {
+.commands-index ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.commands-index ul li {
+    line-height: 1.5em;
+}
+
+.commands-index ul li strong {
+    display: inline-block;
+    padding-left: 5px;
+    vertical-align: top;
+    width: 130px;
+    transition: all .2s;
+    -moz-transition: all .2s;
+    -webkit-transition: all .2s;
+}
+
+.commands-index ul li:hover strong {
+    background:#DDA;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+.commands-index ul li small {
+    display: inline-block;
+    width: 560px;
+}
+
+.commands-index ul li small .pagelink {
+    display: inline-block;
+    width: 50px;
 }
