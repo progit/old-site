@@ -22,6 +22,7 @@ def update_toc(lang, toc)
     end
     index += "</ul>"
   end
+  index += "<li><h1><a href=\"commands.html\">Index of Commands</a></h1></li>"
   index += "</ul>"
   pages << "index.html"
 
@@ -60,6 +61,8 @@ title: Table of Contents
     File.open("../book/#{lang}/index.html", 'w+') { |f| f.write(html) }
   end
 
+  aindex = {}
+
   i = 1
   while i < (pages.size - 1)
     filter = pages[i]
@@ -72,6 +75,13 @@ title: Table of Contents
     end
     content.gsub!('[[nav-prev]]', prevp)
     content.gsub!('[[nav-next]]', nextp)
+
+    content.scan(/git (\-+[a-z\-=]+ )*([a-z][a-z\-]+)/) do |match|
+      aindex[match[1]] ||= {}
+      aindex[match[1]][filter] ||= {:count => 0}
+      aindex[match[1]][filter][:count] += 1
+    end
+
     if lang == 'en'
       File.open("../book/#{filter}", 'w+') { |f| f.write(content) }
     else
@@ -80,6 +90,69 @@ title: Table of Contents
     i += 1
   end
 
+  ignore = ['aware', 'binaries', 'ci', 'co', 'com', 'directory', 'feature',
+           'gitolite', 'gitosis-init', 'installed', 'last', 'library', 'my',
+           'mygrit', 'project', 'prune', 'rack', 'repository', 'stash-unapply',
+           'tarball', 'that', 'user', 'visual', 'will', 'world', 'unstage']
+
+  groups = [
+       ['Setup and Config', [ 'config', 'help' ]],
+       ['Getting and Creating Projects', [ 'init', 'clone']],
+       ['Basic Snapshotting', [ 'add', 'status', 'diff', 'commit', 'reset', 'rm', 'mv']],
+       ['Branching and Merging', [ 'branch', 'checkout', 'merge', 'mergetool', 'log', 'stash', 'tag' ]],
+       ['Sharing and Updating Projects', [ 'fetch', 'pull', 'push', 'remote', 'submodule' ]],
+       ['Inspection and Comparison', [ 'show', 'log', 'diff', 'shortlog', 'describe' ]],
+       ['Patching', ['am', 'apply', 'cherry-pick', 'rebase']],
+       ['Debugging', [ 'bisect', 'blame' ]],
+       ['Email', ['am', 'apply', 'format-patch', 'send-email', 'request-pull']],
+       ['External Sytems', ['svn', 'fast-import']],
+       ['Administration', [ 'gc', 'fsck', 'reflog', 'filter-branch', 'instaweb', 'archive' ]],
+       ['Server Admin', [ 'daemon', 'update-server-info' ]],
+      ]
+  
+  commands = "---
+layout: #{layout}
+title: Index of Commands
+---
+<div class=\"commands-index\">
+"
+  com = aindex.keys.sort
+
+  groups.each do |group|
+    pp group
+    desc, comms = group
+    commands << "<h2>#{desc}</h2>"
+    commands << "<ul>"
+    comms.each do |c|
+      commands << "<li><strong>#{c}</strong> &nbsp; <small>#{links(aindex[c])}</small></li>"
+      com.delete(c)
+    end
+    commands << "</ul>"
+  end
+
+  commands << "<h2>Plumbing Commands</h2>"
+  commands << "<ul>"
+  com.each do |command|
+    next if ignore.include?(command)
+    commands << "<li><strong>#{command}</strong> &nbsp; <small>#{links(aindex[command])}</small></li>"
+  end
+  commands << "</ul>"
+
+  commands << "</div>"
+
+  if lang == 'en'
+      File.open("../book/commands.html", 'w+') {|f| f.write(commands)}
+  else
+      File.open("../book/#{lang}/commands.html", 'w+') {|f| f.write(commands)}
+  end
+
+end
+
+def links(pages)
+  pages.sort.map do |page, data|
+    d = page.scan(/ch(.*?).html/).first.first
+    "<a href=\"#{page}\">#{d}</a> (#{data[:count]}) "
+  end
 end
 
 def generate_pages(lang, chapter, content)
@@ -95,6 +168,7 @@ def generate_pages(lang, chapter, content)
     chapter_title = m[2]
     toc[:title] = chapter_title
   end
+
 
   # replace images
   if images = raw.scan(/Insert (.*?).png/)
@@ -153,6 +227,8 @@ end
 desc "Generate the book html for the site"
 task :genbook do
 
+  genlang = ENV['GENLANG']
+
   # git read-tree --prefix=book-content/ -u gitbook/master
   # git rm -rf book-content/
 
@@ -160,6 +236,7 @@ task :genbook do
     Dir.glob("*").each do |lang|
       chapter_number = 0
       toc = []
+      next if genlang && genlang != lang
       Dir.chdir(lang) do
         Dir.glob("*").each do |chapter|
           puts 'generating : ' + lang + '/' + chapter
