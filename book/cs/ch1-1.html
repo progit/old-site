@@ -20,7 +20,7 @@ title: Pro Git 1.1 Úvod Správa verzí
 
 <h3 id='centralizovan_systmy_sprvy_verz'>Centralizované systémy správy verzí</h3>
 
-<p>Další požadavek na SSV je, aby umožnil spolupráci více vývojářů z různých koutů světa. Proto byly vytvořeny centralizované systémy správy verzí (CSSV). Tyto systémy, jako např. CVS, Subversion nebo Perforce, mají vždy jeden server, který obsahuje všechny spravované soubory ve všech verzích, a množství klientů, již stahují soubory z tohoto jednoho centrálního místa. Po mnoho let byl toto standard ve správě verzí (obr. 1-2).</p>
+<p>Další požadavek na SSV je, aby umožnil spolupráci více vývojářů z různých koutů světa. Proto byly vytvořeny centralizované systémy správy verzí (SSV). Tyto systémy, jako např. CVS, Subversion nebo Perforce, mají vždy jeden server, který obsahuje všechny spravované soubory ve všech verzích, a množství klientů, již stahují soubory z tohoto jednoho centrálního místa. Po mnoho let byl toto standard ve správě verzí (obr. 1-2).</p>
 
 <p><center><img src="/figures/ch1/18333fig0102-tn.png"></center><br/> Obrázek 1-2. Centralizovaný SSV</p>
 
@@ -30,11 +30,11 @@ title: Pro Git 1.1 Úvod Správa verzí
 
 <h3 id='distribuovan_systmy_sprvy_verz'>Distribuované systémy správy verzí</h3>
 
-<p>Proto nastoupily na scénu distribuované SSV (DSSV). V takovém systému (Git, Mercurial, Bazaar, Darcs apod.) klient neuchovává jen poslední verzi souborů, nýbrž vytváří kompletní duplikát repositáře. Pak pokud nějaký server v těchto podmínkách odejde do počítačového nebe, nic se vlastně nestane. Jakýkoli repositář u klienta je možno nahrát zpět na server a jede se dál. Každý checkout je v podstatě kompletní záloha všech dat (obr. 1-3)</p>
+<p>Proto nastoupily na scénu distribuované SSV (DSSV). V takovém systému (Git, Mercurial, Bazaar, Darcs apod.) klient neuchovává jen poslední verzi souborů, nýbrž vytváří kompletní duplikát repozitáře. Pak pokud nějaký server v těchto podmínkách odejde do počítačového nebe, nic se vlastně nestane. Jakýkoli repozitář u klienta je možno nahrát zpět na server a jede se dál. Každý checkout je v podstatě kompletní záloha všech dat (obr. 1-3)</p>
 
 <p><center><img src="/figures/ch1/18333fig0103-tn.png"></center><br/> Obrázek 1-3. Distribuovaný SSV</p>
 
-<p>Navíc mnoho těchto systémů umí slušně pracovat s více vzdálenými repositáři najednou, takže můžete spolupracovat s různými skupinami lidí na různých částech téhož projektu. To umožňuje mít různé způsoby organizace práce, které v centralizovaných systémech vůbec nejsou možné, jako je hierarchický model.</p>
+<p>Navíc mnoho těchto systémů umí slušně pracovat s více vzdálenými repozitáři najednou, takže můžete spolupracovat s různými skupinami lidí na různých částech téhož projektu. To umožňuje mít různé způsoby organizace práce, které v centralizovaných systémech vůbec nejsou možné, jako je hierarchický model.</p>
 
 <div id='nav'>
 <a href='ch1-0.html'>prev</a> | <a href='ch1-2.html'>next</a>

@@ -1,16 +1,16 @@
 ---
 layout: translation
-title: Pro Git 9.1 Gitの内側 Plumbing and Porcelain
+title: Pro Git 9.1 Gitの内側 配管（Plumbing）と磁器（Porcelain）
 ---
-<h2 id='plumbing_and_porcelain'>Plumbing and Porcelain</h2>
+<h2 id='plumbingporcelain'>配管（Plumbing）と磁器（Porcelain）</h2>
 
-<p>This book covers how to use Git with 30 or so verbs such as <code>checkout</code>, <code>branch</code>, <code>remote</code>, and so on. But because Git was initially a toolkit for a VCS rather than a full user-friendly VCS, it has a bunch of verbs that do low-level work and were designed to be chained together UNIX style or called from scripts. These commands are generally referred to as &#8220;plumbing&#8221; commands, and the more user-friendly commands are called &#8220;porcelain&#8221; commands.</p>
+<p>本書は、<code>checkout</code> や <code>branch</code>、<code>remote</code> などの約30のコマンドを用いて、Git の使い方を説明しています。ですが、Git は元々、完全にユーザフレンドリーなバージョン管理システムというよりもむしろ、バージョン管理システムのためのツール類でした。そのため、下位レベルの仕事を行うためのコマンドが沢山あり、UNIXの形式（またはスクリプトから呼ばれる形式）と密に関わりながら設計されました。これらのコマンドは、通常は &#8220;配管（plumbing）&#8221; コマンドと呼ばれ、よりユーザフレンドリーなコマンドは &#8220;磁器（porcelain）&#8221; コマンドと呼ばれます。</p>
 
-<p>The book’s first eight chapters deal almost exclusively with porcelain commands. But in this chapter, you’ll be dealing mostly with the lower-level plumbing commands, because they give you access to the inner workings of Git and help demonstrate how and why Git does what it does. These commands aren’t meant to be used manually on the command line, but rather to be used as building blocks for new tools and custom scripts.</p>
+<p>本書のはじめの8つの章は、ほぼ例外なく磁器コマンドを取り扱いますが、本章では下位レベルの配管コマンドを専ら使用することになります。なぜなら、それらのコマンドは、Gitの内部動作にアクセスして、Gitの内部で、何を、どのように、どうして行うのかを確かめるのに役に立つからです。それらのコマンドは、コマンドラインから実行するのに使用されるのではなく、むしろ新規のツールとカスタムスクリプトのための構成要素（building blocks）として使用されます。</p>
 
-<p>When you run <code>git init</code> in a new or existing directory, Git creates the <code>.git</code> directory, which is where almost everything that Git stores and manipulates is located. If you want to back up or clone your repository, copying this single directory elsewhere gives you nearly everything you need. This entire chapter basically deals with the stuff in this directory. Here’s what it looks like:</p>
+<p>新規の、または既存のディレクトリで <code>git init</code> を実行すると、Git は <code>.git</code> というディレクトリを作ります。Git が保管して操作するほとんどすべてのものがそこに格納されます。もしもレポジトリをバックアップするかクローンを作りたいなら、この1つのディレクトリをどこかにコピーすることで、必要とするほとんどすべてのことが満たされます。この章では全体を通して、<code>.git</code> ディレクトリの中を基本的に取り扱います。その中は以下のようになっています。</p>
 
-<pre><code>$ ls 
+<pre><code>$ ls
 HEAD
 branches/
 config
@@ -21,9 +21,9 @@ info/
 objects/
 refs/</code></pre>
 
-<p>You may see some other files in there, but this is a fresh <code>git init</code> repository — it’s what you see by default. The <code>branches</code> directory isn’t used by newer Git versions, and the <code>description</code> file is only used by the GitWeb program, so don’t worry about those. The <code>config</code> file contains your project-specific configuration options, and the <code>info</code> directory keeps a global exclude file for ignored patterns that you don’t want to track in a .gitignore file. The <code>hooks</code> directory contains your client- or server-side hook scripts, which are discussed in detail in Chapter 6.</p>
+<p>これは <code>git init</code> を実行した直後のデフォルトのレポジトリです。それ以外の場合は、他にも幾つかのファイルがそこに見つかるかもしれません。<code>branches</code> ディレクトリは、新しいバージョンのGitでは使用されません。<code>description</code> ファイルは、GitWeb プログラムのみで使用します。そのため、それらについての配慮は不要です。<code>config</code> ファイルには、あなたのプロジェクト固有の設定オプションが含まれます。<code>info</code> ディレクトリは、追跡の対象に含めたくない除外パターンを <code>.gitignore</code> ファイルに書くための、グローバルレベルで除外するファイルを保持します。<code>hooks</code> ディレクトリには、あなたのクライアントサイド、または、サーバサイドのフックスクリプトが含まれます。それについての詳細は6章に記述されています。</p>
 
-<p>This leaves four important entries: the <code>HEAD</code> and <code>index</code> files and the <code>objects</code> and <code>refs</code> directories. These are the core parts of Git. The <code>objects</code> directory stores all the content for your database, the <code>refs</code> directory stores pointers into commit objects in that data (branches), the <code>HEAD</code> file points to the branch you currently have checked out, and the <code>index</code> file is where Git stores your staging area information. You’ll now look at each of these sections in detail to see how Git operates.</p>
+<p>残りの4つ（<code>HEAD</code> ファイルと <code>index</code> ファイル、また、<code>objects</code> ディレクトリと <code>refs</code> ディレクトリ）は重要なエントリです。これらは、Git の中核（コア）の部分に相当します。<code>objects</code> ディレクトリはあなたのデータベースのすべてのコンテンツを保管します。<code>refs</code> ディレクトリは、そのデータ（ブランチ）内のコミットオブジェクトを指すポインターを保管します。<code>HEAD</code> ファイルは、現在チェックアウトしているブランチを指します。<code>index</code> ファイルは、Git がステージングエリアの情報の保管する場所を示します。これから各セクションで、Git がどのような仕組みで動くのかを詳細に見ていきます。</p>
 
 <div id='nav'>
 <a href='ch9-0.html'>prev</a> | <a href='ch9-2.html'>next</a>

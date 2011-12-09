@@ -49,7 +49,7 @@ Date:   Sun May 3 00:12:22 2009 +0000
 
     fixed install - go to trunk</code></pre>
 <!--Not only does the Author field look a lot better, but the `git-svn-id` is no longer there, either.-->
-<p>Nicht nur das Autoren-Feld sieht jetzt wesentlich besser aus. Auch die <code>git-svn-id wird jetzt nicht mehr gebraucht.</code></p>
+<p>Nicht nur das Autoren-Feld sieht jetzt wesentlich besser aus. Auch die <code>git-svn-id</code> wird jetzt nicht mehr gebraucht.</p>
 <!--You need to do a bit of `post-import` cleanup. For one thing, you should clean up the weird references that `git svn` set up. First you’ll move the tags so they’re actual tags rather than strange remote branches, and then you’ll move the rest of the branches so they’re local.-->
 <p>Nach dem Import musst Du noch ein wenig aufräumen. Dafür solltest Du all die merkwürdigen Referenzen säubern, die <code>git svn</code> angelegt hat. Zuerst verschiebst Du die Tags, damit sie tatsächliche Git-Tags sind statt merkwürdigen Remote-Zweigen. Anschließend verschieben wir den Rest der Zweige, so dass sie lokale Zweige werden.</p>
 <!--To move the tags to be proper Git tags, run-->
@@ -155,7 +155,7 @@ current</code></pre>
 <!--In order to import a Git directory, you need to review how Git stores its data. As you may remember, Git is fundamentally a linked list of commit objects that point to a snapshot of content. All you have to do is tell `fast-import` what the content snapshots are, what commit data points to them, and the order they go in. Your strategy will be to go through the snapshots one at a time and create commits with the contents of each directory, linking each commit back to the previous one.-->
 <p>Damit wir ein Git-Verzeichnis importieren können, müssen wir uns zunächst noch einmal anschauen, wie Git seine Daten speichert. Wie Du Dich vielleicht erinnerst, ist Git im Grundsatz eine verlinkte Liste von Commit-Objekten die auf eine Momentaufnahme (Snapshots) des Inhalts zeigt. Jetzt musst Du nur noch <code>fast-import</code> mitteilen, was dieses Snapshots sind, welche Commit-Daten zu ihnen zeigen und die Reihenfolge, in die sie gehören. Deine Strategie wir es sein, einen nach dem anderen durch die Snapshots zu gehen und Commits mit dem Inhalt eines jeden Verzeichnisses zu erzeigen und jeden dieser Commits anschließend mit dem vorherigen zu verknüpfen.</p>
 <!--As you did in the "An Example Git Enforced Policy" section of Chapter 7, we’ll write this in Ruby, because it’s what I generally work with and it tends to be easy to read. You can write this example pretty easily in anything you’re familiar with — it just needs to print the appropriate information to stdout.-->
-<p>Wie wir das schon im Abschnitt &#8220;(&#8230;)&#8221; in Kapitel 7 getan haben, programmieren wir diese Lösung in Ruby, weil es die Sprache ist, mit der ich normalerweise arbeite und weil es recht einfach zu lesen ist. Du kannst das Beispiel in so ziemlich jeder Sprache schreiben, mit der Du vertraut bist — es muss nur die passenden Informationen nach <code>stdout</code> schreiben.</p>
+<p>Wie wir das schon im Abschnitt &#8220;(&#8230;)&#8221; in Kapitel 7 getan haben, programmieren wir diese Lösung in Ruby, weil es die Sprache ist, mit der ich normalerweise arbeite und weil sie recht einfach zu lesen ist. Du kannst das Beispiel in so ziemlich jeder Sprache schreiben, mit der Du vertraut bist — es muss nur die passenden Informationen nach <code>stdout</code> schreiben.</p>
 <!--To begin, you’ll change into the target directory and identify every subdirectory, each of which is a snapshot that you want to import as a commit. You’ll change into each subdirectory and print the commands necessary to export it. Your basic main loop looks like this:-->
 <p>Zu Beginn musst Du in das Zielverzeichnis wechseln und jedes Unterverzeichnis identifizieren, das ein Snapshot ist, den Du als Commit importieren willst. Du wirst in jedes dieser Unterverzeichnisse wechseln und den entsprechenden Befehl auszugeben um es zu exportieren. Deine Schleife wird etwa so aussehen:</p>
 
@@ -177,7 +177,7 @@ end</code></pre>
 
 <pre><code>mark = convert_dir_to_mark(dir)</code></pre>
 <!--You’ll do this by creating an array of directories and using the index value as the mark, because a mark must be an integer. Your method looks like this:-->
-<p>Das erreichst Du indem Du ein Array von Verzeichnissen anlegst und den Index-Wert als Markierung verwendest (eine Markierung muss vom Typ <code>integer</code> sein). Deine Methode sieht so aus:</p>
+<p>Das erreichst Du, indem Du ein Array von Verzeichnissen anlegst und den Index-Wert als Markierung verwendest (eine Markierung muss vom Typ <code>integer</code> sein). Deine Methode sieht so aus:</p>
 
 <pre><code>$marks = []
 def convert_dir_to_mark(dir)
@@ -203,11 +203,11 @@ end</code></pre>
   end
 end</code></pre>
 <!--That returns an integer value for the date of each directory. The last piece of meta-information you need for each commit is the committer data, which you hardcode in a global variable:-->
-<p>Die Funktion gibt einen Integer-Wert für das Datum eines jeden Verzeichnisses zurück. Das letzte Stück Meta-Informationen, das wir noch für jeden Commit brauchen, sind die Commit-Daten des Autors, die wir in eine globale Variable packen:</p>
+<p>Die Funktion gibt einen Integer-Wert für das Datum eines jeden Verzeichnisses zurück. Das letzte Stück Meta-Information, das wir noch für jeden Commit brauchen, sind die Commit-Daten des Autors, die wir in eine globale Variable packen:</p>
 
 <pre><code>$author = &#39;Scott Chacon &lt;schacon@example.com&gt;&#39;</code></pre>
 <!--Now you’re ready to begin printing out the commit data for your importer. The initial information states that you’re defining a commit object and what branch it’s on, followed by the mark you’ve generated, the committer information and commit message, and then the previous commit, if any. The code looks like this:-->
-<p>Jetzt können wir damit beginnen, die Commit-Daten für den Importer auszudrucken. Die ursprüngliche Information gibt an, dass Du ein Commit-Objekt definierst und zu welchem Branch es gehört, gefolgt von der Markierung, die Du angelegt hast, der Committer-Information und der Commit-Nachricht und schließlich der ID des vorhergehenden Commits, falls dieser existiert. Der Code sieht wie folgt aus:</p>
+<p>Jetzt können wir damit beginnen, die Commit-Daten für den Importer auszugeben. Die ursprüngliche Information gibt an, dass Du ein Commit-Objekt definierst und zu welchem Branch es gehört, gefolgt von der Markierung, die Du angelegt hast, der Committer-Information und der Commit-Nachricht und schließlich der ID des vorhergehenden Commits, falls dieser existiert. Der Code sieht wie folgt aus:</p>
 
 <pre><code># print the import information
 puts &#39;commit refs/heads/master&#39;
@@ -281,7 +281,7 @@ data 16
 new version one
 (...)</code></pre>
 <!--To run the importer, pipe this output through `git fast-import` while in the Git directory you want to import into. You can create a new directory and then run `git init` in it for a starting point, and then run your script:-->
-<p>Du lässt den Importer laufen und leitest, während Du Dich in dem Verzeichnis befindest, das Du importieren willst, die Ausgabe durch eine Pipe zu <code>git fast-import</code> um. Als Anfang kannst Du ein neues Verzeichnis anlegen und darin <code>git init</code> laufen lassen und ans — chließend das Skript starten:</p>
+<p>Um den Importer zu starten, leite die Ausgabe durch eine Pipe zu <code>git fast-import</code> weiter — während Du im Git Verzeichnis befindest, in das Du importieren willst. Zum Anfang kannst Du ein neues Verzeichnis anlegen, darin <code>git init</code> laufen lassen und anschließend das Skript starten:</p>
 
 <pre><code>$ git init
 Initialized empty Git repository in /opt/import_to/.git/
@@ -310,7 +310,7 @@ pack_report: pack_open_windows        =          1 /          1
 pack_report: pack_mapped              =       1356 /       1356
 ---------------------------------------------------------------------</code></pre>
 <!--As you can see, when it completes successfully, it gives you a bunch of statistics about what it accomplished. In this case, you imported 18 objects total for 5 commits into 1 branch. Now, you can run `git log` to see your new history:-->
-<p>Wie Du sehen kannst, gibt es Dir, sobald es erfolgreich durchgelaufen ist, eine ganze Menge Angaben darüber, was es durchgeführt hat. In diesem Beispiel, haben wir insgesamt 18 Objekte für 5 Commits in einen Zweig importiert. Jetzt kannst Du <code>git log</code> ausführen, um die neue History einzusehen:</p>
+<p>Wie Du sehen kannst, werden Dir eine Menge Statistiken über den erreichten Erfolg angezeigt. In diesem Beispiel haben wir insgesamt 18 Objekte für 5 Commits in einen Zweig importiert. Jetzt kannst Du <code>git log</code> ausführen, um die neue History einzusehen:</p>
 
 <pre><code>$ git log -2
 commit 10bfe7d22ce15ee25b60a824c8982157ca593d41
@@ -333,7 +333,7 @@ HEAD is now at 10bfe7d imported from current
 $ ls
 file.rb  lib</code></pre>
 <!--You can do a lot more with the `fast-import` tool — handle different modes, binary data, multiple branches and merging, tags, progress indicators, and more. A number of examples of more complex scenarios are available in the `contrib/fast-import` directory of the Git source code; one of the better ones is the `git-p4` script I just covered.-->
-<p>Du kannst noch ne ganze Menge mehr mit dem <code>fast-import</code>-Tool anstellen — es kann verschiedene Modi behandeln, Binärdaten, mehrere Zweige sowie Merges, Tags, Fortschrittsbalken und mehr. Eine Reihe von Beispielen komplexerer Szenarios werden im <code>contrib/fast-import</code>-Verzeichnis des Git-Quellcodes bereitgestellt; eines der besseren ist das <code>git-p4</code>-Skript, das ich gerade behandelt habe.</p>
+<p>Du kannst noch eine ganze Menge mehr mit dem <code>fast-import</code>-Tool anstellen — es kann verschiedene Modi behandeln, Binärdaten, mehrere Zweige sowie Merges, Tags, Fortschrittsbalken und mehr. Eine Reihe von Beispielen komplexerer Szenarios werden im <code>contrib/fast-import</code>-Verzeichnis des Git-Quellcodes bereitgestellt; eines der besseren ist das <code>git-p4 -Skript, das ich gerade behandelt habe.</code></p>
 
 <div id='nav'>
 <a href='ch8-1.html'>prev</a> | <a href='ch8-3.html'>next</a>

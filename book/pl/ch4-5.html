@@ -18,7 +18,7 @@ $ chmod a+x hooks/post-update</code></pre>
 
 <p>What does this <code>post-update</code> hook do? It looks basically like this:</p>
 
-<pre><code>$ cat .git/hooks/post-update 
+<pre><code>$ cat .git/hooks/post-update
 #!/bin/sh
 exec git-update-server-info</code></pre>
 

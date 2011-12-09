@@ -1,12 +1,12 @@
 ---
 layout: translation
-title: Pro Git 9.3 Gitの内側 Git References
+title: Pro Git 9.3 Gitの内側 Gitの参照
 ---
-<h2 id='git_references'>Git References</h2>
+<h2 id='git'>Gitの参照</h2>
 
-<p>You can run something like <code>git log 1a410e</code> to look through your whole history, but you still have to remember that <code>1a410e</code> is the last commit in order to walk that history to find all those objects. You need a file in which you can store the SHA-1 value under a simple name so you can use that pointer rather than the raw SHA-1 value.</p>
+<p>すべての履歴をひと通り見るには <code>git log 1a410e</code> のように実行します。しかしそれでも履歴を辿りながらそれらすべてのオブジェクトを見つけるためには、<code>1a410e</code> が最後のコミットであることを覚えていなければなりません。SHA-1ハッシュ値を格納できるファイルが必要です。ファイル名はシンプルなもので、未加工（raw）の SHA-1ハッシュ値ではなくポインタを使用することができます。</p>
 
-<p>In Git, these are called &#8220;references&#8221; or &#8220;refs&#8221;; you can find the files that contain the SHA-1 values in the <code>.git/refs</code> directory. In the current project, this directory contains no files, but it does contain a simple structure:</p>
+<p>Git では、これらは &#8220;参照（references）&#8221; ないしは &#8220;refs&#8221; と呼ばれます。SHA-1のハッシュ値を含んでいるファイルは <code>.git/refs</code> ディレクトリ内に見つけることができます。現在のプロジェクトでは、このディレクトリに何もファイルはありませんが、シンプルな構成を持っています。</p>
 
 <pre><code>$ find .git/refs
 .git/refs
@@ -15,85 +15,85 @@ title: Pro Git 9.3 Gitの内側 Git References
 $ find .git/refs -type f
 $</code></pre>
 
-<p>To create a new reference that will help you remember where your latest commit is, you can technically do something as simple as this:</p>
+<p>最後のコミットはどこにあるのかを覚えるのに役立つような参照を新しく作るには、これと同じぐらいシンプルなことを技術的にすることができます。</p>
 
 <pre><code>$ echo &quot;1a410efbd13591db07496601ebc7a059dd55cfe9&quot; &gt; .git/refs/heads/master</code></pre>
 
-<p>Now, you can use the head reference you just created instead of the SHA-1 value in your Git commands:</p>
+<p>これであなたは、Git コマンドにある SHA-1のハッシュ値ではなく、たった今作成したヘッダの参照を使用することができます。</p>
 
 <pre><code>$ git log --pretty=oneline  master
 1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>You aren’t encouraged to directly edit the reference files. Git provides a safer command to do this if you want to update a reference called <code>update-ref</code>:</p>
+<p>参照ファイルに対して直接、変更を行うことは推奨されません。Git はそれを行うためのより安全なコマンドを提供しています。もし参照を更新したければ <code>update-ref</code> というコマンドを呼びます。</p>
 
 <pre><code>$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
 
-<p>That’s basically what a branch in Git is: a simple pointer or reference to the head of a line of work. To create a branch back at the second commit, you can do this:</p>
+<p>Git にとって基本的にブランチとは何なのかをこれは示しているのです。すなわちそれはシンプルなポインタ、もしくは作業ライン（line of work）のヘッドへの参照なのです。二回目のコミット時にバックアップのブランチを作るには、次のようにします。</p>
 
 <pre><code>$ git update-ref refs/heads/test cac0ca</code></pre>
 
-<p>Your branch will contain only work from that commit down:</p>
+<p>これでブランチはそのコミットから下の作業のみを含むことになります。</p>
 
 <pre><code>$ git log --pretty=oneline test
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>Now, your Git database conceptually looks something like Figure 9-4.</p>
+<p>いま、Git のデータベースは概念的には図9-4のように見えます。</p>
 
-<p><center><img src="/figures/ch9/18333fig0904-tn.png"></center><br/> Figure 9-4. Git directory objects with branch head references included.</p>
+<p><center><img src="/figures/ch9/18333fig0904-tn.png"></center><br/> 図9-4. ブランチのヘッドへの参照を含むGitディレクトリオブジェクト</p>
 
-<p>When you run commands like <code>git branch (branchname)</code>, Git basically runs that <code>update-ref</code> command to add the SHA-1 of the last commit of the branch you’re on into whatever new reference you want to create.</p>
+<p><code>git branch (ブランチ名)</code> のようにコマンドを実行すると基本的に Git は <code>update-ref</code> コマンドを実行します。そして、あなたが作りたいと思っている新しい参照は何であれ、いま自分が作業しているブランチ上のブランチの最後のコミットの SHA-1ハッシュを追加します。</p>
 
-<h3 id='the_head'>The HEAD</h3>
+<h3 id='head'>HEADブランチ</h3>
 
-<p>The question now is, when you run <code>git branch (branchname)</code>, how does Git know the SHA-1 of the last commit? The answer is the HEAD file. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, I mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference. If you look at the file, you’ll normally see something like this:</p>
+<p>では、<code>git branch (ブランチ名)</code> を実行したときに、どこから Git は最後のコミットの SHA-1ハッシュを知ることができるでしょうか？ 答えは、HEADファイルです。HEADファイルは、あなたが現在作業中のブランチに対するシンボリック参照（symbolic reference）です。通常の参照と区別する意図でシンボリック参照と呼びますが、それは、一般的にSHA-1ハッシュ値を持たずに他の参照へのポインタを持ちます。通常は以下のファイルが見えるでしょう。</p>
 
-<pre><code>$ cat .git/HEAD 
+<pre><code>$ cat .git/HEAD
 ref: refs/heads/master</code></pre>
 
-<p>If you run <code>git checkout test</code>, Git updates the file to look like this:</p>
+<p><code>git checkout test</code> を実行すると、Git はこのようにファイルを更新します。</p>
 
-<pre><code>$ cat .git/HEAD 
+<pre><code>$ cat .git/HEAD
 ref: refs/heads/test</code></pre>
 
-<p>When you run <code>git commit</code>, it creates the commit object, specifying the parent of that commit object to be whatever SHA-1 value the reference in HEAD points to.</p>
+<p><code>git commit</code> を実行すると、コミットオブジェクトが作られます。HEADにある参照先の SHA-1ハッシュ値が何であれ、そのコミットオブジェクトの親が参照先に指定されます。</p>
 
-<p>You can also manually edit this file, but again a safer command exists to do so: <code>symbolic-ref</code>. You can read the value of your HEAD via this command:</p>
+<p>このファイルを直に編集することもできますが、<code>symbolic-ref</code> と呼ばれる、それを安全に行うためのコマンドが存在します。このコマンドを使ってHEADの値を読み取ることができます。</p>
 
 <pre><code>$ git symbolic-ref HEAD
 refs/heads/master</code></pre>
 
-<p>You can also set the value of HEAD:</p>
+<p>HEADの値を設定することもできます。</p>
 
 <pre><code>$ git symbolic-ref HEAD refs/heads/test
-$ cat .git/HEAD 
+$ cat .git/HEAD
 ref: refs/heads/test</code></pre>
 
-<p>You can’t set a symbolic reference outside of the refs style:</p>
+<p><code>refs</code> の形式以外では、シンボリック参照を設定することはできません。</p>
 
 <pre><code>$ git symbolic-ref HEAD test
 fatal: Refusing to point HEAD outside of refs/</code></pre>
 
-<h3 id='tags'>Tags</h3>
+<h3 id='id190'>タグ</h3>
 
-<p>You’ve just gone over Git’s three main object types, but there is a fourth. The tag object is very much like a commit object — it contains a tagger, a date, a message, and a pointer. The main difference is that a tag object points to a commit rather than a tree. It’s like a branch reference, but it never moves — it always points to the same commit but gives it a friendlier name.</p>
+<p>これまで Git の主要な三つのオブジェクトを見てきましたが、タグという四つ目のオブジェクトがあります。タグオブジェクトはコミットオブジェクトにとても似ています。それには、タガー（tagger）、日付、メッセージ、そしてポインタが含まれます。主な違いは、タグオブジェクトはツリーではなくコミットを指し示すことです。タグオブジェクトはブランチの参照に似ていますが、決して変動しません。そのため常に同じコミットを示しますが、より親しみのある名前が与えられます。</p>
 
-<p>As discussed in Chapter 2, there are two types of tags: annotated and lightweight. You can make a lightweight tag by running something like this:</p>
+<p>2章で述べましたが、タグには二つのタイプがあります。軽量 (lightweight) 版と注釈付き (annotated) 版です。あなたは、次のように実行して軽量 (lightweight) 版のタグを作ることができます。</p>
 
 <pre><code>$ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d</code></pre>
 
-<p>That is all a lightweight tag is — a branch that never moves. An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit. You can see this by creating an annotated tag (<code>-a</code> specifies that it’s an annotated tag):</p>
+<p>これが軽量版のタグのすべてです。つまり決して変動しないブランチなのです。一方、注釈付き版のタグはもっと複雑です。注釈付き版のタグを作ろうとすると、Git はタグオブジェクトを作り、そして、コミットに対する直接的な参照ではなく、そのタグをポイントする参照を書き込みます。注釈付き版のタグを作ることで、これを見ることができます。（注釈付き版のタグを作るには <code>-a</code> オプションを指定して実行します）</p>
 
 <pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m &#39;test tag&#39;</code></pre>
 
-<p>Here’s the object SHA-1 value it created:</p>
+<p>これで、作られたオブジェクトの SHA-1ハッシュ値を見ることができます。</p>
 
-<pre><code>$ cat .git/refs/tags/v1.1 
+<pre><code>$ cat .git/refs/tags/v1.1
 9585191f37f7b0fb9444f35a9bf50de191beadc2</code></pre>
 
-<p>Now, run the <code>cat-file</code> command on that SHA-1 value:</p>
+<p>ここで、そのSHA-1ハッシュ値に対して <code>cat-file</code> コマンドを実行します。</p>
 
 <pre><code>$ git cat-file -p 9585191f37f7b0fb9444f35a9bf50de191beadc2
 object 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -103,15 +103,15 @@ tagger Scott Chacon &lt;schacon@gmail.com&gt; Sat May 23 16:48:58 2009 -0700
 
 test tag</code></pre>
 
-<p>Notice that the object entry points to the commit SHA-1 value that you tagged. Also notice that it doesn’t need to point to a commit; you can tag any Git object. In the Git source code, for example, the maintainer has added their GPG public key as a blob object and then tagged it. You can view the public key by running</p>
+<p>オブジェクトエントリはあなたがタグ付けしたコミットの SHA-1 ハッシュ値をポイントすることに注意してください。またそれがコミットをポイントする必要がないことに注意してください。あらゆる Git オブジェクトに対してタグ付けをすることができます。例えば、Git のソースコードの保守では GPG 公開鍵をブロブオブジェクトとして追加して、それからタグ付けをします。Git ソースコードレポジトリで、以下のように実行することで公開鍵を閲覧することができます。</p>
 
 <pre><code>$ git cat-file blob junio-gpg-pub</code></pre>
 
-<p>in the Git source code repository. The Linux kernel repository also has a non-commit-pointing tag object — the first tag created points to the initial tree of the import of the source code.</p>
+<p>Linuxカーネルのリポジトリは、さらに、非コミットポインティング（non-commit-pointing）タグオブジェクトを持っています。このタグオブジェクトは、最初のタグが作られるとソースコードのインポートの最初のツリーをポイントします。</p>
 
-<h3 id='remotes'>Remotes</h3>
+<h3 id='id191'>リモート</h3>
 
-<p>The third type of reference that you’ll see is a remote reference. If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the <code>refs/remotes</code> directory. For instance, you can add a remote called <code>origin</code> and push your <code>master</code> branch to it:</p>
+<p>これから見ていく三つ目の参照のタイプはリモート参照です。リモートを追加してそれにプッシュを実行すると、Git は追加したリモートにあなたが最後にプッシュした値をを格納します。そのリモートは <code>refs/remotes</code> ディレクトリにある各ブランチを参照します。例えば、<code>origin</code> と呼ばれるリモートを追加して、それを <code>master</code> ブランチにプッシュすることができます。</p>
 
 <pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git
 $ git push origin master
@@ -122,12 +122,12 @@ Total 7 (delta 2), reused 4 (delta 1)
 To git@github.com:schacon/simplegit-progit.git
    a11bef0..ca82a6d  master -&gt; master</code></pre>
 
-<p>Then, you can see what the <code>master</code> branch on the <code>origin</code> remote was the last time you communicated with the server, by checking the <code>refs/remotes/origin/master</code> file:</p>
+<p>そして、<code>origin</code> リモートに対してどの <code>master</code> ブランチが最後にサーバと通信したのかを、<code>refs/remotes/origin/master</code> ファイルをチェックすることで知ることができます。</p>
 
-<pre><code>$ cat .git/refs/remotes/origin/master 
+<pre><code>$ cat .git/refs/remotes/origin/master
 ca82a6dff817ec66f44342007202690a93763949</code></pre>
 
-<p>Remote references differ from branches (<code>refs/heads</code> references) mainly in that they can’t be checked out. Git moves them around as bookmarks to the last known state of where those branches were on those servers.</p>
+<p>リモート参照は主にそれらがチェックアウトされ得ないという点において、ブランチ（<code>refs/heads</code> への参照）とは異なります。Git はそれらをブックマークとして、それらのブランチがかつてサーバー上に存在していた場所の最後に知られている状態に移し変えます。</p>
 
 <div id='nav'>
 <a href='ch9-2.html'>prev</a> | <a href='ch9-4.html'>next</a>

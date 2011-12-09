@@ -4,14 +4,14 @@ title: Pro Git 4.4 Git na serwerze Konfiguracja serwera
 ---
 <h2 id='konfiguracja_serwera'>Konfiguracja serwera</h2>
 
-<p>Let’s walk through setting up SSH access on the server side. In this example, you’ll use the <code>authorized_keys</code> method for authenticating your users. We also assume you’re running a standard Linux distribution like Ubuntu. First, you create a &#8216;git&#8217; user and a <code>.ssh</code> directory for that user.</p>
+<p>Spróbujmy więc prześledzić proces ustawienia dostępu SSH po stronie severa. Aby tego dokonać użyjesz metody &#8216;authorized_keys&#8217; aby uwierzytelnić twoich użytkowników. Zakładamy również ze pracujesz na standardowej instalacji Linux (np. Ubuntu). Pierwszym krokiem będzie utworzenie użytkownika &#8216;git&#8217; i lokalizacji &#8216;.ssh&#8217; dla tegoż użytkownika.</p>
 
 <pre><code>$ sudo adduser git
 $ su git
 $ cd
 $ mkdir .ssh</code></pre>
 
-<p>Next, you need to add some developer SSH public keys to the <code>authorized_keys</code> file for that user. Let’s assume you’ve received a few keys by e-mail and saved them to temporary files. Again, the public keys look something like this:</p>
+<p>Następnie potrzebujesz dodać klucz SSH programisty do pliku &#8216;authorized_keys&#8217; dla tego użytkownika. Zauważmy ze otrzymałeś kilka kluczy mailem i zapisałeś je w pliku tymczasowym. Klucze publiczne wyglądać będą podobnie do tego:</p>
 
 <pre><code>$ cat /tmp/id_rsa.john.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCB007n/ww+ouN4gSLKssMxXnBOvf9LGt4L
@@ -21,20 +21,20 @@ Sdfd8AcCIicTDWbqLAcU4UpkaX8KyGlLwsNuuGztobF8m72ALC/nLF6JLtPofwFBlgc+myiv
 O7TCUSBdLQlgMVOFq1I2uPWQOkOWQAHukEOmfjy2jctxSDBQ220ymjaNsHT4kgtZg2AYYgPq
 dAv8JggJICUvax2T9va5 gsg-keypair</code></pre>
 
-<p>You just append them to your <code>authorized_keys</code> file:</p>
+<p>Załączasz do nich twój plik &#8216;authorized keys&#8217;:</p>
 
 <pre><code>$ cat /tmp/id_rsa.john.pub &gt;&gt; ~/.ssh/authorized_keys
 $ cat /tmp/id_rsa.josie.pub &gt;&gt; ~/.ssh/authorized_keys
 $ cat /tmp/id_rsa.jessica.pub &gt;&gt; ~/.ssh/authorized_keys</code></pre>
 
-<p>Now, you can set up an empty repository for them by running <code>git init</code> with the <code>--bare</code> option, which initializes the repository without a working directory:</p>
+<p>Od tego momentu możesz ustawić puste repozytorium poprzez komendę &#8216;git init&#8217; z opcja &#8217;&#8211;bare&#8217;, która zainicjuje repozytorium bez ścieżki roboczej:</p>
 
 <pre><code>$ cd /opt/git
 $ mkdir project.git
 $ cd project.git
 $ git --bare init</code></pre>
 
-<p>Then, John, Josie, or Jessica can push the first version of their project into that repository by adding it as a remote and pushing up a branch. Note that someone must shell onto the machine and create a bare repository every time you want to add a project. Let’s use <code>gitserver</code> as the hostname of the server on which you’ve set up your &#8216;git&#8217; user and repository. If you’re running it internally, and you set up DNS for <code>gitserver</code> to point to that server, then you can use the commands pretty much as is:</p>
+<p>Teraz John, Josie lub Jessica ma mozliwosc wykonania komedy push (wysłania) pierwszej wersji projektu do repozytorium poprzez dodanie go (projektu) jako zdalny (remote) oraz wysłanie całej gałęzi projektu. Aby tego dokonać należny polaczyc sie poprzez shell z maszyna i utworzyc nowe repozytorium za kazdym razem kiedy chcemy dodac projekt. Użyjmy <code>gitserver</code> jako nazwę severa na którym ustawiasz użytkownika <code>git</code> oraz repozytorium. Jeżeli odpalasz je lokalnie i ustawiasz DNS jako <code>gitserver</code> do połączenia z tym serwerem, wtedy będziesz mógł użyć poniższych komend:</p>
 
 <pre><code># on Johns computer
 $ cd myproject
@@ -44,28 +44,28 @@ $ git commit -m &#39;initial commit&#39;
 $ git remote add origin git@gitserver:/opt/git/project.git
 $ git push origin master</code></pre>
 
-<p>At this point, the others can clone it down and push changes back up just as easily:</p>
+<p>W tym momencie użytkownicy mogą klonować (clone) projekt i wysyłać (push) zmiany w prosty sposób:</p>
 
 <pre><code>$ git clone git@gitserver:/opt/git/project.git
 $ vim README
 $ git commit -am &#39;fix for the README file&#39;
 $ git push origin master</code></pre>
 
-<p>With this method, you can quickly get a read/write Git server up and running for a handful of developers.</p>
+<p>Używając powyższej metody możesz łatwo utworzyć serwer Git (odczyt/zapis) dla grupki użytkowników.</p>
 
-<p>As an extra precaution, you can easily restrict the &#8216;git&#8217; user to only doing Git activities with a limited shell tool called <code>git-shell</code> that comes with Git. If you set this as your &#8216;git&#8217; user’s login shell, then the &#8216;git&#8217; user can’t have normal shell access to your server. To use this, specify <code>git-shell</code> instead of bash or csh for your user’s login shell. To do so, you’ll likely have to edit your <code>/etc/passwd</code> file:</p>
+<p>Jako dodatkowy srodek ostroznosci mozesz zastrzec dostep do komend dla danego uzytkownika <code>git</code> poprzez narzedzie <code>git-shell</code> ktore dostepne jest wraz z Git. Jezeli ustawisz je jako shell do logowania dla twojego danego uzytkownika, to ten uzytkownik nie bedzie mial dostepu do pelnego dostepu do twojego serwera. Aby uzyc tej opcji ustaw <code>git-shell</code> zamiast bash lub csh dla shellu tegoz uzytkownika. Aby to zrobic edytuj plik <code>/etc/passwd</code>:</p>
 
 <pre><code>$ sudo vim /etc/passwd</code></pre>
 
-<p>At the bottom, you should find a line that looks something like this:</p>
+<p>Gdzieś na dole znajdziesz linie podobna do poniższej:</p>
 
 <pre><code>git:x:1000:1000::/home/git:/bin/sh</code></pre>
 
-<p>Change <code>/bin/sh</code> to <code>/usr/bin/git-shell</code> (or run <code>which git-shell</code> to see where it’s installed). The line should look something like this:</p>
+<p>Zamien <code>/bin/sh</code> na <code>/usr/bin/git-shell</code> (lub odpal <code>which git-shell</code> aby znaleźć lokalizacje). Linia podobna byc podobna do poniższej:</p>
 
 <pre><code>git:x:1000:1000::/home/git:/usr/bin/git-shell</code></pre>
 
-<p>Now, the &#8216;git&#8217; user can only use the SSH connection to push and pull Git repositories and can’t shell onto the machine. If you try, you’ll see a login rejection like this:</p>
+<p>Teraz uzytkownik <code>git</code> moze uzyc polaczenia SSH tylko do wyslania i odebrania repozytorium Git, nie możne natomiast zyskać dostępu shell do servera. Serwer odpowie informacja podobna do:</p>
 
 <pre><code>$ ssh git@gitserver
 fatal: What do you think I am? A shell?

@@ -24,7 +24,7 @@ title: Pro Git 3.5 Les branches avec Git Les branches distantes
 
 <p><center><img src="/figures/ch3/18333fig0325-tn.png"></center><br/> Figure 3-25. Ajouter un autre serveur comme accès distant.</p>
 
-<p>Maintenant, lancez <code>git fetch equipeun</code> pour récupérer l&#8217;ensemble des informations du serveur que vous ne possédez pas. Comme ce serveur contient déjà un sous-ensemble des données du serveur <code>origin</code>, Git ne récupère aucune donnée mais positionne une branche distante appelée <code>equipeun/master</code> qui pointe sur le commit que <code>equipeun</code> a comme branche <code>master</code> (voir figure 3-26).</p>
+<p>Maintenant, lancez <code>git fetch equipeun</code> pour récupérer l&#8217;ensemble des informations du serveur distant <code>equipeun</code> que vous ne possédez pas. Comme ce serveur contient déjà un sous-ensemble des données du serveur <code>origin</code>, Git ne récupère aucune donnée mais positionne une branche distante appelée <code>equipeun/master</code> qui pointe sur le commit que <code>equipeun</code> a comme branche <code>master</code> (voir figure 3-26).</p>
 
 <p><center><img src="/figures/ch3/18333fig0326-tn.png"></center><br/> Figure 3-26. Vous récupérez une référence locale à la branch master de equipeun.</p>
 
@@ -72,7 +72,7 @@ Switched to a new branch &quot;correctionserveur&quot;</code></pre>
 
 <pre><code>$ git checkout --track origin/correctionserveur
 Branch correctionserveur set up to track remote branch refs/remotes/origin/correctionserveur.
-Switched to a new branch &quot;serverfix&quot;</code></pre>
+Switched to a new branch &quot;correctionserveur&quot;</code></pre>
 
 <p>Pour créer une branche locale avec un nom différent de celui de la branche distante, vous pouvez simplement utiliser la première version avec un nom de branch locale différent :</p>
 

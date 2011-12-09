@@ -1,22 +1,22 @@
 ---
 layout: translation
-title: Pro Git 9.5 Les trippes de Git Les références spécifiques
+title: Pro Git 9.5 Les tripes de Git Les références spécifiques
 ---
 <h2 id='les_rfrences_spcifiques'>Les références spécifiques</h2>
 
-<p>Dans tout le livre, nous avons utilisé des associations simples entre les branches distantes et les références locales. Elles peuvent être plus complexes. Supposons que vous ajoutiez un dépôt distant comme ceci :</p>
+<p>Dans tout le livre, nous avons utilisé des associations simples entre les branches distantes et les références locales. Elles peuvent être plus complexes. Supposons que vous ajoutiez un dépôt distant comme ceci :</p>
 
 <pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git</code></pre>
 
-<p>Cela ajoute une section au fichier <code>.git/config</code>, contenant le nom du dépôt distant (<code>origin</code>), l&#8217;URL de ce dépôt, et la spécification des références pour la récupération :</p>
+<p>Cela ajoute une section au fichier <code>.git/config</code>, contenant le nom du dépôt distant (<code>origin</code>), l&#8217;URL de ce dépôt et la spécification des références pour la récupération :</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/*:refs/remotes/origin/*</code></pre>
 
-<p>Le format d&#8217;une spécification de référence est un <code>+</code> facultatif, suivi de <code>&lt;src&gt;:&lt;dst&gt;</code>, où <code>&lt;src&gt;</code> est le motif des références du côté distant, et <code>&lt;dst&gt;</code> est l&#8217;emplacement local où les références seront enregistrées. Le <code>+</code> précise à Git de mettre à jour la référence même si ce n&#8217;est pas un avance rapide.</p>
+<p>Le format d&#8217;une spécification de référence est un <code>+</code> facultatif, suivi de <code>&lt;src&gt;:&lt;dst&gt;</code>, où <code>&lt;src&gt;</code> est le motif des références du côté distant et <code>&lt;dst&gt;</code> est l&#8217;emplacement local où les références seront enregistrées. Le <code>+</code> précise à Git de mettre à jour la référence même si ce n&#8217;est pas un avance rapide.</p>
 
-<p>Dans le cas par défaut, qui est celui d&#8217;un enregistrement automatique par la commande <code>git remote add</code>, Git récupère toutes les références de <code>refs/heads/</code> sur le serveur et les enregistre localement dans <code>refs/remotes/origin/</code>. Ainsi, s&#8217;il y a une branche <code>master</code> sur le serveur, vous pouvez accéder localement à l&#8217;historique de cette branche via :</p>
+<p>Dans le cas par défaut, qui est celui d&#8217;un enregistrement automatique par la commande <code>git remote add</code>, Git récupère toutes les références de <code>refs/heads/</code> sur le serveur et les enregistre localement dans <code>refs/remotes/origin/</code>. Ainsi, s&#8217;il y a une branche <code>master</code> sur le serveur, vous pouvez accéder localement à l&#8217;historique de cette branche via :</p>
 
 <pre><code>$ git log origin/master
 $ git log remotes/origin/master
@@ -24,15 +24,15 @@ $ git log refs/remotes/origin/master</code></pre>
 
 <p>Ces syntaxes sont toutes équivalentes, car Git les développe en <code>refs/remotes/origin/master</code>.</p>
 
-<p>Si vous préférez que Git récupère seulement la branche <code>master</code>, et non chacune des branches du serveur distant, vous pouvez remplacer la ligne fetch par :</p>
+<p>Si vous préférez que Git récupère seulement la branche <code>master</code> et non chacune des branches du serveur distant, vous pouvez remplacer la ligne fetch par :</p>
 
 <pre><code>fetch = +refs/heads/master:refs/remotes/origin/master</code></pre>
 
-<p>C&#8217;est la spécification des références de <code>git fetch</code> pour ce dépôt distant. Si l&#8217;on veut effectuer une action particulière une seule fois, la spécification des références peut aussi être précisée en ligne de commande. Pour retirer la branche <code>master</code> du dépôt distant vers la branche locale <code>origin/mymaster</code>, vous pouvez exécutez :</p>
+<p>C&#8217;est la spécification des références de <code>git fetch</code> pour ce dépôt distant. Si l&#8217;on veut effectuer une action particulière une seule fois, la spécification des références peut aussi être précisée en ligne de commande. Pour retirer la branche <code>master</code> du dépôt distant vers la branche locale <code>origin/mymaster</code>, vous pouvez exécuter :</p>
 
 <pre><code>$ git fetch origin master:refs/remotes/origin/mymaster</code></pre>
 
-<p>Vous pouvez indiquer des spécifications pour plusieurs références. En ligne de commande, vous pouvez tirer plusieurs branches de cette façon :</p>
+<p>Vous pouvez indiquer des spécifications pour plusieurs références. En ligne de commande, vous pouvez tirer plusieurs branches de cette façon :</p>
 
 <pre><code>$ git fetch origin master:refs/remotes/origin/mymaster \
    topic:refs/remotes/origin/topic
@@ -40,37 +40,37 @@ From git@github.com:schacon/simplegit
  ! [rejected]        master     -&gt; origin/mymaster  (non fast forward)
  * [new branch]      topic      -&gt; origin/topic</code></pre>
 
-<p>Dans ce cas, la récupération /* pull <em>/ de la branche <code>master</code> a été refuséé car ce n&#8217;était pas une avance rapide. On peut surcharger ce comportement en précisant un <code>+</code> devant la spécification de la référence.</em></p>
+<p>Dans ce cas, la récupération /* pull <em>/ de la branche <code>master</code> a été refusée car ce n&#8217;était pas une avance rapide. On peut surcharger ce comportement en précisant un <code>+</code> devant la spécification de la référence.</em></p>
 
-<p>On peut aussi indiquer plusieurs spécifications de référence pour la récupération, dans le fichier de configuration. Si vous voulez toujours récupérer les branches <code>master</code> /<em>manque les backquotes dans la version en</em>/ et <code>experiment</code>, /* idem<em>/ ajoutez ces deux lignes :</em></p>
+<p>On peut aussi indiquer plusieurs spécifications de référence pour la récupération, dans le fichier de configuration. Si vous voulez toujours récupérer les branches <code>master</code> et <code>experiment</code>, ajoutez ces deux lignes :</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/master:refs/remotes/origin/master
        fetch = +refs/heads/experiment:refs/remotes/origin/experiment</code></pre>
 
-<p>Vous ne pouvez pas utiliser des jokers partiels, ce qui suit est donc invalide :</p>
+<p>Vous ne pouvez pas utiliser des jokers partiels, ce qui suit est donc invalide :</p>
 
 <pre><code>fetch = +refs/heads/qa*:refs/remotes/origin/qa*</code></pre>
 
-<p>On peut toutefois utiliser des espaces de noms pour accomplir cela. S&#8217;il existe une équipe qualité (QA) qui publie une série de branches, et que l&#8217;on veut la branche <code>master</code>, les branches de l&#8217;équipe qualité et rien d&#8217;autre, on peut utiliser la configuration suivante :</p>
+<p>On peut toutefois utiliser des espaces de noms pour accomplir cela. S&#8217;il existe une équipe qualité (QA) qui publie une série de branches et que l&#8217;on veut la branche <code>master</code>, les branches de l&#8217;équipe qualité et rien d&#8217;autre, on peut utiliser la configuration suivante :</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/master:refs/remotes/origin/master
        fetch = +refs/heads/qa/*:refs/remotes/origin/qa/*</code></pre>
 
-<p>Si vous utilisez des processus complexes impliquant un équipe qualité, des développeurs, et des intégrateurs qui publient des branches et qui collaborent sur des branches distantes, vous pouvez facilement utiliser des espaces des noms de cette façon.</p>
+<p>Si vous utilisez des processus complexes impliquant un équipe qualité, des développeurs et des intégrateurs qui publient des branches et qui collaborent sur des branches distantes, vous pouvez facilement utiliser des espaces des noms de cette façon.</p>
 
 <h3 id='publier_une_rfrence_spcifique'>Publier une référence spécifique</h3>
 
-<p>Il est pratique de pouvoir récupérer des références issues d&#8217;espace de nom de cette façon, mais comment l&#8217;équipe qualité insère-t-elle ces branches dans l&#8217;espace de nom <code>qa/</code> en premier lieu ? On peut accomplir cela en utilisant les spécification de références pour la publication.</p>
+<p>Il est pratique de pouvoir récupérer des références issues d&#8217;espace de nom de cette façon, mais comment l&#8217;équipe qualité insère-t-elle ces branches dans l&#8217;espace de nom <code>qa/</code> en premier lieu ? On peut accomplir cela en utilisant les spécification de références pour la publication.</p>
 
-<p>Si l&#8217;équipe qualité veut publier sa branche <code>master</code> vers <code>qa/master</code> sur le serveur distant, elle peut exécuter :</p>
+<p>Si l&#8217;équipe qualité veut publier sa branche <code>master</code> vers <code>qa/master</code> sur le serveur distant, elle peut exécuter :</p>
 
 <pre><code>$ git push origin master:refs/heads/qa/master</code></pre>
 
-<p>Si elle veut que Git le fasse automatiquement à chaque exécution de <code>git push origin</code>, elle peut ajouter une entrée <code>push</code> au fichier de configuration :</p>
+<p>Si elle veut que Git le fasse automatiquement à chaque exécution de <code>git push origin</code>, elle peut ajouter une entrée <code>push</code> au fichier de configuration :</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
@@ -81,11 +81,11 @@ From git@github.com:schacon/simplegit
 
 <h3 id='supprimer_des_rfrences'>Supprimer des références</h3>
 
-<p>Vous pouvez aussi utiliser les spécifications de références pour supprimer des références sur le serveur distant en exécutant une commande comme :</p>
+<p>Vous pouvez aussi utiliser les spécifications de références pour supprimer des références sur le serveur distant en exécutant une commande comme :</p>
 
 <pre><code>$ git push origin :topic</code></pre>
 
-<p>La spécification de référence ressemble à <code>&lt;src&gt;:&lt;dst&gt;</code>, mais en laissant vide la partie <code>&lt;src&gt;</code>, cela signifie de créer la branche à partir de rien, et donc la supprime.</p>
+<p>La spécification de référence ressemble à <code>&lt;src&gt;:&lt;dst&gt;</code>, mais en laissant vide la partie <code>&lt;src&gt;</code>, cela signifie une création de la branche à partir de rien et donc sa suppression.</p>
 
 <div id='nav'>
 <a href='ch9-4.html'>prev</a> | <a href='ch9-6.html'>next</a>

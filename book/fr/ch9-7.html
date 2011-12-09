@@ -1,22 +1,22 @@
 ---
 layout: translation
-title: Pro Git 9.7 Les trippes de Git Maintenance et Récupération de Données
+title: Pro Git 9.7 Les tripes de Git Maintenance et récupération de données
 ---
-<h2 id='maintenance_et_rcupration_de_donnes'>Maintenance et Récupération de Données</h2>
+<h2 id='maintenance_et_rcupration_de_donnes'>Maintenance et récupération de données</h2>
 
-<p>Parfois, vous aurez besoin de faire un peu de ménage : faire un dépôt plus compact, nettoyer les dépôts importés, ou récupérer du travail perdu. Cette section couvrira certains de ces scenarii.</p>
+<p>Parfois, vous aurez besoin de faire un peu de ménage : faire un dépôt plus compact, nettoyer les dépôts importés, ou récupérer du travail perdu. Cette section couvrira certains de ces scénarios.</p>
 
 <h3 id='maintenance'>Maintenance</h3>
 
-<p>De temps en temps, Git exécute automatiquement une commande appelée &#8220;auto gc&#8221;. La plupart du temps, cette commande ne fait rien. Cependant, s&#8217;il y a trop d&#8217;objets bruts (des objets qui ne sont pas dans des fichiers groupés), ou trop de fichiers groupés, Git lance une commande <code>git gc</code> à part entière. <code>gc</code> est l&#8217;abbréviation pour &#8220;garbage collect&#8221; (ramasse-miettes), et la commande fait plusieurs choses : elle rassemble plusieurs objets bruts et les place dans un fichiers groupés, elle consolide des fichiers groupés en un gros fichier groupé, et elle supprim des objets qui ne sont plus accessibles depuis un commit et qui sont vieux de plusieurs mois.</p>
+<p>De temps en temps, Git exécute automatiquement une commande appelée &#8220;auto gc&#8221;. La plupart du temps, cette commande ne fait rien. Cependant, s&#8217;il y a trop d&#8217;objets bruts (des objets qui ne sont pas dans des fichiers groupés), ou trop de fichiers groupés, Git lance une commande <code>git gc</code> à part entière. <code>gc</code> est l&#8217;abréviation pour &#8220;garbage collect&#8221; (ramasse-miettes) et la commande fait plusieurs choses : elle rassemble plusieurs objets bruts et les place dans un fichiers groupés, elle consolide des fichiers groupés en un gros fichier groupé et elle supprime des objets qui ne sont plus accessibles depuis un commit et qui sont vieux de plusieurs mois.</p>
 
-<p>Vous pouvez exécuter <code>auto gc</code> manuellement :</p>
+<p>Vous pouvez exécuter <code>auto gc</code> manuellement :</p>
 
 <pre><code>$ git gc --auto</code></pre>
 
 <p>Encore une fois, cela ne fait généralement rien. Vous devez avoir environ 7.000 objets bruts ou plus de 50 fichiers groupés pour que Git appelle une vraie commande <code>gc</code>. Vous pouvez modifier ces limites avec les propriétés de configuration <code>gc.auto</code> et <code>gc.autopacklimit</code>, respectivement.</p>
 
-<p><code>gc</code> regroupera aussi vos références dans un seul fichier. Supposons que votre dépôt contienne les branches et étiquettes suivantes :</p>
+<p><code>gc</code> regroupera aussi vos références dans un seul fichier. Supposons que votre dépôt contienne les branches et étiquettes suivantes :</p>
 
 <pre><code>$ find .git/refs -type f
 .git/refs/heads/experiment
@@ -24,7 +24,7 @@ title: Pro Git 9.7 Les trippes de Git Maintenance et Récupération de Données
 .git/refs/tags/v1.0
 .git/refs/tags/v1.1</code></pre>
 
-<p>Si vous exécutez <code>git gc</code>, vous n&#8217;aurez plus ces fichiers dans votre répertoire <code>refs</code>. Git les déplacera pour le bien de l&#8217;efficacité dans un fichier nommé <code>.git/packed-refs</code> qui ressemble à ceci :</p>
+<p>Si vous exécutez <code>git gc</code>, vous n&#8217;aurez plus ces fichiers dans votre répertoire <code>refs</code>. Git les déplacera pour le bien de l&#8217;efficacité dans un fichier nommé <code>.git/packed-refs</code> qui ressemble à ceci :</p>
 
 <pre><code>$ cat .git/packed-refs 
 # pack-refs with: peeled 
@@ -34,15 +34,15 @@ cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
 9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
 ^1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
 
-<p>Si vous mettez à jour une référence, Git ne modifiera pas ce fichier, mais enregistrera plutôt un nouveau fichier dans <code>refs/heads</code>. Pour obtenire l&#8217;empreinte SHA approprié pour référence donnée, Git cherche d&#8217;abord cette référence dans le répertoire <code>refs</code>, puis dans le fichier <code>packed-refs</code> si non trouvée. Cependant, vous ne pouvez pas trouver une référence dans votre répertoire <code>refs</code>, elle est probablement dans votre fichier <code>packed-refs</code>.</p>
+<p>Si vous mettez à jour une référence, Git ne modifiera pas ce fichier, mais enregistrera plutôt un nouveau fichier dans <code>refs/heads</code>. Pour obtenir l&#8217;empreinte SHA approprié pour référence donnée, Git cherche d&#8217;abord cette référence dans le répertoire <code>refs</code>, puis dans le fichier <code>packed-refs</code> si non trouvée. Cependant, si vous ne pouvez pas trouver une référence dans votre répertoire <code>refs</code>, elle est probablement dans votre fichier <code>packed-refs</code>.</p>
 
 <p>Remarquez la dernière ligne du fichier, celle commençant par <code>^</code>. Cela signifie que l&#8217;étiquette directement au-dessus est une étiquette annotée et que cette ligne est le commit que l&#8217;étiquette annotée référence.</p>
 
 <h3 id='rcupration_de_donnes'>Récupération de données</h3>
 
-<p>À un moment quelconque de votre vie avec Git, vous pouvez accentillement perdre un commit. Généralement, cela arrive parce que vous avez forcé la suppression d&#8217;une branche contenant du travail, et il se trouve que vous voulez cette branche finalement; ou vous avez réinitialiser une branche avec suppression, en abandonnant des commits dont vous vouliez des informations. Supposons que cela arrive, comment pouvez-vous récupérer vos commits ?</p>
+<p>À un moment quelconque de votre vie avec Git, vous pouvez accidentellement perdre un commit. Généralement, cela arrive parce que vous avez forcé la suppression d&#8217;une branche contenant du travail et il se trouve que vous voulez cette branche finalement; ou vous avez réinitialiser une branche avec suppression, en abandonnant des commits dont vous vouliez des informations. Supposons que cela arrive, comment pouvez-vous récupérer vos commits ?</p>
 
-<p>Voici un exemple qui réinitialise la branche <code>master</code> avec suppression dans votre dépôt de test vers un ancien commit et qui récupère les commits perdus. Premièrement, vérifions dans quel état est votre dépôt en ce moment :</p>
+<p>Voici un exemple qui réinitialise la branche <code>master</code> avec suppression dans votre dépôt de test vers un ancien commit et qui récupère les commits perdus. Premièrement, vérifions dans quel état est votre dépôt en ce moment :</p>
 
 <pre><code>$ git log --pretty=oneline
 ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
@@ -51,7 +51,7 @@ ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>Maintenant, déplaçons la branche <code>master</code> vers le commit du milieu :</p>
+<p>Maintenant, déplaçons la branche <code>master</code> vers le commit du milieu :</p>
 
 <pre><code>$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
 HEAD is now at 1a410ef third commit
@@ -60,15 +60,15 @@ $ git log --pretty=oneline
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>Vous avez effectivement perdu les deux commits du haut, vous n&#8217;avez pas de branche depuis laquelle ces commits seraient accessibles. Vous avez besoin de trouver le SHA du dernier commit et d&#8217;ajouter une branche s&#8217;y référant. Le problème est de trouver ce SHA, ce n&#8217;est pas comme si vous l&#8217;aviez mémorisé, hein ?</p>
+<p>Vous avez effectivement perdu les deux commits du haut, vous n&#8217;avez pas de branche depuis laquelle ces commits seraient accessibles. Vous avez besoin de trouver le SHA du dernier commit et d&#8217;ajouter une branche s&#8217;y référant. Le problème est de trouver ce SHA, ce n&#8217;est pas comme si vous l&#8217;aviez mémorisé, hein ?</p>
 
-<p>Souvent, la manière la plus rapide est d&#8217;utiliser l&#8217;outil <code>git reflog</code> Pendant que vous travaillez, Git enregistre l&#8217;emplacement de votre HEAD chaque fois que vous le changez. À chaque commit ou commutation de branche, le journal des références (reflog) est mis à jour. Le journal des références est aussi mis à jour par la commande <code>git update-ref</code>, qui est une autre raison de l&#8217;utiliser plutôt que de simplement écrire votre valeur SHA dans vos fichiers de références, comme mentionné dans la section &#8220;Git References&#8221; plus haut dans ce chapitre. Vous pouvez voir où vous étiez à n&#8217;importe quel moment en exécutant <code>git reflog</code> :</p>
+<p>Souvent, la manière la plus rapide est d&#8217;utiliser l&#8217;outil <code>git reflog</code> Pendant que vous travaillez, Git enregistre l&#8217;emplacement de votre HEAD chaque fois que vous le changez. À chaque commit ou commutation de branche, le journal des références (reflog) est mis à jour. Le journal des références est aussi mis à jour par la commande <code>git update-ref</code>, qui est une autre raison de l&#8217;utiliser plutôt que de simplement écrire votre valeur SHA dans vos fichiers de références, comme mentionné dans la section &#8220;Git References&#8221; plus haut dans ce chapitre. Vous pouvez voir où vous étiez à n&#8217;importe quel moment en exécutant <code>git reflog</code> :</p>
 
 <pre><code>$ git reflog
 1a410ef HEAD@{0}: 1a410efbd13591db07496601ebc7a059dd55cfe9: updating HEAD
 ab1afef HEAD@{1}: ab1afef80fac8e34258ff41fc1b867c702daa24b: updating HEAD</code></pre>
 
-<p>Ici, nous pouvons voir deux commits que nous avons récupérés, cependant, il n&#8217;y a pas plus d&#8217;information ici. Pour voir, les mêmes informations d&#8217;une manière plus utile, nous pouvons exécuter <code>git log -g</code>, qui nous donnera une sortie normalisée pour votre journal de références :</p>
+<p>Ici, nous pouvons voir deux commits que nous avons récupérés, cependant, il n&#8217;y a pas plus d&#8217;information ici. Pour voir, les mêmes informations d&#8217;une manière plus utile, nous pouvons exécuter <code>git log -g</code>, qui nous donnera une sortie normalisée pour votre journal de références :</p>
 
 <pre><code>$ git log -g
 commit 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -97,14 +97,14 @@ ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>Super, maintenant vous avez une nouvelle branche appelée <code>recover-branch</code> à l&#8217;emplacement où votre branche <code>master</code> était, faisant en sorte que les deux premiers commits soit à nouveau accessibles.</p>
+<p>Super, maintenant vous avez une nouvelle branche appelée <code>recover-branch</code> à l&#8217;emplacement où votre branche <code>master</code> se trouvait, faisant en sorte que les deux premiers commits soit à nouveau accessibles.</p>
 
-<p>Pour poursuivre, nous supposerons que vos pertes ne sont pas dans le journal des références pour une raison quelconque. On peut simuler cela en supprimant <code>recover-branch</code> et le journal des références. Maintenant, les deux premiers commits ne sont plus accessibles (encore) :</p>
+<p>Pour poursuivre, nous supposerons que vos pertes ne sont pas dans le journal des références pour une raison quelconque. On peut simuler cela en supprimant <code>recover-branch</code> et le journal des références. Maintenant, les deux premiers commits ne sont plus accessibles (encore) :</p>
 
 <pre><code>$ git branch –D recover-branch
 $ rm -Rf .git/logs/</code></pre>
 
-<p>Puisque les données du journal de référence sont sauvegardés dans le répertoire <code>.git/logs/</code>, vous n&#8217;avez effectivement plus de journal de références. Comment pouvez-vous récupérer ces commits maintenant ? Une manière de faire est d&#8217;utiliser l&#8217;outil <code>git fsck</code>, qui vérifie l&#8217;intégrité de votre base de données. Si vous l&#8217;exécutez avec l&#8217;option <code>--full</code>, il vous montre tous les objets qui ne sont pas référencés par d&#8217;autres objets :</p>
+<p>Puisque les données du journal de référence sont sauvegardées dans le répertoire <code>.git/logs/</code>, vous n&#8217;avez effectivement plus de journal de références. Comment pouvez-vous récupérer ces commits maintenant ? Une manière de faire est d&#8217;utiliser l&#8217;outil <code>git fsck</code>, qui vérifie l&#8217;intégrité de votre base de données. Si vous l&#8217;exécutez avec l&#8217;option <code>--full</code>, il vous montre tous les objets qui ne sont pas référencés par d&#8217;autres objets :</p>
 
 <pre><code>$ git fsck --full
 dangling blob d670460b4b4aece5915caf5c68d12f560a9fe3e4
@@ -114,15 +114,15 @@ dangling blob 7108f7ecb345ee9d0084193f147cdad4d2998293</code></pre>
 
 <p>Dans ce cas, vous pouvez voir votre commit manquant après &#8220;dangling commit&#8221;. Vous pouvez le restaurez de la même manière que précédemment, en créant une branche qui référence cette empreinte SHA.</p>
 
-<h3 id='supprimer_des_objets'>Supprimer des objets</h3>
+<h3 id='suppression_dobjets'>Suppression d&#8217;objets</h3>
 
-<p>Il y a beaucoup de choses dans Git qui sont géniales, mais une fonctionnalité qui peut poser problème est le fait que <code>git clone</code> télécharge l&#8217;historique entier du projet, incluant chaque version de chaque fichier. C&#8217;est très bien lorsque le tout est du code source, parce Git est hautement optimisé pour compresser les données efficacement. Cependant, si quelqu&#8217;un à un moment donné de l&#8217;historique de votre projet a ajouté un énome fichier, chaque clone sera forcé de télécharger cet énorme fichier, même si il a été supprimé du projet dans le commit suivant. Puisqu&#8217;il est accessible depuis l&#8217;historique, il sera toujours là.</p>
+<p>Il y a beaucoup de choses dans Git qui sont géniales, mais une fonctionnalité qui peut poser problème est le fait que <code>git clone</code> télécharge l&#8217;historique entier du projet, incluant chaque version de chaque fichier. C&#8217;est très bien lorsque le tout est du code source, parce Git est hautement optimisé pour compresser les données efficacement. Cependant, si quelqu&#8217;un à un moment donné de l&#8217;historique de votre projet a ajouté un énorme fichier, chaque clone sera forcé de télécharger cet énorme fichier, même s&#8217;il a été supprimé du projet dans le commit suivant. Puisqu&#8217;il est accessible depuis l&#8217;historique, il sera toujours là.</p>
 
-<p>Cela peut être un énorme problème, lorsque vous convertissez un dépôt Subversion ou Perfoce en un dépôt Git. Car, comme vous ne téléchargez pas l&#8217;historique entier dans ces syst-mes, ce genre d&#8217;ajout n&#8217;a que peu de conséquences. Si vous avez importé depuis un autre système ou que votre dépôt est beaucoup plus gros que ce qu&#8217;il devrait être, voici comment vous pouvez trouver et supprimer des gros objets.</p>
+<p>Cela peut être un énorme problème, lorsque vous convertissez un dépôt Subversion ou Perforce en un dépôt Git. Car, comme vous ne téléchargez pas l&#8217;historique entier dans ces systèmes, ce genre d&#8217;ajout n&#8217;a que peu de conséquences. Si vous avez importé depuis un autre système ou que votre dépôt est beaucoup plus gros que ce qu&#8217;il devrait être, voici comment vous pouvez trouver et supprimer des gros objets.</p>
 
-<p>Soyez prévenu : cette technique détruit votre historique de commit. Elle réécrit chaque objet commit depuis le premier objet arbre que vous modifiez pour supprimer une référence d&#8217;un gros fichier. Si vous faites cela immédiatement après un import, avant que quiconque n&#8217;ait eu le temps de commencer à travailler sur ce commit, tout va bien. Sinon, vous devez alerter tous les contributeurs qu&#8217;ils doivent recommencer (ou au moins faire un <code>rebase</code>) sur votre nouveau commit.</p>
+<p>Soyez prévenu : cette technique détruit votre historique de commit. Elle réécrit chaque objet commit depuis le premier objet arbre que vous modifiez pour supprimer une référence d&#8217;un gros fichier. Si vous faites cela immédiatement après un import, avant que quiconque n&#8217;ait eu le temps de commencer à travailler sur ce commit, tout va bien. Sinon, vous devez alerter tous les contributeurs qu&#8217;ils doivent recommencer (ou au moins faire un <code>rebase</code>) sur votre nouveau commit.</p>
 
-<p>Pour la démonstration, nous allons ajouter un gros fichier dans votre dépôt de test, le supprimer dans le commit suivant, le trouver, et le supprimer de manière permanente du dépôt. Premièrement, ajoutons un gros objet à votre historique :</p>
+<p>Pour la démonstration, nous allons ajouter un gros fichier dans votre dépôt de test, le supprimer dans le commit suivant, le trouver et le supprimer de manière permanente du dépôt. Premièrement, ajoutons un gros objet à votre historique :</p>
 
 <pre><code>$ curl http://kernel.org/pub/software/scm/git/git-1.6.3.1.tar.bz2 &gt; git.tbz2
 $ git add git.tbz2
@@ -131,7 +131,7 @@ $ git commit -am &#39;added git tarball&#39;
  1 files changed, 0 insertions(+), 0 deletions(-)
  create mode 100644 git.tbz2</code></pre>
 
-<p>Oups, vous ne vouliez pas rajouter une énorme archive à votre projet. Il vaut mieux s&#8217;en débarrasser :</p>
+<p>Oups, vous ne vouliez pas rajouter une énorme archive à votre projet. Il vaut mieux s&#8217;en débarrasser :</p>
 
 <pre><code>$ git rm git.tbz2 
 rm &#39;git.tbz2&#39;
@@ -140,7 +140,7 @@ $ git commit -m &#39;oops - removed large tarball&#39;
  1 files changed, 0 insertions(+), 0 deletions(-)
  delete mode 100644 git.tbz2</code></pre>
 
-<p>Maintenant, faites un <code>gc</code> sur votre base de données, pour voir combien d&#8217;espace disque vous utilisez :</p>
+<p>Maintenant, faites un <code>gc</code> sur votre base de données, pour voir combien d&#8217;espace disque vous utilisez :</p>
 
 <pre><code>$ git gc
 Counting objects: 21, done.
@@ -149,7 +149,7 @@ Compressing objects: 100% (16/16), done.
 Writing objects: 100% (21/21), done.
 Total 21 (delta 3), reused 15 (delta 1)</code></pre>
 
-<p>Vous pouvez exécutez la commande <code>count-objects</code> pour voir rapidement combien d&#8217;espace disque vous utilisez :</p>
+<p>Vous pouvez exécutez la commande <code>count-objects</code> pour voir rapidement combien d&#8217;espace disque vous utilisez :</p>
 
 <pre><code>$ git count-objects -v
 count: 4
@@ -160,27 +160,27 @@ size-pack: 2016
 prune-packable: 0
 garbage: 0</code></pre>
 
-<p>L&#8217;entrée <code>size-pack</code> est la taille de vos fichiers groupés en kilo-octets, vous utilisez donc 2Mo. Avant votre dernier commit, vous utilisiez environ 2Ko, clairement, supprimer le fichier avec le commit précédent, ne l&#8217;a pas enlever de votre historique. À chaque fois que quelqu&#8217;un clonera votre dépôt, il aura à cloner les 2Mo pour récupérer votre tout petit projet, parce que vous avez accidentellement rajouté un gros fichier. Débarrassons-nous en.</p>
+<p>L&#8217;entrée <code>size-pack</code> est la taille de vos fichiers groupés en kilo-octets, vous utilisez donc 2Mo. Avant votre dernier commit, vous utilisiez environ 2Ko, clairement, supprimer le fichier avec le commit précédent ne l&#8217;a pas enlevé de votre historique. À chaque fois que quelqu&#8217;un clonera votre dépôt, il aura à cloner les 2Mo pour récupérer votre tout petit projet, parce que vous avez accidentellement rajouté un gros fichier. Débarassons-nous en.</p>
 
-<p>Premièrement, vous devez le trouver. Dans ce cas, vous savez déjà de quel fichier il s&#8217;agit. Mais supposons que vous ne le sachiez pas, comment identifieriez-vous quel(s) fichier(s) prennent trop de place ? Si vous exécutez <code>git gc</code>, tous les objets sont des dans fichiers groupés; vous pouvez identifier les gros objets en utilisant une autre commande de plomberie appelée <code>git verify-pack</code> et en triant sur le troisième champ de la sortie qui est la taille des fichiers. Vous pouvez également la faire suivre à la commande <code>tail</code> car vous ne vous intéressez qu&#8217;aux fichiers les plus gros :</p>
+<p>Premièrement, vous devez le trouver. Dans ce cas, vous savez déjà de quel fichier il s&#8217;agit. Mais supposons que vous ne le sachiez pas, comment identifieriez-vous quel(s) fichier(s) prennent trop de place ? Si vous exécutez <code>git gc</code>, tous les objets sont dans des fichiers groupés ; vous pouvez identifier les gros objets en utilisant une autre commande de plomberie appelée <code>git verify-pack</code> et en triant sur le troisième champ de la sortie qui est la taille des fichiers. Vous pouvez également le faire suivre à la commande <code>tail</code> car vous ne vous intéressez qu&#8217;aux fichiers les plus gros :</p>
 
 <pre><code>$ git verify-pack -v .git/objects/pack/pack-3f8c0...bb.idx | sort -k 3 -n | tail -3
 e3f094f522629ae358806b17daf78246c27c007b blob   1486 734 4667
 05408d195263d853f09dca71d55116663690c27c blob   12908 3478 1189
 7a9eb2fba2b1811321254ac360970fc169ba2330 blob   2056716 2056872 5401</code></pre>
 
-<p>Le gros objet est à la fin : 2Mo. Pour trouver quel fichier c&#8217;est, vous allez utilisez la commande <code>rev-list</code>, que vous avez utilisé brièvement dans le chapitre 7. Si vous mettez l&#8217;option <code>--objects</code> à <code>rev-list</code>, elle listera tous les SHA des commits et des blobs avec le chemin du fichier associés. Vous pouvez utilisez cette commande pour trouver le nom de votre blob :</p>
+<p>Le gros objet est à la fin : 2Mo. Pour trouver quel fichier c&#8217;est, vous allez utilisez la commande <code>rev-list</code>, que vous avez utilisé brièvement dans le chapitre 7. Si vous mettez l&#8217;option <code>--objects</code> à <code>rev-list</code>, elle listera tous les SHA des commits et des blobs avec le chemin du fichier associés. Vous pouvez utilisez cette commande pour trouver le nom de votre blob :</p>
 
 <pre><code>$ git rev-list --objects --all | grep 7a9eb2fb
 7a9eb2fba2b1811321254ac360970fc169ba2330 git.tbz2</code></pre>
 
-<p>Maintenant, vous voulez supprimer ce fichier de toutes les arborescences passées. Vous pouvez facilement voir quels commits ont modifié ce fichier :</p>
+<p>Maintenant, vous voulez supprimer ce fichier de toutes les arborescences passées. Vous pouvez facilement voir quels commits ont modifié ce fichier :</p>
 
 <pre><code>$ git log --pretty=oneline -- git.tbz2
 da3f30d019005479c99eb4c3406225613985a1db oops - removed large tarball
 6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 added git tarball</code></pre>
 
-<p>Vous devez réécrire tous les commits qui sont liés à <code>6df76</code> pour supprimer totalement ce fichier depuis votre historique Git. Pour cela, utilisez <code>filter-branch</code>, que vous avez utilisé dans le Chapitre 6 :</p>
+<p>Vous devez réécrire tous les commits qui sont liés à <code>6df76</code> pour supprimer totalement ce fichier depuis votre historique Git. Pour cela, utilisez <code>filter-branch</code>, que vous avez utilisé dans le Chapitre 6 :</p>
 
 <pre><code>$ git filter-branch --index-filter \
    &#39;git rm --cached --ignore-unmatch git.tbz2&#39; -- 6df7640^..
@@ -188,9 +188,9 @@ Rewrite 6df764092f3e7c8f5f94cbe08ee5cf42e92a0289 (1/2)rm &#39;git.tbz2&#39;
 Rewrite da3f30d019005479c99eb4c3406225613985a1db (2/2)
 Ref &#39;refs/heads/master&#39; was rewritten</code></pre>
 
-<p>L&#8217;option <code>--index-filter</code> est similaire à l&#8217;option <code>--tree-filter</code> utilisé dans le Chapitre 6, sauf qu&#8217;au lieu de modifier les fichiers sur le disk, vous modifiez votre zone d&#8217;attente et votre index. Plutôt que de supprimer un fichier spécifique avec une commande comme <code>rm file</code>, vous devez le supprimez avec <code>git rm --cached</code>; vous devez le supprimer de l&#8217;index, pas du disque. La raison de faire cela de cette manière est la rapidité, car Git n&#8217;ayant pas besoin de récupérer chaque révision sur disque avant votre filtre, la procédure peut être beaucoup beaucoup plus rapide. Vous pouvez faire la même chose avec <code>--tree-filter</code> si vous voulez. L&#8217;option <code>--ignore-unmatch</code> de <code>git rm</code> lui dit que ce n&#8217;est pas une erreur si le motif que vous voulez supprimez n&#8217;existe pas. Finalement, vous demandez à <code>filter-branch</code> de réécrire votre historique seulement depuis le parent du commit <code>6df7640</code>, car vous savez que c&#8217;est de là que le problème a commencé. Sinon, il aurait démarré du début, et serait plus long sans nécessité.</p>
+<p>L&#8217;option <code>--index-filter</code> est similaire à l&#8217;option <code>--tree-filter</code> utilisé dans le Chapitre 6, sauf qu&#8217;au lieu de modifier les fichiers sur le disque, vous modifiez votre zone d&#8217;attente et votre index. Plutôt que de supprimer un fichier spécifique avec une commande comme <code>rm file</code>, vous devez le supprimer avec <code>git rm --cached</code>; vous devez le supprimer de l&#8217;index, pas du disque. La raison de faire cela de cette manière est la rapidité, car Git n&#8217;ayant pas besoin de récupérer chaque révision sur disque avant votre filtre, la procédure peut être beaucoup beaucoup plus rapide. Vous pouvez faire la même chose avec <code>--tree-filter</code> si vous voulez. L&#8217;option <code>--ignore-unmatch</code> de <code>git rm</code> lui dit que ce n&#8217;est pas une erreur si le motif que vous voulez supprimez n&#8217;existe pas. Finalement, vous demandez à <code>filter-branch</code> de réécrire votre historique seulement depuis le parent du commit <code>6df7640</code>, car vous savez que c&#8217;est de là que le problème a commencé. Sinon, il aurait démarré du début et serait plus long sans nécessité.</p>
 
-<p>Votre historique ne contient plus de référence à ce fichier. Cependant, votre journal de révision et un nouvel ensemble de référence que Git a ajouté lors de votre <code>filter-branch</code> dans <code>.git/refs/original</code> en contiennent encore, vous devez donc les supprimer puis regrouper votre base de données. Vous devez vous débarrasser de tout ce qui se référence à ces vieux commits avant de regrouper :</p>
+<p>Votre historique ne contient plus de référence à ce fichier. Cependant, votre journal de révision et un nouvel ensemble de références que Git a ajouté lors de votre <code>filter-branch</code> dans <code>.git/refs/original</code> en contiennent encore, vous devez donc les supprimer puis regrouper votre base de données. Vous devez vous débarrasser de tout ce qui fait référence à ces vieux commits avant de regrouper :</p>
 
 <pre><code>$ rm -Rf .git/refs/original
 $ rm -Rf .git/logs/
@@ -201,7 +201,7 @@ Compressing objects: 100% (14/14), done.
 Writing objects: 100% (19/19), done.
 Total 19 (delta 3), reused 16 (delta 1)</code></pre>
 
-<p>Voyons combien d&#8217;espace vous avez récupéré :</p>
+<p>Voyons combien d&#8217;espace vous avez récupéré :</p>
 
 <pre><code>$ git count-objects -v
 count: 8
@@ -212,7 +212,7 @@ size-pack: 7
 prune-packable: 0
 garbage: 0</code></pre>
 
-<p>La taille du dépôt regroupé est retombé à 7Ko, ce qui est beaucoup que 2Mo. Vous pouvez voir dans la valeur &#8220;size&#8221; que votre gros objet est toujours dans vos objets bruts, il n&#8217;est donc pas parti; mais il ne sera plus transféré lors d&#8217;une poussée vers un serveur ou un clone, ce qui est l&#8217;important dans l&#8217;histoire. Si vous voulez réellement, vous pouvez supprimer complètement l&#8217;objet en exécutant <code>git prune --expire</code>.</p>
+<p>La taille du dépôt regroupé est retombée à 7Ko, ce qui est beaucoup moins que 2Mo. Vous pouvez voir dans la valeur &#8220;size&#8221; que votre gros objet est toujours dans vos objets bruts, il n&#8217;est donc pas parti; mais il ne sera plus transféré lors d&#8217;une poussée vers un serveur ou un clone, ce qui est l&#8217;important dans l&#8217;histoire. Si vous voulez réellement, vous pouvez supprimer complètement l&#8217;objet en exécutant <code>git prune --expire</code>.</p>
 
 <div id='nav'>
 <a href='ch9-6.html'>prev</a> | <a href='ch9-8.html'>next</a>

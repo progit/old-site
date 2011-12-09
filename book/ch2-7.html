@@ -21,7 +21,7 @@ title: Pro Git 2.7 Git Basics Tips and Tricks
 <pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
 commit config</code></pre>
 
-<p>In this case, typing git co and then pressing the Tab key twice suggests commit and config. Adding <code>m&lt;tab&gt;</code> completes <code>git commit</code> automatically.</p>
+<p>In this case, typing <code>git co</code> and then pressing the Tab key twice suggests commit and config. Adding <code>m&lt;tab&gt;</code> completes <code>git commit</code> automatically.</p>
 
 <p>This also works with options, which is probably more useful. For instance, if you’re running a <code>git log</code> command and can’t remember one of the options, you can start typing it and press Tab to see what matches:</p>
 
@@ -65,7 +65,7 @@ Date:   Tue Aug 26 19:48:51 2008 +0800
 
     Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
 
-<p>As you can tell, Git simply replaces the new command with whatever you alias it for. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a <code>!</code> character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing <code>git visual</code> to run <code>gitk</code>:</p>
+<p>As you can tell, Git simply replaces the new command with whatever you alias it to. However, maybe you want to run an external command, rather than a Git subcommand. In that case, you start the command with a <code>!</code> character. This is useful if you write your own tools that work with a Git repository. We can demonstrate by aliasing <code>git visual</code> to run <code>gitk</code>:</p>
 
 <pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
 

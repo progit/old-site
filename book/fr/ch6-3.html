@@ -85,6 +85,23 @@ Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)</code></pre>
 
 <p>Vous pouvez également exécutez <code>git stash pop</code> pour appliquer et supprimer immédiatement la remise de votre pile.</p>
 
+<h3 id='dfaire_leffet_dune_remise'>Défaire l&#8217;effet d&#8217;une remise</h3>
+
+<p>Dans certains cas, il est souhaitable de pouvoir appliquer une modification remisée, réaliser d&#8217;autres modifications, puis défaire les modifications de la remise. Git ne fournit pas de commande <code>stash unapply</code> mais il est possible d&#8217;obtenir le même effet en extrayant les modifications qui constituent la remise et en appliquant leur inverse :</p>
+
+<pre><code>$ git stash show -p stash@{0} | git apply -R</code></pre>
+
+<p>Ici aussi, si la remise n&#8217;est pas indiquée, Git utilise la plus récente.</p>
+
+<pre><code>$ git stash show -p | git apply -R</code></pre>
+
+<p>La création d&#8217;un alias permettra d&#8217;ajouter effectivement la commande <code>stash-unapply</code> à votre Git. Par exemple :</p>
+
+<pre><code>$ git config --global alias.stash-unapply &#39;!git stash show -p | git apply -R&#39;
+$ git stash
+$ #... work work work
+$ git stash-unapply</code></pre>
+
 <h3 id='crer_une_branche_depuis_une_remise'>Créer une branche depuis une remise</h3>
 
 <p>Si vous remiser votre travail, l&#8217;oubliez pendant un temps en continuant sur la branche où vous avez créé la remise, vous pouvez avoir un problème en réappliquant le travail. Si l&#8217;application de la remise essaye de modifier un fichier que vous avez modifié depuis, vous allez obtenir des conflits de fusion et vous devrez essayer de les résoudre. Si vous voulez un moyen plus facile de tester une nouvelle fois les modifications remisées, vous pouvez exécuter <code>git stash branch</code>, qui créera une nouvelle branche à votre place, récupérant le commit où vous étiez lorsque vous avez créé la remise, réappliquera votre travail dedans, et supprimera finalement votre remise si cela a réussi :</p>

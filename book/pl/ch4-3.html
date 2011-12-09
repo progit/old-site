@@ -13,11 +13,11 @@ config            id_dsa.pub</code></pre>
 
 <p>Interesuje Cię para plików nazwanych <code>coś</code> oraz <code>coś.pub</code>, gdzie to <code>coś</code> to zwykle <code>id_dsa</code> albo <code>id_rsa</code>. Plik z rozszerzeniem <code>.pub</code> to klucz publiczny, a ten drugi to klucz prywatny. Jeśli nie masz tych plików (albo w ogóle katalogu <code>.ssh</code>) możesz utworzyć parę kluczy za pomocą programu <code>ssh-keygen</code>, który jest częścią pakietu narzędzi SSH w systemach Linux albo Mac. W systemie Windows program ten jest częścią dystrybucji MSysGit:</p>
 
-<pre><code>$ ssh-keygen 
+<pre><code>$ ssh-keygen
 Generating public/private rsa key pair.
-Enter file in which to save the key (/Users/schacon/.ssh/id_rsa): 
-Enter passphrase (empty for no passphrase): 
-Enter same passphrase again: 
+Enter file in which to save the key (/Users/schacon/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
 Your identification has been saved in /Users/schacon/.ssh/id_rsa.
 Your public key has been saved in /Users/schacon/.ssh/id_rsa.pub.
 The key fingerprint is:
@@ -27,7 +27,7 @@ The key fingerprint is:
 
 <p>Następnie każdy użytkownik powinien wysłać Ci albo komukolwiek, kto podaje się za administratora serwera Git swój klucz publiczny (wciąż zakładając, że korzystasz z serwera SSH, który wymaga korzystania z kluczy publicznych). Aby wysłać klucz wystarczy skopiować zawartość pliku <code>.pub</code> i wkleić go do e-maila. Klucz publiczny wygląda mniej więcej tak:</p>
 
-<pre><code>$ cat ~/.ssh/id_rsa.pub 
+<pre><code>$ cat ~/.ssh/id_rsa.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
 GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
 Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA

@@ -116,7 +116,7 @@ repo testing
 
 <h3 id='advanced_access_control_with_deny_rules'>Advanced Access Control with &#8220;deny&#8221; rules</h3>
 
-<p>So far, we&#8217;ve only seen permissions to be one or <code>R</code>, <code>RW</code>, or <code>RW+</code>. However, gitolite allows another permission: <code>-</code>, standing for &#8220;deny&#8221;. This gives you a lot more power, at the expense of some complexity, because now fallthrough is not the <em>only</em> way for access to be denied, so the <em>order of the rules now matters</em>!</p>
+<p>So far, we&#8217;ve only seen permissions to be one of <code>R</code>, <code>RW</code>, or <code>RW+</code>. However, gitolite allows another permission: <code>-</code>, standing for &#8220;deny&#8221;. This gives you a lot more power, at the expense of some complexity, because now fallthrough is not the <em>only</em> way for access to be denied, so the <em>order of the rules now matters</em>!</p>
 
 <p>Let us say, in the situation above, we want engineers to be able to rewind any branch <em>except</em> master and integ. Here&#8217;s how to do that:</p>
 

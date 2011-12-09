@@ -1,12 +1,12 @@
 ---
 layout: translation
-title: Pro Git 9.3 Git Internals Git References
+title: Pro Git 9.3 Los entesijos internos de Git Referencias Git
 ---
-<h2 id='git_references'>Git References</h2>
+<h2 id='referencias_git'>Referencias Git</h2>
 
-<p>You can run something like <code>git log 1a410e</code> to look through your whole history, but you still have to remember that <code>1a410e</code> is the last commit in order to walk that history to find all those objects. You need a file in which you can store the SHA-1 value under a simple name so you can use that pointer rather than the raw SHA-1 value.</p>
+<p>Puedes utilizar algo así como <code>git log 1a410e</code> para hechar un vistazo a lo largo de toda tu historia, recorriendola y encontrando todos tus objetos. Pero para ello has necesitado recordar que la última confirmación de cambios es <code>1a410e</code>. Necesitarias un archivo donde almacenar los valores de las sumas de comprobación SHA-1, junto con sus respectivos nombres simples que puedas utilizar como enlaces en lugar de la propia suma de comprobación.</p>
 
-<p>In Git, these are called &#8220;references&#8221; or &#8220;refs&#8221;; you can find the files that contain the SHA-1 values in the <code>.git/refs</code> directory. In the current project, this directory contains no files, but it does contain a simple structure:</p>
+<p>En Git, estp es lo que se conoce como &#8220;referencias&#8221; o &#8220;refs&#8221;. En la carpeta <code>.git/refs</code> puedes encontrar esos archivos con valores SHA-1 y nombres . En el proyecto actual, la carpeta aún no contiene archivos, pero sí contiene una estructura simple:</p>
 
 <pre><code>$ find .git/refs
 .git/refs
@@ -15,85 +15,85 @@ title: Pro Git 9.3 Git Internals Git References
 $ find .git/refs -type f
 $</code></pre>
 
-<p>To create a new reference that will help you remember where your latest commit is, you can technically do something as simple as this:</p>
+<p>Para crear una nueva referencia que te sirva de ayuda para recordar cual es tu última confirmación de cambios, puedes realizar técnicamente algo tan simple como:</p>
 
 <pre><code>$ echo &quot;1a410efbd13591db07496601ebc7a059dd55cfe9&quot; &gt; .git/refs/heads/master</code></pre>
 
-<p>Now, you can use the head reference you just created instead of the SHA-1 value in your Git commands:</p>
+<p>A partir de ese momento, puedes utilizar esa referencia principal que acabas de crear, en lugar del valor SHA-1, en todos tus comandos:</p>
 
 <pre><code>$ git log --pretty=oneline  master
 1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>You aren’t encouraged to directly edit the reference files. Git provides a safer command to do this if you want to update a reference called <code>update-ref</code>:</p>
+<p>No es conveniente editar directamente los archivos de referencia. Git suministra un comando mucho más seguro para hacer esto. Si necesitas actualizar una referencia, puedes utilizar el comando <code>update-ref</code>:</p>
 
 <pre><code>$ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9</code></pre>
 
-<p>That’s basically what a branch in Git is: a simple pointer or reference to the head of a line of work. To create a branch back at the second commit, you can do this:</p>
+<p>Esto es lo que es básicamente una rama en Git: un simple apuntador o referencia a la cabeza de una línea de trabajo. Para crear una rama hacia la segunda confirmación de cambios, puedes hacer:</p>
 
 <pre><code>$ git update-ref refs/heads/test cac0ca</code></pre>
 
-<p>Your branch will contain only work from that commit down:</p>
+<p>Y la rama contendrá únicamente trabajo desde esa confirmación de cambios hacia atrás.</p>
 
 <pre><code>$ git log --pretty=oneline test
 cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit</code></pre>
 
-<p>Now, your Git database conceptually looks something like Figure 9-4.</p>
+<p>En estos momentos, tu base de datos Git se parecerá conceptualmente a la figura 9-4.</p>
 
-<p><center><img src="/figures/ch9/18333fig0904-tn.png"></center><br/> Figure 9-4. Git directory objects with branch head references included.</p>
+<p><center><img src="/figures/ch9/18333fig0904-tn.png"></center><br/> Figura 9-4. Objetos en la carpeta Git, con referencias a las cabeceras de las ramas.</p>
 
-<p>When you run commands like <code>git branch (branchname)</code>, Git basically runs that <code>update-ref</code> command to add the SHA-1 of the last commit of the branch you’re on into whatever new reference you want to create.</p>
+<p>Cuando lanzas comandos como <code>git branch (nombrederama)</code>. Lo que hace Git es añadir, a cualquier nueva referencia que vayas a crear, el valor SHA-1 de la última confirmación de cambios en esa rama.</p>
 
-<h3 id='the_head'>The HEAD</h3>
+<h3 id='la_cabeza_head'>La CABEZA (HEAD)</h3>
 
-<p>The question now is, when you run <code>git branch (branchname)</code>, how does Git know the SHA-1 of the last commit? The answer is the HEAD file. The HEAD file is a symbolic reference to the branch you’re currently on. By symbolic reference, I mean that unlike a normal reference, it doesn’t generally contain a SHA-1 value but rather a pointer to another reference. If you look at the file, you’ll normally see something like this:</p>
+<p>Y ahora nos preguntamos, al lanzar el comando <code>git branch (nombrederama)</code>, ¿cómo sabe Git cuál es el valor SHA-1 de la última confirmación de cambios?. La respuesta a esta pregunta es el archivo HEAD (CABEZA). El archivo HEAD es una referencia simbólica a la rama donde te encuentras en cada momento. Por referencia simbólica me refiero a que, a diferencia de una referencia normal, esta contiene un enlace a otra referencia en lugar de un valor SHA-1. Si miras dentro del archivo, podrás observar algo como:</p>
 
 <pre><code>$ cat .git/HEAD 
 ref: refs/heads/master</code></pre>
 
-<p>If you run <code>git checkout test</code>, Git updates the file to look like this:</p>
+<p>Si lanzas el comando <code>git checkout test</code>, Git actualiza el contenido del archivo:</p>
 
 <pre><code>$ cat .git/HEAD 
 ref: refs/heads/test</code></pre>
 
-<p>When you run <code>git commit</code>, it creates the commit object, specifying the parent of that commit object to be whatever SHA-1 value the reference in HEAD points to.</p>
+<p>Cuando lanzas una orden <code>git commit</code>, se crea un nuevo objeto de confirmación de cambios teniendo como padre la confirmación con valor SHA-1 a la que en ese momento esté apuntando la referencia en HEAD.</p>
 
-<p>You can also manually edit this file, but again a safer command exists to do so: <code>symbolic-ref</code>. You can read the value of your HEAD via this command:</p>
+<p>Puedes editar manualmente este archivo. Pero, también para esta tarea existe un comando más seguro: <code>symbolic-ref</code>. Puedes leer el valor de HEAD a través de él:</p>
 
 <pre><code>$ git symbolic-ref HEAD
 refs/heads/master</code></pre>
 
-<p>You can also set the value of HEAD:</p>
+<p>Y también puedes cambiar el valor de HEAD a través de él:</p>
 
 <pre><code>$ git symbolic-ref HEAD refs/heads/test
 $ cat .git/HEAD 
 ref: refs/heads/test</code></pre>
 
-<p>You can’t set a symbolic reference outside of the refs style:</p>
+<p>Pero no puedes fijar una referencia simbólica fuera de &#8220;refs&#8221;:</p>
 
 <pre><code>$ git symbolic-ref HEAD test
 fatal: Refusing to point HEAD outside of refs/</code></pre>
 
-<h3 id='tags'>Tags</h3>
+<h3 id='etiquetas'>Etiquetas</h3>
 
-<p>You’ve just gone over Git’s three main object types, but there is a fourth. The tag object is very much like a commit object — it contains a tagger, a date, a message, and a pointer. The main difference is that a tag object points to a commit rather than a tree. It’s like a branch reference, but it never moves — it always points to the same commit but gives it a friendlier name.</p>
+<p>Acabas de conocer los tres principales tipos de objetos Git, pero hay un cuarto. El objeto tipo etiqueta es muy parecido al tipo confirmación de cambios, &#8211;contiene un marcador, una fecha, un mensaje y un enlace&#8211;. Su principal diferencia reside en que apunta a una confirmación de cambios (commit) en lugar de a un árbol (tree). Es como una referencia a una rama, pero permaneciendo siempre inmovil, &#8211;apuntando siempre a la misma confirmación de cambios&#8211;, dándo un nombre mas amigable a esta.</p>
 
-<p>As discussed in Chapter 2, there are two types of tags: annotated and lightweight. You can make a lightweight tag by running something like this:</p>
+<p>Tal y como se ha comentado en el capítulo 2, hay dos tipos de etiquetas: las anotativas y las ligeras. Puedes crear una etiqueta ligera lanzando un comando tal como:</p>
 
 <pre><code>$ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d</code></pre>
 
-<p>That is all a lightweight tag is — a branch that never moves. An annotated tag is more complex, however. If you create an annotated tag, Git creates a tag object and then writes a reference to point to it rather than directly to the commit. You can see this by creating an annotated tag (<code>-a</code> specifies that it’s an annotated tag):</p>
+<p>Una etiqueta ligera es simplemente eso: una rama que nunca se mueve. Sin embargo, una etiqueta anotativa es más compleja. Al crear una etiqueta anotativa, Git crea un objeto tipo etiqueta y luego escribe una referencia apuntando a él en lugar de apuntar directamente a una confirmación de cambios. Puedes comprobarlo creando una: (la opción <code>-a</code> indica que la etiqueta es anotativa)</p>
 
 <pre><code>$ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 –m &#39;test tag&#39;</code></pre>
 
-<p>Here’s the object SHA-1 value it created:</p>
+<p>Este es el objeto SHA-1 creado:</p>
 
 <pre><code>$ cat .git/refs/tags/v1.1 
 9585191f37f7b0fb9444f35a9bf50de191beadc2</code></pre>
 
-<p>Now, run the <code>cat-file</code> command on that SHA-1 value:</p>
+<p>Ahora, lanzando el comando <code>cat-file</code> para ese valor SHA-1:</p>
 
 <pre><code>$ git cat-file -p 9585191f37f7b0fb9444f35a9bf50de191beadc2
 object 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -103,15 +103,15 @@ tagger Scott Chacon &lt;schacon@gmail.com&gt; Sat May 23 16:48:58 2009 -0700
 
 test tag</code></pre>
 
-<p>Notice that the object entry points to the commit SHA-1 value that you tagged. Also notice that it doesn’t need to point to a commit; you can tag any Git object. In the Git source code, for example, the maintainer has added their GPG public key as a blob object and then tagged it. You can view the public key by running</p>
+<p>Merece destacar que el inicio del objeto apunta al SHA-1 de la confirmación de cambios recién etiquetada. Y también el que no ha sido necesario apuntar directamente a una confirmación de cambios. Realmente puedes etiquetar cualquier tipo de objeto Git. Por ejemplo, en el código fuente de Git los gestores han añadido su clave GPG pública como un objeto binario (blob) y lo han etiquetado. Puedes ver esta clave pública con el comando</p>
 
 <pre><code>$ git cat-file blob junio-gpg-pub</code></pre>
 
-<p>in the Git source code. The Linux kernel also has a non-commit-pointing tag object — the first tag created points to the initial tree of the import of the source code.</p>
+<p>lanzado sobre el código fuente de Git. El kernel de Linux tiene también un objeto tipo etiqueta apuntando a un objeto que no es una confirmación de cambios (commit). La primera etiqueta que se creó es la que apunta al árbol (tree) inicial donde se importó el código fuente.</p>
 
-<h3 id='remotes'>Remotes</h3>
+<h3 id='remotos'>Remotos</h3>
 
-<p>The third type of reference that you’ll see is a remote reference. If you add a remote and push to it, Git stores the value you last pushed to that remote for each branch in the <code>refs/remotes</code> directory. For instance, you can add a remote called <code>origin</code> and push your <code>master</code> branch to it:</p>
+<p>El tercer tipo de referencia que puedes observar es la referencia remota. Si añades un remoto y envias algo a él, Git almacenará en dicho remoto el último valor para cada rama presente en la carpeta <code>refs/remotes</code>. Por ejemplo, puedes añadir un remoto denominado <code>origin</code> y enviar a él tu rama <code>master</code>:</p>
 
 <pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git
 $ git push origin master
@@ -122,12 +122,12 @@ Total 7 (delta 2), reused 4 (delta 1)
 To git@github.com:schacon/simplegit-progit.git
    a11bef0..ca82a6d  master -&gt; master</code></pre>
 
-<p>Then, you can see what the <code>master</code> branch on the <code>origin</code> remote was the last time you communicated with the server, by checking the <code>refs/remotes/origin/master</code> file:</p>
+<p>Tras lo cual puedes confirmar cual era la rama <code>master</code> en el remoto <code>origin</code> la última vez que comunicase con el servidor. Comprobando el archivo <code>refs/remotes/origin/master</code>:</p>
 
 <pre><code>$ cat .git/refs/remotes/origin/master 
 ca82a6dff817ec66f44342007202690a93763949</code></pre>
 
-<p>Remote references differ from branches (<code>refs/heads</code> references) mainly in that they can’t be checked out. Git moves them around as bookmarks to the last known state of where those branches were on those servers.</p>
+<p>Las referencias remotas son distintas de las ramas normales, (referencias en <code>refs/heads</code>); y no se pueden recuperar (checkout) al espacio de trabajo. Git las utiliza solamente como marcadores al último estado conocido de cada rama en cada servidor remoto declarado.</p>
 
 <div id='nav'>
 <a href='ch9-2.html'>prev</a> | <a href='ch9-4.html'>next</a>

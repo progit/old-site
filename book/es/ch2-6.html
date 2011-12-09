@@ -55,72 +55,18 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
     Merge branch &#39;experiment&#39;</code></pre>
 
-<p>&#171;&#171;&lt;&#171;&#160;HEAD:es-es/02-git-basics/01-chapter2.markdown Esto muestra la información del autor de la etiqueta, la fecha en la que la confirmación fue etiquetada, y el mensaje de anotación antes de mostrar la información del a confirmación.</p>
+<p>Esto muestra la información del autor de la etiqueta, la fecha en la que la confirmación fue etiquetada, y el mensaje de anotación antes de mostrar la información de la confirmación.</p>
 
 <h3 id='etiquetas_firmadas'>Etiquetas firmadas</h3>
-
-<h1 id='tambin_puedes_firmar_tus_etiquetas_con_gpg_asumiendo_que_tienes_una_clave_privada_todo_lo_que_tienes_que_hacer_es_usar_el_parmetro__en_lugar_de_'>También puedes firmar tus etiquetas con GPG, asumiendo que tienes una clave privada. Todo lo que tienes que hacer es usar el parámetro <code>-s</code> en lugar de <code>-a</code>.</h1>
-
-<p>Esto muestra la información del etiquetador, la fecha en el que el commit fue etiquetado y el mensaje de anotación antes de mostrar la información del commit.</p>
-
-<blockquote>
-<p>That shows the tagger information, the date the commit was tagged, and the annotation message before showing the commit information.</p>
-</blockquote>
-
-<h3 id='etiquetas_firmadas'>Etiquetas firmadas</h3>
-
-<blockquote>
-<h3 id='signed_tags'>Signed Tags</h3>
-</blockquote>
 
 <p>También puedes firmar tus etiquetas con GPG, siempre que tengas una clave privada. Lo único que debes hacer es usar <code>-s</code> en vez de <code>-a</code>:</p>
-
-<blockquote>
-<p>You can also sign your tags with GPG, assuming you have a private key. All you have to do is use <code>-s</code> instead of <code>-a</code>:</p>
-
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>progit/master:es/02-git-basics/01-chapter2.markdown</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
 
 <pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
 You need a passphrase to unlock the secret key for
 user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
 1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
 
-<p>&#171;&#171;&lt;&#171;&#160;HEAD:es-es/02-git-basics/01-chapter2.markdown</p>
-
-<h1 id='si_ejecutas__en_esta_etiqueta_puedes_ser_tu_firma_gpg_adjuntada'>Si ejecutas <code>git show</code> en esta etiqueta, puedes ser tu firma GPG adjuntada:</h1>
-
 <p>Si ejecutas <code>git show</code> en esa etiqueta, puedes ver la firma GPG adjunta a ella:</p>
-
-<blockquote>
-<p>If you run <code>git show</code> on that tag, you can see your GPG signature attached to it:</p>
-
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>progit/master:es/02-git-basics/01-chapter2.markdown</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
 
 <pre><code>$ git show v1.5
 tag v1.5
@@ -142,43 +88,11 @@ Date:   Sun Feb 8 19:02:46 2009 -0800
 
     Merge branch &#39;experiment&#39;</code></pre>
 
-<p>&#171;&#171;&lt;&#171;&#160;HEAD:es-es/02-git-basics/01-chapter2.markdown Un poco más tarde aprenderás como verificar etiquetas firmadas.</p>
+<p>Más tarde, aprenderás cómo verificar etiquetas firmadas.</p>
 
 <h3 id='etiquetas_ligeras'>Etiquetas ligeras</h3>
 
-<h1 id='otra_forma_de_etiquetar_confirmaciones_es_con_una_etiqueta_ligera_esto_es_bsicamente_la_suma_de_comprobacin_de_la_confirmacin_almacenada_en_un_archivo_ninguna_otra_informacin_es_guardada_para_crear_una_etiqueta_ligera_no_aadas_las_opciones___o_'>Otra forma de etiquetar confirmaciones es con una etiqueta ligera. Esto es básicamente la suma de comprobación de la confirmación almacenada en un archivo —ninguna otra información es guardada—. Para crear una etiqueta ligera no añadas las opciones <code>-a</code>, <code>-s</code> o <code>-m</code>:</h1>
-
-<p>Un poco después aprenderás como verificar etiquetas firmadas.</p>
-
-<blockquote>
-<p>A bit later, you’ll learn how to verify signed tags.</p>
-</blockquote>
-
-<h3 id='etiquetas_ligeras'>Etiquetas ligeras</h3>
-
-<blockquote>
-<h3 id='lightweight_tags'>Lightweight Tags</h3>
-</blockquote>
-
-<p>Otra forma de etiquetar commits es con etiquetas ligeras. Esto es básicamente el checksum del commit almacenado en un fichero - no se guarda ninguna otra información. Para crear una etiqueta ligera, no hay que añadir ninguna de las opciones <code>-a</code>, <code>-s</code>, or <code>-m</code>:</p>
-
-<blockquote>
-<p>Another way to tag commits is with a lightweight tag. This is basically the commit checksum stored in a file — no other information is kept. To create a lightweight tag, don’t supply the <code>-a</code>, <code>-s</code>, or <code>-m</code> option:</p>
-
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<blockquote>
-<p>progit/master:es/02-git-basics/01-chapter2.markdown</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
-</blockquote>
+<p>Otra forma de etiquetar confirmaciones es con una etiqueta ligera. Esto es básicamente la suma de comprobación de la confirmación almacenada en un archivo —ninguna otra información es guardada—. Para crear una etiqueta ligera no añadas las opciones <code>-a</code>, <code>-s</code> o <code>-m</code>:</p>
 
 <pre><code>$ git tag v1.4-lw
 $ git tag
@@ -216,7 +130,7 @@ gpg: Good signature from &quot;Junio C Hamano &lt;junkio@cox.net&gt;&quot;
 gpg:                 aka &quot;[jpeg image of size 1513]&quot;
 Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A</code></pre>
 
-<p>Si no tienes la clave pública del autor de la firma, se obtiene algo así:</p>
+<p>Si no tienes la clave pública del autor de la firma, se obtiene algo parecido a:</p>
 
 <pre><code>gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
 gpg: Can&#39;t check signature: public key not found
@@ -291,7 +205,7 @@ To git@github.com:schacon/simplegit.git
  * [new tag]         v1.4-lw -&gt; v1.4-lw
  * [new tag]         v1.5 -&gt; v1.5</code></pre>
 
-<p>Ahora, cuando alguien clone o reciba de tu repositorio, cogerá también todas tus etiquetas.</p>
+<p>Ahora, cuando alguien clone o reciba de tu repositorio, obtendrá también todas tus etiquetas.</p>
 
 <div id='nav'>
 <a href='ch2-5.html'>prev</a> | <a href='ch2-7.html'>next</a>

@@ -1,10 +1,10 @@
 ---
 layout: translation
-title: Pro Git 9.4 Git Internals Packfiles
+title: Pro Git 9.4 Los entesijos internos de Git Archivos empaquetadores
 ---
-<h2 id='packfiles'>Packfiles</h2>
+<h2 id='archivos_empaquetadores'>Archivos empaquetadores</h2>
 
-<p>Let’s go back to the objects database for your test Git repository. At this point, you have 11 objects — 4 blobs, 3 trees, 3 commits, and 1 tag:</p>
+<p>Volviendo a los objetos en la base de datos de tu repositorio Git de pruebas. En este momento, tienes 11 objetos &#8211;4 binarios, 3 árboles, 3 confirmaciones de cambios y 1 etiqueta&#8211;.</p>
 
 <pre><code>$ find .git/objects -type f
 .git/objects/01/55eb4229851634a0f03eb265b69f5a2d56f341 # tree 2
@@ -19,7 +19,7 @@ title: Pro Git 9.4 Git Internals Packfiles
 .git/objects/fa/49b077972391ad58037050f2a75f74e3671e92 # new.txt
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1</code></pre>
 
-<p>Git compresses the contents of these files with zlib, and you’re not storing much, so all these files collectively take up only 925 bytes. You’ll add some larger content to the repository to demonstrate an interesting feature of Git. Add the repo.rb file from the Grit library you worked with earlier — this is about a 12K source code file:</p>
+<p>Git comprime todos esos archivos con zlib, por lo que ocupan más bien poco. Entre todos suponen solamente 925 bytes. Puedes añadir algún otro archivo de gran contenido al repositorio. Y verás una interesante funcionalidad de Git. Añadiendo el archivo repo.rb de la libreria Grit con la que has estado trabajando anteriormente, supondrá añadir un achivo con unos 12 Kbytes de código fuente.</p>
 
 <pre><code>$ curl http://github.com/mojombo/grit/raw/master/lib/grit/repo.rb &gt; repo.rb
 $ git add repo.rb 
@@ -30,40 +30,40 @@ $ git commit -m &#39;added repo.rb&#39;
  create mode 100644 repo.rb
  rewrite test.txt (100%)</code></pre>
 
-<p>If you look at the resulting tree, you can see the SHA-1 value your repo.rb file got for the blob object:</p>
+<p>Si hechas un vistazo al árbol resultante, podrás observar el valor SHA-1 del objeto binario correspondiente a dicho archivo repo.rb:</p>
 
 <pre><code>$ git cat-file -p master^{tree}
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e      repo.rb
 100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt</code></pre>
 
-<p>You can then use <code>git cat-file</code> to see how big that object is:</p>
+<p>Y ver su tamaño con el comando <code>git cat-file</code>:</p>
 
 <pre><code>$ git cat-file -s 9bc1dc421dcd51b4ac296e3e5b6e2a99cf44391e
 12898</code></pre>
 
-<p>Now, modify that file a little, and see what happens:</p>
+<p>Ahora, modifica un poco dicho archivo y comprueba lo que sucede:</p>
 
 <pre><code>$ echo &#39;# testing&#39; &gt;&gt; repo.rb 
 $ git commit -am &#39;modified repo a bit&#39;
 [master ab1afef] modified repo a bit
  1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
 
-<p>Check the tree created by that commit, and you see something interesting:</p>
+<p>Revisando el árbol creado por esta última confirmación de cambios, verás algo interesante:</p>
 
 <pre><code>$ git cat-file -p master^{tree}
 100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
 100644 blob 05408d195263d853f09dca71d55116663690c27c      repo.rb
 100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt</code></pre>
 
-<p>The blob is now a different blob, which means that although you added only a single line to the end of a 400-line file, Git stored that new content as a completely new object:</p>
+<p>El objeto binario es ahora un binario completamente diferente. Aunque solo has añadido una única línea al final de un archivo que ya contenia 400 líneas, Git ha almacenado el resultado como un objeto completamente nuevo.</p>
 
 <pre><code>$ git cat-file -s 05408d195263d853f09dca71d55116663690c27c
 12908</code></pre>
 
-<p>You have two nearly identical 12K objects on your disk. Wouldn’t it be nice if Git could store one of them in full but then the second object only as the delta between it and the first?</p>
+<p>Y, así, tienes en tu disco dos objetos de 12 Kbytes prácticamente idénticos. ¿No seria práctico si Git pudiera almacenar uno de ellos completo y luego solo las diferencias del segundo con respecto al primero?</p>
 
-<p>It turns out that it can. The initial format in which Git saves objects on disk is called a loose object format. However, occasionally Git packs up several of these objects into a single binary file called a packfile in order to save space and be more efficient. Git does this if you have too many loose objects around, if you run the <code>git gc</code> command manually, or if you push to a remote server. To see what happens, you can manually ask Git to pack up the objects by calling the <code>git gc</code> command:</p>
+<p>Pues bien, Git lo puede hacer. El formato inicial como Git guarda sus objetos en disco es el formato conocido como &#8220;relajado&#8221; (loose). Pero, sin embargo, de vez en cuando, Git suele agrupar varios de esos objetos en un único binario denominado archivo &#8220;empaquetador&#8221;. Para ahorrar espacio y hacer así más eficiente su almacenamiento. Esto sucede cada vez que tiene demasiados objetos en formato &#8220;relajado&#8221;; o cuando tu invocas manualmente al comando <code>git gc</code>; o justo antes de enviar cualquier cosa a un servidor remoto. Puedes comprobar el proceso pidiendole expresamente a Git que empaquete objetos, utilizando el comando <code>git gc</code>:</p>
 
 <pre><code>$ git gc
 Counting objects: 17, done.
@@ -72,7 +72,7 @@ Compressing objects: 100% (13/13), done.
 Writing objects: 100% (17/17), done.
 Total 17 (delta 1), reused 10 (delta 0)</code></pre>
 
-<p>If you look in your objects directory, you’ll find that most of your objects are gone, and a new pair of files has appeared:</p>
+<p>Tras esto, si miras los objetos presentes en la carpeta, veras que han desaparecido la mayoria de los que habia anteriormente. Apareciendo un par de objetos nuevos:</p>
 
 <pre><code>$ find .git/objects -type f
 .git/objects/71/08f7ecb345ee9d0084193f147cdad4d2998293
@@ -81,11 +81,11 @@ Total 17 (delta 1), reused 10 (delta 0)</code></pre>
 .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
 .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack</code></pre>
 
-<p>The objects that remain are the blobs that aren’t pointed to by any commit — in this case, the &#8220;what is up, doc?&#8221; example and the &#8220;test content&#8221; example blobs you created earlier. Because you never added them to any commits, they’re considered dangling and aren’t packed up in your new packfile.</p>
+<p>Solo han quedado aquellos objetos binarios no referenciados por ninguna confirmación de cambios &#8211;en este caso, el ejemplo de &#8220;¿que hay de nuevo, viejo?&#8221; y el ejemplo de &#8220;contenido de pruebas&#8221;&#8211; Porque nunca los has llegado a incluir en ninguna confirmación de cambios, no se han considerado como objetos definitivos y, por tanto, no han sido empaquetados.</p>
 
-<p>The other files are your new packfile and an index. The packfile is a single file containing the contents of all the objects that were removed from your filesystem. The index is a file that contains offsets into that packfile so you can quickly seek to a specific object. What is cool is that although the objects on disk before you ran the <code>gc</code> were collectively about 12K in size, the new packfile is only 6K. You’ve halved your disk usage by packing your objects.</p>
+<p>Los otros archivos presentes son el nuevo archivo empaquetador y un índice. El archivo empaquetador es un único archivo conteniendo dentro de él todos los objetos sueltos eliminados del sistema de archivo. El índice es un archivo que contiene las posiciones de cada uno de esos objetos dentro del archivo empaquetador. Permitiendonos así buscarlos y extraer rápidamente cualquiera de ellos. Lo que es interesante es el hecho de que, aunque los objetos originales presentes en el disco antes del <code>gc</code> ocupaban unos 12 Kbytes, el nuevo archivo empaquetador apenas ocupa 6 Kbytes. Empaquetando los objetos, has conseguido reducir a la mitad el uso de disco.</p>
 
-<p>How does Git do this? When Git packs objects, it looks for files that are named and sized similarly, and stores just the deltas from one version of the file to the next. You can look into the packfile and see what Git did to save space. The <code>git verify-pack</code> plumbing command allows you to see what was packed up:</p>
+<p>¿Cómo consigue Git esto? Cuando Git empaqueta objetos, va buscando archivos de igual nombre y tamaño similar. Almacenando únicamente las diferencias entre una versión de cada archivo y la siguiente. Puedes comprobarlo mirando en el interior del archivo empaquetador. Y, para eso, has de utilizar el comando &#8220;de fontaneria&#8221; <code>git verify-pack</code>:</p>
 
 <pre><code>$ git verify-pack -v \
   .git/objects/pack/pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.idx
@@ -110,9 +110,9 @@ fdf4fc3344e67ab068f836878b6c4951e3b15f3d commit 177 122 627
 chain length = 1: 1 object
 pack-7a16e4488ae40c7d2bc56ea2bd43e25212a66c45.pack: ok</code></pre>
 
-<p>Here, the <code>9bc1d</code> blob, which if you remember was the first version of your repo.rb file, is referencing the <code>05408</code> blob, which was the second version of the file. The third column in the output is the size of the object in the pack, so you can see that <code>05408</code> takes up 12K of the file but that <code>9bc1d</code> only takes up 7 bytes. What is also interesting is that the second version of the file is the one that is stored intact, whereas the original version is stored as a delta — this is because you’re most likely to need faster access to the most recent version of the file.</p>
+<p>Puedes observar que el objeto binario <code>9bc1d</code>, (correspondiente a la primera versión de tu archivo repo.rb), tiene una referencia al binario <code>05408</code> (la segunda versión de ese archivo). La tercera columna refleja el tamaño de cada objeto dentro del paquete. Observandose que <code>05408</code> ocupa unos 12 Kbytes; pero <code>9bc1d</code> solo ocupa 7 bytes. Resulta curioso que se almacene completa la segunda versión del archivo, mientras que la versión original es donde se almacena solo la diferencia. Esto se debe a la mayor probabilidad de que vayamos a recuperar rápidamente la versión mas reciente del archivo.</p>
 
-<p>The really nice thing about this is that it can be repacked at any time. Git will occasionally repack your database automatically, always trying to save more space. You can also manually repack at any time by running <code>git gc</code> by hand.</p>
+<p>Lo verdaderamente interesante de todo este proceso es que podemos reempaquetar en cualquier momento De vez en cuando, Git, en su empeño por optimizar la ocupación de espacio, reempaqueta automaticamente toda la base de datos Pero, también tu mismo puedes reempaquetar en cualquier momento, lanzando manualmente el comando <code>git gc</code>.</p>
 
 <div id='nav'>
 <a href='ch9-3.html'>prev</a> | <a href='ch9-5.html'>next</a>

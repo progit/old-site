@@ -1,32 +1,9 @@
 ---
 layout: translation
-title: Pro Git 2.8 Git の基本 <code>--committer</code> エントリが指定した文字列にマッチするコミットのみを表示する
+title: Pro Git 2.8 Git の基本 まとめ
 ---
-<h2 id='_'><code>--committer</code> エントリが指定した文字列にマッチするコミットのみを表示する</h2>
+<h2 id='id57'>まとめ</h2>
 
-<p>表: <code>git log</code> のフィルタオプション</p>
-
-<p>たとえば、Git ソースツリーのテストファイルに対する変更があったコミットのうち、Junio Hamano がコミットしたもの (マージは除く) で 2008 年 10 月に行われたものを知りたければ次のように指定します。</p>
-
-<pre><code>$ git log --pretty=&quot;%h - %s&quot; --author=gitster --since=&quot;2008-10-01&quot; \
-   --before=&quot;2008-11-01&quot; --no-merges -- t/
-5610e3b - Fix testcase failure when extended attribute
-acd3b9e - Enhance hold_lock_file_for_{update,append}()
-f563754 - demonstrate breakage of detached checkout wi
-d1a43f2 - reset --hard/read-tree --reset -u: remove un
-51a94af - Fix &quot;checkout --track -b newbranch&quot; on detac
-b0ad11e - pull: allow &quot;git pull origin $something:$cur</code></pre>
-
-<p>約 20,000 件におよぶ Git ソースコードのコミットの歴史の中で、このコマンドの条件にマッチするのは 6 件となります。</p>
-
-<h3 id='gui_'>GUI による歴史の可視化</h3>
-
-<p>もう少しグラフィカルなツールでコミットの歴史を見たい場合は、Tcl/Tk のプログラムである gitk を見てみましょう。これは Git に同梱されています。gitk は、簡単に言うとビジュアルな <code>git log</code> ツールです。<code>git log</code> で使えるフィルタリングオプションにはほぼすべて対応しています。プロジェクトのコマンドラインで gitk と打ち込むと、図 2-2 のような画面があらわれるでしょう。</p>
-
-<p><center><img src="/figures/ch2/18333fig0202-tn.png"></center><br/> 図 2-2. gitk history visualizer</p>
-
-<p>ウィンドウの上半分に、コミットの歴史がきれいな家系図とともに表示されます。ウィンドウの下半分には diff ビューアがあり、任意のコミットをクリックしてその変更内容を確認することができます。</p>
-
-<div id='nav'>
-<a href='ch2-7.html'>prev</a> | <a href='ch2-9.html'>next</a>
+<p>これで、ローカルでの Git の基本的な操作がこなせるようになりました。リポジトリの作成やクローン、リポジトリへの変更・ステージ・コミット、リポジトリのこれまでの変更履歴の閲覧などです。次は、Git の強力な機能であるブランチモデルについて説明しましょう。</p><div id='nav'>
+<a href='ch2-7.html'>prev</a> | <a href='ch3-0.html'>next</a>
 </div>

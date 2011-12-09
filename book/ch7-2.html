@@ -28,6 +28,8 @@ title: Pro Git 7.2 Customizing Git Git Attributes
 
 <p>In the 1.6 series of Git, you can use the Git attributes functionality to effectively diff binary files. You do this by telling Git how to convert your binary data to a text format that can be compared via the normal diff.</p>
 
+<h5 id='ms_word_files'>MS Word files</h5>
+
 <p>Because this is a pretty cool and not widely known feature, I’ll go over a few examples. First, you’ll use this technique to solve one of the most annoying problems known to humanity: version-controlling Word documents. Everyone knows that Word is the most horrific editor around; but, oddly, everyone uses it. If you want to version-control Word documents, you can stick them in a Git repository and commit every once in a while; but what good does that do? If you run <code>git diff</code> normally, you only see something like this:</p>
 
 <pre><code>$ git diff 
@@ -42,6 +44,13 @@ Binary files a/chapter1.doc and b/chapter1.doc differ</code></pre>
 <p>This tells Git that any file that matches this pattern (.doc) should use the &#8220;word&#8221; filter when you try to view a diff that contains changes. What is the &#8220;word&#8221; filter? You have to set it up. Here you’ll configure Git to use the <code>strings</code> program to convert Word documents into readable text files, which it will then diff properly:</p>
 
 <pre><code>$ git config diff.word.textconv strings</code></pre>
+
+<p>This command adds a section to your <code>.git/config</code> that looks like this:</p>
+
+<pre><code>[diff &quot;word&quot;]
+	textconv = strings</code></pre>
+
+<p>Side note: There are different kinds of <code>.doc</code> files. Some use an UTF-16 encoding or other &#8220;codepages&#8221; and <code>strings</code> won&#8217;t find anything useful in there. Your mileage may vary.</p>
 
 <p>Now Git knows that if it tries to do a diff between two snapshots, and any of the files end in <code>.doc</code>, it should run those files through the &#8220;word&#8221; filter, which is defined as the <code>strings</code> program. This effectively makes nice text-based versions of your Word files before attempting to diff them.</p>
 
@@ -61,6 +70,58 @@ index c1c8a0a..b93c9e4 100644
 +Let&#39;s see if this works.</code></pre>
 
 <p>Git successfully and succinctly tells me that I added the string &#8220;Let’s see if this works&#8221;, which is correct. It’s not perfect — it adds a bunch of random stuff at the end — but it certainly works. If you can find or write a Word-to-plain-text converter that works well enough, that solution will likely be incredibly effective. However, <code>strings</code> is available on most Mac and Linux systems, so it may be a good first try to do this with many binary formats.</p>
+
+<h5 id='opendocument_text_files'>OpenDocument Text files</h5>
+
+<p>The same approach that we used for MS Word files (<code>*.doc</code>) can be used for OpenDocument Text files (<code>*.odt</code>) created by OpenOffice.org.</p>
+
+<p>Add the following line to your <code>.gitattributes</code> file:</p>
+
+<pre><code>*.odt diff=odt</code></pre>
+
+<p>Now set up the <code>odt</code> diff filter in <code>.git/config</code>:</p>
+
+<pre><code>[diff &quot;odt&quot;]
+	binary = true
+	textconv = /usr/local/bin/odt-to-txt</code></pre>
+
+<p>OpenDocument files are actually zip&#8217;ped directories containing multiple files (the content in an XML format, stylesheets, images, etc.). We&#8217;ll need to write a script to extract the content and return it as plain text. Create a file <code>/usr/local/bin/odt-to-txt</code> (you are free to put it into a different directory) with the following content:</p>
+
+<pre><code>#! /usr/bin/env perl
+# Simplistic OpenDocument Text (.odt) to plain text converter.
+# Author: Philipp Kempgen
+
+if (! defined($ARGV[0])) {
+	print STDERR &quot;No filename given!\n&quot;;
+	print STDERR &quot;Usage: $0 filename\n&quot;;
+	exit 1;
+}
+
+my $content = &#39;&#39;;
+open my $fh, &#39;-|&#39;, &#39;unzip&#39;, &#39;-qq&#39;, &#39;-p&#39;, $ARGV[0], &#39;content.xml&#39; or die $!;
+{
+	local $/ = undef;  # slurp mode
+	$content = &lt;$fh&gt;;
+}
+close $fh;
+$_ = $content;
+s/&lt;text:span\b[^&gt;]*&gt;//g;           # remove spans
+s/&lt;text:h\b[^&gt;]*&gt;/\n\n*****  /g;   # headers
+s/&lt;text:list-item\b[^&gt;]*&gt;\s*&lt;text:p\b[^&gt;]*&gt;/\n    --  /g;  # list items
+s/&lt;text:list\b[^&gt;]*&gt;/\n\n/g;       # lists
+s/&lt;text:p\b[^&gt;]*&gt;/\n  /g;          # paragraphs
+s/&lt;[^&gt;]+&gt;//g;                      # remove all XML tags
+s/\n{2,}/\n\n/g;                   # remove multiple blank lines
+s/\A\n+//;                         # remove leading blank lines
+print &quot;\n&quot;, $_, &quot;\n\n&quot;;</code></pre>
+
+<p>And make it executable</p>
+
+<pre><code>chmod +x /usr/local/bin/odt-to-txt</code></pre>
+
+<p>Now <code>git diff</code> will be able to tell you what changed in <code>.odt</code> files.</p>
+
+<h5 id='image_files'>Image files</h5>
 
 <p>Another interesting problem you can solve this way involves diffing image files. One way to do this is to run JPEG files through a filter that extracts their EXIF information — metadata that is recorded with most image formats. If you download and install the <code>exiftool</code> program, you can use it to convert your images into text about the metadata, so at least the diff will show you a textual representation of any changes that happened:</p>
 

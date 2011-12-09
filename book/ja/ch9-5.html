@@ -1,38 +1,39 @@
 ---
 layout: translation
-title: Pro Git 9.5 Gitの内側 The Refspec
+title: Pro Git 9.5 Gitの内側 参照仕様（Refspec）
 ---
-<h2 id='the_refspec'>The Refspec</h2>
+<h2 id='refspec'>参照仕様（Refspec）</h2>
 
-<p>Throughout this book, you’ve used simple mappings from remote branches to local references; but they can be more complex. Suppose you add a remote like this:</p>
+<p>本書の全体に渡って、リモートブランチからローカルの参照へのシンプルなマッピングを使用してきました。しかし、それらはもっと複雑なものです。以下のようにリモートを追加したとしましょう。</p>
 
 <pre><code>$ git remote add origin git@github.com:schacon/simplegit-progit.git</code></pre>
 
-<p>It adds a section to your <code>.git/config</code> file, specifying the name of the remote (<code>origin</code>), the URL of the remote repository, and the refspec for fetching:</p>
+<p><code>.git/config</code> ファイルにセクションを追加して、リモート（<code>origin</code>）の名前、リモートレポジトリのURL、そしてフェッチするための参照仕様（refspec）を指定します。</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/*:refs/remotes/origin/*</code></pre>
 
-<p>The format of the refspec is an optional <code>+</code>, followed by <code>&lt;src&gt;:&lt;dst&gt;</code>, where <code>&lt;src&gt;</code> is the pattern for references on the remote side and <code>&lt;dst&gt;</code> is where those references will be written locally. The <code>+</code> tells Git to update the reference even if it isn’t a fast-forward.</p>
+<p>参照仕様はコロン（:）で分割した <pre class='markdown-html-error' style='border: solid 3px red; background-color: pink'>REXML could not parse this XML/HTML: 
+&lt;src&gt;:&lt;dst&gt; の形式で、オプションとして先頭に `+` を付けます。`&lt;src&gt;` はリモート側への参照に対するパターンで、`&lt;dst&gt;` はそれらの参照がローカル上で書かれる場所を示します。`+` の記号は Git にそれが早送り（fast-forward）でない場合でも参照を更新することを伝えます。</pre></p>
 
-<p>In the default case that is automatically written by a <code>git remote add</code> command, Git fetches all the references under <code>refs/heads/</code> on the server and writes them to <code>refs/remotes/origin/</code> locally. So, if there is a <code>master</code> branch on the server, you can access the log of that branch locally via</p>
+<p>デフォルトのケースでは <code>git remote add</code> コマンドを実行することで自動的に書かれます。このコマンドを実行すると、Git はサーバ上の <code>refs/heads/</code> 以下にあるすべての参照をフェッチして、ローカル上の <code>refs/remotes/origin/</code> にそれらを書きます。そのため、もしもサーバ上に <code>master</code> ブランチがあると、ローカルからそのブランチのログにアクセスすることができます。</p>
 
 <pre><code>$ git log origin/master
 $ git log remotes/origin/master
 $ git log refs/remotes/origin/master</code></pre>
 
-<p>They’re all equivalent, because Git expands each of them to <code>refs/remotes/origin/master</code>.</p>
+<p>これらはすべて同じ意味を持ちます。なぜなら、Git はそれら各々を <code>refs/remotes/origin/master</code> に拡張するからです。</p>
 
-<p>If you want Git instead to pull down only the <code>master</code> branch each time, and not every other branch on the remote server, you can change the fetch line to</p>
+<p>その代わりに、Git に毎回 <code>master</code> ブランチのみを引き出して、リモートサーバ上のそれ以外のすべてのブランチは引き出さないようにしたい場合は、フェッチラインを以下のように変更します。</p>
 
 <pre><code>fetch = +refs/heads/master:refs/remotes/origin/master</code></pre>
 
-<p>This is just the default refspec for <code>git fetch</code> for that remote. If you want to do something one time, you can specify the refspec on the command line, too. To pull the <code>master</code> branch on the remote down to <code>origin/mymaster</code> locally, you can run</p>
+<p>これはまさにリモートへの <code>git fetch</code> に対する参照仕様のデフォルトの振る舞いです。 もし何かを一度実行したければ、コマンドライン上の参照仕様を指定することもできます。 リモート上の <code>master</code> ブランチをプルして、ローカル上の <code>origin/mymaster</code> に落とすには、以下のように実行します。</p>
 
 <pre><code>$ git fetch origin master:refs/remotes/origin/mymaster</code></pre>
 
-<p>You can also specify multiple refspecs. On the command line, you can pull down several branches like so:</p>
+<p>複数の参照仕様を指定することも可能です。コマンドライン上で、幾つかのブランチをこのように引き落とす（pull down）ことができます。</p>
 
 <pre><code>$ git fetch origin master:refs/remotes/origin/mymaster \
    topic:refs/remotes/origin/topic
@@ -40,52 +41,52 @@ From git@github.com:schacon/simplegit
  ! [rejected]        master     -&gt; origin/mymaster  (non fast forward)
  * [new branch]      topic      -&gt; origin/topic</code></pre>
 
-<p>In this case, the master branch pull was rejected because it wasn’t a fast-forward reference. You can override that by specifying the <code>+</code> in front of the refspec.</p>
+<p>このケースでは、master ブランチのプルは早送りの参照ではなかったため拒否されました。<code>+</code> の記号を参照仕様の先頭に指定することで、それを上書きすることができます。</p>
 
-<p>You can also specify multiple refspecs for fetching in your configuration file. If you want to always fetch the master and experiment branches, add two lines:</p>
+<p>さらに設定ファイルの中のフェッチ設定に複数の参照仕様を指定することができます。もし master と実験用のブランチを常にフェッチしないならば、二行を追加します。</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/master:refs/remotes/origin/master
        fetch = +refs/heads/experiment:refs/remotes/origin/experiment</code></pre>
 
-<p>You can’t use partial globs in the pattern, so this would be invalid:</p>
+<p>ブロブの一部をパターンに使用することはできません。これは無効となります。</p>
 
 <pre><code>fetch = +refs/heads/qa*:refs/remotes/origin/qa*</code></pre>
 
-<p>However, you can use namespacing to accomplish something like that. If you have a QA team that pushes a series of branches, and you want to get the master branch and any of the QA team’s branches but nothing else, you can use a config section like this:</p>
+<p>しかし、似たようなことを達成するのに名前空間を使用することができます。もし一連のブランチをプッシュしてくれる QAチームがいて、master ブランチと QAチームのブランチのみを取得したいならば、設定ファイルのセクションを以下のように使用することができます。</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/master:refs/remotes/origin/master
        fetch = +refs/heads/qa/*:refs/remotes/origin/qa/*</code></pre>
 
-<p>If you have a complex workflow process that has a QA team pushing branches, developers pushing branches, and integration teams pushing and collaborating on remote branches, you can namespace them easily this way.</p>
+<p>QAチームと開発チームがローカルのブランチにプッシュして、結合チームがリモートのブランチ上でプッシュして、共同で開発するような、複雑なワークフローのプロセスであるならば、このように、名前空間によってそれらを簡単に分類することができます。</p>
 
-<h3 id='pushing_refspecs'>Pushing Refspecs</h3>
+<h3 id='id193'>参照仕様へのプッシュ</h3>
 
-<p>It’s nice that you can fetch namespaced references that way, but how does the QA team get their branches into a <code>qa/</code> namespace in the first place? You accomplish that by using refspecs to push.</p>
+<p>その方法で名前空間で分類された参照をフェッチできることは素晴らしいことです。しかし、そもそもどうやって QAチームは、彼らのブランチを <code>qa/</code> という名前空間の中で取得できるのでしょうか? 参照仕様にプッシュすることによってそれが可能です。</p>
 
-<p>If the QA team wants to push their <code>master</code> branch to <code>qa/master</code> on the remote server, they can run</p>
+<p>QAチームが彼らの <code>master</code> ブランチをリモートサーバ上の <code>qa/master</code> にプッシュしたい場合、以下のように実行します。</p>
 
 <pre><code>$ git push origin master:refs/heads/qa/master</code></pre>
 
-<p>If they want Git to do that automatically each time they run <code>git push origin</code>, they can add a <code>push</code> value to their config file:</p>
+<p>もし彼らが <code>git push origin</code> を実行する都度、Git に自動的にそれを行なってほしいならば、設定ファイルに <code>push</code> の値を追加することで目的が達成されます。</p>
 
 <pre><code>[remote &quot;origin&quot;]
        url = git@github.com:schacon/simplegit-progit.git
        fetch = +refs/heads/*:refs/remotes/origin/*
        push = refs/heads/master:refs/heads/qa/master</code></pre>
 
-<p>Again, this will cause a <code>git push origin</code> to push the local <code>master</code> branch to the remote <code>qa/master</code> branch by default.</p>
+<p>再度、これは <code>git push origin</code> の実行をローカルの <code>master</code> ブランチに、リモートの <code>qa/master</code> ブランチに、デフォルトで引き起こします。</p>
 
-<h3 id='deleting_references'>Deleting References</h3>
+<h3 id='id194'>参照の削除</h3>
 
-<p>You can also use the refspec to delete references from the remote server by running something like this:</p>
+<p>また、リモートサーバから以下のように実行することによって、参照仕様を参照を削除する目的で使用することもできます。</p>
 
 <pre><code>$ git push origin :topic</code></pre>
 
-<p>Because the refspec is <code>&lt;src&gt;:&lt;dst&gt;</code>, by leaving off the <code>&lt;src&gt;</code> part, this basically says to make the topic branch on the remote nothing, which deletes it.</p>
+<p>参照仕様は <code>&lt;src&gt;:&lt;dst&gt;</code> という形式であり、<code>&lt;src&gt;</code> の部分を取り除くことは、要するに何もないブランチをリモート上に作ることであり、それを削除することになるのです。</p>
 
 <div id='nav'>
 <a href='ch9-4.html'>prev</a> | <a href='ch9-6.html'>next</a>
