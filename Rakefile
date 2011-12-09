@@ -149,6 +149,7 @@ title: Index of Commands
 end
 
 def links(pages)
+  return '' if !pages
   pages.sort.map do |page, data|
     d = page.scan(/ch(.*?).html/).first.first
     "<span class=\"pagelink\"><a href=\"#{page}\">#{d}</a> (#{data[:count]})</span>\n"

@@ -1,5 +1,5 @@
 git fetch gitbook
-git rm -r translations
+git rm -rf translations
 git read-tree --prefix=translations/ar -u gitbook/master:ar
 git read-tree --prefix=translations/cs -u gitbook/master:cs
 git read-tree --prefix=translations/de -u gitbook/master:de
