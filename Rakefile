@@ -202,7 +202,7 @@ def generate_pages(lang, chapter, content)
     layout = lang == 'en' ? 'master' : 'translation'
     html = "---
 layout: #{layout}
-title: Pro Git #{chapter}.#{section} #{full_title}
+title: 'Pro Git #{chapter}.#{section} #{full_title}'
 ---
 "
     if section_match
