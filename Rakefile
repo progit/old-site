@@ -239,7 +239,7 @@ task :genbook do
       toc = []
       next if genlang && genlang != lang
       Dir.chdir(lang) do
-        Dir.glob("*").each do |chapter|
+        Dir.glob("0*").each do |chapter|
           puts 'generating : ' + lang + '/' + chapter
           content = ''
           Dir.chdir(chapter) do
