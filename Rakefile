@@ -26,7 +26,7 @@ def update_toc(lang, toc)
   index += "</ul>"
   pages << "index.html"
 
-  layout = lang == 'en' ? 'master' : 'translation'
+  layout = ['en', 'ko'].include?(lang) ? 'master' : 'translation'
 
   html = "---
 layout: #{layout}
@@ -41,7 +41,19 @@ title: Table of Contents
   </center>
   <p>Support this site by buying a print version of
   <a href="http://www.amazon.com/gp/product/1430218339?ie=UTF8&tag=prgi-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=1430218339">Pro Git</a><img src="http://www.assoc-amazon.com/e/ir?t=prgi-20&l=as2&o=1&a=1430218339" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
-  <p><a href="http://twitter.com/chacon"><img src="/images/twitterbird.png"></a><a href="http://twitter.com/chacon">Follow the author</a> on Twitter for updates and Git tips</p>
+  <p><a href="http://twitter.com/chacon"><img src="/images/twitterbird.png"></a><a href="http://twitter.com/chacon">Follow the author</a> on Twitter for updates and Git tips</p>'
+  if lang == 'ko'
+    html += '
+  <p>
+  <h3>Also available in:</h3>
+    <ul>
+      <li><a href="http://dogfeet.github.com/progit/progit.ko.pdf">Korean PDF</a></li>
+      <li><a href="http://dogfeet.github.com/progit/progit.ko.mobi">Korean Mobi</a></li>
+      <li><a href="http://dogfeet.github.com/progit/progit.ko.epub">Korean Epub</a></li>
+    </ul>
+  </p>'
+  else
+    html += '
   <p>
   <h3>Also available in:</h3>
     <ul>
@@ -49,7 +61,9 @@ title: Table of Contents
       <li><a href="https://github.s3.amazonaws.com/media/pro-git.en.mobi">Mobi</a></li>
       <li><a href="https://github.s3.amazonaws.com/media/progit.epub">Epub</a></li>
     </ul>
-  </p>
+  </p>'
+  end
+  html += '
 </div>
 '
   html += index
@@ -199,7 +213,7 @@ def generate_pages(lang, chapter, content)
     end
 
     full_title = section_match ? "#{chapter_title} #{section_title}" : chapter_title
-    layout = lang == 'en' ? 'master' : 'translation'
+    layout = ['en', 'ko'].include?(lang) ? 'master' : 'translation'
     html = "---
 layout: #{layout}
 title: Pro Git #{chapter}.#{section} #{full_title}
