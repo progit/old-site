@@ -1,0 +1,74 @@
+---
+layout: master
+title: Pro Git 2.7 Git의 기초 팁과 트릭
+---
+<h2 id='_'>팁과 트릭</h2>
+
+<p>Git의 기초를 마치기 전에 Git을 좀 더 쉽고 편안하게 쓸 수 있게 만들어 줄 몇 가지 팁과 트릭도 설명한다. 이런 팁 없이 Git을 사용하는 사람들도 많다. 우리는 이 책에서 더는 이런 팁을 거론하지 않을 것이고 당신이 이런 팁을 알고 있다고 가정할 것이다. 그래서 알고 있는 것이 좋다.</p>
+
+<h3 id='id202'>자동완성</h3>
+
+<p>Bash 쉘을 쓰고 있다면 멋진 자동완성(Auto-completion) 기능을 사용할 수 있다. Git의 소스코드를 다운받아 <code>contrib/completion</code> 디렉토리를 살펴보면 <code>git-completion.bash</code>라는 파일이 있을 것이다. 그 파일을 홈 디렉토리에 카피하고 <code>.bashrc</code> 파일에 다음과 같은 내용을 추가하자:</p>
+
+<pre><code>source ~/.git-completion.bash</code></pre>
+
+<p>또 모든 사용자가 사용할 수 있게 설정할 수 있다. Mac 시스템이라면 이 스크립트를 <code>/opt/local/etc/bash_completion.d</code> 디렉토리에 복사하고 리눅스라면 <code>/etc/bash_completion.d/</code>에 복사한다. 이 디렉토리는 Bash가 자동완성을 지원하기 위해 사용하는 디렉토리다.</p>
+
+<p>윈도우에 msysGit을 설치해서 Git Bash를 사용하는 경우에는 자동완성이 미리 설정되어 있다.</p>
+
+<p>Git 명령을 입력할 때 <code>&lt;Tab&gt;</code> 키를 누르면 Git이 제안하는 명령들이 출력된다:</p>
+
+<pre><code>$ git co&lt;tab&gt;&lt;tab&gt;
+commit config</code></pre>
+
+<p>이 경우 <code>git co</code>를 입력하고 Tab 키를 두번 누르면 commit과 config를 제안한다. 이 때 <code>m&lt;tab&gt;</code>을 입력하면 자동으로 <code>git commit</code>명령을 완성한다.</p>
+
+<p>옵션에도 이 기능이 되고 더 유용하다. 예를 들어 <code>git log</code>명령을 실행하는데 옵션이 전혀 기억나지 않는다면 다음과 같이 입력하고 Tap 키를 누르면 다음과 같은 옵션을 제안한다:</p>
+
+<pre><code>$ git log --s&lt;tab&gt;
+--shortstat  --since=  --src-prefix=  --stat   --summary</code></pre>
+
+<p>이건 상당히 멋진 팁이다. 아마 문서를 찾아보는 등의 시간을 절약해 줄 것이다.</p>
+
+<h3 id='git_alias'>Git Alias</h3>
+
+<p>명령을 완벽하게 입력하지 않으면 Git은 알아듣지 못한다. Git의 명령을 전부 입력하는 것이 귀찮다면 <code>git config</code>를 사용하여 각 명령의 Alias을 쉽게 만들 수 있다. 다음은 Alias을 만드는 예이다:</p>
+
+<pre><code>$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status</code></pre>
+
+<p>이제 <code>git commit</code> 대신 <code>git ci</code>만으로도 커밋할 수 있다. Git을 계속 사용한다면 다른 명령어도 자주 사용하게 될 것이다. 자주 사용하는 명령은 Alias을 만들어 편하게 사용한다.</p>
+
+<p>이미 있는 명령을 편리하고 새로운 명령으로 만들어 사용할 수 있다. 예를 들어 파일을 Unstage 상태로 변경하는 명령을 만들어서 불편함을 덜 수 있다. 다음과 같이 <code>unstage</code> 라는 Alias을 만든다:</p>
+
+<pre><code>$ git config --global alias.unstage &#39;reset HEAD --&#39;</code></pre>
+
+<p>다음 두 명령은 동일하게 동작한다:</p>
+
+<pre><code>$ git unstage fileA
+$ git reset HEAD fileA</code></pre>
+
+<p>한결 간결해졌다. 추가로 <code>last</code> 명령을 만들어 보자:</p>
+
+<pre><code>$ git config --global alias.last &#39;log -1 HEAD&#39;</code></pre>
+
+<p>이제 최근 커밋을 좀 더 쉽게 확인할 수 있다:</p>
+
+<pre><code>$ git last
+commit 66938dae3329c7aebe598c2246a8e6af90d04646
+Author: Josh Goebel &lt;dreamer3@example.com&gt;
+Date:   Tue Aug 26 19:48:51 2008 +0800
+
+    test for current head
+
+    Signed-off-by: Scott Chacon &lt;schacon@example.com&gt;</code></pre>
+
+<p>이것으로 쉽게 새로운 명령을 만들 수 있다. 그리고 Git의 명령어뿐만 아니라 외부 명령어도 실행할 수 있다. <code>!</code>를 제일 앞에 추가하면 외부 명령을 실행한다. 다음은 <code>git visual</code>이라고 입력하면 <code>gitk</code>가 실행된다:</p>
+
+<pre><code>$ git config --global alias.visual &quot;!gitk&quot;</code></pre>
+
+<div id='nav'>
+<a href='ch2-6.html'>prev</a> | <a href='ch2-8.html'>next</a>
+</div>

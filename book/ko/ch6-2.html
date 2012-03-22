@@ -1,0 +1,161 @@
+---
+layout: master
+title: Pro Git 6.2 Git 도구 대화형 명령어
+---
+<h2 id='_'>대화형 명령어</h2>
+
+<p>Git은 대화형 스크립트도 제공해서 명령어를 좀 더 쉽게 사용할 수 있다. 여기서 소개하는 몇 가지 대화형 명령어를 이용하면 바로 전문가처럼 능숙하게 커밋할 수 있다. 스크립트를 통해 커밋할 파일을 고르고 수정된 파일의 일부분만 커밋할 수도 있다. 스크립트는 수정하는 파일이 매우 많아서 통째로 커밋하기 어려울 때 이슈별로 나눠서 커밋하기에 좋다. 이슈별로 나눠서 커밋하면 함께 일하는 동료가 검토하기 쉬워진다. <code>git add</code> 명령에 <code>-i</code>나 <code>--interactive</code> 옵션을 주고 실행하면 Git은 다음과 같은 대화형 모드로 들어간다:</p>
+
+<pre><code>$ git add -i
+           staged     unstaged path
+  1:    unchanged        +0/-1 TODO
+  2:    unchanged        +1/-1 index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+
+*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now&gt; </code></pre>
+
+<p>이 명령어는 Staging Area의 현재 상태가 어떻고 할 수 있는 일이 무엇인지 보여준다. 기본적으로 <code>git status</code> 명령이 보여주는 것과 같지만 좀 더 간결하고 정돈돼 있다. 왼쪽에는 staged 상태인 파일들을 보여주고 오른쪽에는 unstaged인 파일들을 보여준다.</p>
+
+<p>그리고 마지막 <code>Commands</code> 부분에서는 할 수 일이 무엇인지 보여준다. 파일들을 stage하고 unstage하는 것, untracked 상태의 파일들을 추가하는 것, stage한 파일을 diff해보는 것들을 할 수 있다. 게다가 수정한 파일의 일부분만 Staging Area에 추가할 수도 있다.</p>
+
+<h3 id='staging_area____'>Staging Area에 파일 추가하고 추가 취소하기</h3>
+
+<p><code>What now&gt;</code> 프롬프트에서 <code>2</code>나 <code>u</code>를(update) 입력하면 Staging Area에 추가할 수 있는 파일을 전부 보여준다:</p>
+
+<pre><code>What now&gt; 2
+           staged     unstaged path
+  1:    unchanged        +0/-1 TODO
+  2:    unchanged        +1/-1 index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+Update&gt;&gt;</code></pre>
+
+<p>TODO와 index.html 파일을 stage하려면 다음과 같이 입력한다:</p>
+
+<pre><code>Update&gt;&gt; 1,2
+           staged     unstaged path
+* 1:    unchanged        +0/-1 TODO
+* 2:    unchanged        +1/-1 index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+Update&gt;&gt;</code></pre>
+
+<p><code>*</code> 표시가 붙은 파일은 stage하도록 선택한 것이다. 선택하고 <code>Update&gt;&gt;</code> 프롬프트에 아무것도 입력하지 않고 엔터를 치면 Git은 선택한 파일을 Staging Area로 추가한다:</p>
+
+<pre><code>Update&gt;&gt; 
+updated 2 paths
+
+*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now&gt; 1
+           staged     unstaged path
+  1:        +0/-1      nothing TODO
+  2:        +1/-1      nothing index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
+
+<p>이제 TODO와 index.html 파일은 stage했고 simplegit.rb 파일만 아직 unstaged 상태로 남아 있다. 이제 TODO 파일을 다시 unstage하고 싶으면 <code>3</code>이나 <code>r</code>을(revert) 입력한다:</p>
+
+<pre><code>*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now&gt; 3
+           staged     unstaged path
+  1:        +0/-1      nothing TODO
+  2:        +1/-1      nothing index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+Revert&gt;&gt; 1
+           staged     unstaged path
+* 1:        +0/-1      nothing TODO
+  2:        +1/-1      nothing index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb
+Revert&gt;&gt; [enter]
+reverted one path</code></pre>
+
+<p>다시 status를 선택하면 TODO 파일이 unstaged 상태인 것을 알 수 있다:</p>
+
+<pre><code>*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now&gt; 1
+           staged     unstaged path
+  1:    unchanged        +0/-1 TODO
+  2:        +1/-1      nothing index.html
+  3:    unchanged        +5/-1 lib/simplegit.rb</code></pre>
+
+<p>staged 파일들의 변경내용을 보려면 <code>6</code>이나 <code>d</code>를(diff) 입력한다. 그러면 먼저 staged 상태인 파일들을 보여준다. 그리고 그중에서 파일 하나를 선택한다. 그 결과는 명령 줄에서 <code>git diff --cached</code>라고 실행한 결과와 같다:</p>
+
+<pre><code>*** Commands ***
+  1: status     2: update      3: revert     4: add untracked
+  5: patch      6: diff        7: quit       8: help
+What now&gt; 6
+           staged     unstaged path
+  1:        +1/-1      nothing index.html
+Review diff&gt;&gt; 1
+diff --git a/index.html b/index.html
+index 4d07108..4335f49 100644
+--- a/index.html
++++ b/index.html
+@@ -16,7 +16,7 @@ Date Finder
+
+ &lt;p id=&quot;out&quot;&gt;...&lt;/p&gt;
+
+-&lt;div id=&quot;footer&quot;&gt;contact : support@github.com&lt;/div&gt;
++&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+
+ &lt;script type=&quot;text/javascript&quot;&gt;</code></pre>
+
+<p>위와 같이 대화형 추가 모드를 사용하면 Staging Area에 파일들을 좀 더 쉽게 추가할 수 있다.</p>
+
+<h3 id='__staging_area_'>파일의 일부분만 Staging Area에 추가하기</h3>
+
+<p>파일의 일부분만 Staging Area에 추가하는 것도 가능하다. 예를 들어 simplegit.rb 파일은 고친 부분이 두 군데이다. 그 중 하나를 추가하고 나머지는 그대로 두고 싶다. Git에서는 이런 작업도 매우 쉽게 할 수 있다. 대화형 프롬프트에서 <code>5</code>, <code>p</code>를(patch) 입력한다. 그러면 Git은 부분적으로 Staging Area에 추가할 파일이 있는지 묻는다. 파일을 선택하면 파일의 특정 부분을 Staging Area에 추가할 것인지 부분별로 구분하여 묻는다:</p>
+
+<pre><code>diff --git a/lib/simplegit.rb b/lib/simplegit.rb
+index dd5ecc4..57399e0 100644
+--- a/lib/simplegit.rb
++++ b/lib/simplegit.rb
+@@ -22,7 +22,7 @@ class SimpleGit
+   end
+
+   def log(treeish = &#39;master&#39;)
+-    command(&quot;git log -n 25 #{treeish}&quot;)
++    command(&quot;git log -n 30 #{treeish}&quot;)
+   end
+
+   def blame(path)
+Stage this hunk [y,n,a,d,/,j,J,g,e,?]? </code></pre>
+
+<p>여기에서 <code>?</code>를 입력하면 선택할 수 있는 명령어를 설명해준다:</p>
+
+<pre><code>Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
+y - stage this hunk
+n - do not stage this hunk
+a - stage this and all the remaining hunks in the file
+d - do not stage this hunk nor any of the remaining hunks in the file
+g - select a hunk to go to
+/ - search for a hunk matching the given regex
+j - leave this hunk undecided, see next undecided hunk
+J - leave this hunk undecided, see next hunk
+k - leave this hunk undecided, see previous undecided hunk
+K - leave this hunk undecided, see previous hunk
+s - split the current hunk into smaller hunks
+e - manually edit the current hunk
+? - print help</code></pre>
+
+<p><code>y</code>나 <code>n</code>을 입력하면 각 부분을 Stage할지 말지 결정할 수 있다. 하지만, 파일을 통째로 stage하거나 필요할 때까지 아예 그대로 남겨 두는 것이 다음부터 더 유용할지도 모른다. 어쨌든 파일의 어떤 부분은 Stage하고 다른 부분은 unstaged 상태로 남겨놓고 status 명령으로 확인해보면 결과는 다음과 같다:</p>
+
+<pre><code>What now&gt; 1
+           staged     unstaged path
+  1:    unchanged        +0/-1 TODO
+  2:        +1/-1      nothing index.html
+  3:        +1/-1        +4/-0 lib/simplegit.rb</code></pre>
+
+<p>simplegit.rb 파일의 상태를 보자. 어떤 줄은 staged 상태이고 어떤 줄은 unstaged라고 알려줄 것이다. 이 파일은 부분적으로 stage하였다. 이제 대화형 모드를 종료하고 일부분만 Stage한 파일을 커밋할 수 있다.</p>
+
+<p>끝으로 대화형 스크립트로만 파일 일부분을 Stage할 수 있는 것은 아니다. <code>git add -p</code>나 <code>git add --patch</code>로도 같은 일을 할 수 있다.</p>
+
+<div id='nav'>
+<a href='ch6-1.html'>prev</a> | <a href='ch6-3.html'>next</a>
+</div>

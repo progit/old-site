@@ -1,0 +1,210 @@
+---
+layout: master
+title: Pro Git 3.2 Git 브랜치 브랜치와 Merge의 기초
+---
+<h2 id='_merge_'>브랜치와 Merge의 기초</h2>
+
+<p>실제 개발과정에서 겪을 만한 예제를 살펴보자. 브랜치와 Merge는 보통 이런 식으로 진행한다:</p>
+
+<p>1. 작업 중인 웹사이트가 있다.</p>
+
+<ol>
+<li>새로운 이슈를 처리할 새 Branch를 하나 생성.</li>
+
+<li>새로 만든 Branch에서 작업 중.</li>
+</ol>
+
+<p>이때 중요한 문제가 생겨서 그것을 해결하는 Hotfix를 먼저 만들어야 한다. 그러면 다음과 같이 할 수 있다:</p>
+
+<ol>
+<li>새로운 이슈를 처리하기 이전의 운영(Production) 브랜치로 복원.</li>
+
+<li>Hotfix 브랜치를 새로 하나 생성.</li>
+
+<li>수정한 Hotfix 테스트를 마치고 운영 브랜치로 Merge. 4. 다시 작업하던 브랜치로 옮겨가서 하던 일 진행.</li>
+</ol>
+
+<h3 id='_'>브랜치의 기초</h3>
+
+<p>먼저 커밋을 몇 번 했다고 가정하자.</p>
+
+<p><center><img src="/figures/ch3/18333fig0310-tn.png"></center><br/> 그림 3-10. 현재 커밋 히스토리</p>
+
+<p>이슈 관리 시스템에 등록된 53번 이슈를 처리한다고 하면 이 이슈에 집중할 수 있는 브랜치를 새로 하나 만든다. Git은 어떤 이슈 관리 시스템에도 종속돼 있지 않다. 브랜치를 만들면서 Checkout까지 한 번에 하려면 <code>git checkout</code> 명령에 <code>-b</code>라는 옵션을 준다.</p>
+
+<pre><code>$ git checkout -b iss53
+Switched to a new branch &#39;iss53&#39;</code></pre>
+
+<p>위 명령은 아래 명령을 줄여놓은 것이다:</p>
+
+<pre><code>$ git branch iss53
+$ git checkout iss53</code></pre>
+
+<p>그림 3-11은 위 명령의 결과를 나타낸다.</p>
+
+<p><center><img src="/figures/ch3/18333fig0311-tn.png"></center><br/> 그림 3-11. 브랜치 포인터를 새로 만듦</p>
+
+<p>iss53 브랜치를 Checkout했기 때문에(즉, HEAD는 iss53 브랜치를 가리킨다) 뭔가 일을 하고 커밋하면 iss53 브랜치가 앞으로 진행한다:</p>
+
+<pre><code>$ vim index.html
+$ git commit -a -m &#39;added a new footer [issue 53]&#39;</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0312-tn.png"></center><br/> 그림 3-12. 진행 중인 iss53 브랜치</p>
+
+<p>다른 상황을 가정해보자. 만드는 사이트에 문제가 생겨서 즉시 고쳐야 한다. 버그를 해결한 Hotfix에 &#8216;iss53&#8217;이 섞이는 것을 방지하기 위해 &#8216;iss53&#8217;와 관련된 코드를 어딘가에 저장해두고 원래 운영 환경의 소스로 복구해야 한다. Git을 사용하면 이런 노력을 들일 필요 없이 그냥 master 브랜치로 옮기면 된다.</p>
+
+<p>그렇지만, 브랜치를 이동하려면 해야 할 일이 있다. 아직 커밋하지 않은 파일이 Checkout할 브랜치와 충돌 나면 브랜치를 변경할 수 없다. 브랜치를 변경할 때에는 Working Directory를 정리하는 것이 좋다. 이런 문제를 다루는 방법은(주로, stashing이나 커밋 amending에 대해) 나중에 다룰 것이다. 지금은 작업하던 것을 모두 커밋하고 master 브랜치로 옮긴다:</p>
+
+<pre><code>$ git checkout master
+Switched to branch &#39;master&#39;</code></pre>
+
+<p>이때 Working Directory는 53번 이슈를 시작하기 이전의 모습으로 되돌려지기 때문에 새로운 문제에 집중할 수 있는 환경이 만들어진다. Git은 자동으로 Working Directory에 파일들을 추가하고, 지우고, 수정해서 Checkout한 브랜치의 Snapshot으로 되돌려 놓는다는 것을 기억해야 한다.</p>
+
+<p>hotfix라는 브랜치를 만들고 새로운 이슈를 해결할 때까지 사용한다:</p>
+
+<pre><code>$ git checkout -b &#39;hotfix&#39;
+Switched to a new branch &#39;hotfix&#39;
+$ vim index.html
+$ git commit -a -m &#39;fixed the broken email address&#39;
+[hotfix]: created 3a0874c: &#39;fixed the broken email address&#39;
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0313-tn.png"></center><br/> 그림 3-13. master 브랜치에서 갈라져 나온 hotfix 브랜치</p>
+
+<p>운영 환경에 적용하려면 문제를 제대로 고쳤는지 테스트하고 master 브랜치에 합쳐야 한다. <code>git merge</code> 명령으로 다음과 같이 한다:</p>
+
+<pre><code>$ git checkout master
+$ git merge hotfix
+Updating f42c576..3a0874c
+Fast forward
+ README |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)</code></pre>
+
+<p>Merge 메시지에서 &#8216;Fast forward&#8217;가 보이는가? Merge할 브랜치가 가리키고 있던 커밋이 현 브랜치가 가리키는 것보다 &#8216;앞으로 진행한&#8217; 커밋이기 때문에 master 브랜치 포인터는 최신 커밋으로 이동한다. 이런 Merge 방식을 &#8216;Fast forward&#8217;라고 부른다. 다시 말해서 A 브랜치에서 다른 B 브랜치를 Merge할 때 B가 A 이후의 커밋을 가리키고 있으면 A가 그저 B의 커밋을 가리키게 할 뿐이다.</p>
+
+<p>이제 hotfix는 master 브랜치에 포함됐고 운영환경에 적용할 수 있다(그림 3-14).</p>
+
+<p><center><img src="/figures/ch3/18333fig0314-tn.png"></center><br/> 그림 3-14. Merge 후 hotfix 브랜치와 같은 것을 가리키는 master 브랜치</p>
+
+<p>문제를 급히 해결하고 master 브랜치에 적용하고 나면 다시 일하던 브랜치로 돌아가야 한다. 하지만, 그전에 필요없는 hotfix 브랜치를 삭제한다. <code>git branch</code> 명령에 <code>-d</code> 옵션을 주고 브랜치를 삭제한다.</p>
+
+<pre><code>$ git branch -d hotfix
+Deleted branch hotfix (3a0874c).</code></pre>
+
+<p>자 이제 이슈 53번을 처리하던 환경으로 되돌아가서 하던 일을 계속 하자(그림 3-15):</p>
+
+<pre><code>$ git checkout iss53
+Switched to branch &#39;iss53&#39;
+$ vim index.html
+$ git commit -a -m &#39;finished the new footer [issue 53]&#39;
+[iss53]: created ad82d7a: &#39;finished the new footer [issue 53]&#39;
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p><center><img src="/figures/ch3/18333fig0315-tn.png"></center><br/> 그림 3-15. master와 별개로 진행하는 iss53 브랜치</p>
+
+<p>위에서 작업한 hotfix가 iss53 브랜치에 영향을 끼치지 않는다는 점을 이해하는 것이 중요하다. <code>git merge master</code> 명령으로 master 브랜치를 iss53 브랜치에 Merge하면 iss53 브랜치에 hotfix가 적용된다. 아니면 iss53 브랜치가 master에 Merge할 수 있는 수준이 될 때까지 기다렸다가 Merge하면 hotfix와 iss53가 합쳐진다.</p>
+
+<h3 id='merge_'>Merge의 기초</h3>
+
+<p>53번 이슈를 다 구현하고 master 브랜치에 Merge하는 과정을 살펴보자. master 브랜치에 Merge하는 것은 앞서 살펴본 hotfix 브랜치를 Merge하는 것과 비슷하다. <code>git merge</code> 명령으로 합칠 브랜치에서 합쳐질 브랜치를 Merge하면 된다:</p>
+
+<pre><code>$ git checkout master
+$ git merge iss53
+Merge made by recursive.
+ README |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)</code></pre>
+
+<p>hotfix를 Merge했을 때와 메시지가 다르다. 현 브랜치가 가리키는 커밋이 Merge할 브랜치의 조상이 아니므로 Git은 &#8216;Fast-forward&#8217;로 Merge하지 않는다. 이러면 Git은 각 브랜치가 가리키는 커밋 두 개와 공통 조상 하나를 사용하여 3-way Merge를 한다. 그림 3-16에 이 Merge에서 사용하는 커밋 세 개가 표시된다.</p>
+
+<p><center><img src="/figures/ch3/18333fig0316-tn.png"></center><br/> 그림 3-16. Git은 Merge에 필요한 공통 커밋을 자동으로 찾음</p>
+
+<p>단순히 브랜치 포인터를 최신 커밋으로 옮기는 게 아니라 3-way Merge의 결과를 별도의 커밋으로 만들고 나서 해당 브랜치가 그 커밋을 가리키도록 이동시킨다(그림 3-17). 그래서 이런 커밋은 부모가 여러 개고 Merge 커밋이라고 부른다.</p>
+
+<p>Git은 Merge하는데 필요한 최적의 공통 조상을 자동으로 찾는다. 이런 기능도 Git이 다른 버전 관리 시스템보다 나은 점이다. CVS나 Subversion 같은 버전 관리 시스템들은 개발자가 직접 공통 조상을 찾아서 Merge해야 한다. Git은 다른 시스템보다 Merge가 대단히 쉽다.</p>
+
+<p><center><img src="/figures/ch3/18333fig0317-tn.png"></center><br/> 그림 3-17. Git은 Merge할 때 Merge에 대한 정보가 들어 있는 커밋를 하나 만든다.</p>
+
+<p>iss53 브랜치를 master에 Merge하고 나면 iss53 브랜치는 더는 필요 없다. 다음 명령으로 브랜치를 삭제하고 이슈의 상태를 처리 완료로 표시한다:</p>
+
+<pre><code>$ git branch -d iss53</code></pre>
+
+<h3 id='conflict_'>충돌(Conflict)의 기초</h3>
+
+<p>가끔씩 3-way Merge가 실패할 때도 있다. Merge하는 두 브랜치에서 같은 파일의 한 부분을 동시에 수정하고 Merge하면 Git은 해당 부분을 Merge하지 못한다. 예를 들어, 53번 이슈와 hotfix가 같은 부분을 수정했다면 Git은 Merge하지 못하고 다음과 같은 충돌 메시지를 출력한다.</p>
+
+<pre><code>$ git merge iss53
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+
+<p>Git은 자동으로 Merge된 새 커밋을 만들어내지 못했다. 변경사항의 충돌을 개발자가 해결하지 않는 한 Merge 과정을 진행할 수 없다. Merge 충돌이 일어났을 때 Git이 어떤 파일을 Merge 할 수 없었는지 살펴보려면 어느 시점에서든 <code>git status</code> 명령을 이용한다:</p>
+
+<pre><code>[master*]$ git status
+index.html: needs merge
+# On branch master
+# Changed but not updated:
+#   (use &#39;git add &lt;file&gt;...&#39; to update what will be committed)
+#   (use &#39;git checkout -- &lt;file&gt;...&#39; to discard changes in working directory)
+#
+#	unmerged:   index.html
+#</code></pre>
+
+<p>충돌이 일어난 파일은 unmerged 상태로 표시된다. Git은 충돌이 난 부분을 표준 형식에 따라 표시해준다. 그러면 개발자는 해당 부분을 수동으로 해결한다. 충돌 난 부분은 다음과 같이 표시된다.</p>
+
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:index.html
+&lt;div id=&#39;footer&#39;&gt;contact : email.support@github.com&lt;/div&gt;
+=======
+&lt;div id=&#39;footer&#39;&gt;
+  please contact us at support@github.com
+&lt;/div&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre>
+
+<p><code>=======</code> 위쪽의 내용은 HEAD 버전(merge 명령을 실행할 때 작업하던 master 브랜치)의 내용이고 아래쪽은 iss53 브랜치의 내용이다. 충돌을 해결하려면 위쪽이나 아래쪽 내용 중에서 고르거나 직접 새로 작성하여 Merge한다. 다음은 아예 새로 작성하여 충돌을 해결하는 예제다.</p>
+
+<pre><code>&lt;div id=&#39;footer&#39;&gt;
+please contact us at email.support@github.com
+&lt;/div&gt;</code></pre>
+
+<p>충돌한 양쪽에서 조금씩 가져와서 새로 수정했다. 그리고 <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> 가 포함된 행을 삭제하였다. 이렇게 충돌한 부분을 해결하고 <code>git add</code> 명령으로 다시 Git에 저장한다. 충돌을 쉽게 해결하기 위해 다른 Merge 도구도 이용할 수 있는데, <code>git mergetool</code> 명령으로 실행한다.</p>
+
+<pre><code>$ git mergetool
+merge tool candidates: kdiff3 tkdiff xxdiff meld gvimdiff opendiff emerge vimdiff
+Merging the files: index.html
+
+Normal merge conflict for &#39;index.html&#39;:
+  {local}: modified
+  {remote}: modified
+Hit return to start merge resolution tool (opendiff):</code></pre>
+
+<p>Mac을 사용하는 경우 Git은 <code>opendiff</code>를 실행해준다. 기본 도구 말고 사용할 수 있는 다른 Merge 도구도 있는데, &#8216;merge tool candidates&#8217; 부분에 보여준다. 여기에 표시된 도구 중 하나를 고를 수 있다. Merge 도구를 변경하는 방법은 7장에서 다룬다.</p>
+
+<p>Merge 도구를 종료하면 Git은 잘 Merge했는지 물어본다. 잘 마쳤다고 입력하면 자동으로 <code>git add</code>를 수행해서 해당 파일을 Staging Area에 저장해준다.</p>
+
+<p><code>git status</code> 명령으로 충돌이 해결된 상태인지 다시 한번 확인해볼 수 있다.</p>
+
+<pre><code>$ git status
+# On branch master
+# Changes to be committed:
+#   (use &#39;git reset HEAD &lt;file&gt;...&#39; to unstage)
+#
+#	modified:   index.html
+#</code></pre>
+
+<p>충돌을 해결하고 나서 해당 파일이 Staging Area에 저장됐는지 확인했으면 <code>git commit</code> 명령으로 Merge 한 것을 커밋한다. 충돌을 해결하고 Merge하는 것이면 커밋 메시지는 아래와 같다.</p>
+
+<pre><code>Merge branch &#39;iss53&#39;
+
+Conflicts:
+  index.html
+#
+# It looks like you may be committing a MERGE.
+# If this is not correct, please remove the file
+# .git/MERGE_HEAD
+# and try again.
+#</code></pre>
+
+<p>어떻게 충돌을 해결했고 확신이 부족한 부분은 무엇을 어떻게 했는지 자세하게 기록한다. 자세한 기록은 나중에 이 Merge 커밋을 이해하는데 도움을 줄 것이다.</p>
+
+<div id='nav'>
+<a href='ch3-1.html'>prev</a> | <a href='ch3-3.html'>next</a>
+</div>

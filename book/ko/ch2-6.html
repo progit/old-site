@@ -1,0 +1,212 @@
+---
+layout: master
+title: Pro Git 2.6 Git의 기초 Tag(Tag)
+---
+<h2 id='tagtag'>Tag(Tag)</h2>
+
+<p>다른 VCS처럼 Git도 Tag를 지원한다. 사람들은 보통 릴리즈할 때 사용한다(v1.0, 등등). 이번에는 Tag를 조회하고 생성하는 법과 Tag의 종류를 설명한다.</p>
+
+<h3 id='tag_'>Tag 조회하기</h3>
+
+<p>우선 <code>git tag</code> 명령으로 이미 만들어져 있어 사용할 수 있는 Tag가 있는지 확인할 수 있다:</p>
+
+<pre><code>$ git tag
+v0.1
+v1.3</code></pre>
+
+<p>이 명령은 알파벳 순서로 Tag들을 보여준다. 사실 순서는 별로 중요한 게 아니다.</p>
+
+<p>검색 패턴을 사용하여 Tag를 검색할 수 있다. Git 소스 저장소는 240여 개의 Tag가 있다. 만약 1.4.2 버전의 Tag들만 검색하고 싶으면 다음과 같이 실행한다:</p>
+
+<pre><code>$ git tag -l &#39;v1.4.2.*&#39;
+v1.4.2.1
+v1.4.2.2
+v1.4.2.3
+v1.4.2.4</code></pre>
+
+<h3 id='tag_'>Tag 붙이기</h3>
+
+<p>Git의 Tag는 Lightweight Tag와 Annotated Tag로 두 종류가 있다. Lightweight Tag는 브랜치와 비슷한데 브랜치처럼 가리키는 지점을 최신 커밋으로 이동시키지 않는다. 단순히 특정 커밋에 대한 포인터일 뿐이다. 한편, Annotated Tag는 Git 데이터베이스에 Tag를 만든 사람의 이름, 이메일과 Tag를 만든 날짜, 그리고 Tag 메시지도 저장한다. 또 GPG(GNU Privacy Guard)로 서명할 수도 있다. 이 모든 정보를 저장해둬야 할 때에만 Annotated Tag를 추천한다. 그냥 다른 정보를 저장하지 않는 단순한 Tag가 필요하다면 Lightweight Tag를 사용하는 것이 좋다.</p>
+
+<h3 id='annotated_tag'>Annotated Tag</h3>
+
+<p>Annotated Tag를 만드는 방법은 간단하다. <code>tag</code> 명령을 실행할 때 <code>-a</code> 옵션을 추가한다:</p>
+
+<pre><code>$ git tag -a v1.4 -m &#39;my version 1.4&#39;
+$ git tag
+v0.1
+v1.3
+v1.4</code></pre>
+
+<p><code>-m</code> 옵션으로 Tag를 저장할 때 메시지를 함께 저장할 수 있다. 명령을 실행할 때 메시지를 입력하지 않으면 Git은 편집기를 실행시킨다.</p>
+
+<p><code>git show</code> 명령으로 Tag 정보와 커밋 정보를 모두 확인할 수 있다:</p>
+
+<pre><code>$ git show v1.4
+tag v1.4
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 14:45:11 2009 -0800
+
+my version 1.4
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>커밋 정보를 보여주기 전에 먼저 Tag를 만든 사람이 누구인지, 언제 Tag를 만들었는지, 그리고 Tag 메시지가 무엇인지 보여준다.</p>
+
+<h3 id='tag_'>Tag에 서명하기</h3>
+
+<p>GPG 개인키가 있으면 Tag에 서명할 수 있다. 이때에는 <code>-a</code>옵션 대신 <code>-s</code>를 사용한다:</p>
+
+<pre><code>$ git tag -s v1.5 -m &#39;my signed 1.5 tag&#39;
+You need a passphrase to unlock the secret key for
+user: &quot;Scott Chacon &lt;schacon@gee-mail.com&gt;&quot;
+1024-bit DSA key, ID F721C45A, created 2009-02-09</code></pre>
+
+<p>이 Tag에 <code>git show</code>를 실행하면 GPG 서명도 볼 수 있다:</p>
+
+<pre><code>$ git show v1.5
+tag v1.5
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:22:20 2009 -0800
+
+my signed 1.5 tag
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.8 (Darwin)
+
+iEYEABECAAYFAkmQurIACgkQON3DxfchxFr5cACeIMN+ZxLKggJQf0QYiQBwgySN
+Ki0An2JeAVUCAiJ7Ox6ZEtK+NvZAj82/
+=WryJ
+-----END PGP SIGNATURE-----
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<p>잠시 후 서명한 Tag를 검증하는 방법도 설명할 것이다.</p>
+
+<h3 id='lightweight_tag'>Lightweight Tag</h3>
+
+<p>Lightweight Tag는 기본적으로 파일에 커밋 체크섬을 저장하는 것뿐이다. 다른 정보는 저장하지 않는다. Lightweight Tag를 만들 때에는 <code>-a</code>, <code>-s</code>, <code>-m</code> 옵션을 사용하지 않는다:</p>
+
+<pre><code>$ git tag v1.4-lw
+$ git tag
+v0.1
+v1.3
+v1.4
+v1.4-lw
+v1.5</code></pre>
+
+<p>이 Tag에 <code>git show</code>를 실행하면 별도의 Tag 정보를 확인할 수 없다. 이 명령은 단순히 커밋 정보만을 보여준다:</p>
+
+<pre><code>$ git show v1.4-lw
+commit 15027957951b64cf874c3557a0f3547bd83b3ff6
+Merge: 4a447f7... a6b4c97...
+Author: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Sun Feb 8 19:02:46 2009 -0800
+
+    Merge branch &#39;experiment&#39;</code></pre>
+
+<h3 id='tag_'>Tag 검증하기</h3>
+
+<p><code>git tag -v [Tag 이름]</code> 명령으로 서명한 Tag를 검증한다. 이 명령은 GPG를 사용하여 서명을 검증한다. 그래서 서명자의 GPG 공개키가 필요하다. 이 공개키가 Keyring에 있어야만 이 명령이 성공적으로 실행된다:</p>
+
+<pre><code>$ git tag -v v1.4.2.1
+object 883653babd8ee7ea23e6a5c392bb739348b1eb61
+type commit
+tag v1.4.2.1
+tagger Junio C Hamano &lt;junkio@cox.net&gt; 1158138501 -0700
+
+GIT 1.4.2.1
+
+Minor fixes since 1.4.2, including git-mv and git-http with alternates.
+gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Good signature from &quot;Junio C Hamano &lt;junkio@cox.net&gt;&quot;
+gpg:                 aka &quot;[jpeg image of size 1513]&quot;
+Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A</code></pre>
+
+<p>만약 서명자의 공개키가 없으면 다음과 같은 메시지를 출력한다:</p>
+
+<pre><code>gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+gpg: Can&#39;t check signature: public key not found
+error: could not verify the tag &#39;v1.4.2.1&#39;</code></pre>
+
+<h3 id='_tag'>나중에 Tag하기</h3>
+
+<p>예전 커밋에 대해서도 Tag할 수 있다. 커밋 히스토리는 다음과 같고:</p>
+
+<pre><code>$ git log --pretty=oneline
+15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch &#39;experiment&#39;
+a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
+0d52aaab4479697da7686c15f77a3d64d9165190 one more thing
+6d52a271eda8725415634dd79daabbc4d9b6008e Merge branch &#39;experiment&#39;
+0b7434d86859cc7b8c3d5e1dddfed66ff742fcbc added a commit function
+4682c3261057305bdd616e23b64b0857d832627b added a todo file
+166ae0c4d3f420721acbb115cc33848dfcc2121a started write support
+9fceb02d0ae598e95dc970b74767f19372d61af8 updated rakefile
+964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
+8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme</code></pre>
+
+<p>프로젝트에 &#8220;updated rakefile&#8221; 커밋을 v1.2로 Tag하지 못했다고 해도 지금 Tag를 붙일 수 있다. 특정 커밋에 Tag하기 위해서 명령의 끝에 커밋 체크섬을 명시한다(긴 체크섬을 전부 사용할 필요는 없다):</p>
+
+<pre><code>$ git tag -a v1.2 9fceb02</code></pre>
+
+<p>이제 다음과 같이 만든 Tag를 확인한다:</p>
+
+<pre><code>$ git tag
+v0.1
+v1.2
+v1.3
+v1.4
+v1.4-lw
+v1.5
+
+$ git show v1.2
+tag v1.2
+Tagger: Scott Chacon &lt;schacon@gee-mail.com&gt;
+Date:   Mon Feb 9 15:32:16 2009 -0800
+
+version 1.2
+commit 9fceb02d0ae598e95dc970b74767f19372d61af8
+Author: Magnus Chacon &lt;mchacon@gee-mail.com&gt;
+Date:   Sun Apr 27 20:43:35 2008 -0700
+
+    updated rakefile
+...</code></pre>
+
+<h3 id='tag_'>Tag 공유하기</h3>
+
+<p><code>git push</code> 명령은 자동으로 리모트 서버에 Tag를 전송하지 않는다. Tag를 만들었으면 서버에 별도로 Push해야 한다. 브랜치를 공유하는 것과 같은 방법으로 할 수 있다. <code>git push origin [Tag 이름]</code>을 실행한다:</p>
+
+<pre><code>$ git push origin v1.5
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+* [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>만약 한 번에 Tag를 여러 개 Push하고 싶으면 <code>--tags</code> 옵션을 추가하여 <code>git push</code>명령을 실행한다. 이 명령으로 리모트 서버에 없는 Tag를 모두 전송할 수 있다:</p>
+
+<pre><code>$ git push origin --tags
+Counting objects: 50, done.
+Compressing objects: 100% (38/38), done.
+Writing objects: 100% (44/44), 4.56 KiB, done.
+Total 44 (delta 18), reused 8 (delta 1)
+To git@github.com:schacon/simplegit.git
+ * [new tag]         v0.1 -&gt; v0.1
+ * [new tag]         v1.2 -&gt; v1.2
+ * [new tag]         v1.4 -&gt; v1.4
+ * [new tag]         v1.4-lw -&gt; v1.4-lw
+ * [new tag]         v1.5 -&gt; v1.5</code></pre>
+
+<p>누군가 저장소에서 Clone하거나 Pull을 하면 모든 Tag 정보도 함께 전송된다.</p>
+
+<div id='nav'>
+<a href='ch2-5.html'>prev</a> | <a href='ch2-7.html'>next</a>
+</div>
