@@ -202,7 +202,7 @@ def generate_pages(lang, chapter, content)
     layout = lang == 'en' ? 'master' : 'translation'
     html = "---
 layout: #{layout}
-title: Pro Git #{chapter}.#{section} #{full_title}
+title: 'Pro Git #{chapter}.#{section} #{full_title}'
 ---
 "
     if section_match
@@ -239,7 +239,7 @@ task :genbook do
       toc = []
       next if genlang && genlang != lang
       Dir.chdir(lang) do
-        Dir.glob("*").each do |chapter|
+        Dir.glob("0*").each do |chapter|
           puts 'generating : ' + lang + '/' + chapter
           content = ''
           Dir.chdir(chapter) do
