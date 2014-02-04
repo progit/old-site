@@ -9501,10 +9501,10 @@ Figura 3-39.</seg>
     </tu>
     <tu>
       <tuv lang="EN">
-        <seg>$ git clone ssh://user@server:project.git</seg>
+        <seg>$ git clone ssh://user@server/project.git</seg>
       </tuv>
       <tuv lang="ES">
-        <seg>$ git clone ssh://user@server:project.git</seg>
+        <seg>$ git clone ssh://user@server/project.git</seg>
       </tuv>
     </tu>
     <tu>
