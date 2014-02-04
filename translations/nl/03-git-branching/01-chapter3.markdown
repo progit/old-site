@@ -475,7 +475,7 @@ Boem. Geen branch meer op je server. Je zult deze pagina wel een ezelsoor willen
 
 ## Rebasen ##
 
-In Git zijn er twee hoofdmanieren om wijzigingen te integreren van één branch in een andere: de `samenvoeging` en de `rebase`. In dit gedeelte zul je leren wat rebasen is, hoe je het moet doen, waarom het een zeer bijzondere toepassing is, en in welke gevallen je het niet wilt gebruiken.
+In Git zijn er twee hoofdmanieren om wijzigingen te integreren van één branch in een andere: de `merge` en de `rebase`. In dit gedeelte zul je leren wat rebasen is, hoe je het moet doen, waarom het een zeer bijzondere toepassing is, en in welke gevallen je het niet wilt gebruiken.
 
 ### De Eenvoudige Rebase ###
 
@@ -484,7 +484,7 @@ Als je teruggaat naar een eerder voorbeeld van de Samenvoegen sectie (zie Figuur
 Insert 18333fig0327.png 
 Figuur 3-27. Je initiele afgeweken historie.
 
-De eenvoudigste weg om de branches te integreren, zoals we al hebben besproken, is het `samenvoeg` commando. Het voert een drieweg samenvoeging uit tussen de twee laatste snapshots van de branches (C3 en C4), en de meest recente gezamenlijke voorouder van die twee (C2), creëeert een nieuw snapshot (en commit), zoals getoond in Figuur 3-28.
+De eenvoudigste weg om de branches te integreren, zoals we al hebben besproken, is het `merge` commando. Het voert een drieweg samenvoeging uit tussen de twee laatste snapshots van de branches (C3 en C4), en de meest recente gezamenlijke voorouder van die twee (C2), creëeert een nieuw snapshot (en commit), zoals getoond in Figuur 3-28.
 
 Insert 18333fig0328.png 
 Figuur 3-28. Een branch samenvoegen om de afgeweken werk historie te integreren.
